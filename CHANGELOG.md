@@ -8,6 +8,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.2.1] - 2026-05-20
+
+### Added
+
+- Native Rust `reduce-json` command.
+- Native Rust `run` hot path with tee-stream raw logging and JSON summary sidecar.
+- Benchmark categories for terminal compression, agent response compression, JSON/tool payload compression, knowledge structuring and native performance.
+- Engine comparison command for TypeScript and native benchmarks.
+- Real Claude hook template installer with `.claude/settings.json` and hook script generation.
+- Branding documentation and cleaner transparent SVG assets.
+
+### Changed
+
+- JSON reducer now emits compact path/value summaries for noisy tool payloads.
+- Knowledge-to-Rules benchmarks are reported as reusable structuring, not failed compression.
+- Native explicit mode now fails clearly when the native binary is unavailable.
+- Removed the low-value non-technical discovery keyword/topic from package metadata.
+
 ## [0.2.0] - 2026-05-20
 
 ### Added
@@ -22,7 +40,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Expanded Spec-Driven Development commands and validation.
 - Pending/approved memory workflow with stale detection.
 - CI workflow for Node 20/22 across Linux, macOS and Windows.
-- Soturine fox SVG branding and documentation screenshots.
+- Fox SVG branding and documentation screenshots.
 
 ### Changed
 

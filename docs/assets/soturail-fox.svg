@@ -1,16 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-labelledby="title desc">
   <title id="title">SotuRail fox logo</title>
-  <desc id="desc">A friendly orange fox head above two subtle rail-like context lines.</desc>
-  <rect width="256" height="256" rx="40" fill="#fff7ed"/>
-  <path d="M50 88 78 34l34 40h32l34-40 28 54-16 64c-8 32-34 52-62 52s-54-20-62-52L50 88Z" fill="#f97316"/>
-  <path d="M78 34 96 96 50 88Z" fill="#fb923c"/>
-  <path d="M178 34 160 96l46-8Z" fill="#fb923c"/>
-  <path d="M82 104c16-18 76-18 92 0l-10 44c-6 24-22 38-36 38s-30-14-36-38l-10-44Z" fill="#ffedd5"/>
-  <path d="M105 124c0 7-5 12-12 12s-12-5-12-12 5-12 12-12 12 5 12 12Zm70 0c0 7-5 12-12 12s-12-5-12-12 5-12 12-12 12 5 12 12Z" fill="#1f2937"/>
-  <path d="M118 145h20l-10 10-10-10Z" fill="#111827"/>
-  <path d="M108 166c10 8 30 8 40 0" fill="none" stroke="#7c2d12" stroke-width="6" stroke-linecap="round"/>
-  <path d="M36 216h184M52 232h152" fill="none" stroke="#475569" stroke-width="8" stroke-linecap="round"/>
-  <path d="M76 204v40M128 204v40M180 204v40" fill="none" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="62" cy="216" r="4" fill="#0f766e"/>
-  <circle cx="194" cy="216" r="4" fill="#0f766e"/>
+  <desc id="desc">A friendly minimal orange fox head with subtle circuit-like context rails underneath.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M88 92 118 28l37 43h10l37-43 30 64-18 65c-9 32-32 49-54 49s-45-17-54-49L88 92Z" fill="#f97316" stroke="#7c2d12" stroke-width="8"/>
+    <path d="M118 28 129 89 88 92Z" fill="#fb923c" stroke="#7c2d12" stroke-width="7"/>
+    <path d="M202 28 191 89l41 3Z" fill="#fb923c" stroke="#7c2d12" stroke-width="7"/>
+    <path d="M117 104c18-16 68-16 86 0l-10 41c-6 23-21 36-33 36s-27-13-33-36l-10-41Z" fill="#fff7ed" stroke="#fed7aa" stroke-width="4"/>
+    <path d="M139 117c0 6-5 11-11 11s-11-5-11-11 5-11 11-11 11 5 11 11Zm64 0c0 6-5 11-11 11s-11-5-11-11 5-11 11-11 11 5 11 11Z" fill="#111827" stroke="none"/>
+    <path d="M151 138h18l-9 9-9-9Z" fill="#111827" stroke="none"/>
+    <path d="M143 160c11 8 23 8 34 0" stroke="#7c2d12" stroke-width="6"/>
+    <path d="M76 196h168M103 210h114" stroke="#38bdf8" stroke-width="6"/>
+    <path d="M116 186v31M160 184v33M204 186v31" stroke="#0f766e" stroke-width="4"/>
+    <circle cx="76" cy="196" r="5" fill="#38bdf8" stroke="none"/>
+    <circle cx="244" cy="196" r="5" fill="#38bdf8" stroke="none"/>
+  </g>
 </svg>

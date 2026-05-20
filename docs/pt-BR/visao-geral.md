@@ -23,4 +23,4 @@ O comando principal e:
 soturail
 ```
 
-No v0.2.0, os numeros de tokens, reducao e cache sao estimativas locais quando nao ha metadados reais importados. SotuRail nao inventa acertos reais de cache de provedores.
+No v0.2.1, os numeros de tokens, reducao e cache sao estimativas locais quando nao ha metadados reais importados. Knowledge-to-Rules e tratado como estruturacao reutilizavel, nao apenas compressao. SotuRail nao inventa acertos reais de cache de provedores.

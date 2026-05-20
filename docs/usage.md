@@ -50,7 +50,7 @@ soturail doctor cache
 soturail stats
 ```
 
-## v0.2.0 Workflows
+## v0.2.x Workflows
 
 ```bash
 soturail bench prepare
@@ -60,4 +60,5 @@ soturail format README.md --mode concise
 soturail ingest README.md --type docs
 soturail rules check
 soturail native doctor
+soturail bench compare-engines
 ```

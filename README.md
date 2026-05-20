@@ -20,6 +20,10 @@ SotuRail is a local-first Context OS for AI coding agents such as Claude Code, C
 
 It wraps a repository and terminal session with reversible evidence rails: heuristic repo maps, progressive file reading, safe command execution, raw log recovery, reducers, prompt-cache-friendly blocks, Spec-Driven Development artifacts, local memory, hooks, benchmarks and rules extraction.
 
+## Project Status
+
+v0.2.x is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Benchmarks are local and reproducible. External comparisons are optional and user-provided.
+
 ## 2. Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -30,7 +34,7 @@ AI coding agents often receive too much unstable context: full files, noisy test
 - Progressive reader for large files with reversible collapsed ranges.
 - Safe tee-stream runner with raw log preservation.
 - Git, test, JSON and generic terminal reducers.
-- Optional Rust native reducer engine with TypeScript fallback.
+- Optional Rust native reducer and runner hot paths with TypeScript fallback.
 - Cross-call dedupe for repeated command output.
 - Reproducible local benchmark suite.
 - Agent response compression modes.
@@ -60,6 +64,16 @@ Rust is optional. TypeScript builds do not require Rust.
 npm run build:native   # optional, requires cargo
 npm run build:all      # TypeScript + native, requires cargo
 ```
+
+## Native Performance Path
+
+TypeScript remains the public CLI, orchestration, docs and npm distribution layer. Rust handles optional hot paths where streaming, low overhead and binary execution matter:
+
+- native terminal reducers;
+- native JSON/tool payload reducer;
+- native tee-stream runner with raw log and summary sidecar support.
+
+SotuRail does not claim native speedups unless local benchmark results show them for your machine.
 
 ## 6. Quick Start
 
@@ -94,7 +108,7 @@ soturail doctor cache
 
 ## 8. Benchmarks
 
-SotuRail includes deterministic local fixtures for terminal reducers, agent response compression and Knowledge-to-Rules extraction.
+SotuRail includes deterministic local fixtures for terminal compression, agent response compression, JSON/tool payload compression, Knowledge-to-Rules structuring and native performance readiness.
 
 ```bash
 npm run build
@@ -109,6 +123,14 @@ The latest report is written to [benchmarks/reports/latest.md](benchmarks/report
 soturail bench compare-optional --tool rtk
 soturail bench compare-optional --tool squeez
 ```
+
+### Benchmark Interpretation
+
+- Terminal compression measures how reducers shrink logs while preserving errors, paths and recovery links.
+- Agent response compression measures deterministic formatting modes.
+- JSON/tool payload compression preserves relevant primitive values while collapsing repetitive structure.
+- Knowledge-to-Rules is reusable structuring, not pure compression; structured rules can be larger than a tiny source document because they add citations and validator metadata.
+- Native performance compares Rust and TypeScript only when `soturail-native` is built locally.
 
 ## 9. Agent Hooks
 

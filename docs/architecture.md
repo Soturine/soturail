@@ -1,6 +1,6 @@
 # Architecture
 
-SotuRail v0.2.0 is a TypeScript/Node.js local-first CLI. It stores all runtime state in `.soturail/` inside the repository. An optional Rust reducer binary can be used when present, but TypeScript remains the orchestration and fallback layer.
+SotuRail v0.2.1 is a TypeScript/Node.js local-first CLI. It stores all runtime state in `.soturail/` inside the repository. An optional Rust reducer and runner binary can be used when present, but TypeScript remains the orchestration and fallback layer.
 
 ## Runtime Areas
 
@@ -40,7 +40,7 @@ sequenceDiagram
 
 ## Native Runner Boundary
 
-`NativeRunnerAdapter` remains the command execution seam. The optional `soturail-native` crate currently implements reducer paths, not process execution. Future versions can move performance-sensitive execution behind the same boundary.
+`NativeRunnerAdapter` remains the TypeScript command execution seam. The optional `soturail-native` crate implements reducer paths and a native tee-stream runner hot path. Future versions can package prebuilt native binaries for npm.
 
 ## Repo Map
 

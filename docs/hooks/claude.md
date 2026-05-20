@@ -1,5 +1,24 @@
 # Claude Hooks
 
-Claude guidance is stored in `CLAUDE.md`. v0.2.0 can add prompt-only SotuRail rules and a pre-tool adapter template.
+SotuRail v0.2.1 includes a conservative Claude Code hook template.
 
-The rules tell Claude to use `soturail index`, `soturail read`, `soturail run` and `soturail expand` conservatively.
+```bash
+soturail hooks install claude --dry-run
+soturail hooks install claude
+```
+
+Generated files:
+
+- `.claude/settings.json`
+- `.claude/hooks/soturail-pre-tool-use.js`
+- `.claude/hooks/soturail-post-tool-use.js`
+
+Existing files are backed up with `.soturail.bak` before being changed.
+
+The pre-tool hook inspects incoming tool payload text when Claude Code provides it. It blocks obvious destructive shell commands, including recursive deletion, `sudo`, `git push`, downloaded script piping and raw disk copy patterns. It also suggests `soturail run` for tests, builds and logs.
+
+The hook never routes `git push` through `soturail run`.
+
+## Limitation
+
+Claude Code hook schemas may vary by installed version. SotuRail writes a conservative documented template; if your Claude Code release expects a different schema, copy the generated command into the supported hook slot manually.

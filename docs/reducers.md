@@ -16,4 +16,4 @@ Handles Vitest, Jest, Mocha, Pytest, Maven Surefire and Gradle test output at a 
 
 ## JSON TOON Lite
 
-Minifies valid JSON and labels compacted arrays. Primitive value paths are included so important values remain traceable.
+Emits a compressed representation with relevant `path: value` lines. It preserves error messages, statuses, ids, file paths, booleans and nulls that affect debugging, while collapsing repetitive arrays and object structure. The reduced representation is clearly labeled when it is not valid JSON.
