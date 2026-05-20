@@ -23,12 +23,25 @@ fn test_preserves_assertion() {
 
 #[test]
 fn json_reducer_preserves_relevant_values() {
-    let raw = r#"{"status":"error","message":"Permission denied","path":"src/app.ts","items":[{"id":1,"ok":true},{"id":2,"ok":false,"error":"timeout"}]}"#;
-    let out = reduce_json(raw, "abc");
+    let items = (0..120)
+        .map(|index| {
+            if index == 77 {
+                format!(r#"{{"id":{},"ok":false,"error":"timeout"}}"#, index)
+            } else {
+                format!(r#"{{"id":{},"ok":true,"error":null}}"#, index)
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(",");
+    let raw = format!(
+        r#"{{"status":"error","message":"Permission denied","path":"src/app.ts","items":[{}]}}"#,
+        items
+    );
+    let out = reduce_json(&raw, "abc");
     assert!(out.contains("Permission denied"));
     assert!(out.contains("timeout"));
     assert!(out.contains("src/app.ts"));
-    assert!(out.len() < raw.len() * 2);
+    assert!(out.len() < raw.len());
 }
 
 #[test]
