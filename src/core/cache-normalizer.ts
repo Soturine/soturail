@@ -4,7 +4,13 @@ import path from "node:path";
 import { appendJsonl, getWorkspacePaths, readJsonl } from "./config.js";
 import { estimateTokens } from "./token-estimator.js";
 
-export type CacheBlockType = "header" | "governance" | "config" | "repo-map" | "spec" | "memory";
+export type CacheBlockType =
+  | "static_header"
+  | "governance"
+  | "config"
+  | "repo_map"
+  | "approved_specs"
+  | "approved_memory";
 
 export interface CacheBlock {
   block_id: string;
@@ -86,7 +92,7 @@ async function collectStableSources(root: string): Promise<StableSource[]> {
   const paths = getWorkspacePaths(root);
   const sources: StableSource[] = [
     {
-      type: "header",
+      type: "static_header",
       sourcePath: "internal://soturail/static-header",
       stableOrder: 0,
       content: [
@@ -123,35 +129,37 @@ async function collectStableSources(root: string): Promise<StableSource[]> {
   const repoMapPath = path.resolve(paths.indexesDir, "repo-map.json");
   const repoMap = await readIfExists(repoMapPath);
   if (repoMap) {
-    sources.push({ type: "repo-map", sourcePath: repoMapPath, stableOrder: 30, content: repoMap.trim() });
+    sources.push({ type: "repo_map", sourcePath: repoMapPath, stableOrder: 30, content: repoMap.trim() });
   }
 
   const specFiles = await listSpecFiles(paths.specsDir);
   specFiles.forEach((specFile, index) => {
     sources.push({
-      type: "spec",
+      type: "approved_specs",
       sourcePath: specFile,
       stableOrder: 40 + index,
       content: ""
     });
   });
 
-  for (const source of sources.filter((item) => item.type === "spec")) {
+  for (const source of sources.filter((item) => item.type === "approved_specs")) {
     const content = await readIfExists(source.sourcePath);
     if (content && /\b(Status:\s*Approved|\[approved\]|approved:\s*true)\b/i.test(content)) {
       source.content = content.trim();
     }
   }
 
-  const memoryRecords = await readJsonl<Record<string, unknown>>(paths.memoryFile);
+  const legacyMemoryRecords = await readJsonl<Record<string, unknown>>(paths.memoryFile);
+  const approvedMemoryRecords = await readJsonl<Record<string, unknown>>(paths.memoryApprovedFile);
+  const memoryRecords = [...legacyMemoryRecords, ...approvedMemoryRecords];
   const approvedMemory = memoryRecords.filter((record) => {
     const content = typeof record.content === "string" ? record.content : "";
     return record.approved === true || /\[approved\]/i.test(content);
   });
   if (approvedMemory.length > 0) {
     sources.push({
-      type: "memory",
-      sourcePath: paths.memoryFile,
+      type: "approved_memory",
+      sourcePath: paths.memoryApprovedFile,
       stableOrder: 60,
       content: approvedMemory.map((record) => JSON.stringify(record)).join("\n")
     });

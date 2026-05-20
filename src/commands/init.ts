@@ -92,6 +92,38 @@ Add terminal screenshots or Markdown previews here when preparing releases.
   ptBr: `# Visao geral
 
 SotuRail e um Context OS local-first para agentes de IA de desenvolvimento. Ele indexa repositorios, le arquivos progressivamente, executa comandos com logs brutos recuperaveis e organiza contexto estavel para prompt caching.
+`,
+  benchmarking: `# Benchmarking
+
+Run soturail bench prepare, soturail bench run and soturail bench report to generate local benchmark evidence.
+`,
+  hooks: `# Agent Hooks
+
+SotuRail provides dry-run hook installers and prompt-only fallbacks for Claude, Codex, Gemini and Cursor.
+`,
+  nativeRunner: `# Native Runner
+
+The optional Rust reducer engine is detected automatically and TypeScript reducers remain the fallback.
+`,
+  reducers: `# Reducers
+
+SotuRail reducers preserve raw-log recovery while compressing Git, test, JSON and generic output.
+`,
+  responseCompression: `# Agent Response Compression
+
+soturail format compresses verbose AI responses into deterministic task-oriented modes.
+`,
+  knowledgeToRules: `# Knowledge-to-Rules
+
+soturail ingest turns Markdown, TXT, JSON and YAML into structured local rules and validators.
+`,
+  rules: `# Rules
+
+Rules are stored under .soturail/rules and can be listed, checked and exported.
+`,
+  specWorkflow: `# Spec-Driven Workflow
+
+soturail spec manages constitution, spec, plan, tasks, verification, context budget and security impact files.
 `
 };
 
@@ -106,6 +138,14 @@ function documentationTemplates(root: string): Array<{ path: string; content: st
     { path: path.resolve(root, "docs", "security-model.md"), content: text.security },
     { path: path.resolve(root, "docs", "prompt-caching.md"), content: text.caching },
     { path: path.resolve(root, "docs", "metrics.md"), content: text.metrics },
+    { path: path.resolve(root, "docs", "benchmarking.md"), content: text.benchmarking },
+    { path: path.resolve(root, "docs", "hooks.md"), content: text.hooks },
+    { path: path.resolve(root, "docs", "native-runner.md"), content: text.nativeRunner },
+    { path: path.resolve(root, "docs", "reducers.md"), content: text.reducers },
+    { path: path.resolve(root, "docs", "response-compression.md"), content: text.responseCompression },
+    { path: path.resolve(root, "docs", "knowledge-to-rules.md"), content: text.knowledgeToRules },
+    { path: path.resolve(root, "docs", "rules.md"), content: text.rules },
+    { path: path.resolve(root, "docs", "spec-driven-workflow.md"), content: text.specWorkflow },
     { path: path.resolve(root, "docs", "release-checklist.md"), content: text.release },
     { path: path.resolve(root, "docs", "assets", "screenshots", "README.md"), content: text.screenshots },
     { path: path.resolve(root, "docs", "pt-BR", "visao-geral.md"), content: text.ptBr }

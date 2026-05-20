@@ -28,6 +28,13 @@ export const ConfigSchema = z.object({
   workspace_dir: z.string().default(WORKSPACE_DIR),
   max_file_size_kb: z.number().int().positive().max(10240).default(512),
   ignore_extensions: z.array(z.string()).default([...DEFAULT_BINARY_EXTENSIONS]),
+  response_compression: z
+    .object({
+      default_mode: z.enum(["normal", "concise", "ultra", "review", "commit", "debug", "docs"]).default("normal"),
+      preserve_code_blocks: z.boolean().default(true),
+      preserve_security_warnings: z.boolean().default(true)
+    })
+    .default({ default_mode: "normal", preserve_code_blocks: true, preserve_security_warnings: true }),
   cache: z
     .object({
       dynamic_footer_token_budget: z.number().int().positive().max(10000).default(800)
@@ -54,6 +61,17 @@ export interface WorkspacePaths {
   metricsFile: string;
   cacheDir: string;
   cacheBlocks: string;
+  dedupeDir: string;
+  dedupeIndex: string;
+  hooksDir: string;
+  hooksHosts: string;
+  rulesDir: string;
+  rulesFile: string;
+  rulesChecklist: string;
+  rulesCitations: string;
+  rulesValidatorsDir: string;
+  memoryPendingFile: string;
+  memoryApprovedFile: string;
 }
 
 export interface EnsureResult {
@@ -78,7 +96,18 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     metricsDir: path.resolve(workspace, "metrics"),
     metricsFile: path.resolve(workspace, "metrics", "events.jsonl"),
     cacheDir: path.resolve(workspace, "cache"),
-    cacheBlocks: path.resolve(workspace, "cache", "blocks.jsonl")
+    cacheBlocks: path.resolve(workspace, "cache", "blocks.jsonl"),
+    dedupeDir: path.resolve(workspace, "dedupe"),
+    dedupeIndex: path.resolve(workspace, "dedupe", "index.jsonl"),
+    hooksDir: path.resolve(workspace, "hooks"),
+    hooksHosts: path.resolve(workspace, "hooks", "hosts.json"),
+    rulesDir: path.resolve(workspace, "rules"),
+    rulesFile: path.resolve(workspace, "rules", "rules.yml"),
+    rulesChecklist: path.resolve(workspace, "rules", "checklist.md"),
+    rulesCitations: path.resolve(workspace, "rules", "citations.json"),
+    rulesValidatorsDir: path.resolve(workspace, "rules", "validators"),
+    memoryPendingFile: path.resolve(workspace, "memory", "pending.jsonl"),
+    memoryApprovedFile: path.resolve(workspace, "memory", "approved.jsonl")
   };
 }
 
@@ -136,7 +165,11 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.memoryDir,
     paths.specsDir,
     paths.metricsDir,
-    paths.cacheDir
+    paths.cacheDir,
+    paths.dedupeDir,
+    paths.hooksDir,
+    paths.rulesDir,
+    paths.rulesValidatorsDir
   ];
 
   for (const dir of dirs) {
@@ -146,8 +179,11 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
   await writeFileIfMissing(paths.configFile, `${JSON.stringify(defaultConfig, null, 2)}\n`, result, paths.root);
   await writeFileIfMissing(paths.rawIndex, "", result, paths.root);
   await writeFileIfMissing(paths.memoryFile, "", result, paths.root);
+  await writeFileIfMissing(paths.memoryPendingFile, "", result, paths.root);
+  await writeFileIfMissing(paths.memoryApprovedFile, "", result, paths.root);
   await writeFileIfMissing(paths.metricsFile, "", result, paths.root);
   await writeFileIfMissing(paths.cacheBlocks, "", result, paths.root);
+  await writeFileIfMissing(paths.dedupeIndex, "", result, paths.root);
   return result;
 }
 

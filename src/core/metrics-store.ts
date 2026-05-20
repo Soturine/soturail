@@ -1,6 +1,16 @@
 import { getWorkspacePaths, appendJsonl, readJsonl } from "./config.js";
 
-export type MetricEventType = "command_run" | "expand" | "omission_report" | "doctor_cache";
+export type MetricEventType =
+  | "command_run"
+  | "expand"
+  | "omission_report"
+  | "doctor_cache"
+  | "response_format"
+  | "rules_ingest"
+  | "rules_check"
+  | "hook_install"
+  | "dedupe_hit"
+  | "bench_run";
 
 export interface MetricEvent {
   type: MetricEventType;
