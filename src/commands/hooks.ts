@@ -18,6 +18,47 @@ interface HookTarget {
   content: string;
 }
 
+const claudePreToolHook = `#!/usr/bin/env node
+const fs = require("node:fs");
+
+const input = fs.readFileSync(0, "utf8");
+let payload = {};
+try {
+  payload = input.trim() ? JSON.parse(input) : {};
+} catch {
+  payload = { raw: input };
+}
+
+const text = JSON.stringify(payload);
+const dangerous = [
+  /\\brm\\s+-[^\\n]*r[^\\n]*f/i,
+  /(^|[;&|]\\s*)sudo\\b/i,
+  /(^|[;&|]\\s*)git\\s+push\\b/i,
+  /\\bcurl\\b[^|]*\\|\\s*(sh|bash)\\b/i,
+  /\\bdd\\s+[^\\n]*\\bif=/i,
+  /(^|[;&|]\\s*)del\\s+\\/s\\b/i
+];
+
+if (dangerous.some((pattern) => pattern.test(text))) {
+  console.error("SotuRail blocked a destructive Claude shell command. Do not route git push through soturail run.");
+  process.exit(2);
+}
+
+if (/\\b(npm|pnpm|yarn|bun|cargo|pytest|vitest|jest|tsc|node)\\b/.test(text)) {
+  console.error("SotuRail suggestion: run tests/builds/log commands through soturail run so raw logs are recoverable.");
+}
+process.exit(0);
+`;
+
+const claudePostToolHook = `#!/usr/bin/env node
+const fs = require("node:fs");
+const input = fs.readFileSync(0, "utf8");
+if (/raw_id/.test(input)) {
+  console.error("SotuRail note: use soturail expand <raw_id> when the compressed summary lacks needed evidence.");
+}
+process.exit(0);
+`;
+
 function rules(host: HookHost): string {
   return `# SotuRail prompt-only rules for ${host}
 
@@ -75,6 +116,75 @@ async function installTarget(target: HookTarget, root: string, dryRun: boolean):
   return actions;
 }
 
+async function writeWithBackup(filePath: string, content: string, root: string, dryRun: boolean): Promise<string[]> {
+  const relative = path.normalize(path.relative(root, filePath)).replace(/\\/g, "/");
+  const actions = [`${dryRun ? "Would write" : "Write"} ${relative}`];
+  try {
+    await fs.access(filePath);
+    actions.push(`${dryRun ? "Would create" : "Create"} backup ${relative}.soturail.bak`);
+    if (!dryRun) {
+      await fs.copyFile(filePath, `${filePath}.soturail.bak`);
+    }
+  } catch {
+    actions.push(`${dryRun ? "Would create" : "Create"} ${relative}`);
+  }
+  if (!dryRun) {
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, content, "utf8");
+  }
+  return actions;
+}
+
+async function installClaude(root: string, dryRun: boolean): Promise<string[]> {
+  const settingsPath = path.resolve(root, ".claude", "settings.json");
+  const preHookPath = path.resolve(root, ".claude", "hooks", "soturail-pre-tool-use.js");
+  const postHookPath = path.resolve(root, ".claude", "hooks", "soturail-post-tool-use.js");
+  const settings = await buildClaudeSettings(settingsPath);
+  return [
+    ...(await writeWithBackup(settingsPath, `${JSON.stringify(settings, null, 2)}\n`, root, dryRun)),
+    ...(await writeWithBackup(preHookPath, claudePreToolHook, root, dryRun)),
+    ...(await writeWithBackup(postHookPath, claudePostToolHook, root, dryRun)),
+    "Claude hook template is conservative; verify the schema against your installed Claude Code version."
+  ];
+}
+
+async function buildClaudeSettings(settingsPath: string): Promise<Record<string, unknown>> {
+  const existing = await readJsonObject(settingsPath);
+  const hooks = isRecord(existing.hooks) ? { ...existing.hooks } : {};
+  hooks.PreToolUse = appendClaudeHook(hooks.PreToolUse, "Bash", "node .claude/hooks/soturail-pre-tool-use.js");
+  hooks.PostToolUse = appendClaudeHook(hooks.PostToolUse, "Bash", "node .claude/hooks/soturail-post-tool-use.js");
+  return {
+    ...existing,
+    hooks,
+    soturail: {
+      ...(isRecord(existing.soturail) ? existing.soturail : {}),
+      mode: "conservative-template",
+      note: "If your Claude Code version uses a different hook schema, copy these commands into the supported hook slots manually."
+    }
+  };
+}
+
+async function readJsonObject(filePath: string): Promise<Record<string, unknown>> {
+  try {
+    const parsed = JSON.parse(await fs.readFile(filePath, "utf8")) as unknown;
+    return isRecord(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function appendClaudeHook(value: unknown, matcher: string, command: string): unknown[] {
+  const entries = Array.isArray(value) ? [...value] : [];
+  if (!entries.some((entry) => JSON.stringify(entry).includes(command))) {
+    entries.push({ matcher, hooks: [{ type: "command", command }] });
+  }
+  return entries;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
 export async function listHooks(): Promise<string> {
   return `${hosts
     .map((host) => {
@@ -103,9 +213,14 @@ export async function installHooks(hostValue: string, options: HookInstallOption
   const lines = [`SotuRail hooks install ${hostValue}${dryRun ? " --dry-run" : ""}`];
   const installed: Record<string, unknown>[] = [];
   for (const host of selected) {
-    const target = targetFor(host);
-    lines.push(...(await installTarget(target, root, dryRun)));
-    installed.push({ host, target: target.file, mode: target.mode, installed_at: new Date().toISOString() });
+    if (host === "claude") {
+      lines.push(...(await installClaude(root, dryRun)));
+      installed.push({ host, target: ".claude/settings.json", mode: "adapter-template", installed_at: new Date().toISOString() });
+    } else {
+      const target = targetFor(host);
+      lines.push(...(await installTarget(target, root, dryRun)));
+      installed.push({ host, target: target.file, mode: target.mode, installed_at: new Date().toISOString() });
+    }
   }
   if (!dryRun) {
     const paths = getWorkspacePaths(root);
