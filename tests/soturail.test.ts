@@ -10,6 +10,8 @@ import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
 import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src/core/safety-policy.js";
 import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
+import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
+import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { expandRawLog } from "../src/commands/expand.js";
 import { installHooks, promptOnly } from "../src/commands/hooks.js";
 import { ingestCommand } from "../src/commands/ingest.js";
@@ -220,6 +222,61 @@ describe("dedupe", () => {
   });
 });
 
+describe("branding assets", () => {
+  it("keeps SVG logos vector-only and transparent for the main fox logo", async () => {
+    const root = process.cwd();
+    const fox = await fs.readFile(path.join(root, "docs", "assets", "soturail-fox.svg"), "utf8");
+    const icon = await fs.readFile(path.join(root, "docs", "assets", "soturail-icon.svg"), "utf8");
+
+    expect(fox).toContain("<title");
+    expect(icon).toContain("<desc");
+    expect(`${fox}\n${icon}`).not.toMatch(/base64|<image\b/i);
+    expect(fox).not.toMatch(/<rect\b[^>]*(width="(?:100%|320|256)"|height="(?:100%|220|256)")[^>]*fill=/i);
+  });
+});
+
+describe("reducers and benchmarks", () => {
+  it("reduces the default noisy JSON shape while preserving important values", () => {
+    const raw = JSON.stringify({
+      status: "error",
+      message: "Permission denied",
+      path: "src/app.ts",
+      items: Array.from({ length: 120 }, (_, index) => ({ id: index, ok: index !== 77, error: index === 77 ? "timeout" : null }))
+    }, null, 2);
+    const reduced = compactJsonToonWithMetrics(raw);
+
+    expect(reduced).not.toBeNull();
+    expect(reduced?.text).toContain("Permission denied");
+    expect(reduced?.text).toContain("timeout");
+    expect(reduced?.text).toContain("src/app.ts");
+    expect(reduced?.text.length).toBeLessThan(raw.length);
+    expect(reduced?.metrics.arrays_collapsed_count).toBeGreaterThan(0);
+  });
+
+  it("reports benchmark categories and separates knowledge structuring from compression", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "README.md"), "# Project\n\n## Quick start\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ engines: { node: ">=20" } }));
+    await writeFile(path.join(root, ".github", "workflows", "ci.yml"), "name: CI\n");
+    const results = await runBenchmarks({ engine: "ts" }, root);
+    const report = await fs.readFile(path.join(root, "benchmarks", "reports", "latest.md"), "utf8");
+    const json = results.find((result) => result.category === "json_tool_payload_compression");
+    const rules = results.find((result) => result.category === "knowledge_structuring");
+
+    expect(report).toContain("json_tool_payload_compression");
+    expect(report).toContain("Knowledge-to-Rules is reported as reusable structuring");
+    expect(json?.compression_ratio_percent).toBeGreaterThan(0);
+    expect(rules?.compression_ratio_percent).toBeNull();
+  });
+
+  it("reports native comparison as unavailable when no native binary exists", async () => {
+    const root = await tempRoot();
+    const output = await compareEngines(root);
+    expect(output).toContain("Native engine not available");
+  });
+});
+
 describe("agent response compression", () => {
   const verbose = [
     "I think the bug is probably in src/app.ts:12 and it fails with AssertionError.",
@@ -291,6 +348,42 @@ describe("hooks", () => {
     expect(installed).toContain("Create backup AGENTS.md.soturail.bak");
     expect(await fs.readFile(path.join(root, "AGENTS.md.soturail.bak"), "utf8")).toBe("existing\n");
     expect(prompt).toContain("Use soturail index");
+  });
+
+  it("generates a conservative Claude hook template with destructive command guard", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, ".claude", "settings.json"), "{\"existing\":true}\n");
+    const dryRun = await installHooks("claude", { dryRun: true }, root);
+    expect(dryRun).toContain("Would write .claude/settings.json");
+    expect(dryRun).toContain("Would write .claude/hooks/soturail-pre-tool-use.js");
+
+    const installed = await installHooks("claude", {}, root);
+    const hook = await fs.readFile(path.join(root, ".claude", "hooks", "soturail-pre-tool-use.js"), "utf8");
+    const backup = await fs.readFile(path.join(root, ".claude", "settings.json.soturail.bak"), "utf8");
+
+    expect(installed).toContain("Claude hook template is conservative");
+    expect(backup).toContain("existing");
+    expect(hook).toContain("git push");
+    expect(hook).toContain("SotuRail blocked a destructive Claude shell command");
+  });
+});
+
+describe("native explicit mode", () => {
+  it("fails clearly when native engine is requested but unavailable", async () => {
+    const root = await tempRoot();
+    const oldPath = process.env.PATH;
+    process.env.PATH = "";
+    try {
+      await expect(
+        executeRunCommand([`"${process.execPath}" -e "console.log('native')"`], {
+          engine: "native",
+          terminalStdout: drainedPassThrough(),
+          terminalStderr: drainedPassThrough()
+        }, root)
+      ).rejects.toThrow(/Native engine requested/);
+    } finally {
+      process.env.PATH = oldPath;
+    }
   });
 });
 
