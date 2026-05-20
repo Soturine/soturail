@@ -1,0 +1,98 @@
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import type { Command } from "commander";
+import { readCacheBlocks } from "../core/cache-normalizer.js";
+import { getWorkspacePaths } from "../core/config.js";
+import { MetricsStore } from "../core/metrics-store.js";
+import { RawStore } from "../core/raw-store.js";
+
+export interface StatsReport {
+  estimated_raw_tokens: number;
+  estimated_compressed_tokens: number;
+  compression_ratio: number | null;
+  command_count: number;
+  expansion_count: number;
+  manual_omission_or_failure_count: number;
+  estimated_cache_stability_score: number;
+  provider_cache_hits: number | null;
+  provider_cache_source: string | null;
+}
+
+async function readProviderCacheMetadata(root: string): Promise<{ hits: number; source: string } | null> {
+  const paths = getWorkspacePaths(root);
+  const filePath = path.resolve(paths.metricsDir, "provider-cache.json");
+  try {
+    const parsed = JSON.parse(await fs.readFile(filePath, "utf8")) as Record<string, unknown>;
+    const hits = parsed.provider_cache_hits;
+    if (typeof hits === "number" && Number.isFinite(hits)) {
+      return { hits, source: path.normalize(path.relative(root, filePath)).replace(/\\/g, "/") };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function collectStats(root = process.cwd()): Promise<StatsReport> {
+  const rawStore = new RawStore(root);
+  const metrics = new MetricsStore(root);
+  const records = await rawStore.readManifest();
+  const events = await metrics.readAll();
+  const blocks = await readCacheBlocks(root);
+  const rawTokens = records.reduce((sum, record) => sum + record.raw_tokens_estimated, 0);
+  const compressedTokens = records.reduce((sum, record) => sum + record.compressed_tokens_estimated, 0);
+  const expansionCount = events.filter((event) => event.type === "expand").length;
+  const omissionCount = events.filter((event) => event.type === "omission_report").length;
+  const failureCount = records.filter((record) => record.exit_code !== 0).length;
+  const lastDoctorCache = [...events]
+    .reverse()
+    .find((event) => event.type === "doctor_cache" && typeof event.estimated_cache_stability_score === "number");
+  const stableTokens = blocks.reduce((sum, block) => sum + block.token_estimate, 0);
+  const cacheScore = typeof lastDoctorCache?.estimated_cache_stability_score === "number"
+    ? lastDoctorCache.estimated_cache_stability_score
+    : stableTokens > 0
+      ? Number((stableTokens / (stableTokens + 800)).toFixed(4))
+      : 0;
+  const provider = await readProviderCacheMetadata(root);
+
+  return {
+    estimated_raw_tokens: rawTokens,
+    estimated_compressed_tokens: compressedTokens,
+    compression_ratio: compressedTokens > 0 ? Number((rawTokens / compressedTokens).toFixed(2)) : null,
+    command_count: records.length,
+    expansion_count: expansionCount,
+    manual_omission_or_failure_count: omissionCount + failureCount,
+    estimated_cache_stability_score: cacheScore,
+    provider_cache_hits: provider?.hits ?? null,
+    provider_cache_source: provider?.source ?? null
+  };
+}
+
+export function formatStats(report: StatsReport): string {
+  const providerLine = report.provider_cache_hits === null
+    ? "real_provider_cache_hits: not imported"
+    : `real_provider_cache_hits: ${report.provider_cache_hits} (source: ${report.provider_cache_source})`;
+  return [
+    "SotuRail local stats",
+    `estimated_raw_tokens: ${report.estimated_raw_tokens}`,
+    `estimated_compressed_tokens: ${report.estimated_compressed_tokens}`,
+    `compression_ratio: ${report.compression_ratio === null ? "n/a" : `${report.compression_ratio}:1`}`,
+    `command_count: ${report.command_count}`,
+    `expansion_count: ${report.expansion_count}`,
+    `manual_omission_or_failure_count: ${report.manual_omission_or_failure_count}`,
+    `estimated_cache_stability_score: ${report.estimated_cache_stability_score}`,
+    providerLine,
+    "",
+    "Token counts and cache stability are local estimates unless provider metadata is explicitly imported."
+  ].join("\n");
+}
+
+export function registerStatsCommand(program: Command): void {
+  program
+    .command("stats")
+    .description("Print honest local metrics from raw and metrics manifests.")
+    .action(async () => {
+      const report = await collectStats();
+      process.stdout.write(`${formatStats(report)}\n`);
+    });
+}
