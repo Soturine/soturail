@@ -49,3 +49,15 @@ soturail doctor
 soturail doctor cache
 soturail stats
 ```
+
+## v0.2.0 Workflows
+
+```bash
+soturail bench prepare
+soturail bench run --engine ts
+soturail hooks install codex --dry-run
+soturail format README.md --mode concise
+soturail ingest README.md --type docs
+soturail rules check
+soturail native doctor
+```

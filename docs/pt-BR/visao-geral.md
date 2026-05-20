@@ -11,6 +11,10 @@ Ele ajuda a:
 - comprimir saidas longas do terminal;
 - separar blocos estaveis de dados dinamicos para prompt caching;
 - manter memoria local ligada ao commit Git atual;
+- comprimir respostas de agentes em modos profissionais;
+- transformar documentos em regras estruturadas e validadores;
+- instalar regras de hooks ou fallback prompt-only para agentes;
+- gerar benchmarks locais reproduziveis;
 - relatar metricas honestas.
 
 O comando principal e:
@@ -19,4 +23,4 @@ O comando principal e:
 soturail
 ```
 
-No v0.1.0, os numeros de tokens e cache sao estimativas locais. SotuRail nao inventa acertos reais de cache de provedores.
+No v0.2.0, os numeros de tokens, reducao e cache sao estimativas locais quando nao ha metadados reais importados. SotuRail nao inventa acertos reais de cache de provedores.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" role="img" aria-labelledby="title desc">
+  <title id="title">SotuRail init documentation example</title>
+  <desc id="desc">Static terminal-style documentation example for soturail init.</desc>
+  <rect width="760" height="340" rx="14" fill="#0f172a"/>
+  <circle cx="28" cy="26" r="7" fill="#ef4444"/><circle cx="52" cy="26" r="7" fill="#f59e0b"/><circle cx="76" cy="26" r="7" fill="#22c55e"/>
+  <text x="28" y="70" fill="#e2e8f0" font-family="Consolas, monospace" font-size="18">$ soturail init</text>
+  <text x="28" y="108" fill="#fb923c" font-family="Consolas, monospace" font-size="18">SotuRail workspace initialized.</text>
+  <text x="28" y="150" fill="#e2e8f0" font-family="Consolas, monospace" font-size="16">Created paths:</text>
+  <text x="48" y="180" fill="#86efac" font-family="Consolas, monospace" font-size="16">+ .soturail/config/config.json</text>
+  <text x="48" y="208" fill="#86efac" font-family="Consolas, monospace" font-size="16">+ .soturail/raw/index.jsonl</text>
+  <text x="48" y="236" fill="#86efac" font-family="Consolas, monospace" font-size="16">+ docs/architecture.md</text>
+  <text x="28" y="286" fill="#94a3b8" font-family="Consolas, monospace" font-size="14">Documentation example; exact paths depend on your workspace.</text>
+</svg>

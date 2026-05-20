@@ -1,0 +1,22 @@
+{
+  "claude": {
+    "mode": "adapter-template",
+    "target": "CLAUDE.md",
+    "notes": "Pre-tool hooks vary by host version; prompt-only rules are always safe."
+  },
+  "codex": {
+    "mode": "prompt-only",
+    "target": "AGENTS.md",
+    "notes": "Uses repository guidance rather than unstable host internals."
+  },
+  "gemini": {
+    "mode": "prompt-only",
+    "target": "GEMINI.md",
+    "notes": "Uses local project guidance."
+  },
+  "cursor": {
+    "mode": "prompt-only",
+    "target": ".cursor/rules/soturail.mdc",
+    "notes": "Cursor rules file fallback."
+  }
+}

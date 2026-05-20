@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" role="img" aria-labelledby="title desc">
+  <title id="title">SotuRail run and expand documentation example</title>
+  <desc id="desc">Static terminal-style documentation example showing raw_id recovery.</desc>
+  <rect width="820" height="360" rx="14" fill="#111827"/>
+  <text x="28" y="58" fill="#e5e7eb" font-family="Consolas, monospace" font-size="18">$ soturail run npm test</text>
+  <text x="28" y="98" fill="#fca5a5" font-family="Consolas, monospace" font-size="16">FAIL tests/app.test.ts</text>
+  <text x="28" y="128" fill="#fca5a5" font-family="Consolas, monospace" font-size="16">AssertionError: expected 1 to equal 2</text>
+  <text x="28" y="180" fill="#fb923c" font-family="Consolas, monospace" font-size="16">SotuRail run complete.</text>
+  <text x="28" y="210" fill="#e5e7eb" font-family="Consolas, monospace" font-size="16">Compressor: test-reducer</text>
+  <text x="28" y="240" fill="#e5e7eb" font-family="Consolas, monospace" font-size="16">raw_id: example123</text>
+  <text x="28" y="270" fill="#86efac" font-family="Consolas, monospace" font-size="16">Recovery: soturail expand example123</text>
+  <text x="28" y="320" fill="#94a3b8" font-family="Consolas, monospace" font-size="14">Documentation example; raw_id is illustrative.</text>
+</svg>

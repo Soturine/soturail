@@ -1,0 +1,162 @@
+export function helper0() { return 0; }
+export function helper1() { return 1; }
+export function helper2() { return 2; }
+export function helper3() { return 3; }
+export function helper4() { return 4; }
+export function helper5() { return 5; }
+export function helper6() { return 6; }
+export function helper7() { return 7; }
+export function helper8() { return 8; }
+export function helper9() { return 9; }
+export function helper10() { return 10; }
+export function helper11() { return 11; }
+export function helper12() { return 12; }
+export function helper13() { return 13; }
+export function helper14() { return 14; }
+export function helper15() { return 15; }
+export function helper16() { return 16; }
+export function helper17() { return 17; }
+export function helper18() { return 18; }
+export function helper19() { return 19; }
+export function helper20() { return 20; }
+export function helper21() { return 21; }
+export function helper22() { return 22; }
+export function helper23() { return 23; }
+export function helper24() { return 24; }
+export function helper25() { return 25; }
+export function helper26() { return 26; }
+export function helper27() { return 27; }
+export function helper28() { return 28; }
+export function helper29() { return 29; }
+export function helper30() { return 30; }
+export function helper31() { return 31; }
+export function helper32() { return 32; }
+export function helper33() { return 33; }
+export function helper34() { return 34; }
+export function helper35() { return 35; }
+export function helper36() { return 36; }
+export function helper37() { return 37; }
+export function helper38() { return 38; }
+export function helper39() { return 39; }
+export function helper40() { return 40; }
+export function helper41() { return 41; }
+export function helper42() { return 42; }
+export function helper43() { return 43; }
+export function helper44() { return 44; }
+export function helper45() { return 45; }
+export function helper46() { return 46; }
+export function helper47() { return 47; }
+export function helper48() { return 48; }
+export function helper49() { return 49; }
+export function helper50() { return 50; }
+export function helper51() { return 51; }
+export function helper52() { return 52; }
+export function helper53() { return 53; }
+export function helper54() { return 54; }
+export function helper55() { return 55; }
+export function helper56() { return 56; }
+export function helper57() { return 57; }
+export function helper58() { return 58; }
+export function helper59() { return 59; }
+export function helper60() { return 60; }
+export function helper61() { return 61; }
+export function helper62() { return 62; }
+export function helper63() { return 63; }
+export function helper64() { return 64; }
+export function helper65() { return 65; }
+export function helper66() { return 66; }
+export function helper67() { return 67; }
+export function helper68() { return 68; }
+export function helper69() { return 69; }
+export function helper70() { return 70; }
+export function helper71() { return 71; }
+export function helper72() { return 72; }
+export function helper73() { return 73; }
+export function helper74() { return 74; }
+export function helper75() { return 75; }
+export function helper76() { return 76; }
+export function helper77() { return 77; }
+export function helper78() { return 78; }
+export function helper79() { return 79; }
+export class CriticalService { run() { return 'ok'; } }
+def py_helper_0(): return 0
+def py_helper_1(): return 1
+def py_helper_2(): return 2
+def py_helper_3(): return 3
+def py_helper_4(): return 4
+def py_helper_5(): return 5
+def py_helper_6(): return 6
+def py_helper_7(): return 7
+def py_helper_8(): return 8
+def py_helper_9(): return 9
+def py_helper_10(): return 10
+def py_helper_11(): return 11
+def py_helper_12(): return 12
+def py_helper_13(): return 13
+def py_helper_14(): return 14
+def py_helper_15(): return 15
+def py_helper_16(): return 16
+def py_helper_17(): return 17
+def py_helper_18(): return 18
+def py_helper_19(): return 19
+def py_helper_20(): return 20
+def py_helper_21(): return 21
+def py_helper_22(): return 22
+def py_helper_23(): return 23
+def py_helper_24(): return 24
+def py_helper_25(): return 25
+def py_helper_26(): return 26
+def py_helper_27(): return 27
+def py_helper_28(): return 28
+def py_helper_29(): return 29
+def py_helper_30(): return 30
+def py_helper_31(): return 31
+def py_helper_32(): return 32
+def py_helper_33(): return 33
+def py_helper_34(): return 34
+def py_helper_35(): return 35
+def py_helper_36(): return 36
+def py_helper_37(): return 37
+def py_helper_38(): return 38
+def py_helper_39(): return 39
+def py_helper_40(): return 40
+def py_helper_41(): return 41
+def py_helper_42(): return 42
+def py_helper_43(): return 43
+def py_helper_44(): return 44
+def py_helper_45(): return 45
+def py_helper_46(): return 46
+def py_helper_47(): return 47
+def py_helper_48(): return 48
+def py_helper_49(): return 49
+def py_helper_50(): return 50
+def py_helper_51(): return 51
+def py_helper_52(): return 52
+def py_helper_53(): return 53
+def py_helper_54(): return 54
+def py_helper_55(): return 55
+def py_helper_56(): return 56
+def py_helper_57(): return 57
+def py_helper_58(): return 58
+def py_helper_59(): return 59
+def py_helper_60(): return 60
+def py_helper_61(): return 61
+def py_helper_62(): return 62
+def py_helper_63(): return 63
+def py_helper_64(): return 64
+def py_helper_65(): return 65
+def py_helper_66(): return 66
+def py_helper_67(): return 67
+def py_helper_68(): return 68
+def py_helper_69(): return 69
+def py_helper_70(): return 70
+def py_helper_71(): return 71
+def py_helper_72(): return 72
+def py_helper_73(): return 73
+def py_helper_74(): return 74
+def py_helper_75(): return 75
+def py_helper_76(): return 76
+def py_helper_77(): return 77
+def py_helper_78(): return 78
+def py_helper_79(): return 79
+public class App { public void run() {} }

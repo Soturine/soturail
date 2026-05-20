@@ -1,6 +1,6 @@
 # Architecture
 
-SotuRail v0.1.0 is a TypeScript/Node.js local-first CLI. It stores all runtime state in `.soturail/` inside the repository.
+SotuRail v0.2.0 is a TypeScript/Node.js local-first CLI. It stores all runtime state in `.soturail/` inside the repository. An optional Rust reducer binary can be used when present, but TypeScript remains the orchestration and fallback layer.
 
 ## Runtime Areas
 
@@ -10,7 +10,10 @@ SotuRail v0.1.0 is a TypeScript/Node.js local-first CLI. It stores all runtime s
 - `.soturail/metrics/events.jsonl` - append-only local events.
 - `.soturail/specs/` - Spec-Driven Development artifacts.
 - `.soturail/memory/memory.jsonl` - Git-linked local memory.
+- `.soturail/memory/pending.jsonl` and `approved.jsonl` - memory approval workflow.
 - `.soturail/cache/blocks.jsonl` - stable prompt block manifest.
+- `.soturail/rules/` - extracted rules, checklists and citations.
+- `.soturail/hooks/hosts.json` - installed hook registry.
 
 ## Flow
 
@@ -37,7 +40,7 @@ sequenceDiagram
 
 ## Native Runner Boundary
 
-`NativeRunnerAdapter` is the migration seam for future Rust or Go execution engines. v0.1.0 implements the adapter in TypeScript only.
+`NativeRunnerAdapter` remains the command execution seam. The optional `soturail-native` crate currently implements reducer paths, not process execution. Future versions can move performance-sensitive execution behind the same boundary.
 
 ## Repo Map
 

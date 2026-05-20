@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" role="img" aria-labelledby="title desc">
+  <title id="title">SotuRail stats documentation example</title>
+  <desc id="desc">Static terminal-style documentation example for honest local stats.</desc>
+  <rect width="760" height="340" rx="14" fill="#0b1220"/>
+  <text x="28" y="58" fill="#e2e8f0" font-family="Consolas, monospace" font-size="18">$ soturail stats</text>
+  <text x="28" y="102" fill="#fb923c" font-family="Consolas, monospace" font-size="17">SotuRail local stats</text>
+  <text x="28" y="138" fill="#e2e8f0" font-family="Consolas, monospace" font-size="16">estimated_raw_tokens: from local manifests</text>
+  <text x="28" y="168" fill="#e2e8f0" font-family="Consolas, monospace" font-size="16">estimated_compressed_tokens: from reducers</text>
+  <text x="28" y="198" fill="#e2e8f0" font-family="Consolas, monospace" font-size="16">real_provider_cache_hits: not imported</text>
+  <text x="28" y="250" fill="#94a3b8" font-family="Consolas, monospace" font-size="14">Documentation example; no fake benchmark numbers shown.</text>
+</svg>

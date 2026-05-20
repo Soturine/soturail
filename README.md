@@ -1,34 +1,51 @@
+<p align="center">
+  <img src="docs/assets/soturail-fox.svg" alt="SotuRail fox logo" width="180" />
+</p>
+
 # SotuRail
+
+[![Node.js >=20](https://img.shields.io/badge/node-%3E%3D20-3c873a)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](tsconfig.json)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![CI](https://github.com/Soturine/soturail/actions/workflows/ci.yml/badge.svg)](https://github.com/Soturine/soturail/actions/workflows/ci.yml)
+[![local-first](https://img.shields.io/badge/local--first-yes-f97316)](docs/security-model.md)
+[![context-engineering](https://img.shields.io/badge/context--engineering-SotuRail-7c3aed)](docs/prompt-caching.md)
+
+SotuRail — Local-first context rails for AI coding agents.  
+SotuRail — trilhos locais de contexto para agentes de IA.
+
+## 1. What Is SotuRail?
 
 SotuRail is a local-first Context OS for AI coding agents such as Claude Code, Codex CLI, Gemini CLI, Cursor and similar tools.
 
-It adds context rails around a repository and terminal session: scan the repo without flooding the model, read large files progressively, run commands through a safe wrapper, preserve raw logs, compress terminal output, keep prompt-cache-friendly stable blocks, manage specs and memory, and report honest local metrics.
+It wraps a repository and terminal session with reversible evidence rails: heuristic repo maps, progressive file reading, safe command execution, raw log recovery, reducers, prompt-cache-friendly blocks, Spec-Driven Development artifacts, local memory, hooks, benchmarks and rules extraction.
 
-## Problem
+## 2. Why SotuRail Exists
 
-AI coding agents are powerful, but a normal repository and shell session are noisy. Large files, long logs, repeated test output and unstable prompt payloads waste context and make debugging harder. SotuRail keeps the source of truth local and recoverable while giving agents a smaller, more stable view.
+AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
 
-## Architecture
+## 3. Key Features
 
-```mermaid
-flowchart TD
-  CLI[soturail CLI] --> Init[Workspace init]
-  CLI --> Index[Heuristic Repo Map]
-  CLI --> Read[Progressive reader]
-  CLI --> Run[NativeRunnerAdapter]
-  Run --> Safety[Safety policy]
-  Run --> Raw[Raw log store]
-  Run --> Reducers[Compression reducers]
-  CLI --> Expand[Raw expansion]
-  CLI --> Spec[SDD specs]
-  CLI --> Memory[Git-linked memory]
-  CLI --> Cache[Cache normalizer]
-  CLI --> Stats[Honest metrics]
-  Raw --> Stats
-  Cache --> Stats
-```
+- Heuristic Repo Map with cross-platform ignore handling.
+- Progressive reader for large files with reversible collapsed ranges.
+- Safe tee-stream runner with raw log preservation.
+- Git, test, JSON and generic terminal reducers.
+- Optional Rust native reducer engine with TypeScript fallback.
+- Cross-call dedupe for repeated command output.
+- Reproducible local benchmark suite.
+- Agent response compression modes.
+- Knowledge-to-Rules ingestion and validators.
+- Prompt-only and hook-style agent integrations.
+- SDD specs, approved memory and cache block normalization.
+- Honest local metrics.
 
-## Install
+## 4. How It Differs Conceptually
+
+SotuRail is an independent implementation. It may be conceptually adjacent to terminal reducers, host hook systems, Spec-Driven Development kits and memory tools, but it does not depend on RTK, Squeez, Spec Kit, Caveman, MemPalace or proprietary workflows.
+
+SotuRail aims to unify these ideas into one local-first workflow: reversible raw logs, safety policy, benchmarks, prompt cache ordering, specs, memory, hooks and rules.
+
+## 5. Installation
 
 ```bash
 npm install
@@ -37,105 +54,130 @@ npm link
 soturail --help
 ```
 
-For local validation without linking:
+Rust is optional. TypeScript builds do not require Rust.
 
 ```bash
-node dist/cli.js --help
+npm run build:native   # optional, requires cargo
+npm run build:all      # TypeScript + native, requires cargo
 ```
 
-## Quick Start
+## 6. Quick Start
 
 ```bash
 soturail init
 soturail index
-soturail read src/cli.ts --query "commands"
+soturail read README.md --query "quick start"
 soturail run npm test
 soturail expand <raw_id>
 soturail stats
 ```
 
-## Commands
+## 7. Commands
 
 ```bash
 soturail init
 soturail index
 soturail read <file> --query "goal"
-soturail read <file> --full
-soturail run <command...>
-soturail run --interactive <command...>
+soturail run --engine auto <command...>
+soturail run --engine native <command...>
 soturail expand <raw_id>
-soturail spec new "feature idea"
-soturail memory add "decision or fact"
-soturail memory search "term"
-soturail doctor
+soturail bench prepare
+soturail bench run --engine ts
+soturail hooks list
+soturail format README.md --mode concise
+soturail ingest README.md --type docs
+soturail rules check
+soturail spec status
+soturail memory propose "decision"
 soturail doctor cache
-soturail stats
 ```
 
-## Screenshot / Markdown Preview
+## 8. Benchmarks
 
-```text
-$ soturail run npm test
-...live command output...
-
-SotuRail run complete.
-Exit code: 1
-Compressor: test-reducer
-raw_id: 6f9a2d10
-Recovery: soturail expand 6f9a2d10
-
-Test Output Summary
-Raw log: soturail expand 6f9a2d10
-Failures, assertions, stack traces, and file paths:
-...
-```
-
-Screenshots can be placed in [docs/assets/screenshots](docs/assets/screenshots/README.md).
-
-## Safety Model
-
-`soturail run` blocks dangerous command patterns by default:
-
-- `rm -rf`
-- `sudo`
-- `format`
-- `dd if=`
-- `curl | sh`
-- `del /s`
-- automatic `git push`
-
-Bypass requires the exact phrase:
+SotuRail includes deterministic local fixtures for terminal reducers, agent response compression and Knowledge-to-Rules extraction.
 
 ```bash
-soturail run rm -rf tmp --unsafe-confirm "I_UNDERSTAND_THIS_CAN_DESTROY_DATA"
+npm run build
+soturail bench prepare
+soturail bench run --engine ts
+soturail bench report
 ```
 
-SotuRail never runs `git push` automatically.
+The latest report is written to [benchmarks/reports/latest.md](benchmarks/reports/latest.md). External comparisons are optional and user-provided only:
 
-## Prompt Caching Strategy
+```bash
+soturail bench compare-optional --tool rtk
+soturail bench compare-optional --tool squeez
+```
 
-SotuRail keeps stable blocks before dynamic data:
+## 9. Agent Hooks
 
-1. Static header
-2. Stable project governance
-3. Stable config
-4. Stable repo map
-5. Stable approved specs
-6. Stable approved memory
-7. Dynamic footer
+SotuRail provides cautious hook scaffolding and prompt-only fallbacks:
 
-Dynamic data such as timestamps, raw ids, command status and recent logs stays after stable blocks. `doctor cache` reports an estimated local stability score only; it does not claim real provider cache hits.
+```bash
+soturail hooks list
+soturail hooks doctor
+soturail hooks install claude --dry-run
+soturail hooks prompt-only codex
+```
 
-## Roadmap
+Host APIs vary, so SotuRail never writes guessed config without showing the target and creating backups for existing files.
 
-See [ROADMAP.md](ROADMAP.md). v0.2.0 is planned around richer ignore behavior, stronger reducers, provider metadata import, and a more ergonomic context payload command.
+## 10. Agent Response Compression
 
-## Resumo em Portugues
+SotuRail includes Caveman-like output compression as inspiration, implemented independently with professional modes:
 
-SotuRail e um Context OS local-first para agentes de IA de desenvolvimento. Ele organiza contexto do repositorio, le arquivos grandes progressivamente, executa comandos com logs brutos recuperaveis e separa blocos estaveis de dados dinamicos para melhorar reutilizacao de prompt.
+- `normal`
+- `concise`
+- `ultra`
+- `review`
+- `commit`
+- `debug`
+- `docs`
 
-Leia tambem: [docs/pt-BR/visao-geral.md](docs/pt-BR/visao-geral.md).
+It preserves fenced code blocks, shell commands, file paths, line numbers, security warnings and failure details using deterministic reducers. See [docs/response-compression.md](docs/response-compression.md).
 
-## License
+## 11. Knowledge-to-Rules Engine
+
+SotuRail can ingest Markdown, TXT, JSON and YAML into structured YAML/JSON rules, checklists, citations and simple validators.
+
+```bash
+soturail ingest docs/requirements.md --type requirements
+soturail rules list
+soturail rules check
+soturail rules export --format yaml
+```
+
+This makes heavy docs smaller, reusable and auditable without inventing rules that do not appear in the source. See [docs/knowledge-to-rules.md](docs/knowledge-to-rules.md).
+
+## 12. Prompt Caching Design
+
+Stable blocks are ordered before dynamic data:
+
+1. static_header
+2. governance
+3. config
+4. repo_map
+5. approved_specs
+6. approved_memory
+7. dynamic_footer
+
+SotuRail reports estimated cache stability only. It never claims real provider cache hits unless imported metadata exists.
+
+## 13. Security Model
+
+`soturail run` blocks dangerous patterns by default, including `rm -rf`, `sudo`, `format`, `dd if=`, `curl | sh`, `del /s` and `git push`.
+
+Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material.
+
+## 14. Roadmap
+
+See [ROADMAP.md](ROADMAP.md). v0.3.0 focuses on deeper native paths, MCP, hardened PDF extraction, semantic memory approval, Tree-sitter repo maps and optional local embeddings.
+
+## 15. Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Reducers, hooks and rules should include tests, safety notes and benchmark impact when relevant.
+
+## 16. License
 
 MIT © Rafael Ryan Ramos de Souza

@@ -1,0 +1,226 @@
+{
+  "generated_at": "2026-05-20T22:39:07.363Z",
+  "engine": "ts",
+  "results": [
+    {
+      "name": "noisy-git-diff.txt",
+      "category": "terminal",
+      "engine": "ts",
+      "raw_bytes": 7976,
+      "reduced_bytes": 2432,
+      "estimated_raw_tokens": 1994,
+      "estimated_reduced_tokens": 608,
+      "compression_ratio_percent": 69.51,
+      "wall_time_ms": 1.517,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 8,
+      "raw_id": null,
+      "raw_sha256": "78a0b4e038f67eb07f0ddce7a7837bc137d8a263cda4b4ac5bab680e211ba45a",
+      "reduced_sha256": "0c9bf8a8d1fb308604a5f8146f8f4c8c5da6768f05c4fcad7cac592d848ae22d",
+      "quality_passed": true,
+      "details": {
+        "compressor": "git-reducer"
+      }
+    },
+    {
+      "name": "noisy-test-output.txt",
+      "category": "terminal",
+      "engine": "ts",
+      "raw_bytes": 6500,
+      "reduced_bytes": 634,
+      "estimated_raw_tokens": 1625,
+      "estimated_reduced_tokens": 159,
+      "compression_ratio_percent": 90.22,
+      "wall_time_ms": 1.381,
+      "preserved_error_lines_count": 2,
+      "preserved_file_paths_count": 6,
+      "raw_id": null,
+      "raw_sha256": "1b1039d5765bc5ab9605ccb9093021fd7b7f910eb10d367fdb204b097fd131b2",
+      "reduced_sha256": "a61cc9d1c0b0c9a1ba8b0daeda766e5b3155e09875ea4b3dbb1551fd83c86331",
+      "quality_passed": true,
+      "details": {
+        "compressor": "test-reducer"
+      }
+    },
+    {
+      "name": "noisy-json.json",
+      "category": "terminal",
+      "engine": "ts",
+      "raw_bytes": 8154,
+      "reduced_bytes": 8571,
+      "estimated_raw_tokens": 2039,
+      "estimated_reduced_tokens": 2143,
+      "compression_ratio_percent": -5.1,
+      "wall_time_ms": 0.641,
+      "preserved_error_lines_count": 140,
+      "preserved_file_paths_count": 2,
+      "raw_id": null,
+      "raw_sha256": "f11b617b4aeb922c887e6b93b6a7e45b1c6b438049d175e01c77e311d8a0f820",
+      "reduced_sha256": "d92911eecb582c7f94468ff7ecf09992b5c42b67e49d06780c9a527e7333053d",
+      "quality_passed": true,
+      "details": {
+        "compressor": "json-toon-lite"
+      }
+    },
+    {
+      "name": "noisy-log.txt",
+      "category": "terminal",
+      "engine": "ts",
+      "raw_bytes": 8785,
+      "reduced_bytes": 1783,
+      "estimated_raw_tokens": 2197,
+      "estimated_reduced_tokens": 446,
+      "compression_ratio_percent": 79.7,
+      "wall_time_ms": 0.913,
+      "preserved_error_lines_count": 9,
+      "preserved_file_paths_count": 4,
+      "raw_id": null,
+      "raw_sha256": "3720d73595e5be6ff92efd7d9bd0143353f408414754e2db99a291103de3e5c0",
+      "reduced_sha256": "a6bc2186c850701a15577bce68da4c1c80b13c5829717fb90ba27dafa3fcf133",
+      "quality_passed": true,
+      "details": {
+        "compressor": "generic-stream"
+      }
+    },
+    {
+      "name": "verbose-ai-answer-concise",
+      "category": "response",
+      "engine": "ts",
+      "raw_bytes": 2775,
+      "reduced_bytes": 394,
+      "estimated_raw_tokens": 694,
+      "estimated_reduced_tokens": 99,
+      "compression_ratio_percent": 85.73,
+      "wall_time_ms": 1.016,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 3,
+      "raw_id": null,
+      "raw_sha256": "360199c674cc4437e116ff2363c8e1f972fefd1bb58a12d1b51d0bb21b5cc29b",
+      "reduced_sha256": "73019a008f288ea19e3fad699f1742fe97faa95b5a0fef905df9d4c91b71a9dd",
+      "quality_passed": true,
+      "details": {
+        "mode": "concise",
+        "preserved_commands_count": 0,
+        "preserved_code_blocks_count": 1,
+        "preserved_security_warnings_count": 1
+      }
+    },
+    {
+      "name": "verbose-ai-answer-review",
+      "category": "response",
+      "engine": "ts",
+      "raw_bytes": 2775,
+      "reduced_bytes": 402,
+      "estimated_raw_tokens": 694,
+      "estimated_reduced_tokens": 101,
+      "compression_ratio_percent": 85.45,
+      "wall_time_ms": 0.445,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 2,
+      "raw_id": null,
+      "raw_sha256": "360199c674cc4437e116ff2363c8e1f972fefd1bb58a12d1b51d0bb21b5cc29b",
+      "reduced_sha256": "691e4528741ade04cd9f0a599894765ac5325817e1ab8359dd376d474dba875b",
+      "quality_passed": true,
+      "details": {
+        "mode": "review",
+        "preserved_commands_count": 0,
+        "preserved_code_blocks_count": 1,
+        "preserved_security_warnings_count": 2
+      }
+    },
+    {
+      "name": "verbose-ai-answer-debug",
+      "category": "response",
+      "engine": "ts",
+      "raw_bytes": 2775,
+      "reduced_bytes": 517,
+      "estimated_raw_tokens": 694,
+      "estimated_reduced_tokens": 130,
+      "compression_ratio_percent": 81.27,
+      "wall_time_ms": 0.515,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 4,
+      "raw_id": null,
+      "raw_sha256": "360199c674cc4437e116ff2363c8e1f972fefd1bb58a12d1b51d0bb21b5cc29b",
+      "reduced_sha256": "a067282cce59ffacf9973a441ae59c79fe6000e6053d56edc32eb724c29cc5ff",
+      "quality_passed": true,
+      "details": {
+        "mode": "debug",
+        "preserved_commands_count": 0,
+        "preserved_code_blocks_count": 1,
+        "preserved_security_warnings_count": 1
+      }
+    },
+    {
+      "name": "verbose-ai-answer-commit",
+      "category": "response",
+      "engine": "ts",
+      "raw_bytes": 2775,
+      "reduced_bytes": 305,
+      "estimated_raw_tokens": 694,
+      "estimated_reduced_tokens": 77,
+      "compression_ratio_percent": 88.9,
+      "wall_time_ms": 0.158,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 2,
+      "raw_id": null,
+      "raw_sha256": "360199c674cc4437e116ff2363c8e1f972fefd1bb58a12d1b51d0bb21b5cc29b",
+      "reduced_sha256": "9bc6f9161a616f604a76dfaf6e5f09359ac92824a6681665e524cf492db1fa72",
+      "quality_passed": true,
+      "details": {
+        "mode": "commit",
+        "preserved_commands_count": 0,
+        "preserved_code_blocks_count": 1,
+        "preserved_security_warnings_count": 1
+      }
+    },
+    {
+      "name": "verbose-ai-answer-docs",
+      "category": "response",
+      "engine": "ts",
+      "raw_bytes": 2775,
+      "reduced_bytes": 289,
+      "estimated_raw_tokens": 694,
+      "estimated_reduced_tokens": 73,
+      "compression_ratio_percent": 89.48,
+      "wall_time_ms": 0.173,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 2,
+      "raw_id": null,
+      "raw_sha256": "360199c674cc4437e116ff2363c8e1f972fefd1bb58a12d1b51d0bb21b5cc29b",
+      "reduced_sha256": "3bb4146d5262a4036eee04f8128038b61c3809fd069de56393b7189dc3bd5747",
+      "quality_passed": true,
+      "details": {
+        "mode": "docs",
+        "preserved_commands_count": 0,
+        "preserved_code_blocks_count": 1,
+        "preserved_security_warnings_count": 1
+      }
+    },
+    {
+      "name": "rules-doc-extraction",
+      "category": "rules",
+      "engine": "ts",
+      "raw_bytes": 265,
+      "reduced_bytes": 3957,
+      "estimated_raw_tokens": 67,
+      "estimated_reduced_tokens": 990,
+      "compression_ratio_percent": -1377.61,
+      "wall_time_ms": 4.4,
+      "preserved_error_lines_count": 0,
+      "preserved_file_paths_count": 11,
+      "raw_id": null,
+      "raw_sha256": "99342cde565f84f27eba348f5ba52a04a3dfe38c0e4f787b27994e7bded876f1",
+      "reduced_sha256": "6aa322ec27267157a5262e09fa9eee085548a45a57a34c1ac1d0ce46b9491f5b",
+      "quality_passed": true,
+      "details": {
+        "extracted_rules_count": 5,
+        "validator_success_count": 4,
+        "validator_failure_count": 1,
+        "citations_count": 5,
+        "source_sections_preserved_count": 2,
+        "manual_expansion_count": 0
+      }
+    }
+  ]
+}
