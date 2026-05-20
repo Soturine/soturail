@@ -5,6 +5,11 @@ interface SummaryMarker {
   last_items: unknown[];
 }
 
+interface PrimitivePath {
+  path: string;
+  value: string | number | boolean | null;
+}
+
 function compactValue(value: unknown, maxArrayItems: number): unknown {
   if (Array.isArray(value)) {
     if (value.length > maxArrayItems) {
@@ -38,12 +43,31 @@ export function compactJsonToon(input: string, maxArrayItems = 30): string | nul
   try {
     const parsed = JSON.parse(trimmed) as unknown;
     const compacted = compactValue(parsed, maxArrayItems);
+    const primitivePaths = collectPrimitivePaths(parsed).slice(0, 500);
     const compactedText = JSON.stringify(compacted);
     const label = compactedText.includes("__soturail_compacted_array__")
       ? "JSON TOON Lite compacted representation:"
       : "JSON TOON Lite minified valid JSON:";
-    return `${label}\n${compactedText}\n`;
+    const paths = primitivePaths.length > 0
+      ? `\nPrimitive value paths preserved:\n${primitivePaths.map((entry) => `${entry.path}: ${JSON.stringify(entry.value)}`).join("\n")}\n`
+      : "\n";
+    return `${label}\n${compactedText}${paths}`;
   } catch {
     return null;
   }
+}
+
+function collectPrimitivePaths(value: unknown, basePath = "$"): PrimitivePath[] {
+  if (value === null || ["string", "number", "boolean"].includes(typeof value)) {
+    return [{ path: basePath, value: value as string | number | boolean | null }];
+  }
+  if (Array.isArray(value)) {
+    return value.flatMap((item, index) => collectPrimitivePaths(item, `${basePath}[${index}]`));
+  }
+  if (value && typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).flatMap(([key, item]) =>
+      collectPrimitivePaths(item, `${basePath}.${key}`)
+    );
+  }
+  return [];
 }

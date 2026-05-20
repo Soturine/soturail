@@ -1,5 +1,5 @@
 export function isGitCommand(command: string): boolean {
-  return /\bgit\s+(status|diff|show|log|checkout|merge|rebase|pull|fetch)\b/i.test(command);
+  return /\bgit\s+(status|diff|show|log|branch|checkout|merge|rebase|pull|fetch)\b/i.test(command);
 }
 
 export function reduceGitOutput(raw: string, rawId: string): string {
@@ -17,7 +17,9 @@ export function reduceGitOutput(raw: string, rawId: string): string {
       continue;
     }
 
-    const statusFile = line.match(/^(?:\s*(?:modified|new file|deleted|renamed|copied|both modified|M|A|D|R|\?\?)[:\s]+)(.+)$/i);
+    const statusFile = line.match(
+      /^(?:\s*(?:modified|new file|deleted|renamed|copied|both modified|M|A|D|R|UU|AA|DD|\?\?)[:\s]+)(.+)$/i
+    );
     if (statusFile?.[1]) {
       changedFiles.add(statusFile[1].trim());
       preserved.push(line);
@@ -32,6 +34,14 @@ export function reduceGitOutput(raw: string, rawId: string): string {
       /^no changes added\b/i.test(trimmed) ||
       /^nothing to commit\b/i.test(trimmed) ||
       /^@@\s/.test(trimmed) ||
+      /^commit\s+[a-f0-9]{7,40}/i.test(trimmed) ||
+      /^Author:/i.test(trimmed) ||
+      /^Date:/i.test(trimmed) ||
+      /^\*\s+/.test(trimmed) ||
+      /^rename (?:from|to)\b/i.test(trimmed) ||
+      /^deleted file mode\b/i.test(trimmed) ||
+      /^new file mode\b/i.test(trimmed) ||
+      /^(<<<<<<<|=======|>>>>>>>)\b/.test(trimmed) ||
       /^(fatal|error|warning):/i.test(trimmed) ||
       /^(index|---|\+\+\+)/.test(trimmed)
     ) {

@@ -1,16 +1,20 @@
 import type { Writable } from "node:stream";
 import type { Command } from "commander";
+import { DedupeStore, sha256Text } from "../core/dedupe-store.js";
 import { ensureWorkspace } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { NativeRunnerAdapter, type RunnerOptions } from "../core/native-runner-adapter.js";
 import { RawStore, type RawRunRecord } from "../core/raw-store.js";
 import { validateCommand } from "../core/safety-policy.js";
 import { estimateTokens } from "../core/token-estimator.js";
-import { compressOutput } from "../compressors/index.js";
+import type { ReducerEngine } from "../core/native-engine.js";
+import { compressOutputWithEngine } from "../compressors/index.js";
 
 export interface RunCliOptions {
   interactive?: boolean;
   unsafeConfirm?: string;
+  native?: boolean;
+  engine?: ReducerEngine;
 }
 
 export interface RunExecutionOptions extends RunCliOptions {
@@ -26,7 +30,30 @@ export interface RunExecutionResult {
 }
 
 function commandFromParts(parts: string[]): string {
-  return parts.join(" ").trim();
+  if (parts.length === 1) {
+    return parts[0]?.trim() ?? "";
+  }
+  return parts.map(shellQuoteIfNeeded).join(" ").trim();
+}
+
+function shellQuoteIfNeeded(part: string): string {
+  if (!/\s/.test(part)) {
+    return part;
+  }
+  if ((part.startsWith("\"") && part.endsWith("\"")) || (part.startsWith("'") && part.endsWith("'"))) {
+    return part;
+  }
+  return `"${part.replace(/(["\\$`])/g, "\\$1")}"`;
+}
+
+function normalizeEngine(value: ReducerEngine | undefined): ReducerEngine {
+  if (value === undefined) {
+    return "auto";
+  }
+  if (["auto", "ts", "native"].includes(value)) {
+    return value;
+  }
+  throw new Error(`Unknown reducer engine "${value}". Use auto, ts, or native.`);
 }
 
 export async function executeRunCommand(
@@ -59,6 +86,7 @@ export async function executeRunCommand(
 
   const rawStore = new RawStore(root);
   const metrics = new MetricsStore(root);
+  const dedupe = new DedupeStore(root);
   const log = await rawStore.createLog(command);
   const adapter = new NativeRunnerAdapter();
   const runnerOptions: RunnerOptions = {
@@ -75,7 +103,17 @@ export async function executeRunCommand(
   }
 
   const result = await adapter.run(runnerOptions);
-  const compression = compressOutput(command, result.rawText, log.rawId);
+  const outputHash = sha256Text(result.rawText);
+  const previous = await dedupe.findReusable(outputHash, result.exitCode);
+  const requestedEngine = options.native ? "native" : normalizeEngine(options.engine);
+  const compression = previous
+    ? {
+        compressor: "dedupe",
+        summary: `Output identical to previous raw_id ${previous.raw_id}; use soturail expand ${previous.raw_id} for full output.\nCurrent raw log is still preserved as ${log.rawId}.\n`,
+        compressed_tokens_estimated: estimateTokens(`Output identical to previous raw_id ${previous.raw_id}.`),
+        engine: "ts" as const
+      }
+    : await compressOutputWithEngine(command, result.rawText, log.rawId, requestedEngine, root);
   const record: RawRunRecord = {
     raw_id: log.rawId,
     path: log.relativePath,
@@ -87,6 +125,21 @@ export async function executeRunCommand(
     compressed_tokens_estimated: compression.compressed_tokens_estimated
   };
   await rawStore.appendRunRecord(record);
+  await dedupe.append({
+    output_sha256: outputHash,
+    raw_id: log.rawId,
+    command,
+    exit_code: result.exitCode,
+    raw_path: log.relativePath,
+    created_at: log.createdAt
+  });
+  if (previous) {
+    await metrics.append({
+      type: "dedupe_hit",
+      raw_id: log.rawId,
+      details: { previous_raw_id: previous.raw_id, output_sha256: outputHash }
+    });
+  }
   await metrics.append({
     type: "command_run",
     raw_id: log.rawId,
@@ -101,6 +154,7 @@ export async function executeRunCommand(
     "SotuRail run complete.",
     `Exit code: ${result.exitCode}`,
     `Compressor: ${compression.compressor}`,
+    `Engine: ${compression.engine}`,
     `raw_id: ${log.rawId}`,
     `Recovery: soturail expand ${log.rawId}`,
     "",
@@ -122,6 +176,8 @@ export function registerRunCommand(program: Command): void {
     .allowUnknownOption(true)
     .allowExcessArguments(true)
     .option("--interactive", "Forward stdin/TTY behavior when possible")
+    .option("--native", "Prefer the optional native reducer engine")
+    .option("--engine <engine>", "Reducer engine: auto, ts, or native", "auto")
     .option("--unsafe-confirm <phrase>", "Exact phrase required to bypass dangerous-command blocking")
     .argument("[command...]", "Command and arguments to execute")
     .action(async (commandParts: string[] = [], options: RunCliOptions) => {
@@ -134,6 +190,12 @@ export function registerRunCommand(program: Command): void {
       }
       if (options.unsafeConfirm !== undefined) {
         runOptions.unsafeConfirm = options.unsafeConfirm;
+      }
+      if (options.native !== undefined) {
+        runOptions.native = options.native;
+      }
+      if (options.engine !== undefined) {
+        runOptions.engine = options.engine;
       }
       const result = await executeRunCommand(commandParts, runOptions);
       process.stdout.write(result.summary);

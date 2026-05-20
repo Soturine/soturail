@@ -1,10 +1,11 @@
 export function isTestCommand(command: string, raw: string): boolean {
   return /\b(npm|pnpm|yarn|bun)\s+(run\s+)?test\b/i.test(command) ||
-    /\b(vitest|jest|pytest)\b/i.test(command) ||
-    /\b(FAIL|FAILED|AssertionError|Traceback|Tests?:)\b/i.test(raw);
+    /\b(vitest|jest|pytest|mocha|mvn|gradle)\b/i.test(command) ||
+    /\b(FAIL|FAILED|AssertionError|Traceback|Tests?:|BUILD FAILED|There (?:was|were) \d+ failure|Surefire)\b/i.test(raw);
 }
 
-const IMPORTANT = /\b(FAIL|FAILED|Error|AssertionError|Expected|Received|Traceback|at\s+.+:\d+:\d+|\.test\.|\.spec\.|tests?\/|passed|failed|skipped|summary|Test Files|Tests|Snapshots|Time)\b/i;
+const IMPORTANT =
+  /\b(FAIL|FAILED|Error|AssertionError|Expected|Received|Traceback|Caused by|at\s+.+:\d+:\d+|\.test\.|\.spec\.|tests?\/|src[\\/].+:\d+|FAILED TESTS|BUILD FAILED|Surefire|Maven|Gradle|passed|failed|skipped|summary|Test Files|Tests|Snapshots|Time)\b/i;
 const NOISE = /^\s*(PASS|✓|✔|ok)\s+/i;
 
 export function reduceTestOutput(raw: string, rawId: string): string {
