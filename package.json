@@ -1,6 +1,6 @@
 {
   "name": "soturail",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
   "type": "module",
   "bin": {
@@ -25,7 +25,9 @@
     "test:all": "npm test && npm run test:native",
     "bench:prepare": "node dist/cli.js bench prepare",
     "bench": "node dist/cli.js bench run --engine ts",
-    "bench:report": "node dist/cli.js bench report"
+    "bench:report": "node dist/cli.js bench report",
+    "bench:native": "node dist/cli.js bench run --engine native",
+    "bench:compare": "node dist/cli.js bench compare-engines"
   },
   "keywords": [
     "ai-agents",
@@ -42,8 +44,7 @@
     "llm-tools",
     "agent-hooks",
     "developer-tools",
-    "soturail",
-    "soturine"
+    "soturail"
   ],
   "author": "Rafael Ryan Ramos de Souza",
   "license": "MIT",

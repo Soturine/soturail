@@ -24,7 +24,7 @@ export function buildProgram(): Command {
   program
     .name("soturail")
     .description("Local-first Context OS rails for AI coding agents.")
-    .version("0.2.0")
+    .version("0.2.1")
     .showHelpAfterError();
 
   registerInitCommand(program);
