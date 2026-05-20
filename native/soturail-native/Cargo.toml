@@ -1,0 +1,15 @@
+[package]
+name = "soturail-native"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+authors = ["Rafael Ryan Ramos de Souza"]
+description = "Optional native reducers for SotuRail."
+
+[lib]
+name = "soturail_native"
+path = "src/lib.rs"
+
+[[bin]]
+name = "soturail-native"
+path = "src/main.rs"
