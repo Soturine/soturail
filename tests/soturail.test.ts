@@ -9,10 +9,14 @@ import { isAlwaysIgnored, normalizeForIgnore, scanRepository } from "../src/core
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
 import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src/core/safety-policy.js";
+import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
 import { expandRawLog } from "../src/commands/expand.js";
+import { installHooks, promptOnly } from "../src/commands/hooks.js";
+import { ingestCommand } from "../src/commands/ingest.js";
 import { runInit } from "../src/commands/init.js";
 import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
+import { checkRules, listRules } from "../src/commands/rules.js";
 import { collectStats, formatStats } from "../src/commands/stats.js";
 
 const tempRoots: string[] = [];
@@ -183,10 +187,110 @@ describe("cache normalizer", () => {
     const dynamicIndex = labels.indexOf("dynamic-footer");
     const blocks = await readCacheBlocks(root);
 
-    expect(labels).toEqual(["header", "governance", "config", "repo-map", "spec", "memory", "dynamic-footer"]);
+    expect(labels).toEqual(["static_header", "governance", "config", "repo_map", "approved_specs", "approved_memory", "dynamic-footer"]);
     expect(dynamicIndex).toBe(result.sections.length - 1);
     expect(blocks.map((block) => block.stable_order)).toEqual([...blocks.map((block) => block.stable_order)].sort((a, b) => a - b));
     expect(result.payload.indexOf("raw_id=abc")).toBeGreaterThan(result.payload.indexOf("Stable governance"));
+  });
+
+  it("keeps identical static prefix when only the dynamic footer changes", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await writeFile(path.join(root, "AGENTS.md"), "Stable governance\n");
+    const first = await buildCachePayload(root, "dynamic footer raw_id=one");
+    const second = await buildCachePayload(root, "dynamic footer raw_id=two");
+    const marker = "<!-- soturail:dynamic:dynamic-footer -->";
+
+    expect(first.payload.split(marker)[0]).toBe(second.payload.split(marker)[0]);
+  });
+});
+
+describe("dedupe", () => {
+  it("summarizes repeated identical output while preserving both raw logs", async () => {
+    const root = await tempRoot();
+    const stdout = drainedPassThrough();
+    const stderr = drainedPassThrough();
+    const command = `"${process.execPath}" -e "console.log('same output')"`;
+    const first = await executeRunCommand([command], { terminalStdout: stdout, terminalStderr: stderr }, root);
+    const second = await executeRunCommand([command], { terminalStdout: stdout, terminalStderr: stderr }, root);
+    const records = await new RawStore(root).readManifest();
+
+    expect(second.summary).toContain(`Output identical to previous raw_id ${first.rawId}`);
+    expect(records).toHaveLength(2);
+  });
+});
+
+describe("agent response compression", () => {
+  const verbose = [
+    "I think the bug is probably in src/app.ts:12 and it fails with AssertionError.",
+    "Security warning: do not run rm -rf or git push automatically.",
+    "Run npm test after the fix.",
+    "```ts",
+    "export const value = 1;",
+    "```"
+  ].join("\n");
+
+  it("preserves code blocks, commands, paths and security warnings", () => {
+    const result = reduceAgentResponse(verbose, "concise");
+
+    expect(result.output).toContain("```ts\nexport const value = 1;\n```");
+    expect(result.output).toContain("npm test");
+    expect(result.output).toContain("src/app.ts:12");
+    expect(result.output).toContain("Security warning");
+    expect(result.preserved_security_warnings_count).toBeGreaterThan(0);
+  });
+
+  it("creates review, commit and debug shaped output", () => {
+    expect(reduceAgentResponse(verbose, "review").output).toContain("High:");
+    expect(reduceAgentResponse(verbose, "commit").output).toMatch(/^(fix|feat|docs|test)\(/);
+    expect(reduceAgentResponse(verbose, "debug").output).toContain("Symptom:");
+  });
+});
+
+describe("knowledge to rules", () => {
+  it("extracts rules and validates required repository files", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await writeFile(path.join(root, "README.md"), "# Project\n\n## Quick start\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ engines: { node: ">=20" } }));
+    await writeFile(path.join(root, ".github", "workflows", "ci.yml"), "name: CI\n");
+    await writeFile(
+      path.join(root, "requirements.md"),
+      [
+        "# Runtime",
+        "- Project must run on Node.js 20 or newer.",
+        "- README.md must include a section named Quick start.",
+        "- LICENSE must be present.",
+        "- .github/workflows/ci.yml is required for CI workflow."
+      ].join("\n")
+    );
+
+    const ingest = await ingestCommand("requirements.md", { type: "requirements" }, root);
+    const listed = await listRules(root);
+    const checked = await checkRules(root);
+
+    expect(ingest).toContain("Extracted rules:");
+    expect(listed).toContain("Node.js");
+    expect(checked).toContain("validator_success_count");
+    expect(await fs.readFile(path.join(root, ".soturail", "rules", "rules.yml"), "utf8")).toContain("source_section");
+  });
+});
+
+describe("hooks", () => {
+  it("supports dry-run, prompt-only output and backup creation", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "AGENTS.md"), "existing\n");
+    const dryRun = await installHooks("codex", { dryRun: true }, root);
+    expect(dryRun).toContain("Would update AGENTS.md");
+    expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe("existing\n");
+
+    const installed = await installHooks("codex", {}, root);
+    const prompt = await promptOnly("codex");
+
+    expect(installed).toContain("Create backup AGENTS.md.soturail.bak");
+    expect(await fs.readFile(path.join(root, "AGENTS.md.soturail.bak"), "utf8")).toBe("existing\n");
+    expect(prompt).toContain("Use soturail index");
   });
 });
 
