@@ -1,0 +1,44 @@
+{
+  "name": "soturail",
+  "version": "0.1.0",
+  "description": "Local-first Context OS rails for AI coding agents.",
+  "type": "module",
+  "bin": {
+    "soturail": "./dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "docs"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "context",
+    "local-first",
+    "typescript"
+  ],
+  "author": "Rafael Ryan Ramos de Souza",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}
