@@ -10,7 +10,7 @@ import { compressOutputWithEngine } from "../compressors/index.js";
 import { ensureWorkspace, writeJson } from "../core/config.js";
 import { ingestDocument } from "../core/document-ingest.js";
 import { MetricsStore } from "../core/metrics-store.js";
-import type { ReducerEngine } from "../core/native-engine.js";
+import { detectNativeEngine, type ReducerEngine } from "../core/native-engine.js";
 import { extractRules } from "../core/rule-extractor.js";
 import { estimateTokens } from "../core/token-estimator.js";
 import { validateRules } from "../core/rule-validator.js";
@@ -24,13 +24,13 @@ interface BenchOptions {
 
 interface BenchResult {
   name: string;
-  category: "terminal" | "response" | "rules";
+  category: "terminal_compression" | "agent_response_compression" | "json_tool_payload_compression" | "knowledge_structuring" | "native_performance";
   engine: string;
   raw_bytes: number;
   reduced_bytes: number;
   estimated_raw_tokens: number;
   estimated_reduced_tokens: number;
-  compression_ratio_percent: number;
+  compression_ratio_percent: number | null;
   wall_time_ms: number;
   preserved_error_lines_count: number;
   preserved_file_paths_count: number;
@@ -166,7 +166,7 @@ async function terminalResult(root: string, fixture: string, command: string, en
   }
   return {
     name: fixture,
-    category: "terminal",
+    category: "terminal_compression",
     engine: reduced.engine,
     raw_bytes: Buffer.byteLength(raw),
     reduced_bytes: Buffer.byteLength(text),
@@ -181,6 +181,38 @@ async function terminalResult(root: string, fixture: string, command: string, en
     reduced_sha256: sha256(text),
     quality_passed: true,
     details: { compressor: reduced.compressor }
+  };
+}
+
+async function jsonResult(root: string, engine: ReducerEngine): Promise<BenchResult> {
+  const raw = await readFixture(root, "noisy-json.json");
+  const start = performance.now();
+  const reduced = await compressOutputWithEngine("cat output.json", raw, "bench-noisy-json", engine, root);
+  const wall = performance.now() - start;
+  const text = reduced.summary;
+  const rawTokens = estimateTokens(raw);
+  const reducedTokens = estimateTokens(text);
+  const quality = qualityCheck("noisy-json.json", text);
+  if (!quality.ok) {
+    throw new Error(`Benchmark quality check failed for noisy-json.json: ${quality.reason}`);
+  }
+  return {
+    name: "noisy-json.json",
+    category: "json_tool_payload_compression",
+    engine: reduced.engine,
+    raw_bytes: Buffer.byteLength(raw),
+    reduced_bytes: Buffer.byteLength(text),
+    estimated_raw_tokens: rawTokens,
+    estimated_reduced_tokens: reducedTokens,
+    compression_ratio_percent: compressionPercent(rawTokens, reducedTokens),
+    wall_time_ms: Number(wall.toFixed(3)),
+    preserved_error_lines_count: (text.match(/\b(error|denied|timeout|permission)\b/gi) ?? []).length,
+    preserved_file_paths_count: (text.match(/src[\\/][\w.-]+(?::\d+(?::\d+)?)?/g) ?? []).length,
+    raw_id: null,
+    raw_sha256: sha256(raw),
+    reduced_sha256: sha256(text),
+    quality_passed: true,
+    details: reduced.details ?? {}
   };
 }
 
@@ -207,7 +239,7 @@ async function responseResult(root: string, mode: "concise" | "review" | "debug"
   const wall = performance.now() - start;
   return {
     name: `verbose-ai-answer-${mode}`,
-    category: "response",
+    category: "agent_response_compression",
     engine: "ts",
     raw_bytes: Buffer.byteLength(raw),
     reduced_bytes: Buffer.byteLength(reduced.output),
@@ -241,13 +273,13 @@ async function rulesResult(root: string): Promise<BenchResult> {
   const wall = performance.now() - start;
   return {
     name: "rules-doc-extraction",
-    category: "rules",
+    category: "knowledge_structuring",
     engine: "ts",
     raw_bytes: Buffer.byteLength(raw),
     reduced_bytes: Buffer.byteLength(output),
     estimated_raw_tokens: estimateTokens(raw),
     estimated_reduced_tokens: estimateTokens(output),
-    compression_ratio_percent: compressionPercent(estimateTokens(raw), estimateTokens(output)),
+    compression_ratio_percent: null,
     wall_time_ms: Number(wall.toFixed(3)),
     preserved_error_lines_count: 0,
     preserved_file_paths_count: (output.match(/\bREADME\.md|LICENSE|ci\.yml/g) ?? []).length,
@@ -257,6 +289,9 @@ async function rulesResult(root: string): Promise<BenchResult> {
     quality_passed: rules.length >= 3,
     details: {
       extracted_rules_count: rules.length,
+      raw_document_tokens: estimateTokens(raw),
+      structured_rule_tokens: estimateTokens(output),
+      reuse_value_note: "Structured rules may be larger than the seed document but are reusable, citable and validator-friendly.",
       validator_success_count: checks.filter((check) => check.ok).length,
       validator_failure_count: checks.filter((check) => !check.ok).length,
       citations_count: rules.length,
@@ -270,11 +305,25 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
   await ensureWorkspace(root);
   await prepareBenchmarks(root);
   const engine = options.engine ?? "ts";
+  if (engine === "native" && !(await detectNativeEngine(root)).available) {
+    const dirs = benchDirs(root);
+    await fs.mkdir(dirs.results, { recursive: true });
+    await fs.mkdir(dirs.reports, { recursive: true });
+    const report = [
+      "# SotuRail Benchmark Report",
+      "",
+      "Native engine was requested but `soturail-native` is not available. Build it with `npm run build:native`.",
+      ""
+    ].join("\n");
+    await writeJson(path.resolve(dirs.results, "latest.json"), { generated_at: new Date().toISOString(), engine, native_available: false, results: [] });
+    await fs.writeFile(path.resolve(dirs.reports, "latest.md"), report, "utf8");
+    return [];
+  }
   const results = [
     await terminalResult(root, "noisy-git-diff.txt", "git diff", engine),
     await terminalResult(root, "noisy-test-output.txt", "npm test", engine),
-    await terminalResult(root, "noisy-json.json", "cat output.json", engine),
     await terminalResult(root, "noisy-log.txt", "docker logs app", engine),
+    await jsonResult(root, engine),
     await responseResult(root, "concise"),
     await responseResult(root, "review"),
     await responseResult(root, "debug"),
@@ -291,26 +340,69 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
   return results;
 }
 
+export async function compareEngines(root = process.cwd()): Promise<string> {
+  const native = await detectNativeEngine(root);
+  if (!native.available) {
+    return "Native engine not available. Build it with npm run build:native before comparing engines.\n";
+  }
+  const tsResults = await runBenchmarks({ engine: "ts" }, root);
+  const nativeResults = await runBenchmarks({ engine: "native" }, root);
+  const rows = tsResults.map((tsResult) => {
+    const nativeResult = nativeResults.find((item) => item.name === tsResult.name && item.category === tsResult.category);
+    if (!nativeResult) {
+      return `| ${tsResult.name} | ${tsResult.category} | n/a | n/a | n/a |`;
+    }
+    const speedup = nativeResult.wall_time_ms === 0
+      ? 0
+      : Number((((tsResult.wall_time_ms - nativeResult.wall_time_ms) / tsResult.wall_time_ms) * 100).toFixed(2));
+    return `| ${tsResult.name} | ${tsResult.category} | ${tsResult.wall_time_ms} | ${nativeResult.wall_time_ms} | ${speedup}% |`;
+  });
+  const report = [
+    "# SotuRail Engine Comparison",
+    "",
+    "| Fixture | Category | TypeScript wall_time_ms | Native wall_time_ms | speedup_percent |",
+    "|---|---|---:|---:|---:|",
+    ...rows,
+    ""
+  ].join("\n");
+  const reportPath = path.resolve(benchDirs(root).reports, "engine-comparison.md");
+  await fs.writeFile(reportPath, report, "utf8");
+  return `${reportPath}\n`;
+}
+
 export async function reportBenchmarks(root = process.cwd()): Promise<string> {
   const reportPath = path.resolve(benchDirs(root).reports, "latest.md");
   return fs.readFile(reportPath, "utf8").catch(() => "No benchmark report found. Run soturail bench run first.\n");
 }
 
 function renderReport(results: BenchResult[]): string {
+  const grouped = groupByCategory(results);
   const rows = results.map((result) =>
-    `| ${result.name} | ${result.category} | ${result.engine} | ${result.estimated_raw_tokens} | ${result.estimated_reduced_tokens} | ${result.compression_ratio_percent}% | ${result.wall_time_ms} | ${result.quality_passed ? "pass" : "fail"} |`
+    `| ${result.name} | ${result.category} | ${result.engine} | ${result.estimated_raw_tokens} | ${result.estimated_reduced_tokens} | ${result.compression_ratio_percent === null ? "n/a" : `${result.compression_ratio_percent}%`} | ${result.wall_time_ms} | ${result.quality_passed ? "pass" : "fail"} |`
   );
   return [
     "# SotuRail Benchmark Report",
     "",
     "Generated from deterministic local fixtures. No external RTK/Squeez comparison numbers are included unless a user runs optional comparison locally.",
     "",
-    "| Fixture | Category | Engine | Raw tokens | Reduced tokens | compression_ratio_percent | wall_time_ms | Quality |",
+    "Categories:",
+    ...Object.entries(grouped).map(([category, count]) => `- ${category}: ${count} case(s)`),
+    "",
+    "| Fixture | Category | Engine | Raw tokens | Reduced/structured tokens | compression_ratio_percent | wall_time_ms | Quality |",
     "|---|---|---:|---:|---:|---:|---:|---|",
     ...rows,
     "",
-    "Includes terminal reducers, agent response compression and Knowledge-to-Rules cases."
+    "Includes terminal compression, agent response compression, JSON/tool payload compression, knowledge structuring and native performance readiness cases.",
+    "",
+    "Knowledge-to-Rules is reported as reusable structuring, not pure compression."
   ].join("\n") + "\n";
+}
+
+function groupByCategory(results: BenchResult[]): Record<string, number> {
+  return results.reduce<Record<string, number>>((acc, result) => {
+    acc[result.category] = (acc[result.category] ?? 0) + 1;
+    return acc;
+  }, {});
 }
 
 export async function compareOptional(tool: string, root = process.cwd()): Promise<string> {
@@ -340,5 +432,8 @@ export function registerBenchCommand(program: Command): void {
   });
   bench.command("compare-optional").description("Detect optional external comparison tool without installing it.").option("--tool <tool>", "rtk or squeez").action(async (options: BenchOptions) => {
     process.stdout.write(await compareOptional(options.tool ?? ""));
+  });
+  bench.command("compare-engines").description("Compare TypeScript and native engines when native is available.").action(async () => {
+    process.stdout.write(await compareEngines());
   });
 }

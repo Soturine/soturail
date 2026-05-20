@@ -2,7 +2,7 @@ import { estimateTokens } from "../core/token-estimator.js";
 import { reduceWithNative, type ReducerEngine, type ReductionKind } from "../core/native-engine.js";
 import { reduceGenericStream } from "./generic-stream.js";
 import { isGitCommand, reduceGitOutput } from "./git-reducer.js";
-import { compactJsonToon } from "./json-toon.js";
+import { compactJsonToonWithMetrics } from "./json-toon.js";
 import { isTestCommand, reduceTestOutput } from "./test-reducer.js";
 
 export interface CompressionResult {
@@ -10,16 +10,19 @@ export interface CompressionResult {
   summary: string;
   compressed_tokens_estimated: number;
   engine: "ts" | "native";
+  details?: Record<string, unknown>;
 }
 
 export function compressOutput(command: string, raw: string, rawId: string): CompressionResult {
-  const jsonSummary = compactJsonToon(raw);
+  const jsonSummary = compactJsonToonWithMetrics(raw);
   if (jsonSummary) {
+    const summary = `${jsonSummary.text.replace("<raw_id>", rawId)}Raw log: soturail expand ${rawId}\n`;
     return {
       compressor: "json-toon-lite",
-      summary: `${jsonSummary}Raw log: soturail expand ${rawId}\n`,
-      compressed_tokens_estimated: estimateTokens(jsonSummary),
-      engine: "ts"
+      summary,
+      compressed_tokens_estimated: estimateTokens(summary),
+      engine: "ts",
+      details: { ...jsonSummary.metrics }
     };
   }
 
@@ -89,6 +92,9 @@ export async function compressOutputWithEngine(
 }
 
 function nativeKindFor(command: string, raw: string): ReductionKind | null {
+  if (raw.trim().startsWith("{") || raw.trim().startsWith("[")) {
+    return "reduce-json";
+  }
   if (isGitCommand(command)) {
     return "reduce-git";
   }
