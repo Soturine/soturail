@@ -74,6 +74,30 @@ Describe the user-facing problem and the smallest verifiable outcome.
 - [ ] Implement behavior.
 - [ ] Run build and tests.
 - [ ] Document usage and limitations.
+`,
+    "verification.md": `# Verification: ${title}
+
+## Verification Plan
+
+- Build succeeds locally.
+- Tests cover the expected behavior.
+- CLI examples are exercised when applicable.
+`,
+    "context-budget.md": `# Context Budget: ${title}
+
+## Context Budget
+
+- Prefer repo maps and targeted reads.
+- Keep raw logs recoverable through soturail expand.
+- Place stable spec content before dynamic run output.
+`,
+    "security-impact.md": `# Security Impact: ${title}
+
+## Security Impact
+
+- Identify destructive command risks.
+- Identify secret-bearing raw logs.
+- Confirm no automatic remote push is introduced.
 `
   };
 }
@@ -105,4 +129,103 @@ export function registerSpecCommand(program: Command): void {
       const result = await createSpec(featureIdea);
       process.stdout.write(`Created spec folder: ${result.folder}\n${result.files.map((file) => `  + ${file}`).join("\n")}\n`);
     });
+
+  spec.command("status").description("List local spec folders and task progress.").action(async () => {
+    process.stdout.write(await specStatus());
+  });
+
+  spec.command("validate").description("Validate spec folders for required SDD sections.").argument("[spec-folder]", "Optional spec folder").action(async (folder?: string) => {
+    process.stdout.write(await validateSpecs(folder));
+  });
+
+  const task = spec.command("task").description("Manage tasks in a spec folder.");
+  task.command("add").argument("<spec-folder>", "Spec folder").argument("<text>", "Task text").action(async (folder: string, text: string) => {
+    process.stdout.write(await addSpecTask(folder, text));
+  });
+  task.command("list").argument("<spec-folder>", "Spec folder").action(async (folder: string) => {
+    process.stdout.write(await listSpecTasks(folder));
+  });
+  task.command("done").argument("<spec-folder>", "Spec folder").argument("<index>", "1-based task index").action(async (folder: string, index: string) => {
+    process.stdout.write(await markSpecTaskDone(folder, Number(index)));
+  });
+}
+
+async function specFolders(root = process.cwd()): Promise<string[]> {
+  const paths = getWorkspacePaths(root);
+  try {
+    const entries = await fs.readdir(paths.specsDir, { withFileTypes: true });
+    return entries.filter((entry) => entry.isDirectory()).map((entry) => path.resolve(paths.specsDir, entry.name)).sort();
+  } catch {
+    return [];
+  }
+}
+
+async function readFileOrEmpty(filePath: string): Promise<string> {
+  return fs.readFile(filePath, "utf8").catch(() => "");
+}
+
+export async function specStatus(root = process.cwd()): Promise<string> {
+  await ensureWorkspace(root);
+  const folders = await specFolders(root);
+  if (folders.length === 0) {
+    return "No specs found. Run soturail spec new \"feature idea\".\n";
+  }
+  const lines = ["SotuRail spec status"];
+  for (const folder of folders) {
+    const tasks = await readFileOrEmpty(path.resolve(folder, "tasks.md"));
+    const done = (tasks.match(/^- \[x\]/gim) ?? []).length;
+    const total = (tasks.match(/^- \[[ x]\]/gim) ?? []).length;
+    lines.push(`${relativeToRoot(root, folder)}: ${done}/${total} tasks done`);
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+export async function validateSpecs(specFolder?: string, root = process.cwd()): Promise<string> {
+  await ensureWorkspace(root);
+  const folders = specFolder ? [path.resolve(root, specFolder)] : await specFolders(root);
+  const checks = [
+    { file: "spec.md", label: "problem statement", pattern: /problem|user need/i },
+    { file: "spec.md", label: "acceptance criteria", pattern: /acceptance criteria/i },
+    { file: "verification.md", label: "verification plan", pattern: /verification plan/i },
+    { file: "context-budget.md", label: "context budget", pattern: /context budget/i },
+    { file: "security-impact.md", label: "security impact", pattern: /security impact/i }
+  ];
+  const lines = ["SotuRail spec validate"];
+  for (const folder of folders) {
+    lines.push(relativeToRoot(root, folder));
+    for (const check of checks) {
+      const content = await readFileOrEmpty(path.resolve(folder, check.file));
+      lines.push(`  ${check.pattern.test(content) ? "OK" : "FAIL"} ${check.label}`);
+    }
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+export async function addSpecTask(specFolder: string, text: string, root = process.cwd()): Promise<string> {
+  const tasksFile = path.resolve(root, specFolder, "tasks.md");
+  await fs.appendFile(tasksFile, `- [ ] ${text}\n`, "utf8");
+  return `Added task to ${path.normalize(specFolder).replace(/\\/g, "/")}\n`;
+}
+
+export async function listSpecTasks(specFolder: string, root = process.cwd()): Promise<string> {
+  const tasks = await readFileOrEmpty(path.resolve(root, specFolder, "tasks.md"));
+  const lines = tasks.split(/\r?\n/).filter((line) => /^- \[[ x]\]/i.test(line));
+  return lines.length > 0 ? `${lines.map((line, index) => `${index + 1}. ${line}`).join("\n")}\n` : "No tasks found.\n";
+}
+
+export async function markSpecTaskDone(specFolder: string, index: number, root = process.cwd()): Promise<string> {
+  const tasksFile = path.resolve(root, specFolder, "tasks.md");
+  const content = await fs.readFile(tasksFile, "utf8");
+  let seen = 0;
+  const next = content.split(/\r?\n/).map((line) => {
+    if (/^- \[[ x]\]/i.test(line)) {
+      seen += 1;
+      if (seen === index) {
+        return line.replace(/^- \[[ x]\]/i, "- [x]");
+      }
+    }
+    return line;
+  }).join("\n");
+  await fs.writeFile(tasksFile, next, "utf8");
+  return `Marked task ${index} done in ${path.normalize(specFolder).replace(/\\/g, "/")}\n`;
 }
