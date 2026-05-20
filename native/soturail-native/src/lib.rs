@@ -115,3 +115,154 @@ pub fn reduce_test(input: &str, raw_id: &str) -> String {
         if important.is_empty() { "- no failure-looking lines detected".to_string() } else { important.join("\n") }
     )
 }
+
+pub fn reduce_json(input: &str, raw_id: &str) -> String {
+    let parsed: serde_json::Result<serde_json::Value> = serde_json::from_str(input.trim());
+    let Ok(value) = parsed else {
+        return reduce_generic(input, raw_id);
+    };
+    let mut primitive_lines = Vec::<String>::new();
+    collect_relevant_primitives(&value, "$", &mut primitive_lines);
+    let mut array_lines = Vec::<String>::new();
+    collect_array_summaries(&value, "$", &mut array_lines);
+    let mut out = vec![
+        "Native JSON Tool Payload Summary".to_string(),
+        "Compressed representation; not intended to be parsed as original JSON.".to_string(),
+        format!("Raw log: soturail expand {}", raw_id),
+        String::new(),
+        "Relevant primitive paths:".to_string(),
+    ];
+    if primitive_lines.is_empty() {
+        out.push("- none detected".to_string());
+    } else {
+        primitive_lines.sort();
+        primitive_lines.dedup();
+        out.extend(primitive_lines.into_iter().take(160));
+    }
+    if !array_lines.is_empty() {
+        out.push(String::new());
+        out.push("Collapsed arrays:".to_string());
+        out.extend(array_lines.into_iter().take(80));
+    }
+    out.join("\n") + "\n"
+}
+
+pub fn is_dangerous_command(command: &str) -> bool {
+    let lower = command.to_ascii_lowercase();
+    lower.contains("rm -rf")
+        || lower.split_whitespace().any(|token| token == "sudo")
+        || lower.split_whitespace().any(|token| token == "format")
+        || lower.contains("dd if=")
+        || lower.contains("curl ") && lower.contains("| sh")
+        || lower.contains("curl ") && lower.contains("| bash")
+        || lower.contains("wget ") && lower.contains("| sh")
+        || lower.contains("del /s")
+        || lower.contains("git push")
+}
+
+fn collect_relevant_primitives(value: &serde_json::Value, path: &str, out: &mut Vec<String>) {
+    match value {
+        serde_json::Value::Null => {
+            let _ = path;
+        }
+        serde_json::Value::Bool(boolean) => {
+            if relevant_path(path) || !*boolean || sample_path(path) {
+                out.push(format!("{}: {}", path, boolean));
+            }
+        }
+        serde_json::Value::Number(number) => {
+            if relevant_path(path) || sample_path(path) {
+                out.push(format!("{}: {}", path, number));
+            }
+        }
+        serde_json::Value::String(text) => {
+            if relevant_path(path) || relevant_text(text) {
+                out.push(format!("{}: {:?}", path, text));
+            }
+        }
+        serde_json::Value::Array(items) => {
+            for (index, item) in items.iter().enumerate() {
+                if index < 3 || contains_relevant(item) || index + 2 >= items.len() {
+                    collect_relevant_primitives(item, &format!("{}[{}]", path, index), out);
+                }
+            }
+        }
+        serde_json::Value::Object(map) => {
+            for (key, item) in map {
+                collect_relevant_primitives(item, &format!("{}.{}", path, key), out);
+            }
+        }
+    }
+}
+
+fn collect_array_summaries(value: &serde_json::Value, path: &str, out: &mut Vec<String>) {
+    match value {
+        serde_json::Value::Array(items) => {
+            if items.len() > 12 {
+                out.push(format!("{}: {} items", path, items.len()));
+            }
+            for (index, item) in items.iter().enumerate().take(8) {
+                collect_array_summaries(item, &format!("{}[{}]", path, index), out);
+            }
+        }
+        serde_json::Value::Object(map) => {
+            for (key, item) in map {
+                collect_array_summaries(item, &format!("{}.{}", path, key), out);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn relevant_path(path: &str) -> bool {
+    let lower = path.to_ascii_lowercase();
+    ["status", "error", "message", "path", "file", "code", "reason"]
+        .iter()
+        .any(|needle| lower.contains(needle))
+}
+
+fn sample_path(path: &str) -> bool {
+    let lower = path.to_ascii_lowercase();
+    if !(lower.ends_with(".id") || lower.ends_with(".ok") || lower.ends_with(".status") || lower.ends_with(".path") || lower.ends_with(".file")) {
+        return false;
+    }
+    let Some(index) = latest_array_index(&lower) else {
+        return false;
+    };
+    index < 3 || index >= 100
+}
+
+fn latest_array_index(path: &str) -> Option<usize> {
+    let close = path.rfind(']')?;
+    let open = path[..close].rfind('[')?;
+    path[open + 1..close].parse::<usize>().ok()
+}
+
+fn relevant_text(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    ["error", "denied", "timeout", "failed", "exception", "traceback", "src/", "tests/"]
+        .iter()
+        .any(|needle| lower.contains(needle))
+}
+
+fn contains_relevant(value: &serde_json::Value) -> bool {
+    match value {
+        serde_json::Value::String(text) => relevant_text(text),
+        serde_json::Value::Bool(boolean) => !*boolean,
+        serde_json::Value::Array(items) => items.iter().any(contains_relevant),
+        serde_json::Value::Object(map) => map
+            .iter()
+            .any(|(key, item)| primitive_relevance(key, item) || contains_relevant(item)),
+        _ => false,
+    }
+}
+
+fn primitive_relevance(key: &str, value: &serde_json::Value) -> bool {
+    match value {
+        serde_json::Value::Null => false,
+        serde_json::Value::Bool(boolean) => !*boolean || relevant_path(key),
+        serde_json::Value::String(text) => relevant_path(key) || relevant_text(text),
+        serde_json::Value::Number(_) => relevant_path(key),
+        _ => false,
+    }
+}

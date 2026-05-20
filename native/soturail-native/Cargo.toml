@@ -1,10 +1,13 @@
 [package]
 name = "soturail-native"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "MIT"
 authors = ["Rafael Ryan Ramos de Souza"]
 description = "Optional native reducers for SotuRail."
+
+[dependencies]
+serde_json = "1"
 
 [lib]
 name = "soturail_native"

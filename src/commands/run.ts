@@ -1,4 +1,5 @@
 import type { Writable } from "node:stream";
+import { promises as fs } from "node:fs";
 import type { Command } from "commander";
 import { DedupeStore, sha256Text } from "../core/dedupe-store.js";
 import { ensureWorkspace } from "../core/config.js";
@@ -7,7 +8,7 @@ import { NativeRunnerAdapter, type RunnerOptions } from "../core/native-runner-a
 import { RawStore, type RawRunRecord } from "../core/raw-store.js";
 import { validateCommand } from "../core/safety-policy.js";
 import { estimateTokens } from "../core/token-estimator.js";
-import type { ReducerEngine } from "../core/native-engine.js";
+import { detectNativeEngine, runWithNative, type ReducerEngine } from "../core/native-engine.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
 
 export interface RunCliOptions {
@@ -84,28 +85,21 @@ export async function executeRunCommand(
     );
   }
 
+  const requestedEngine = options.native ? "native" : normalizeEngine(options.engine);
+  const nativeInfo = requestedEngine === "ts" ? { available: false } : await detectNativeEngine(root);
+  if (requestedEngine === "native" && !nativeInfo.available) {
+    throw new Error("Native engine requested but soturail-native was not found. Run npm run build:native or use --engine ts.");
+  }
   const rawStore = new RawStore(root);
   const metrics = new MetricsStore(root);
   const dedupe = new DedupeStore(root);
   const log = await rawStore.createLog(command);
-  const adapter = new NativeRunnerAdapter();
-  const runnerOptions: RunnerOptions = {
-    command,
-    cwd: root,
-    interactive: options.interactive === true,
-    rawLogStream: log.stream
-  };
-  if (options.terminalStdout) {
-    runnerOptions.terminalStdout = options.terminalStdout;
-  }
-  if (options.terminalStderr) {
-    runnerOptions.terminalStderr = options.terminalStderr;
-  }
 
-  const result = await adapter.run(runnerOptions);
+  const result = nativeInfo.available
+    ? await runNativePath(commandParts, log, options, root)
+    : await runTypeScriptPath(command, log.stream, options, root);
   const outputHash = sha256Text(result.rawText);
   const previous = await dedupe.findReusable(outputHash, result.exitCode);
-  const requestedEngine = options.native ? "native" : normalizeEngine(options.engine);
   const compression = previous
     ? {
         compressor: "dedupe",
@@ -113,7 +107,7 @@ export async function executeRunCommand(
         compressed_tokens_estimated: estimateTokens(`Output identical to previous raw_id ${previous.raw_id}.`),
         engine: "ts" as const
       }
-    : await compressOutputWithEngine(command, result.rawText, log.rawId, requestedEngine, root);
+    : await compressOutputWithEngine(command, result.rawText, log.rawId, nativeInfo.available ? requestedEngine : "ts", root);
   const record: RawRunRecord = {
     raw_id: log.rawId,
     path: log.relativePath,
@@ -167,6 +161,69 @@ export async function executeRunCommand(
     summary,
     record
   };
+}
+
+async function runTypeScriptPath(
+  command: string,
+  rawLogStream: Writable,
+  options: RunExecutionOptions,
+  root: string
+): Promise<{ exitCode: number; rawText: string }> {
+  const adapter = new NativeRunnerAdapter();
+  const runnerOptions: RunnerOptions = {
+    command,
+    cwd: root,
+    interactive: options.interactive === true,
+    rawLogStream
+  };
+  if (options.terminalStdout) {
+    runnerOptions.terminalStdout = options.terminalStdout;
+  }
+  if (options.terminalStderr) {
+    runnerOptions.terminalStderr = options.terminalStderr;
+  }
+  return adapter.run(runnerOptions);
+}
+
+async function runNativePath(
+  commandParts: string[],
+  log: Awaited<ReturnType<RawStore["createLog"]>>,
+  options: RunExecutionOptions,
+  root: string
+): Promise<{ exitCode: number; rawText: string }> {
+  await closeLogStream(log.stream);
+  const summaryJsonPath = `${log.absolutePath}.summary.json`;
+  const nativeOptions = {
+    commandParts,
+    rawLogPath: log.absolutePath,
+    summaryJsonPath,
+    cwd: root,
+    interactive: options.interactive === true
+  } as {
+    commandParts: string[];
+    rawLogPath: string;
+    summaryJsonPath: string;
+    cwd: string;
+    interactive: boolean;
+    terminalStdout?: Writable;
+    terminalStderr?: Writable;
+  };
+  if (options.terminalStdout) {
+    nativeOptions.terminalStdout = options.terminalStdout;
+  }
+  if (options.terminalStderr) {
+    nativeOptions.terminalStderr = options.terminalStderr;
+  }
+  const native = await runWithNative(nativeOptions, root);
+  if (!native) {
+    throw new Error("Native engine was detected but native run failed to start.");
+  }
+  const rawText = await fs.readFile(log.absolutePath, "utf8");
+  return { exitCode: native.exitCode, rawText };
+}
+
+async function closeLogStream(stream: Writable): Promise<void> {
+  await new Promise<void>((resolve) => stream.end(resolve));
 }
 
 export function registerRunCommand(program: Command): void {
