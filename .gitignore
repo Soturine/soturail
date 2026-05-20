@@ -1,8 +1,8 @@
 node_modules/
 dist/
 coverage/
+target/
+native/soturail-native/target/
 .env
-.soturail/raw/
-.soturail/cache/
-.soturail/metrics/
+.soturail/
 *.log

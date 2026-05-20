@@ -2,15 +2,15 @@
 
 ## Tests
 
+- [ ] Tests added/updated
 - [ ] `npm run build`
 - [ ] `npm test`
+- [ ] Native tests run if native code changed
 
-## Safety and reversibility
+## Checklist
 
-- [ ] No telemetry added
-- [ ] Raw evidence remains recoverable when output is compressed
-- [ ] No automatic `git push`
-
-## Docs
-
-- [ ] Updated if behavior changed
+- [ ] Docs updated
+- [ ] CHANGELOG updated
+- [ ] No TODO placeholders in core logic
+- [ ] Security impact considered
+- [ ] Benchmark impact considered if reducer/native/hook changed

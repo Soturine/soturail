@@ -1,28 +1,58 @@
 # Contributing
 
-Thank you for considering a contribution to SotuRail.
+Thank you for helping SotuRail become a reliable local-first developer tool.
 
-## Development Setup
+## Setup
 
 ```bash
-npm install
+npm ci
 npm run build
 npm test
 ```
 
-## Principles
+Optional native path:
 
-- Keep the project local-first.
-- Preserve raw evidence whenever output is compressed.
-- Do not invent telemetry or provider metrics.
-- Prefer small, reviewed changes.
-- Do not add native compiled dependencies in v0.1.x.
+```bash
+npm run build:native
+npm run test:native
+```
+
+## Benchmarks
+
+```bash
+npm run build
+npm run bench:prepare
+npm run bench
+npm run bench:report
+```
+
+Do not claim external comparisons unless the tool was installed and run locally by the contributor.
+
+## Proposing Reducers
+
+Reducers must preserve:
+
+- errors and warnings;
+- file paths and line numbers;
+- assertion summaries and stack traces;
+- recovery instructions pointing to raw logs when applicable.
+
+Include tests and benchmark impact when reducer behavior changes.
+
+## Proposing Hooks
+
+Hooks must support `--dry-run`, print exact file targets and create backups before changing existing host files. If a host config location is uncertain, prefer prompt-only rules.
+
+## Compression Omissions
+
+If a summary drops essential information, open an issue with:
+
+- command executed;
+- reducer used;
+- raw_id if available;
+- missing signal;
+- expected preserved output.
 
 ## Pull Requests
 
-Please include:
-
-- the user problem;
-- the implementation approach;
-- tests run locally;
-- docs updated when behavior changes.
+Please update tests, docs and CHANGELOG for user-visible changes. Core logic should not include TODO placeholders.

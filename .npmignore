@@ -3,5 +3,8 @@ tests/
 coverage/
 .github/
 .soturail/
+native/soturail-native/target/
+benchmarks/results/*.json
+benchmarks/reports/*.md
 vitest.config.ts
 tsconfig.tsbuildinfo

@@ -6,10 +6,18 @@ labels: enhancement
 assignees: ""
 ---
 
-## Problem
+## Problem Statement
 
-## Proposed behavior
+## Proposed Solution
 
-## Local-first and safety considerations
+## CLI/API Design
 
-## Alternatives considered
+```bash
+
+```
+
+## Alternatives Considered
+
+## Impact
+
+Describe impact on tokens, safety or cache stability.

@@ -6,22 +6,28 @@ labels: bug
 assignees: ""
 ---
 
-## What happened?
+## SotuRail Version
 
-## Expected behavior
+## OS and Shell
 
-## Reproduction steps
+## Node Version
+
+## Rust Version
+
+Only required if native mode is involved.
+
+## Command Executed
 
 ```bash
 
 ```
 
-## Environment
+## Expected Behavior
 
-- OS:
-- Node.js:
-- SotuRail version:
+## Actual Behavior
 
-## Raw evidence
+## Minimal Reproduction
 
-If relevant, include the `raw_id` and whether `soturail expand <raw_id>` contains the full output.
+## Logs or raw_id
+
+If available and safe to share, include `raw_id` and relevant `soturail expand <raw_id>` excerpts.
