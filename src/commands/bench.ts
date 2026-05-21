@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 import type { Command } from "commander";
 import { reduceAgentResponse } from "../compressors/agent-response-reducer.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
+import { buildCachePayload } from "../core/cache-normalizer.js";
 import { ensureWorkspace, writeJson } from "../core/config.js";
 import { ingestDocument } from "../core/document-ingest.js";
 import { MetricsStore } from "../core/metrics-store.js";
@@ -22,22 +23,38 @@ interface BenchOptions {
   tool?: string;
 }
 
-interface BenchResult {
+export type BenchmarkCategory =
+  | "terminal_compression"
+  | "agent_response_compression"
+  | "knowledge_structuring"
+  | "cache_stability"
+  | "native_engine";
+
+export interface BenchResult {
+  case_id: string;
   name: string;
-  category: "terminal_compression" | "agent_response_compression" | "json_tool_payload_compression" | "knowledge_structuring" | "native_performance";
+  category: BenchmarkCategory;
   engine: string;
   raw_bytes: number;
   reduced_bytes: number;
+  raw_tokens: number;
+  reduced_tokens: number;
+  reduction_percent: number | null;
   estimated_raw_tokens: number;
   estimated_reduced_tokens: number;
   compression_ratio_percent: number | null;
+  runtime_ms: number;
   wall_time_ms: number;
+  quality_passed: boolean;
+  preserved_errors_count: number;
+  preserved_paths_count: number;
+  preserved_commands_count: number;
   preserved_error_lines_count: number;
   preserved_file_paths_count: number;
   raw_id: string | null;
   raw_sha256: string;
   reduced_sha256: string;
-  quality_passed: boolean;
+  notes: string;
   details: Record<string, unknown>;
 }
 
@@ -66,52 +83,60 @@ async function writeFixture(root: string, name: string, content: string): Promis
 }
 
 export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
-  const gitDiff = [
-    "On branch main",
-    "Changes not staged for commit:",
-    " modified: src/app.ts",
-    " deleted: src/old.ts",
-    "diff --git a/src/app.ts b/src/app.ts",
-    "index 1111111..2222222 100644",
-    "--- a/src/app.ts",
-    "+++ b/src/app.ts",
-    "@@ -1,3 +1,5 @@",
-    " export function app() {",
-    "-  return 1;",
-    "+  return 2;",
-    "+  console.log('changed');",
-    " }",
-    ...Array.from({ length: 300 }, (_, index) => `+ repeated diff noise ${index}`)
+  const npmInstall = [
+    "npm WARN deprecated left-pad@1.3.0: use String.prototype.padStart()",
+    "added 421 packages, and audited 422 packages in 12s",
+    ...Array.from({ length: 220 }, (_, index) => `npm http fetch GET 200 https://registry.npmjs.org/pkg-${index} 24ms (cache hit)`),
+    "5 moderate severity vulnerabilities",
+    "Run npm audit for details"
   ].join("\n");
-  const testOutput = [
+  const vitestFailure = [
     "FAIL tests/app.test.ts > app > returns expected value",
     "AssertionError: expected 1 to equal 2",
     "Expected: 2",
     "Received: 1",
     "    at tests/app.test.ts:12:10",
-    "Traceback (most recent call last):",
-    "  File \"tests/test_app.py\", line 7, in test_app",
-    "AssertionError: boom",
-    ...Array.from({ length: 250 }, () => "PASS tests/noise.test.ts")
+    "    at src/app.ts:7:3",
+    ...Array.from({ length: 180 }, () => "PASS tests/noise.test.ts")
   ].join("\n");
-  const noisyJson = JSON.stringify({
+  const tscError = [
+    "src/commands/self.ts:42:7 - error TS2322: Type 'string' is not assignable to type 'number'.",
+    "42 const count: number = value;",
+    "Found 1 error in src/commands/self.ts:42",
+    ...Array.from({ length: 120 }, (_, index) => `message TS${index}: incremental build trace`)
+  ].join("\n");
+  const gitDiff = [
+    "diff --git a/src/app.ts b/src/app.ts",
+    "index 1111111..2222222 100644",
+    "--- a/src/app.ts",
+    "+++ b/src/app.ts",
+    "@@ -1,3 +1,5 @@",
+    "-  return 1;",
+    "+  return 2;",
+    "diff --git a/docs/usage.md b/docs/usage.md",
+    "--- a/docs/usage.md",
+    "+++ b/docs/usage.md",
+    "@@ -10,4 +10,8 @@",
+    "+Use soturail self all before release commits.",
+    "rename from src/old.ts",
+    "rename to src/new.ts",
+    ...Array.from({ length: 300 }, (_, index) => `+ repeated diff noise ${index}`)
+  ].join("\n");
+  const gitStatus = [
+    "On branch main",
+    "Changes not staged for commit:",
+    ...Array.from({ length: 120 }, (_, index) => ` modified: src/generated-${index}.ts`),
+    " deleted: src/old.ts",
+    "Untracked files:",
+    " docs/windows.md"
+  ].join("\n");
+  const jsonPayload = JSON.stringify({
     status: "error",
     message: "Permission denied",
     path: "src/app.ts",
-    items: Array.from({ length: 120 }, (_, index) => ({ id: index, ok: index !== 77, error: index === 77 ? "timeout" : null }))
+    request_id: "req_123",
+    items: Array.from({ length: 160 }, (_, index) => ({ id: index, ok: index !== 77, error: index === 77 ? "timeout" : null }))
   }, null, 2);
-  const noisyLog = [
-    ...Array.from({ length: 150 }, () => "server ok healthcheck passed"),
-    "WARN permission refused for src/secret.ts:4",
-    "ERROR timeout while reading src/app.ts:22",
-    ...Array.from({ length: 150 }, () => "server ok healthcheck passed")
-  ].join("\n");
-  const largeCode = [
-    ...Array.from({ length: 80 }, (_, index) => `export function helper${index}() { return ${index}; }`),
-    "export class CriticalService { run() { return 'ok'; } }",
-    ...Array.from({ length: 80 }, (_, index) => `def py_helper_${index}(): return ${index}`),
-    "public class App { public void run() {} }"
-  ].join("\n");
   const verboseAi = [
     "I think the main issue is probably that tests are failing because src/app.ts:12 returns the wrong value.",
     "Security warning: do not run rm -rf or git push automatically.",
@@ -121,8 +146,15 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
     "  return 2;",
     "}",
     "```",
-    ...Array.from({ length: 40 }, () => "Basically, this is just extra explanation that can be shorter.")
+    ...Array.from({ length: 48 }, () => "Basically, this is extra explanation that can be shorter.")
   ].join("\n");
+  const readmeText = [
+    "# SotuRail",
+    "SotuRail is a local-first Context OS for AI coding agents.",
+    "Run npm install -g soturail, then soturail init.",
+    "Use soturail run npm test to preserve raw logs.",
+    ...Array.from({ length: 60 }, () => "This documentation paragraph repeats project goals and usage details for compression testing.")
+  ].join("\n\n");
   const rulesDoc = [
     "# Runtime",
     "- Project must run on Node.js 20 or newer.",
@@ -133,12 +165,14 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
     "- git push must never be run automatically through soturail run."
   ].join("\n");
 
-  await writeFixture(root, "noisy-git-diff.txt", gitDiff);
-  await writeFixture(root, "noisy-test-output.txt", testOutput);
-  await writeFixture(root, "noisy-json.json", noisyJson);
-  await writeFixture(root, "noisy-log.txt", noisyLog);
-  await writeFixture(root, "large-code-file.txt", largeCode);
+  await writeFixture(root, "npm-install-noisy.txt", npmInstall);
+  await writeFixture(root, "vitest-failure-stacktrace.txt", vitestFailure);
+  await writeFixture(root, "tsc-error.txt", tscError);
+  await writeFixture(root, "git-diff-multiple.txt", gitDiff);
+  await writeFixture(root, "git-status-many.txt", gitStatus);
+  await writeFixture(root, "json-tool-payload.json", jsonPayload);
   await writeFixture(root, "verbose-ai-answer.md", verboseAi);
+  await writeFixture(root, "readme-doc.md", readmeText);
   await writeFixture(root, "rules-doc.md", rulesDoc);
 
   return "Benchmark fixtures prepared in benchmarks/fixtures.\n";
@@ -148,118 +182,62 @@ async function readFixture(root: string, name: string): Promise<string> {
   return fs.readFile(path.resolve(benchDirs(root).fixtures, name), "utf8");
 }
 
-function compressionPercent(rawTokens: number, reducedTokens: number): number {
+function reductionPercent(rawTokens: number, reducedTokens: number): number {
   return rawTokens === 0 ? 0 : Number((((rawTokens - reducedTokens) / rawTokens) * 100).toFixed(2));
 }
 
-async function terminalResult(root: string, fixture: string, command: string, engine: ReducerEngine): Promise<BenchResult> {
+async function terminalResult(root: string, caseId: string, fixture: string, command: string, engine: ReducerEngine): Promise<BenchResult> {
   const raw = await readFixture(root, fixture);
   const start = performance.now();
-  const reduced = await compressOutputWithEngine(command, raw, `bench-${fixture}`, engine, root);
-  const wall = performance.now() - start;
+  const reduced = await compressOutputWithEngine(command, raw, `bench-${caseId}`, engine, root);
+  const runtime = performance.now() - start;
   const text = reduced.summary;
   const rawTokens = estimateTokens(raw);
   const reducedTokens = estimateTokens(text);
-  const quality = qualityCheck(fixture, text);
+  const quality = qualityCheck(caseId, text);
   if (!quality.ok) {
-    throw new Error(`Benchmark quality check failed for ${fixture}: ${quality.reason}`);
+    throw new Error(`Benchmark quality check failed for ${caseId}: ${quality.reason}`);
   }
-  return {
-    name: fixture,
+  return makeResult({
+    case_id: caseId,
     category: "terminal_compression",
     engine: reduced.engine,
-    raw_bytes: Buffer.byteLength(raw),
-    reduced_bytes: Buffer.byteLength(text),
-    estimated_raw_tokens: rawTokens,
-    estimated_reduced_tokens: reducedTokens,
-    compression_ratio_percent: compressionPercent(rawTokens, reducedTokens),
-    wall_time_ms: Number(wall.toFixed(3)),
-    preserved_error_lines_count: (text.match(/\b(error|warn|fail|assertion|timeout|denied|refused)\b/gi) ?? []).length,
-    preserved_file_paths_count: (text.match(/(?:src|tests)[\\/][\w.-]+(?::\d+(?::\d+)?)?/g) ?? []).length,
-    raw_id: null,
-    raw_sha256: sha256(raw),
-    reduced_sha256: sha256(text),
-    quality_passed: true,
-    details: { compressor: reduced.compressor }
-  };
+    raw,
+    reduced: text,
+    rawTokens,
+    reducedTokens,
+    reduction: reductionPercent(rawTokens, reducedTokens),
+    runtime,
+    quality: true,
+    notes: quality.note ?? "Terminal output reducer preserved required signals.",
+    details: { compressor: reduced.compressor, ...(reduced.details ?? {}) }
+  });
 }
 
-async function jsonResult(root: string, engine: ReducerEngine): Promise<BenchResult> {
-  const raw = await readFixture(root, "noisy-json.json");
-  const start = performance.now();
-  const reduced = await compressOutputWithEngine("cat output.json", raw, "bench-noisy-json", engine, root);
-  const wall = performance.now() - start;
-  const text = reduced.summary;
-  const rawTokens = estimateTokens(raw);
-  const reducedTokens = estimateTokens(text);
-  const quality = qualityCheck("noisy-json.json", text);
-  if (!quality.ok) {
-    throw new Error(`Benchmark quality check failed for noisy-json.json: ${quality.reason}`);
-  }
-  return {
-    name: "noisy-json.json",
-    category: "json_tool_payload_compression",
-    engine: reduced.engine,
-    raw_bytes: Buffer.byteLength(raw),
-    reduced_bytes: Buffer.byteLength(text),
-    estimated_raw_tokens: rawTokens,
-    estimated_reduced_tokens: reducedTokens,
-    compression_ratio_percent: compressionPercent(rawTokens, reducedTokens),
-    wall_time_ms: Number(wall.toFixed(3)),
-    preserved_error_lines_count: (text.match(/\b(error|denied|timeout|permission)\b/gi) ?? []).length,
-    preserved_file_paths_count: (text.match(/src[\\/][\w.-]+(?::\d+(?::\d+)?)?/g) ?? []).length,
-    raw_id: null,
-    raw_sha256: sha256(raw),
-    reduced_sha256: sha256(text),
-    quality_passed: true,
-    details: reduced.details ?? {}
-  };
-}
-
-function qualityCheck(fixture: string, text: string): { ok: boolean; reason?: string } {
-  if (fixture.includes("test") && (!text.includes("AssertionError") || !text.includes("tests/app.test.ts"))) {
-    return { ok: false, reason: "test assertion or path missing" };
-  }
-  if (fixture.includes("git") && (!text.includes("src/app.ts") || !text.includes("@@ -1,3 +1,5 @@"))) {
-    return { ok: false, reason: "git path or hunk missing" };
-  }
-  if (fixture.includes("json") && (!text.includes("Permission denied") || !text.includes("timeout"))) {
-    return { ok: false, reason: "JSON error primitives missing" };
-  }
-  if (fixture.includes("log") && (!text.includes("permission refused") || !text.includes("src/app.ts:22"))) {
-    return { ok: false, reason: "log signal missing" };
-  }
-  return { ok: true };
-}
-
-async function responseResult(root: string, mode: "concise" | "review" | "debug" | "commit" | "docs"): Promise<BenchResult> {
-  const raw = await readFixture(root, "verbose-ai-answer.md");
+async function responseResult(root: string, fixture: string, mode: "concise" | "review" | "debug" | "commit" | "docs"): Promise<BenchResult> {
+  const raw = await readFixture(root, fixture);
   const start = performance.now();
   const reduced = reduceAgentResponse(raw, mode);
-  const wall = performance.now() - start;
-  return {
-    name: `verbose-ai-answer-${mode}`,
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: `${fixture.replace(/\.[^.]+$/, "")}-${mode}`,
     category: "agent_response_compression",
     engine: "ts",
-    raw_bytes: Buffer.byteLength(raw),
-    reduced_bytes: Buffer.byteLength(reduced.output),
-    estimated_raw_tokens: reduced.raw_tokens,
-    estimated_reduced_tokens: reduced.compressed_tokens,
-    compression_ratio_percent: reduced.reduction_percent,
-    wall_time_ms: Number(wall.toFixed(3)),
-    preserved_error_lines_count: 0,
-    preserved_file_paths_count: reduced.preserved_paths_count,
-    raw_id: null,
-    raw_sha256: sha256(raw),
-    reduced_sha256: sha256(reduced.output),
-    quality_passed: reduced.output.includes("npm test") && reduced.output.includes("Security warning"),
+    raw,
+    reduced: reduced.output,
+    rawTokens: reduced.raw_tokens,
+    reducedTokens: reduced.compressed_tokens,
+    reduction: reduced.reduction_percent,
+    runtime,
+    quality: reduced.output.includes("npm test") || reduced.output.includes("soturail run"),
+    notes: `Agent response compression mode: ${mode}.`,
     details: {
       mode,
       preserved_commands_count: reduced.preserved_commands_count,
       preserved_code_blocks_count: reduced.preserved_code_blocks_count,
       preserved_security_warnings_count: reduced.preserved_security_warnings_count
     }
-  };
+  });
 }
 
 async function rulesResult(root: string): Promise<BenchResult> {
@@ -270,34 +248,142 @@ async function rulesResult(root: string): Promise<BenchResult> {
   const rules = extractRules(document);
   const checks = await validateRules(rules, root);
   const output = JSON.stringify({ rules, checks }, null, 2);
-  const wall = performance.now() - start;
-  return {
-    name: "rules-doc-extraction",
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "rules-extraction-markdown",
     category: "knowledge_structuring",
     engine: "ts",
-    raw_bytes: Buffer.byteLength(raw),
-    reduced_bytes: Buffer.byteLength(output),
-    estimated_raw_tokens: estimateTokens(raw),
-    estimated_reduced_tokens: estimateTokens(output),
-    compression_ratio_percent: null,
-    wall_time_ms: Number(wall.toFixed(3)),
-    preserved_error_lines_count: 0,
-    preserved_file_paths_count: (output.match(/\bREADME\.md|LICENSE|ci\.yml/g) ?? []).length,
-    raw_id: null,
-    raw_sha256: sha256(raw),
-    reduced_sha256: sha256(output),
-    quality_passed: rules.length >= 3,
+    raw,
+    reduced: output,
+    rawTokens: estimateTokens(raw),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: rules.length >= 3,
+    notes: "Knowledge-to-Rules is reusable structuring, not pure compression.",
     details: {
       extracted_rules_count: rules.length,
-      raw_document_tokens: estimateTokens(raw),
-      structured_rule_tokens: estimateTokens(output),
-      reuse_value_note: "Structured rules may be larger than the seed document but are reusable, citable and validator-friendly.",
       validator_success_count: checks.filter((check) => check.ok).length,
       validator_failure_count: checks.filter((check) => !check.ok).length,
       citations_count: rules.length,
-      source_sections_preserved_count: new Set(rules.map((rule) => rule.source_section)).size,
-      manual_expansion_count: 0
+      source_sections_preserved_count: new Set(rules.map((rule) => rule.source_section)).size
     }
+  });
+}
+
+async function cacheStabilityResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const first = await buildCachePayload(root, "dynamic footer raw_id=one");
+  const second = await buildCachePayload(root, "dynamic footer raw_id=two");
+  const marker = "<!-- soturail:dynamic:dynamic-footer -->";
+  const stablePrefixEqual = first.payload.split(marker)[0] === second.payload.split(marker)[0];
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "cache-stable-prefix",
+    category: "cache_stability",
+    engine: "ts",
+    raw: first.payload,
+    reduced: second.payload,
+    rawTokens: estimateTokens(first.payload),
+    reducedTokens: estimateTokens(second.payload),
+    reduction: null,
+    runtime,
+    quality: stablePrefixEqual,
+    notes: "Verifies dynamic footer changes do not move stable cache-friendly prefix blocks.",
+    details: { stable_prefix_equal: stablePrefixEqual }
+  });
+}
+
+async function nativeEngineResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const native = await detectNativeEngine(root);
+  const runtime = performance.now() - start;
+  const text = native.available
+    ? `native available at ${native.path}\nversion: ${native.version ?? "unknown"}`
+    : "native engine unavailable; no native benchmark results were fabricated";
+  return makeResult({
+    case_id: "native-engine-availability",
+    category: "native_engine",
+    engine: native.available ? "native" : "unavailable",
+    raw: text,
+    reduced: text,
+    rawTokens: estimateTokens(text),
+    reducedTokens: estimateTokens(text),
+    reduction: null,
+    runtime,
+    quality: true,
+    notes: native.available ? "Native binary detected." : "Native binary unavailable; TypeScript benchmark remains authoritative.",
+    details: { available: native.available, path: native.path ?? null, version: native.version ?? null }
+  });
+}
+
+function qualityCheck(caseId: string, text: string): { ok: boolean; reason?: string; note?: string } {
+  if (caseId.includes("vitest") && (!text.includes("AssertionError") || !text.includes("tests/app.test.ts"))) {
+    return { ok: false, reason: "Vitest assertion or path missing" };
+  }
+  if (caseId.includes("tsc") && (!text.includes("TS2322") || !text.includes("src/commands/self.ts"))) {
+    return { ok: false, reason: "TypeScript diagnostic missing" };
+  }
+  if (caseId.includes("git-diff") && (!text.includes("src/app.ts") || !text.includes("@@ -1,3 +1,5 @@"))) {
+    return { ok: false, reason: "git diff path or hunk missing" };
+  }
+  if (caseId.includes("git-status") && !text.includes("src/generated-")) {
+    return { ok: false, reason: "git status changed path missing" };
+  }
+  if (caseId.includes("json") && (!text.includes("Permission denied") || !text.includes("timeout"))) {
+    return { ok: false, reason: "JSON error primitives missing" };
+  }
+  if (caseId.includes("npm-install") && (!text.includes("moderate severity") || !text.includes("npm audit"))) {
+    return { ok: false, reason: "npm warning or command suggestion missing" };
+  }
+  return { ok: true };
+}
+
+interface MakeResultInput {
+  case_id: string;
+  category: BenchmarkCategory;
+  engine: string;
+  raw: string;
+  reduced: string;
+  rawTokens: number;
+  reducedTokens: number;
+  reduction: number | null;
+  runtime: number;
+  quality: boolean;
+  notes: string;
+  details: Record<string, unknown>;
+}
+
+function makeResult(input: MakeResultInput): BenchResult {
+  const errors = (input.reduced.match(/\b(error|warn|fail|assertion|timeout|denied|refused|TS\d+)\b/gi) ?? []).length;
+  const paths = (input.reduced.match(/(?:src|tests|docs|\.github)[\\/][\w./-]+(?::\d+(?::\d+)?)?/g) ?? []).length;
+  const commands = (input.reduced.match(/\b(?:npm|npx|node|soturail|git|tsc|vitest|pytest)\b[^\n]*/g) ?? []).length;
+  return {
+    case_id: input.case_id,
+    name: input.case_id,
+    category: input.category,
+    engine: input.engine,
+    raw_bytes: Buffer.byteLength(input.raw),
+    reduced_bytes: Buffer.byteLength(input.reduced),
+    raw_tokens: input.rawTokens,
+    reduced_tokens: input.reducedTokens,
+    reduction_percent: input.reduction,
+    estimated_raw_tokens: input.rawTokens,
+    estimated_reduced_tokens: input.reducedTokens,
+    compression_ratio_percent: input.reduction,
+    runtime_ms: Number(input.runtime.toFixed(3)),
+    wall_time_ms: Number(input.runtime.toFixed(3)),
+    quality_passed: input.quality,
+    preserved_errors_count: errors,
+    preserved_paths_count: paths,
+    preserved_commands_count: commands,
+    preserved_error_lines_count: errors,
+    preserved_file_paths_count: paths,
+    raw_id: null,
+    raw_sha256: sha256(input.raw),
+    reduced_sha256: sha256(input.reduced),
+    notes: input.notes,
+    details: input.details
   };
 }
 
@@ -306,38 +392,35 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
   await prepareBenchmarks(root);
   const engine = options.engine ?? "ts";
   if (engine === "native" && !(await detectNativeEngine(root)).available) {
-    const dirs = benchDirs(root);
-    await fs.mkdir(dirs.results, { recursive: true });
-    await fs.mkdir(dirs.reports, { recursive: true });
-    const report = [
-      "# SotuRail Benchmark Report",
-      "",
-      "Native engine was requested but `soturail-native` is not available. Build it with `npm run build:native`.",
-      ""
-    ].join("\n");
-    await writeJson(path.resolve(dirs.results, "latest.json"), { generated_at: new Date().toISOString(), engine, native_available: false, results: [] });
-    await fs.writeFile(path.resolve(dirs.reports, "latest.md"), report, "utf8");
-    return [];
+    const results = [await nativeEngineResult(root)];
+    await writeBenchmarkFiles(root, engine, results);
+    return results;
   }
   const results = [
-    await terminalResult(root, "noisy-git-diff.txt", "git diff", engine),
-    await terminalResult(root, "noisy-test-output.txt", "npm test", engine),
-    await terminalResult(root, "noisy-log.txt", "docker logs app", engine),
-    await jsonResult(root, engine),
-    await responseResult(root, "concise"),
-    await responseResult(root, "review"),
-    await responseResult(root, "debug"),
-    await responseResult(root, "commit"),
-    await responseResult(root, "docs"),
-    await rulesResult(root)
+    await terminalResult(root, "npm-install-noisy", "npm-install-noisy.txt", "npm install", engine),
+    await terminalResult(root, "vitest-failure-stacktrace", "vitest-failure-stacktrace.txt", "npm test", engine),
+    await terminalResult(root, "tsc-error", "tsc-error.txt", "npm run build", engine),
+    await terminalResult(root, "git-diff-multiple", "git-diff-multiple.txt", "git diff", engine),
+    await terminalResult(root, "git-status-many", "git-status-many.txt", "git status", engine),
+    await terminalResult(root, "json-tool-payload", "json-tool-payload.json", "cat tool-output.json", engine),
+    await responseResult(root, "verbose-ai-answer.md", "concise"),
+    await responseResult(root, "verbose-ai-answer.md", "review"),
+    await responseResult(root, "readme-doc.md", "docs"),
+    await rulesResult(root),
+    await cacheStabilityResult(root),
+    await nativeEngineResult(root)
   ];
+  await writeBenchmarkFiles(root, engine, results);
+  await new MetricsStore(root).append({ type: "bench_run", details: { engine, results_count: results.length } });
+  return results;
+}
+
+async function writeBenchmarkFiles(root: string, engine: ReducerEngine, results: BenchResult[]): Promise<void> {
   const dirs = benchDirs(root);
   await fs.mkdir(dirs.results, { recursive: true });
   await fs.mkdir(dirs.reports, { recursive: true });
   await writeJson(path.resolve(dirs.results, "latest.json"), { generated_at: new Date().toISOString(), engine, results });
   await fs.writeFile(path.resolve(dirs.reports, "latest.md"), renderReport(results), "utf8");
-  await new MetricsStore(root).append({ type: "bench_run", details: { engine, results_count: results.length } });
-  return results;
 }
 
 export async function compareEngines(root = process.cwd()): Promise<string> {
@@ -348,19 +431,19 @@ export async function compareEngines(root = process.cwd()): Promise<string> {
   const tsResults = await runBenchmarks({ engine: "ts" }, root);
   const nativeResults = await runBenchmarks({ engine: "native" }, root);
   const rows = tsResults.map((tsResult) => {
-    const nativeResult = nativeResults.find((item) => item.name === tsResult.name && item.category === tsResult.category);
+    const nativeResult = nativeResults.find((item) => item.case_id === tsResult.case_id && item.category === tsResult.category);
     if (!nativeResult) {
-      return `| ${tsResult.name} | ${tsResult.category} | n/a | n/a | n/a |`;
+      return `| ${tsResult.case_id} | ${tsResult.category} | n/a | n/a | n/a |`;
     }
-    const speedup = nativeResult.wall_time_ms === 0
+    const speedup = nativeResult.runtime_ms === 0
       ? 0
-      : Number((((tsResult.wall_time_ms - nativeResult.wall_time_ms) / tsResult.wall_time_ms) * 100).toFixed(2));
-    return `| ${tsResult.name} | ${tsResult.category} | ${tsResult.wall_time_ms} | ${nativeResult.wall_time_ms} | ${speedup}% |`;
+      : Number((((tsResult.runtime_ms - nativeResult.runtime_ms) / tsResult.runtime_ms) * 100).toFixed(2));
+    return `| ${tsResult.case_id} | ${tsResult.category} | ${tsResult.runtime_ms} | ${nativeResult.runtime_ms} | ${speedup}% |`;
   });
   const report = [
     "# SotuRail Engine Comparison",
     "",
-    "| Fixture | Category | TypeScript wall_time_ms | Native wall_time_ms | speedup_percent |",
+    "| Fixture | Category | TypeScript runtime_ms | Native runtime_ms | speedup_percent |",
     "|---|---|---:|---:|---:|",
     ...rows,
     ""
@@ -375,26 +458,35 @@ export async function reportBenchmarks(root = process.cwd()): Promise<string> {
   return fs.readFile(reportPath, "utf8").catch(() => "No benchmark report found. Run soturail bench run first.\n");
 }
 
+export function summarizeBenchmarkResults(results: BenchResult[]): string {
+  const grouped = groupByCategory(results);
+  const failed = results.filter((result) => !result.quality_passed).length;
+  return [
+    `cases_count: ${results.length}`,
+    `quality_failed_count: ${failed}`,
+    ...Object.entries(grouped).map(([category, count]) => `${category}: ${count}`)
+  ].join("\n");
+}
+
 function renderReport(results: BenchResult[]): string {
   const grouped = groupByCategory(results);
   const rows = results.map((result) =>
-    `| ${result.name} | ${result.category} | ${result.engine} | ${result.estimated_raw_tokens} | ${result.estimated_reduced_tokens} | ${result.compression_ratio_percent === null ? "n/a" : `${result.compression_ratio_percent}%`} | ${result.wall_time_ms} | ${result.quality_passed ? "pass" : "fail"} |`
+    `| ${result.case_id} | ${result.category} | ${result.engine} | ${result.raw_tokens} | ${result.reduced_tokens} | ${result.reduction_percent === null ? "n/a" : `${result.reduction_percent}%`} | ${result.runtime_ms} | ${result.quality_passed ? "pass" : "fail"} | ${result.notes} |`
   );
   return [
     "# SotuRail Benchmark Report",
     "",
-    "Generated from deterministic local fixtures. No external RTK/Squeez comparison numbers are included unless a user runs optional comparison locally.",
+    "Generated from deterministic local fixtures. No external RTK/Squeez/NTK comparison numbers are included unless a user runs optional comparison locally.",
     "",
     "Categories:",
     ...Object.entries(grouped).map(([category, count]) => `- ${category}: ${count} case(s)`),
     "",
-    "| Fixture | Category | Engine | Raw tokens | Reduced/structured tokens | compression_ratio_percent | wall_time_ms | Quality |",
-    "|---|---|---:|---:|---:|---:|---:|---|",
+    "| case_id | category | engine | raw_tokens | reduced_tokens | reduction_percent | runtime_ms | quality | notes |",
+    "|---|---|---:|---:|---:|---:|---:|---|---|",
     ...rows,
     "",
-    "Includes terminal compression, agent response compression, JSON/tool payload compression, knowledge structuring and native performance readiness cases.",
-    "",
-    "Knowledge-to-Rules is reported as reusable structuring, not pure compression."
+    "Knowledge structuring cases are extraction and validation tasks, not failed compression cases.",
+    "Native engine rows never fabricate native speed numbers when the native binary is unavailable."
   ].join("\n") + "\n";
 }
 

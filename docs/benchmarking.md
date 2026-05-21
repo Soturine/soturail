@@ -18,9 +18,11 @@ The suite groups results as:
 
 - terminal compression;
 - agent response compression;
-- JSON/tool payload compression;
 - knowledge structuring;
-- native performance when available.
+- cache stability;
+- native engine availability/performance when available.
+
+Terminal compression includes npm install noise, Vitest failures, TypeScript diagnostics, git diff/status noise and JSON/tool payload output.
 
 Knowledge-to-Rules is not judged as pure compression. It creates reusable structured rules, citations and validator metadata.
 
