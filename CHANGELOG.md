@@ -6,7 +6,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-- No unreleased changes yet.
+### Added
+
+- v0.2.2 Self-Dogfooding & Reliability work in progress.
+- Added self-dogfooding command namespace.
+- Added self-dogfood markdown report.
+- Added build/test/bench orchestration through SotuRail itself.
+- Expanded benchmark categories and fixtures.
+- Added Windows usage documentation.
+- Added Skill Rail and Workflow Rail planning docs.
+
+### Changed
+
+- Improved tiny-output compression accounting.
 
 ## [0.2.1] - 2026-05-20
 

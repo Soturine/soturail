@@ -6,6 +6,8 @@ SotuRail hook support is cautious. Claude gets a conservative hook template firs
 soturail hooks list
 soturail hooks doctor
 soturail hooks install claude --dry-run
+soturail hooks install claude
+soturail hooks uninstall claude
 soturail hooks install all --dry-run
 soturail hooks prompt-only codex
 ```
@@ -13,3 +15,12 @@ soturail hooks prompt-only codex
 Installers create backups before modifying existing files. If a host config location is uncertain, SotuRail generates prompt-only guidance instead of guessing.
 
 Claude install writes `.claude/settings.json` and hook scripts under `.claude/hooks/`. Dry-run prints every file that would change.
+
+Always review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts. Prompt-only fallback remains available for every host:
+
+```bash
+soturail hooks prompt-only claude
+soturail hooks prompt-only codex
+soturail hooks prompt-only gemini
+soturail hooks prompt-only cursor
+```

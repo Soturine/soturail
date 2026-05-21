@@ -3,3 +3,14 @@
 Codex prompt-only integration uses `AGENTS.md`.
 
 SotuRail does not assume private Codex host hook APIs. The fallback rules describe when to index, read progressively, run through SotuRail and avoid `git push`.
+
+Useful commands:
+
+```bash
+soturail hooks install codex --dry-run
+soturail hooks install codex
+soturail hooks uninstall codex
+soturail hooks prompt-only codex
+```
+
+Existing `AGENTS.md` content is backed up before install. Review generated prompt rules before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.

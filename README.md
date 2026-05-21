@@ -26,6 +26,24 @@ It wraps a repository and terminal session with reversible evidence rails: heuri
 
 v0.2.x is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Benchmarks are local and reproducible. External comparisons are optional and user-provided.
 
+## Built With SotuRail
+
+SotuRail now dogfoods itself for release-oriented development. `soturail self all` runs repository checks, indexing, build, tests, benchmarks and a local Markdown report through SotuRail's own rails.
+
+## Self-Dogfooding
+
+```bash
+soturail self doctor
+soturail self index
+soturail self build
+soturail self test
+soturail self bench
+soturail self report
+soturail self all
+```
+
+Reports are written to `.soturail/reports/self-dogfood.md` with stable project context first and dynamic raw IDs, command status and benchmark data later.
+
 ## 2. Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -152,6 +170,10 @@ soturail bench compare-optional --tool squeez
 - Knowledge-to-Rules is reusable structuring, not pure compression; structured rules can be larger than a tiny source document because they add citations and validator metadata.
 - Native performance compares Rust and TypeScript only when `soturail-native` is built locally.
 
+## Honest Metrics
+
+Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
+
 ## 9. Agent Hooks
 
 SotuRail provides cautious hook scaffolding and prompt-only fallbacks:
@@ -164,6 +186,8 @@ soturail hooks prompt-only codex
 ```
 
 Host APIs vary, so SotuRail never writes guessed config without showing the target and creating backups for existing files.
+
+Review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.
 
 ## 10. Agent Response Compression
 
@@ -211,6 +235,18 @@ SotuRail reports estimated cache stability only. It never claims real provider c
 `soturail run` blocks dangerous patterns by default, including `rm -rf`, `sudo`, `format`, `dd if=`, `curl | sh`, `del /s` and `git push`.
 
 Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material.
+
+## Windows Notes
+
+Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShell quoting, global install, `npx`, local tarball testing and common paste mistakes such as copying Markdown code-fence labels into CMD.
+
+## Road To Skill Rail
+
+Skill Rail and Workflow Rail are planned, not implemented in v0.2.2. See [docs/skill-rail.md](docs/skill-rail.md) and [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
+
+## Comparison Philosophy
+
+SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks and skill registries. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest.
 
 ## 14. Roadmap
 
