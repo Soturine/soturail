@@ -82,6 +82,35 @@ describe("soturail init", () => {
     expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe("custom agent instructions\n");
     expect(second.skipped).toContain("AGENTS.md");
   });
+
+  it("scaffolds v0.3 docs and examples in a clean workspace", async () => {
+    const root = await tempRoot();
+    const report = await runInit(root);
+    const expected = [
+      path.join("docs", "mcp.md"),
+      path.join("docs", "skill-rail.md"),
+      path.join("docs", "context-packs.md"),
+      path.join("docs", "comparisons.md"),
+      path.join("docs", "workflow-rail.md"),
+      path.join("docs", "first-real-workflow.md"),
+      path.join("examples", "README.md"),
+      path.join("examples", "skills", "README.md"),
+      path.join("examples", "skills", "code-review-skill.yml"),
+      path.join("examples", "skills", "release-manager-skill.yml"),
+      path.join("examples", "skills", "bug-triage-skill.yml"),
+      path.join("examples", "mcp", "initialize.json"),
+      path.join("examples", "mcp", "resources-list.json"),
+      path.join("examples", "mcp", "resources-read-repo-map.json"),
+      path.join("examples", "mcp", "tools-list.json"),
+      path.join("examples", "context-packs", "generic-workflow.md"),
+      path.join("examples", "hooks", "prompt-only-codex.md")
+    ];
+
+    for (const relative of expected) {
+      await expect(fs.access(path.join(root, relative))).resolves.toBeUndefined();
+      expect(report.created).toContain(path.normalize(relative));
+    }
+  });
 });
 
 describe("file scanner", () => {

@@ -124,6 +124,205 @@ Rules are stored under .soturail/rules and can be listed, checked and exported.
   specWorkflow: `# Spec-Driven Workflow
 
 soturail spec manages constitution, spec, plan, tasks, verification, context budget and security impact files.
+`,
+  mcp: `# MCP
+
+SotuRail can expose local context through a small MCP-compatible stdio server.
+
+\`\`\`bash
+soturail mcp doctor
+soturail mcp manifest
+soturail mcp serve --transport stdio
+\`\`\`
+
+The MCP server exposes read-oriented resources and safe tools. It does not expose arbitrary shell execution by default.
+`,
+  skillRail: `# Skill Rail
+
+Skill Rail creates local, reviewable agent skills under .soturail/skills.
+
+\`\`\`bash
+soturail skills init code-review
+soturail skills list
+soturail skills validate
+soturail skills export --target claude
+\`\`\`
+`,
+  contextPacks: `# Context Packs
+
+Context packs put stable project context before dynamic session metadata.
+
+\`\`\`bash
+soturail context pack --target generic
+soturail context pack --target claude
+\`\`\`
+
+Generated packs are written under .soturail/context.
+`,
+  comparisons: `# Comparisons
+
+SotuRail aims to unify local-first context engineering ideas into one workflow.
+
+It is an independent implementation inspired by common workflow patterns around terminal reduction, response compression, Spec-Driven workflows, memory, rules, hooks, MCP and skill exports. It does not vendor competing projects.
+`,
+  workflowRail: `# Workflow Rail
+
+Workflow Rail is planned for future releases. v0.3.x focuses on Skill Rail, MCP, context packs and real installed usage polish.
+`,
+  firstWorkflow: `# First Real Workflow
+
+This workflow starts in a clean project.
+
+\`\`\`bash
+mkdir my-soturail-test
+cd my-soturail-test
+soturail init
+soturail index
+soturail context pack --target generic
+soturail skills init code-review
+soturail skills validate
+soturail skills export --target claude
+soturail mcp doctor
+soturail mcp manifest
+soturail run node --version
+soturail stats
+\`\`\`
+
+## Windows Notes
+
+PowerShell and CMD quote commands differently. Do not paste Markdown fence markers into CMD. Quote paths with spaces.
+
+## What should happen?
+
+SotuRail creates .soturail, repo indexes, a generic context pack, a local skill, an exported Claude skill and local stats. Stats may show zero commands until you run a command through soturail run <command>.
+`,
+  examplesReadme: `# SotuRail Examples
+
+These examples are small, reviewable starting points for skills, MCP messages, context packs and hook guidance.
+`,
+  examplesSkillsReadme: `# Skill Examples
+
+Copy a YAML example into .soturail/skills/<id>/skill.yml only after reviewing it. Generated skills should always pass soturail skills validate.
+`,
+  examplesContextReadme: `# Context Pack Examples
+
+Use soturail context pack --target generic to create .soturail/context/generic-context.md.
+`,
+  examplesMcpReadme: `# MCP Examples
+
+Send one JSON-RPC object per line to soturail mcp serve --transport stdio.
+`,
+  examplesHooksReadme: `# Hook Examples
+
+Use dry-run first and review generated files before enabling hooks.
+`,
+  exampleCodeReviewSkill: `id: code-review
+name: Code Review
+description: Review code changes for correctness, safety and missing tests.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: low
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - rm -rf
+  - curl | sh
+  - git push
+  - secret exfiltration
+requires_human_approval:
+  - destructive_command
+  - remote_write
+  - dependency_install
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
+`,
+  exampleReleaseSkill: `id: release-manager
+name: Release Manager
+description: Prepare release notes, validation evidence and publication checklists.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: medium
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - git push
+  - npm publish without validation
+  - secret exfiltration
+requires_human_approval:
+  - remote_write
+  - dependency_install
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
+`,
+  exampleBugSkill: `id: bug-triage
+name: Bug Triage
+description: Reduce a bug report into reproduction steps, suspected causes and verification commands.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: low
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - rm -rf
+  - curl | sh
+  - secret exfiltration
+requires_human_approval:
+  - destructive_command
+  - remote_write
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
+`,
+  mcpInitialize: `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"manual-smoke","version":"0.1.0"}}}
+`,
+  mcpResourcesList: `{"jsonrpc":"2.0","id":2,"method":"resources/list"}
+`,
+  mcpResourcesReadRepoMap: `{"jsonrpc":"2.0","id":3,"method":"resources/read","params":{"uri":"soturail://repo-map"}}
+`,
+  mcpToolsList: `{"jsonrpc":"2.0","id":4,"method":"tools/list"}
+`,
+  contextGenericWorkflow: `# Generic Context Pack Workflow
+
+\`\`\`bash
+soturail init
+soturail index
+soturail context pack --target generic
+\`\`\`
+
+Review .soturail/context/generic-context.md before pasting it into an agent.
+`,
+  promptOnlyCodex: `# Prompt-only Codex Rules
+
+- Run soturail index before large changes.
+- Prefer soturail read for large files.
+- Run tests and builds through soturail run.
+- Never route git push through soturail run.
 `
 };
 
@@ -146,9 +345,29 @@ function documentationTemplates(root: string): Array<{ path: string; content: st
     { path: path.resolve(root, "docs", "knowledge-to-rules.md"), content: text.knowledgeToRules },
     { path: path.resolve(root, "docs", "rules.md"), content: text.rules },
     { path: path.resolve(root, "docs", "spec-driven-workflow.md"), content: text.specWorkflow },
+    { path: path.resolve(root, "docs", "mcp.md"), content: text.mcp },
+    { path: path.resolve(root, "docs", "skill-rail.md"), content: text.skillRail },
+    { path: path.resolve(root, "docs", "context-packs.md"), content: text.contextPacks },
+    { path: path.resolve(root, "docs", "comparisons.md"), content: text.comparisons },
+    { path: path.resolve(root, "docs", "workflow-rail.md"), content: text.workflowRail },
+    { path: path.resolve(root, "docs", "first-real-workflow.md"), content: text.firstWorkflow },
     { path: path.resolve(root, "docs", "release-checklist.md"), content: text.release },
     { path: path.resolve(root, "docs", "assets", "screenshots", "README.md"), content: text.screenshots },
-    { path: path.resolve(root, "docs", "pt-BR", "visao-geral.md"), content: text.ptBr }
+    { path: path.resolve(root, "docs", "pt-BR", "visao-geral.md"), content: text.ptBr },
+    { path: path.resolve(root, "examples", "README.md"), content: text.examplesReadme },
+    { path: path.resolve(root, "examples", "skills", "README.md"), content: text.examplesSkillsReadme },
+    { path: path.resolve(root, "examples", "context-packs", "README.md"), content: text.examplesContextReadme },
+    { path: path.resolve(root, "examples", "mcp", "README.md"), content: text.examplesMcpReadme },
+    { path: path.resolve(root, "examples", "hooks", "README.md"), content: text.examplesHooksReadme },
+    { path: path.resolve(root, "examples", "skills", "code-review-skill.yml"), content: text.exampleCodeReviewSkill },
+    { path: path.resolve(root, "examples", "skills", "release-manager-skill.yml"), content: text.exampleReleaseSkill },
+    { path: path.resolve(root, "examples", "skills", "bug-triage-skill.yml"), content: text.exampleBugSkill },
+    { path: path.resolve(root, "examples", "mcp", "initialize.json"), content: text.mcpInitialize },
+    { path: path.resolve(root, "examples", "mcp", "resources-list.json"), content: text.mcpResourcesList },
+    { path: path.resolve(root, "examples", "mcp", "resources-read-repo-map.json"), content: text.mcpResourcesReadRepoMap },
+    { path: path.resolve(root, "examples", "mcp", "tools-list.json"), content: text.mcpToolsList },
+    { path: path.resolve(root, "examples", "context-packs", "generic-workflow.md"), content: text.contextGenericWorkflow },
+    { path: path.resolve(root, "examples", "hooks", "prompt-only-codex.md"), content: text.promptOnlyCodex }
   ];
 }
 
