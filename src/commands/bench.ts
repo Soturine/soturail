@@ -7,9 +7,11 @@ import { promisify } from "node:util";
 import type { Command } from "commander";
 import { reduceAgentResponse } from "../compressors/agent-response-reducer.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
+import { applyBlockDedupe } from "../core/block-dedupe.js";
 import { buildCachePayload } from "../core/cache-normalizer.js";
 import { buildContextPack } from "../core/context-pack.js";
 import { ensureWorkspace, writeJson } from "../core/config.js";
+import { DedupeStore } from "../core/dedupe-store.js";
 import { ingestDocument } from "../core/document-ingest.js";
 import { exportHook } from "./hooks.js";
 import { approveMemory, listMemory, proposeMemory } from "./memory.js";
@@ -34,6 +36,7 @@ interface BenchOptions {
 
 export type BenchmarkCategory =
   | "terminal_compression"
+  | "terminal_reducer"
   | "agent_response_compression"
   | "knowledge_structuring"
   | "cache_stability"
@@ -53,6 +56,9 @@ export interface BenchResult {
   reduced_bytes: number;
   raw_tokens: number;
   reduced_tokens: number;
+  dedupe_tokens_saved: number;
+  metadata_overhead_tokens: number;
+  net_tokens_saved: number;
   reduction_percent: number | null;
   estimated_raw_tokens: number;
   estimated_reduced_tokens: number;
@@ -178,6 +184,65 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
     "# Security",
     "- git push must never be run automatically through soturail run."
   ].join("\n");
+  const npmTestSuccess = [
+    "RUN v2.1.9 C:/project",
+    ...Array.from({ length: 180 }, (_, index) => `✓ tests/unit-${index}.test.ts (${index + 1} tests)`),
+    "Test Files 42 passed (42)",
+    "Tests 312 passed (312)"
+  ].join("\n");
+  const dockerLogs = [
+    ...Array.from({ length: 160 }, (_, index) => `2026-05-21T10:00:${String(index % 60).padStart(2, "0")}Z info worker heartbeat ok`),
+    "2026-05-21T10:03:01Z ERROR connection refused while opening /app/config.yml",
+    "2026-05-21T10:03:02Z WARN retrying request"
+  ].join("\n");
+  const eslintFailure = [
+    "src/app.ts",
+    "  12:7  error  'unused' is assigned a value but never used  @typescript-eslint/no-unused-vars",
+    "  18:3  warning  Unexpected console statement  no-console",
+    "✖ 2 problems (1 error, 1 warning)"
+  ].join("\n");
+  const viteBuild = [
+    "vite v5.4.0 building for production...",
+    ...Array.from({ length: 90 }, (_, index) => `transforming node_modules/pkg-${index}/index.js`),
+    "dist/assets/index.js 42.00 kB | gzip: 12.00 kB",
+    "✓ built in 1.24s"
+  ].join("\n");
+  const nextBuild = [
+    "▲ Next.js 15.0.0",
+    "Creating an optimized production build ...",
+    "warn  - Large page data detected in app/dashboard/page.tsx",
+    "Route (app) /dashboard  125 kB",
+    "✓ Compiled successfully"
+  ].join("\n");
+  const javaStacktrace = [
+    "Exception in thread \"main\" java.lang.NullPointerException: Cannot invoke service",
+    "\tat com.example.Main.main(Main.java:12)",
+    "\tat com.example.Service.run(Service.java:44)",
+    ...Array.from({ length: 80 }, (_, index) => `\tat com.example.Generated.frame${index}(Generated.java:${index + 1})`)
+  ].join("\n");
+  const mavenFailure = [
+    "[INFO] -------------------------------------------------------",
+    "[ERROR] Tests run: 12, Failures: 1, Errors: 0, Skipped: 0",
+    "[ERROR] com.example.UserServiceTest.shouldSaveUser  Time elapsed: 0.01 s  <<< FAILURE!",
+    "java.lang.AssertionError: expected:<saved> but was:<failed>",
+    "    at src/test/java/com/example/UserServiceTest.java:27"
+  ].join("\n");
+  const gradleFailure = [
+    "> Task :test FAILED",
+    "UserServiceTest > shouldSaveUser FAILED",
+    "    org.opentest4j.AssertionFailedError at UserServiceTest.java:27",
+    "FAILURE: Build failed with an exception."
+  ].join("\n");
+  const dedupeRepeated = [
+    ...Array.from({ length: 8 }, (_, index) => `cached dependency line ${index}`),
+    ...Array.from({ length: 8 }, (_, index) => `cached dependency line ${index}`),
+    "ERROR final line must remain visible"
+  ].join("\n");
+  const similarRepeated = [
+    ...Array.from({ length: 8 }, (_, index) => `2026-05-21T10:00:0${index}Z cache hit package-${index} in C:\\Temp\\build\\a`),
+    ...Array.from({ length: 8 }, (_, index) => `2026-05-21T10:05:0${index}Z cache hit package-${index} in C:\\Temp\\build\\b`)
+  ].join("\n");
+  const tinyOutput = "ok\n";
 
   await writeFixture(root, "npm-install-noisy.txt", npmInstall);
   await writeFixture(root, "vitest-failure-stacktrace.txt", vitestFailure);
@@ -188,6 +253,17 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
   await writeFixture(root, "verbose-ai-answer.md", verboseAi);
   await writeFixture(root, "readme-doc.md", readmeText);
   await writeFixture(root, "rules-doc.md", rulesDoc);
+  await writeFixture(root, "npm-test-success.txt", npmTestSuccess);
+  await writeFixture(root, "docker-logs-noisy.txt", dockerLogs);
+  await writeFixture(root, "eslint-failure.txt", eslintFailure);
+  await writeFixture(root, "vite-build-success.txt", viteBuild);
+  await writeFixture(root, "next-build-warning.txt", nextBuild);
+  await writeFixture(root, "java-stacktrace.txt", javaStacktrace);
+  await writeFixture(root, "maven-failure.txt", mavenFailure);
+  await writeFixture(root, "gradle-failure.txt", gradleFailure);
+  await writeFixture(root, "dedupe-repeated-output.txt", dedupeRepeated);
+  await writeFixture(root, "similar-output-dedupe.txt", similarRepeated);
+  await writeFixture(root, "tiny-output-overhead.txt", tinyOutput);
 
   return "Benchmark fixtures prepared in benchmarks/fixtures.\n";
 }
@@ -214,7 +290,7 @@ async function terminalResult(root: string, caseId: string, fixture: string, com
   }
   return makeResult({
     case_id: caseId,
-    category: "terminal_compression",
+    category: "terminal_reducer",
     engine: reduced.engine,
     raw,
     reduced: text,
@@ -224,7 +300,11 @@ async function terminalResult(root: string, caseId: string, fixture: string, com
     runtime,
     quality: true,
     notes: quality.note ?? "Terminal output reducer preserved required signals.",
-    details: { compressor: reduced.compressor, ...(reduced.details ?? {}) }
+    details: {
+      compressor: reduced.compressor,
+      metadata_overhead_tokens: estimateTokens(`Raw log: soturail expand bench-${caseId}`),
+      ...(reduced.details ?? {})
+    }
   });
 }
 
@@ -328,6 +408,52 @@ async function nativeEngineResult(root: string): Promise<BenchResult> {
     quality: true,
     notes: native.available ? "Native binary detected." : "Native binary unavailable; TypeScript benchmark remains authoritative.",
     details: { available: native.available, path: native.path ?? null, version: native.version ?? null }
+  });
+}
+
+async function dedupeResult(root: string, mode: "exact" | "similar"): Promise<BenchResult> {
+  const raw = await readFixture(root, mode === "exact" ? "dedupe-repeated-output.txt" : "similar-output-dedupe.txt");
+  const store = new DedupeStore(root);
+  const start = performance.now();
+  const seedText = raw.split(/\r?\n/).slice(0, 8).join("\n");
+  const seed = await applyBlockDedupe(seedText, store, {
+    rawId: `bench-${mode}-seed`,
+    blockMinLines: 8,
+    recentWindow: 10,
+    preserveErrorBlocks: true,
+    similarMode: mode === "similar" ? "conservative" : "off"
+  });
+  for (const block of seed.newBlocks) {
+    await store.appendBlock({ kind: "block", ...block });
+  }
+  const reduced = await applyBlockDedupe(raw, store, {
+    rawId: `bench-${mode}`,
+    blockMinLines: 8,
+    recentWindow: 10,
+    preserveErrorBlocks: true,
+    similarMode: mode === "similar" ? "conservative" : "off"
+  });
+  const runtime = performance.now() - start;
+  const reducedText = reduced.output;
+  return makeResult({
+    case_id: mode === "exact" ? "dedupe_repeated_output" : "similar_output_dedupe",
+    category: "terminal_reducer",
+    engine: "ts",
+    raw,
+    reduced: reducedText,
+    rawTokens: estimateTokens(raw),
+    reducedTokens: estimateTokens(reducedText),
+    reduction: reductionPercent(estimateTokens(raw), estimateTokens(reducedText)),
+    runtime,
+    quality: reducedText.includes("[deduped block:") && (mode === "similar" || reducedText.includes("ERROR final line")),
+    notes: mode === "similar"
+      ? "Experimental conservative similar-output dedupe normalized timestamps and temp paths."
+      : "Block-level dedupe reused repeated safe output while preserving risky lines.",
+    details: {
+      dedupe_tokens_saved: reduced.tokensSaved,
+      reused_blocks: reduced.reusedBlocks.length,
+      metadata_overhead_tokens: estimateTokens("dedupe block reference")
+    }
   });
 }
 
@@ -448,17 +574,32 @@ function qualityCheck(caseId: string, text: string): { ok: boolean; reason?: str
   if (caseId.includes("tsc") && (!text.includes("TS2322") || !text.includes("src/commands/self.ts"))) {
     return { ok: false, reason: "TypeScript diagnostic missing" };
   }
-  if (caseId.includes("git-diff") && (!text.includes("src/app.ts") || !text.includes("@@ -1,3 +1,5 @@"))) {
+  if (caseId.includes("git_diff") && (!text.includes("src/app.ts") || !text.includes("@@ -1,3 +1,5 @@"))) {
     return { ok: false, reason: "git diff path or hunk missing" };
   }
-  if (caseId.includes("git-status") && !text.includes("src/generated-")) {
+  if (caseId.includes("git_status") && !text.includes("src/generated-")) {
     return { ok: false, reason: "git status changed path missing" };
   }
   if (caseId.includes("json") && (!text.includes("Permission denied") || !text.includes("timeout"))) {
     return { ok: false, reason: "JSON error primitives missing" };
   }
-  if (caseId.includes("npm-install") && (!text.includes("moderate severity") || !text.includes("npm audit"))) {
+  if (caseId.includes("npm_install") && (!text.includes("moderate severity") || !text.includes("npm audit"))) {
     return { ok: false, reason: "npm warning or command suggestion missing" };
+  }
+  if (caseId.includes("docker") && !text.includes("ERROR connection refused")) {
+    return { ok: false, reason: "docker error missing" };
+  }
+  if (caseId.includes("eslint") && !text.includes("@typescript-eslint/no-unused-vars")) {
+    return { ok: false, reason: "eslint rule missing" };
+  }
+  if (caseId.includes("java") && (!text.includes("NullPointerException") || !text.includes("Main.java:12"))) {
+    return { ok: false, reason: "java exception missing" };
+  }
+  if (caseId.includes("maven") && !text.includes("UserServiceTest.java:27")) {
+    return { ok: false, reason: "maven failure path missing" };
+  }
+  if (caseId.includes("gradle") && !text.includes("UserServiceTest.java:27")) {
+    return { ok: false, reason: "gradle failure path missing" };
   }
   return { ok: true };
 }
@@ -482,6 +623,8 @@ function makeResult(input: MakeResultInput): BenchResult {
   const errors = (input.reduced.match(/\b(error|warn|fail|assertion|timeout|denied|refused|TS\d+)\b/gi) ?? []).length;
   const paths = (input.reduced.match(/(?:src|tests|docs|\.github)[\\/][\w./-]+(?::\d+(?::\d+)?)?/g) ?? []).length;
   const commands = (input.reduced.match(/\b(?:npm|npx|node|soturail|git|tsc|vitest|pytest)\b[^\n]*/g) ?? []).length;
+  const dedupeTokensSaved = numericDetail(input.details.dedupe_tokens_saved);
+  const metadataOverheadTokens = numericDetail(input.details.metadata_overhead_tokens);
   return {
     case_id: input.case_id,
     name: input.case_id,
@@ -491,6 +634,9 @@ function makeResult(input: MakeResultInput): BenchResult {
     reduced_bytes: Buffer.byteLength(input.reduced),
     raw_tokens: input.rawTokens,
     reduced_tokens: input.reducedTokens,
+    dedupe_tokens_saved: dedupeTokensSaved,
+    metadata_overhead_tokens: metadataOverheadTokens,
+    net_tokens_saved: input.rawTokens - input.reducedTokens - metadataOverheadTokens + dedupeTokensSaved,
     reduction_percent: input.reduction,
     estimated_raw_tokens: input.rawTokens,
     estimated_reduced_tokens: input.reducedTokens,
@@ -511,6 +657,10 @@ function makeResult(input: MakeResultInput): BenchResult {
   };
 }
 
+function numericDetail(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
 export async function runBenchmarks(options: BenchOptions = {}, root = process.cwd()): Promise<BenchResult[]> {
   await ensureWorkspace(root);
   await prepareBenchmarks(root);
@@ -521,12 +671,23 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
     return results;
   }
   const results = [
-    await terminalResult(root, "npm-install-noisy", "npm-install-noisy.txt", "npm install", engine),
-    await terminalResult(root, "vitest-failure-stacktrace", "vitest-failure-stacktrace.txt", "npm test", engine),
-    await terminalResult(root, "tsc-error", "tsc-error.txt", "npm run build", engine),
-    await terminalResult(root, "git-diff-multiple", "git-diff-multiple.txt", "git diff", engine),
-    await terminalResult(root, "git-status-many", "git-status-many.txt", "git status", engine),
-    await terminalResult(root, "json-tool-payload", "json-tool-payload.json", "cat tool-output.json", engine),
+    await terminalResult(root, "npm_install_noisy", "npm-install-noisy.txt", "npm install", engine),
+    await terminalResult(root, "npm_test_success", "npm-test-success.txt", "npm test", engine),
+    await terminalResult(root, "vitest_failure", "vitest-failure-stacktrace.txt", "vitest run", engine),
+    await terminalResult(root, "tsc_error", "tsc-error.txt", "tsc --noEmit", engine),
+    await terminalResult(root, "git_diff_large", "git-diff-multiple.txt", "git diff", engine),
+    await terminalResult(root, "git_status_many_files", "git-status-many.txt", "git status", engine),
+    await terminalResult(root, "json_tool_payload", "json-tool-payload.json", "cat tool-output.json", engine),
+    await terminalResult(root, "docker_logs_noisy", "docker-logs-noisy.txt", "docker logs app", engine),
+    await terminalResult(root, "eslint_failure", "eslint-failure.txt", "npx eslint src", engine),
+    await terminalResult(root, "vite_build_success", "vite-build-success.txt", "vite build", engine),
+    await terminalResult(root, "next_build_warning", "next-build-warning.txt", "next build", engine),
+    await terminalResult(root, "java_stacktrace", "java-stacktrace.txt", "java Main", engine),
+    await terminalResult(root, "maven_failure", "maven-failure.txt", "mvn test", engine),
+    await terminalResult(root, "gradle_failure", "gradle-failure.txt", "gradle test", engine),
+    await terminalResult(root, "tiny_output_overhead", "tiny-output-overhead.txt", "node -e \"console.log('ok')\"", engine),
+    await dedupeResult(root, "exact"),
+    await dedupeResult(root, "similar"),
     await responseResult(root, "verbose-ai-answer.md", "concise"),
     await responseResult(root, "verbose-ai-answer.md", "review"),
     await responseResult(root, "readme-doc.md", "docs"),
@@ -602,7 +763,7 @@ export function summarizeBenchmarkResults(results: BenchResult[]): string {
 function renderReport(results: BenchResult[]): string {
   const grouped = groupByCategory(results);
   const rows = results.map((result) =>
-    `| ${result.case_id} | ${result.category} | ${result.engine} | ${result.raw_tokens} | ${result.reduced_tokens} | ${result.reduction_percent === null ? "n/a" : `${result.reduction_percent}%`} | ${result.runtime_ms} | ${result.quality_passed ? "pass" : "fail"} | ${result.notes} |`
+    `| ${result.case_id} | ${result.category} | ${result.engine} | ${result.raw_tokens} | ${result.reduced_tokens} | ${result.dedupe_tokens_saved} | ${result.metadata_overhead_tokens} | ${result.net_tokens_saved} | ${result.reduction_percent === null ? "n/a" : `${result.reduction_percent}%`} | ${result.runtime_ms} | ${result.quality_passed ? "pass" : "fail"} | ${result.notes} |`
   );
   return [
     "# SotuRail Benchmark Report",
@@ -612,8 +773,8 @@ function renderReport(results: BenchResult[]): string {
     "Categories:",
     ...Object.entries(grouped).map(([category, count]) => `- ${category}: ${count} case(s)`),
     "",
-    "| case_id | category | engine | raw_tokens | reduced_tokens | reduction_percent | runtime_ms | quality | notes |",
-    "|---|---|---:|---:|---:|---:|---:|---|---|",
+    "| case_id | category | engine | raw_tokens | reduced_tokens | dedupe_tokens_saved | metadata_overhead_tokens | net_tokens_saved | reduction_percent | runtime_ms | quality | notes |",
+    "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|",
     ...rows,
     "",
     "Knowledge structuring cases are extraction and validation tasks, not failed compression cases.",
