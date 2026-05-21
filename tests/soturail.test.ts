@@ -766,10 +766,13 @@ describe("release reliability", () => {
 
   it("keeps runtime audit and npm pack release gates clean", async () => {
     const result = await runReleasePreflight(process.cwd(), { runAudit: true, runPack: true });
+    const packedGate = result.gates.find((gate) => gate.id === "packed_package_cli_version");
 
     expect(result.gates.find((gate) => gate.id === "runtime_audit")?.ok).toBe(true);
     expect(result.gates.find((gate) => gate.id === "npm_pack_no_raw_logs")?.ok).toBe(true);
-    expect(result.gates.find((gate) => gate.id === "packed_package_cli_version")?.ok).toBe(true);
+    expect(packedGate?.ok).toBe(true);
+    expect(packedGate?.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
+    expect(packedGate?.details).toContain("help_exit_code=0");
   }, 40000);
 
   it("detects stale CLI metadata inside a packed tarball", async () => {
@@ -790,6 +793,46 @@ describe("release reliability", () => {
 
     expect(result.ok).toBe(false);
     expect(result.details).toContain("expected 1.2.3");
+    expect(result.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
+    expect(result.details).toContain("npx_usage=none");
+  }, 40000);
+
+  it("does not accept a fake global or cached CLI when the packed CLI is stale", async () => {
+    const root = await tempRoot();
+    const fakeBin = path.join(root, "fake-bin");
+    await fs.mkdir(fakeBin, { recursive: true });
+    if (process.platform === "win32") {
+      await writeFile(path.join(fakeBin, "soturail.cmd"), "@echo off\r\necho 1.2.3\r\n");
+      await writeFile(path.join(fakeBin, "npx.cmd"), "@echo off\r\necho 1.2.3\r\n");
+    } else {
+      await writeFile(path.join(fakeBin, "soturail"), "#!/usr/bin/env sh\necho 1.2.3\n");
+      await writeFile(path.join(fakeBin, "npx"), "#!/usr/bin/env sh\necho 1.2.3\n");
+      await fs.chmod(path.join(fakeBin, "soturail"), 0o755);
+      await fs.chmod(path.join(fakeBin, "npx"), 0o755);
+    }
+    await writeFile(path.join(root, "package.json"), JSON.stringify({
+      name: "soturail",
+      version: "1.2.3",
+      type: "module",
+      bin: { soturail: "dist/cli.js" },
+      files: ["dist", "README.md", "LICENSE"]
+    }, null, 2));
+    await writeFile(path.join(root, "README.md"), "# Fixture\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(path.join(root, "dist", "core", "version.js"), "export const SOTURAIL_VERSION = \"1.2.2\";\n");
+    await writeFile(path.join(root, "dist", "cli.js"), "#!/usr/bin/env node\nconsole.log('1.2.2');\n");
+    const oldPath = process.env.PATH;
+    process.env.PATH = `${fakeBin}${path.delimiter}${oldPath ?? ""}`;
+    try {
+      const result = await verifyPackedPackage(root, "soturail", "1.2.3");
+
+      expect(result.ok).toBe(false);
+      expect(result.cliVersion).toBe("1.2.2");
+      expect(result.details).toContain("global_cli_usage=none");
+      expect(result.details).toContain("npx_usage=none");
+    } finally {
+      process.env.PATH = oldPath;
+    }
   }, 40000);
 });
 
