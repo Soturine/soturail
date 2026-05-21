@@ -214,9 +214,11 @@ function resolveSpawn(command: string, args: string[]): { command: string; args:
   if (process.platform !== "win32") return { command, args };
   if (command === "node") return { command: process.execPath, args };
   const npmExecPath = process.env.npm_execpath;
-  if ((command === "npm" || command === "npx") && npmExecPath) {
-    const cli = path.resolve(path.dirname(npmExecPath), command === "npm" ? "npm-cli.js" : "npx-cli.js");
-    return { command: process.execPath, args: [cli, ...args] };
+  if (command === "npm" || command === "npx") {
+    const cli = npmExecPath
+      ? path.resolve(path.dirname(npmExecPath), command === "npm" ? "npm-cli.js" : "npx-cli.js")
+      : path.resolve(path.dirname(process.execPath), "node_modules", "npm", "bin", command === "npm" ? "npm-cli.js" : "npx-cli.js");
+    if (existsSync(cli)) return { command: process.execPath, args: [cli, ...args] };
   }
   return { command: resolveWindowsCommand(command), args };
 }
