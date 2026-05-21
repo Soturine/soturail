@@ -26,7 +26,7 @@ From a source checkout:
 npm run build
 npm pack --dry-run
 npm pack
-npm install -g .\soturail-0.3.0.tgz
+npm install -g .\soturail-0.3.2.tgz
 soturail --version
 ```
 
@@ -106,6 +106,8 @@ npm run release:check
 ```
 
 `package.json`, `package-lock.json`, `node dist/cli.js --version`, the npm tarball name, the changelog and the release notes must all agree on the same version.
+
+v0.3.2 also verifies the packed tarball by installing it in a temporary clean project and running the installed CLI. This helps catch stale generated version files before publish.
 
 Use browser-based npm login when needed:
 

@@ -77,9 +77,9 @@ AI coding agents often receive too much unstable context: full files, noisy test
 - Heuristic Repo Map with cross-platform ignore handling.
 - Progressive reader for large files with reversible collapsed ranges.
 - Safe tee-stream runner with raw log preservation.
-- Git, test, JSON and generic terminal reducers.
+- Git, test, npm, TypeScript, Docker, ESLint, Java/Maven/Gradle, build, JSON and generic terminal reducers.
 - Optional Rust native reducer and runner hot paths with TypeScript fallback.
-- Cross-call dedupe for repeated command output.
+- Cross-call and block-level dedupe for repeated command output.
 - Reproducible local benchmark suite.
 - Agent response compression modes.
 - Knowledge-to-Rules ingestion and validators.
@@ -99,13 +99,13 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.3.1 --help
+npx soturail@0.3.2 --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail@0.3.1
+npm install -g soturail@0.3.2
 soturail --help
 soturail --version
 ```
@@ -162,8 +162,11 @@ soturail init
 soturail index
 soturail read <file> --query "goal"
 soturail run --engine auto <command...>
+soturail run --similar-dedupe conservative npm test
 soturail run --engine native <command...>
 soturail expand <raw_id>
+soturail expand <raw_id> --allow-raw --yes
+soturail dedupe stats
 soturail bench prepare
 soturail bench run --engine ts
 soturail hooks list
@@ -201,6 +204,7 @@ soturail bench compare-optional --tool squeez
 ### Benchmark Interpretation
 
 - Terminal compression measures how reducers shrink logs while preserving errors, paths and recovery links.
+- Dedupe cases measure conservative block reuse and report `dedupe_tokens_saved`, metadata overhead and net savings.
 - Agent response compression measures deterministic formatting modes.
 - JSON/tool payload compression preserves relevant primitive values while collapsing repetitive structure.
 - Knowledge-to-Rules is reusable structuring, not pure compression; structured rules can be larger than a tiny source document because they add citations and validator metadata.
@@ -209,6 +213,17 @@ soturail bench compare-optional --tool squeez
 ## Honest Metrics
 
 Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
+
+## Reducers And Dedupe
+
+v0.3.2 adds stronger reducers for common developer commands including `npm install`, `npm test`, Vitest, `tsc`, `git diff`, `git status`, Docker logs, ESLint, Vite/Next build output and Java/Maven/Gradle failures. Reducers preserve errors, warnings, file paths, line/column references, stack traces, security warnings and the raw recovery hint.
+
+Block-level dedupe is conservative by default. It can replace repeated safe blocks with references such as `[deduped block: ...]`, while preserving error blocks and current failure context. Similar-output dedupe is experimental and opt-in:
+
+```bash
+soturail run --similar-dedupe conservative npm test
+soturail dedupe stats
+```
 
 ## 9. Agent Hooks
 
@@ -306,7 +321,7 @@ SotuRail reports estimated cache stability only. It never claims real provider c
 
 `soturail run` blocks dangerous patterns by default, including `rm -rf`, `sudo`, `format`, `dd if=`, `curl | sh`, `del /s` and `git push`.
 
-Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material.
+Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material. `soturail expand <raw_id>` redacts probable secrets by default; use `--allow-raw --yes` only when you intentionally need exact raw output.
 
 ## Windows Notes
 

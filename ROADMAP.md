@@ -12,8 +12,9 @@
 
 - Reducers for npm install, npm test, tsc, Vitest, Java stack traces, Maven/Gradle, git diff, git status, Docker logs, ESLint and Vite/Next build output.
 - Block-level dedupe.
-- Similar-output dedupe.
-- Benchmark before/after reports.
+- Similar-output dedupe as an experimental conservative mode.
+- Benchmark reports with dedupe savings, metadata overhead and net token savings.
+- Packed-package verification to prevent package/CLI version drift.
 
 ## v0.4.0 - Real Agent Integrations
 

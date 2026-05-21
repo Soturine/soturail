@@ -10,7 +10,7 @@ RTK-like terminal compression is conceptually related. SotuRail focuses on rever
 
 ## Hooks And Dedupe
 
-Squeez-like hooks and dedupe are adjacent ideas. SotuRail has prompt-only fallbacks, conservative Claude hooks, context packs and local dedupe as an independent implementation.
+Squeez-like hooks and dedupe are adjacent ideas. SotuRail has prompt-only fallbacks, conservative Claude hooks, context packs, whole-output dedupe and conservative block-level dedupe as an independent implementation. Similar-output dedupe is deterministic and experimental; it is not semantic AI matching.
 
 ## Response Compression
 

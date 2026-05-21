@@ -14,6 +14,7 @@ Before publishing:
 - [ ] `node dist/cli.js context --help`
 - [ ] `npm pack --dry-run`
 - [ ] `npm run release:check`
+- [ ] `node dist/cli.js release verify-package`
 - [ ] `node dist/cli.js --version` matches `package.json`.
 - [ ] Confirm docs mention limitations honestly.
 - [ ] Confirm no telemetry exists.
@@ -29,6 +30,15 @@ Check four separate release identifiers before publishing:
 - GitHub release: created only after npm publish succeeds.
 
 The package version and CLI runtime version must match. `npm run build` regenerates the CLI version source from `package.json`, and `npm run release:check` verifies the built CLI before publication.
+
+v0.3.2 adds a packed-package verification gate. It runs `npm pack --json`, installs the generated `.tgz` into a temporary clean directory, and verifies both:
+
+```bash
+node node_modules/soturail/dist/cli.js --version
+npx --no-install soturail --version
+```
+
+This gate must print the same version as `package.json`.
 
 ## Audit Distinction
 

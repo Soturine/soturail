@@ -14,6 +14,13 @@ SotuRail metrics are local, append-only and transparent.
 
 - estimated raw tokens;
 - estimated compressed tokens;
+- estimated reduced payload tokens;
+- terminal reducer estimated tokens saved;
+- dedupe estimated tokens saved;
+- metadata overhead tokens;
+- net estimated tokens saved;
+- dedupe blocks reused;
+- dedupe recent window;
 - compression ratio;
 - command count;
 - expansion count;
@@ -23,6 +30,8 @@ SotuRail metrics are local, append-only and transparent.
 - response compression reduction and preservation counts;
 - rules ingestion and validation counts;
 - benchmark fixture measurements.
+
+Small command outputs can be larger after SotuRail adds raw recovery metadata. When that happens, `compression_effective` is `false` and the CLI prints the small-output warning instead of hiding the overhead.
 
 ## Token Estimation
 

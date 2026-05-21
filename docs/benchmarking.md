@@ -16,7 +16,7 @@ Outputs:
 
 The suite groups results as:
 
-- terminal compression;
+- terminal reducer compression;
 - agent response compression;
 - knowledge structuring;
 - cache stability;
@@ -27,7 +27,17 @@ The suite groups results as:
 - agent hook export;
 - memory approval workflow.
 
-Terminal compression includes npm install noise, Vitest failures, TypeScript diagnostics, git diff/status noise and JSON/tool payload output.
+Terminal reducer cases include npm install noise, npm test success, Vitest failures, TypeScript diagnostics, git diff/status noise, Docker logs, ESLint failures, Vite/Next build output, Java stack traces, Maven/Gradle failures, JSON/tool payload output, tiny-output overhead and dedupe fixtures.
+
+Each v0.3.2 reducer case reports:
+
+- `raw_tokens`;
+- `reduced_tokens`;
+- `dedupe_tokens_saved`;
+- `metadata_overhead_tokens`;
+- `net_tokens_saved`;
+- `quality_passed`;
+- preserved errors, paths and commands.
 
 Knowledge-to-Rules is not judged as pure compression. It creates reusable structured rules, citations and validator metadata.
 

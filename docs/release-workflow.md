@@ -15,8 +15,18 @@ The check also verifies:
 - `package.json` and `package-lock.json` version sync;
 - `node dist/cli.js --version` matches the package version;
 - npm pack dry-run emits the matching tarball name;
+- the packed tarball installs into a clean temp project and its installed CLI prints the package version;
+- expected package files are present and forbidden generated files are absent;
 - `CHANGELOG.md` and `RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
 - README install instructions and `LICENSE` exist.
+
+You can run only the package verification gate with:
+
+```bash
+soturail release verify-package
+```
+
+This catches stale generated version files that local source checks might miss.
 
 ## Publish
 

@@ -27,7 +27,19 @@ This is intentionally verbose so accidental bypasses are unlikely.
 
 Raw command logs remain on disk so compressed summaries can always be audited.
 
-Raw logs may contain secrets. Do not commit `.soturail/raw/`. MCP raw-log expansion redacts probable secrets by default unless `allow_raw=true` is explicitly passed.
+Raw logs may contain secrets. Do not commit `.soturail/raw/`. CLI expansion redacts probable secrets by default:
+
+```bash
+soturail expand <raw_id>
+```
+
+Exact raw output requires an explicit opt-in:
+
+```bash
+soturail expand <raw_id> --allow-raw --yes
+```
+
+MCP raw-log expansion also redacts probable secrets by default unless `allow_raw=true` is explicitly passed.
 
 ## MCP And Skills
 
