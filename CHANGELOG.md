@@ -8,6 +8,22 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.3.3] - 2026-05-21
+
+### Fixed
+
+- Fixed packed package CLI verification so release gates execute the CLI installed from the generated `.tgz`.
+- Avoided npm cache, `npx`, `npm exec` and global CLI false positives in release verification.
+
+### Changed
+
+- Release verification now installs the packed `.tgz` into a clean temporary project and executes `node_modules/soturail/dist/cli.js`.
+- Added clearer diagnostics for package verification failures in local and GitHub Actions logs.
+
+### Security
+
+- Runtime audit remains enforced with `npm audit --omit=dev`.
+
 ## [0.3.2] - 2026-05-21
 
 ### Added
