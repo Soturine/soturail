@@ -57,6 +57,8 @@ npm run release:full -- X.Y.Z --publish-npm --github-release
 
 The release commands accept a positional version, `--target-version X.Y.Z`, or the backward-compatible `--version X.Y.Z` option. The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
 
+Release verification installs the packed `.tgz` into a clean temporary project and executes `node_modules/soturail/dist/cli.js` directly to avoid npm cache or global CLI false positives.
+
 ## Release Reliability
 
 SotuRail includes a release preflight check to prevent stale package metadata, broken npm CLI binaries, missing release notes, and changelog/version mismatches.
@@ -99,13 +101,13 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.3.2 --help
+npx soturail@0.3.3 --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail@0.3.2
+npm install -g soturail@0.3.3
 soturail --help
 soturail --version
 ```

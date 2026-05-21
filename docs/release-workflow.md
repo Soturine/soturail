@@ -28,6 +28,8 @@ soturail release verify-package
 
 This catches stale generated version files that local source checks might miss.
 
+As of v0.3.3, release verification installs the packed `.tgz` into a clean temporary project and executes the CLI from `node_modules/soturail/dist/cli.js`. It does not call global `soturail`, `npx soturail` or `npm exec --package=soturail`, which avoids npm cache/global CLI false positives.
+
 ## Publish
 
 ```bash
