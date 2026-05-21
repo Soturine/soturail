@@ -118,6 +118,15 @@ export async function executeRunCommand(
     raw_tokens_estimated: estimateTokens(result.rawText),
     compressed_tokens_estimated: compression.compressed_tokens_estimated
   };
+  const metadataTokens = estimateTokens([
+    "SotuRail run complete.",
+    `Exit code: ${result.exitCode}`,
+    `Compressor: ${compression.compressor}`,
+    `raw_id: ${log.rawId}`,
+    `Recovery: soturail expand ${log.rawId}`,
+    `Command: ${command}`
+  ].join("\n"));
+  const netTokens = record.compressed_tokens_estimated + metadataTokens;
   await rawStore.appendRunRecord(record);
   await dedupe.append({
     output_sha256: outputHash,
@@ -140,7 +149,14 @@ export async function executeRunCommand(
     command,
     exit_code: result.exitCode,
     raw_tokens_estimated: record.raw_tokens_estimated,
-    compressed_tokens_estimated: record.compressed_tokens_estimated
+    compressed_tokens_estimated: record.compressed_tokens_estimated,
+    estimated_raw_tokens: record.raw_tokens_estimated,
+    estimated_reduced_payload_tokens: record.compressed_tokens_estimated,
+    estimated_soturail_metadata_tokens: metadataTokens,
+    estimated_net_tokens_sent: netTokens,
+    summary_overhead_tokens: metadataTokens,
+    compression_effective: netTokens <= record.raw_tokens_estimated,
+    small_output_warning: netTokens > record.raw_tokens_estimated
   });
 
   const summary = [
@@ -151,6 +167,9 @@ export async function executeRunCommand(
     `Engine: ${compression.engine}`,
     `raw_id: ${log.rawId}`,
     `Recovery: soturail expand ${log.rawId}`,
+    ...(netTokens > record.raw_tokens_estimated
+      ? ["Compression was not effective for this small command, but raw recovery paths and audit metadata were preserved."]
+      : []),
     "",
     compression.summary
   ].join("\n");

@@ -5,10 +5,17 @@ import { readCacheBlocks } from "../core/cache-normalizer.js";
 import { getWorkspacePaths } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { RawStore } from "../core/raw-store.js";
+import { estimateTokens } from "../core/token-estimator.js";
 
 export interface StatsReport {
   estimated_raw_tokens: number;
   estimated_compressed_tokens: number;
+  estimated_reduced_payload_tokens: number;
+  estimated_soturail_metadata_tokens: number;
+  estimated_net_tokens_sent: number;
+  summary_overhead_tokens: number;
+  compression_effective: boolean;
+  small_output_warning: boolean;
   compression_ratio: number | null;
   command_count: number;
   expansion_count: number;
@@ -41,6 +48,8 @@ export async function collectStats(root = process.cwd()): Promise<StatsReport> {
   const blocks = await readCacheBlocks(root);
   const rawTokens = records.reduce((sum, record) => sum + record.raw_tokens_estimated, 0);
   const compressedTokens = records.reduce((sum, record) => sum + record.compressed_tokens_estimated, 0);
+  const metadataTokens = records.reduce((sum, record) => sum + estimateMetadataTokens(record), 0);
+  const netTokens = compressedTokens + metadataTokens;
   const expansionCount = events.filter((event) => event.type === "expand").length;
   const omissionCount = events.filter((event) => event.type === "omission_report").length;
   const failureCount = records.filter((record) => record.exit_code !== 0).length;
@@ -58,6 +67,12 @@ export async function collectStats(root = process.cwd()): Promise<StatsReport> {
   return {
     estimated_raw_tokens: rawTokens,
     estimated_compressed_tokens: compressedTokens,
+    estimated_reduced_payload_tokens: compressedTokens,
+    estimated_soturail_metadata_tokens: metadataTokens,
+    estimated_net_tokens_sent: netTokens,
+    summary_overhead_tokens: metadataTokens,
+    compression_effective: netTokens <= rawTokens,
+    small_output_warning: netTokens > rawTokens,
     compression_ratio: compressedTokens > 0 ? Number((rawTokens / compressedTokens).toFixed(2)) : null,
     command_count: records.length,
     expansion_count: expansionCount,
@@ -68,6 +83,17 @@ export async function collectStats(root = process.cwd()): Promise<StatsReport> {
   };
 }
 
+function estimateMetadataTokens(record: { raw_id: string; command: string; exit_code: number; compressor: string }): number {
+  return estimateTokens([
+    "SotuRail run complete.",
+    `Exit code: ${record.exit_code}`,
+    `Compressor: ${record.compressor}`,
+    `raw_id: ${record.raw_id}`,
+    `Recovery: soturail expand ${record.raw_id}`,
+    `Command: ${record.command}`
+  ].join("\n"));
+}
+
 export function formatStats(report: StatsReport): string {
   const providerLine = report.provider_cache_hits === null
     ? "real_provider_cache_hits: not imported"
@@ -76,6 +102,12 @@ export function formatStats(report: StatsReport): string {
     "SotuRail local stats",
     `estimated_raw_tokens: ${report.estimated_raw_tokens}`,
     `estimated_compressed_tokens: ${report.estimated_compressed_tokens}`,
+    `estimated_reduced_payload_tokens: ${report.estimated_reduced_payload_tokens}`,
+    `estimated_soturail_metadata_tokens: ${report.estimated_soturail_metadata_tokens}`,
+    `estimated_net_tokens_sent: ${report.estimated_net_tokens_sent}`,
+    `summary_overhead_tokens: ${report.summary_overhead_tokens}`,
+    `compression_effective: ${report.compression_effective}`,
+    `small_output_warning: ${report.small_output_warning}`,
     `compression_ratio: ${report.compression_ratio === null ? "n/a" : `${report.compression_ratio}:1`}`,
     `command_count: ${report.command_count}`,
     `expansion_count: ${report.expansion_count}`,
@@ -83,6 +115,9 @@ export function formatStats(report: StatsReport): string {
     `estimated_cache_stability_score: ${report.estimated_cache_stability_score}`,
     providerLine,
     "",
+    ...(report.small_output_warning
+      ? ["Compression was not effective for this small command, but raw recovery paths and audit metadata were preserved.", ""]
+      : []),
     "Token counts and cache stability are local estimates unless provider metadata is explicitly imported."
   ].join("\n");
 }

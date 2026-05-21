@@ -20,6 +20,13 @@ export interface MetricEvent {
   exit_code?: number;
   raw_tokens_estimated?: number;
   compressed_tokens_estimated?: number;
+  estimated_raw_tokens?: number;
+  estimated_reduced_payload_tokens?: number;
+  estimated_soturail_metadata_tokens?: number;
+  estimated_net_tokens_sent?: number;
+  summary_overhead_tokens?: number;
+  compression_effective?: boolean;
+  small_output_warning?: boolean;
   estimated_cache_stability_score?: number;
   details?: Record<string, unknown>;
 }
