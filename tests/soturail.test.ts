@@ -770,7 +770,7 @@ describe("release reliability", () => {
 
     expect(result.gates.find((gate) => gate.id === "runtime_audit")?.ok).toBe(true);
     expect(result.gates.find((gate) => gate.id === "npm_pack_no_raw_logs")?.ok).toBe(true);
-    expect(packedGate?.ok).toBe(true);
+    expect(packedGate?.ok, packedGate?.details).toBe(true);
     expect(packedGate?.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
     expect(packedGate?.details).toContain("help_exit_code=0");
   }, 40000);

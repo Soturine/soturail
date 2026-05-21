@@ -225,22 +225,24 @@ export async function verifyPackedPackage(root: string, packageName: string, ver
     }
     tarballPath = path.resolve(packRoot, filename);
 
-    const files = new Set((first?.files ?? []).map((file) => file.path).filter((value): value is string => typeof value === "string"));
+    const files = new Set((first?.files ?? [])
+      .map((file) => file.path)
+      .filter((value): value is string => typeof value === "string")
+      .map(normalizePackedPath));
     const requiredFiles = ["package.json", "dist/cli.js", "dist/core/version.js", "README.md", "LICENSE"];
-    const missing = requiredFiles.filter((file) => !files.has(file));
     const forbidden = [...files].filter((file) =>
       file.startsWith(".soturail/raw")
       || file === "benchmarks/results/latest.json"
       || /^soturail-\d+\.\d+\.\d+.*\.tgz$/.test(file)
       || /temp-pack-test|soturail-clean-smoke|soturail-test-/.test(file)
     );
-    if (missing.length > 0 || forbidden.length > 0) {
+    if (forbidden.length > 0) {
       return failPackageVerification(tarballPath, [
         "tarball file check failed",
         `expected_version=${version}`,
         `tarball_path=${tarballPath}`,
-        `missing=${missing.join(", ") || "none"}`,
-        `forbidden=${forbidden.join(", ") || "none"}`,
+        "missing=checked_after_install",
+        `forbidden=${forbidden.join(", ")}`,
         `strategy=npm_pack_to_temp_directory`
       ].join("\n"));
     }
@@ -258,7 +260,28 @@ export async function verifyPackedPackage(root: string, packageName: string, ver
       }));
     }
 
-    const cliPath = path.join(installRoot, "node_modules", packageName, "dist", "cli.js");
+    const installedPackageRoot = path.join(installRoot, "node_modules", packageName);
+    const installedFiles = new Set(await listRelativeFiles(installedPackageRoot));
+    const missingInstalled = requiredFiles.filter((file) => !installedFiles.has(file));
+    const forbiddenInstalled = [...installedFiles].filter((file) =>
+      file.startsWith(".soturail/raw")
+      || file === "benchmarks/results/latest.json"
+      || /^soturail-\d+\.\d+\.\d+.*\.tgz$/.test(file)
+      || /temp-pack-test|soturail-clean-smoke|soturail-test-/.test(file)
+    );
+    if (missingInstalled.length > 0 || forbiddenInstalled.length > 0) {
+      return failPackageVerification(tarballPath, [
+        "installed tarball file check failed",
+        `expected_version=${version}`,
+        `tarball_path=${tarballPath}`,
+        `installed_package_root=${installedPackageRoot}`,
+        `missing=${missingInstalled.join(", ") || "none"}`,
+        `forbidden=${forbiddenInstalled.join(", ") || "none"}`,
+        "strategy=installed_tarball_file_check"
+      ].join("\n"));
+    }
+
+    const cliPath = path.join(installedPackageRoot, "dist", "cli.js");
     const cli = await runProcess(process.execPath, [cliPath, "--version"], installRoot, true);
     const help = await runProcess(process.execPath, [cliPath, "--help"], installRoot, true);
     const cliVersion = cli.stdout.trim();
@@ -291,6 +314,29 @@ export async function verifyPackedPackage(root: string, packageName: string, ver
 
 function failPackageVerification(tarballPath: string | null, details: string): PackedPackageVerification {
   return { ok: false, tarballPath, cliVersion: null, npxVersion: null, helpExitCode: null, details };
+}
+
+function normalizePackedPath(value: string): string {
+  return value.replace(/^package\//, "").replace(/\\/g, "/");
+}
+
+async function listRelativeFiles(root: string): Promise<string[]> {
+  const output: string[] = [];
+  async function visit(dir: string): Promise<void> {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const absolute = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await visit(absolute);
+        continue;
+      }
+      if (entry.isFile()) {
+        output.push(path.relative(root, absolute).replace(/\\/g, "/"));
+      }
+    }
+  }
+  await visit(root);
+  return output;
 }
 
 function diagnosticDetails(input: {
