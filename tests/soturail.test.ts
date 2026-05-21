@@ -7,7 +7,7 @@ import { buildCachePayload, readCacheBlocks } from "../src/core/cache-normalizer
 import { buildContextPack } from "../src/core/context-pack.js";
 import { appendJsonl, defaultConfig, ensureWorkspace, getWorkspacePaths } from "../src/core/config.js";
 import { isAlwaysIgnored, normalizeForIgnore, scanRepository } from "../src/core/file-scanner.js";
-import { handleMcpMessage, mcpManifest } from "../src/core/mcp-server.js";
+import { handleMcpMessage, mcpDoctor, mcpManifest } from "../src/core/mcp-server.js";
 import { readMcpResource } from "../src/core/mcp-resources.js";
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
@@ -21,6 +21,7 @@ import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { buildProgram } from "../src/cli.js";
 import { expandRawLog } from "../src/commands/expand.js";
 import { exportHook, hooksDoctor, installHooks, promptOnly } from "../src/commands/hooks.js";
+import { runIndex } from "../src/commands/index.js";
 import { ingestCommand } from "../src/commands/ingest.js";
 import { approveMemory, listMemory, proposeMemory, rejectMemory } from "../src/commands/memory.js";
 import { runInit } from "../src/commands/init.js";
@@ -775,5 +776,41 @@ describe("documentation files", () => {
     await expect(fs.access(path.join(root, "docs", "windows.md"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, "docs", "skill-rail.md"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, "docs", "workflow-rail.md"))).resolves.toBeUndefined();
+  });
+});
+
+describe("clean-folder installed workflow", () => {
+  it("runs the v0.3 happy path without dirtying the repository", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ name: "clean-folder", version: "0.0.0" }, null, 2));
+    await writeFile(path.join(root, "README.md"), "# Clean Folder\n\nQuick start\n");
+    await writeFile(path.join(root, "src", "app.ts"), "export function hello() { return 'world'; }\n");
+
+    await runInit(root);
+    const indexOutput = await runIndex(root);
+    const pack = await buildContextPack("generic", root);
+    const skill = await createSkill("demo-skill", root);
+    const listOutput = renderSkillList([skill], root);
+    const validation = await validateSkills(root);
+    const exported = await exportSkills("claude", root);
+    const doctor = await mcpDoctor("0.3.1");
+    const manifest = await mcpManifest("0.3.1");
+    const hookDoctor = await hooksDoctor(root);
+    const stats = formatStats(await collectStats(root));
+
+    expect(indexOutput).toContain("Heuristic Repo Map written");
+    await expect(fs.access(path.join(root, "docs", "mcp.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "first-real-workflow.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "examples", "mcp", "initialize.json"))).resolves.toBeUndefined();
+    await expect(fs.access(pack.path)).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".soturail", "exports", "skills", "claude", "demo-skill.md"))).resolves.toBeUndefined();
+    expect(listOutput).toContain("skills_count: 1");
+    expect(validation.ok).toBe(true);
+    expect(exported).toContain("demo-skill.md");
+    expect(doctor).toContain("arbitrary_shell_execution: disabled");
+    expect(manifest.resources.length).toBeGreaterThan(0);
+    expect(manifest.tools.map((tool) => tool.name)).toContain("soturail.context.pack");
+    expect(hookDoctor).toContain("Next steps:");
+    expect(stats).toContain("command_count:");
   });
 });
