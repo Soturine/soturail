@@ -99,13 +99,13 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.3.0 --help
+npx soturail@0.3.1 --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail
+npm install -g soturail@0.3.1
 soturail --help
 soturail --version
 ```

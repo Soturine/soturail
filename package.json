@@ -1,6 +1,6 @@
 {
   "name": "soturail",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
   "type": "module",
   "bin": {
@@ -13,7 +13,8 @@
     "dist",
     "README.md",
     "LICENSE",
-    "docs"
+    "docs",
+    "examples"
   ],
   "scripts": {
     "sync:version": "node scripts/sync-version.mjs",
