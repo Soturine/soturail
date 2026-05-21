@@ -71,6 +71,26 @@ node app.js
 npx soturail --help
 ```
 
+## MCP And Context Packs
+
+PowerShell examples:
+
+```powershell
+soturail mcp doctor
+soturail mcp manifest
+soturail context pack --target generic
+```
+
+CMD examples:
+
+```bat
+soturail mcp doctor
+soturail mcp manifest
+soturail context pack --target generic
+```
+
+When testing `soturail mcp serve --transport stdio`, send one JSON object per line. See `examples\mcp\` for payloads.
+
 ## Safety
 
 SotuRail blocks destructive command shapes through `soturail run`, including `rm -rf`, `sudo`, `del /s`, downloaded script piping and automatic `git push`.

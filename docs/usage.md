@@ -67,13 +67,21 @@ soturail bench compare-engines
 
 ```bash
 soturail skills init demo-skill
+soturail skills list
 soturail skills validate
 soturail skills export --target claude
+soturail context pack --target claude
+soturail context pack --target codex
+soturail context pack --target gemini
+soturail context pack --target cursor
 soturail context pack --target generic
 soturail mcp doctor
 soturail mcp manifest
+soturail mcp serve --transport stdio
 soturail hooks install --agent claude --mode safe-hooks --dry-run
 soturail release check
 ```
 
 MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution in v0.3.0.
+
+For a first clean-folder walkthrough, see [first-real-workflow.md](first-real-workflow.md).

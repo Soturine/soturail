@@ -1,6 +1,6 @@
 # Workflow Rail
 
-Workflow Rail is planned for v0.4.0. It is not implemented in v0.3.0.
+Workflow Rail is planned for v0.4.0. It is not implemented in v0.3.x.
 
 The goal is to describe repeatable engineering workflows as local, auditable artifacts that can later export into Skill Rail or an MCP server.
 
@@ -24,3 +24,9 @@ soturail workflow export skill
 - Require human approval before enabling generated workflows or exported skills.
 
 Workflow Rail should complement, not replace, the existing SotuRail rails: `soturail run`, raw log recovery, Knowledge-to-Rules, benchmarks, cache-normalized payloads and self-dogfooding reports.
+
+## Current Road
+
+- v0.3.1: real usage polish, installed workflow examples and clean-folder smoke tests.
+- v0.3.2: stronger reducers and deduplication.
+- v0.4.0: real agent integrations and Workflow Rail.

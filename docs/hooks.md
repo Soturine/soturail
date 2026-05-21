@@ -20,3 +20,10 @@ Installers create backups before modifying existing files. Dry-run prints every 
 Claude safe-hooks write `.claude/settings.json` and hook scripts under `.claude/hooks/`. The pre-tool hook blocks destructive command shapes and suggests `soturail run` for tests, builds and logs.
 
 Always review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.
+
+`soturail hooks doctor` prints safe modes and next commands:
+
+- Claude: `safe-hooks` and `mcp`.
+- Codex, Gemini and Cursor: `prompt-only`.
+- Start with `--dry-run`.
+- Export guidance with `soturail hooks export --agent claude`.

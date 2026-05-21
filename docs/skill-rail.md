@@ -20,3 +20,7 @@ Skills live in `.soturail/skills/<skill-id>/` with `skill.yml`, `SKILL.md`, exam
 Validation checks required metadata, target names, duplicate IDs, deterministic content hashes, destructive shell patterns, prompt-injection style instructions and probable embedded secrets.
 
 Exports are written to `.soturail/exports/skills/<target>/`. Review every generated file before enabling it in Claude, Codex, Gemini, Cursor or another host.
+
+`soturail skills list` prints each skill ID, risk level, name, description, version, targets and local path. If there are no local skills, it prints the command to create one.
+
+The generated starter skill includes safe workflow steps, a verification checklist, example input/output, target metadata and human approval requirements for destructive commands, remote writes and dependency installation.

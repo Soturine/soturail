@@ -144,10 +144,16 @@ SotuRail does not claim native speedups unless local benchmark results show them
 soturail init
 soturail index
 soturail read README.md --query "quick start"
+soturail context pack --target generic
+soturail skills init demo-skill
+soturail skills validate
+soturail mcp doctor
 soturail run npm test
 soturail expand <raw_id>
 soturail stats
 ```
+
+For an installed clean-folder walkthrough, see [docs/first-real-workflow.md](docs/first-real-workflow.md).
 
 ## 7. Commands
 
@@ -233,6 +239,8 @@ soturail skills pack --format markdown
 
 Exports are written under `.soturail/exports/skills/` and should be reviewed before enabling in an agent host.
 
+Examples live under [examples/skills](examples/skills).
+
 ## MCP And Context Packs
 
 SotuRail exposes local context through a minimal MCP-compatible stdio server and cache-friendly context packs.
@@ -241,11 +249,17 @@ SotuRail exposes local context through a minimal MCP-compatible stdio server and
 soturail mcp doctor
 soturail mcp manifest
 soturail mcp serve --transport stdio
+soturail context pack --target claude
+soturail context pack --target codex
+soturail context pack --target gemini
+soturail context pack --target cursor
 soturail context pack --target generic
 soturail context explain
 ```
 
 MCP does not expose arbitrary shell execution in v0.3.0. Raw log expansion redacts probable secrets unless raw output is explicitly requested.
+
+Context packs are written to `.soturail/context/<target>-context.md`. JSON-RPC examples live under [examples/mcp](examples/mcp).
 
 ## 10. Agent Response Compression
 

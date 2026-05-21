@@ -1,0 +1,26 @@
+id: release-manager
+name: Release Manager
+description: Prepare release validation, changelog notes, npm package checks and GitHub release evidence.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: medium
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - npm publish without validation
+  - git push without explicit user request
+  - secret exfiltration
+requires_human_approval:
+  - remote_write
+  - dependency_install
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
