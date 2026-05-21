@@ -8,6 +8,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.4.0] - 2026-05-21
+
+### Added
+
+- Added agent integration registry and exports.
+- Added agent-specific prompt/context exports for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+- Added MCP host configuration helpers.
+- Added MCP smoke command.
+- Added Workflow Rail with local task state.
+- Added optional Git worktree task isolation.
+- Added agent integration examples and workflow examples.
+
+### Changed
+
+- Improved hooks dry-run, export and doctor guidance.
+- Improved context packs with agent-specific targets and `--target all`.
+- Improved installed user experience for agent integration setup.
+
+### Fixed
+
+- Strengthened release package verification to prevent stale CLI/package version mismatches.
+
+### Security
+
+- MCP still does not expose arbitrary shell execution by default.
+- Agent config install remains dry-run-first and backup-first.
+- Workflow Rail does not push, merge or delete user work without explicit confirmation.
+
 ## [0.3.3] - 2026-05-21
 
 ### Fixed
