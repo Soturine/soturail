@@ -4,7 +4,7 @@
   "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
   "type": "module",
   "bin": {
-    "soturail": "./dist/cli.js"
+    "soturail": "dist/cli.js"
   },
   "exports": {
     ".": "./dist/cli.js"
@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "build:native": "cargo build --manifest-path native/soturail-native/Cargo.toml --release",

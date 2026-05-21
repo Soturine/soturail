@@ -8,6 +8,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](tsconfig.json)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![CI](https://github.com/Soturine/soturail/actions/workflows/ci.yml/badge.svg)](https://github.com/Soturine/soturail/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/soturail.svg)](https://www.npmjs.com/package/soturail)
+[![npm downloads](https://img.shields.io/npm/dm/soturail.svg)](https://www.npmjs.com/package/soturail)
 [![local-first](https://img.shields.io/badge/local--first-yes-f97316)](docs/security-model.md)
 [![context-engineering](https://img.shields.io/badge/context--engineering-SotuRail-7c3aed)](docs/prompt-caching.md)
 
@@ -51,6 +53,22 @@ SotuRail aims to unify these ideas into one local-first workflow: reversible raw
 
 ## 5. Installation
 
+Use directly with npx:
+
+```bash
+npx soturail --help
+npx soturail@0.2.1 --version
+```
+
+Install globally:
+
+```bash
+npm install -g soturail
+soturail --help
+```
+
+For local development from source:
+
 ```bash
 npm install
 npm run build
@@ -64,6 +82,8 @@ Rust is optional. TypeScript builds do not require Rust.
 npm run build:native   # optional, requires cargo
 npm run build:all      # TypeScript + native, requires cargo
 ```
+
+npm package: https://www.npmjs.com/package/soturail
 
 ## Native Performance Path
 

@@ -12,6 +12,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- First public npm release as `soturail`.
+- Installation via `npx soturail` and `npm install -g soturail`.
 - Native Rust `reduce-json` command.
 - Native Rust `run` hot path with tee-stream raw logging and JSON summary sidecar.
 - Benchmark categories for terminal compression, agent response compression, JSON/tool payload compression, knowledge structuring and native performance.
@@ -25,6 +27,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Knowledge-to-Rules benchmarks are reported as reusable structuring, not failed compression.
 - Native explicit mode now fails clearly when the native binary is unavailable.
 - Removed the low-value non-technical discovery keyword/topic from package metadata.
+
+### Fixed
+
+- Fixed npm `bin` metadata so the `soturail` CLI resolves correctly through `npx` and global installs.
 
 ## [0.2.0] - 2026-05-20
 
