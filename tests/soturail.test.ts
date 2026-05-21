@@ -19,7 +19,7 @@ import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.j
 import { compressOutput } from "../src/compressors/index.js";
 import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
-import { buildProgram } from "../src/cli.js";
+import { buildProgram, isCliEntrypoint } from "../src/cli.js";
 import { expandRawLog, redactProbableSecrets } from "../src/commands/expand.js";
 import { exportHook, hooksDoctor, installHooks, promptOnly } from "../src/commands/hooks.js";
 import { runIndex } from "../src/commands/index.js";
@@ -701,6 +701,24 @@ describe("release reliability", () => {
 
     expect(SOTURAIL_VERSION).toBe(packageJson.version);
     expect(program.version()).toBe(packageJson.version);
+  });
+
+  it("recognizes the CLI entrypoint through canonical paths", async () => {
+    const root = await tempRoot();
+    const current = path.join(root, "real", "cli.js");
+    const linked = path.join(root, "linked", "cli.js");
+    await writeFile(current, "console.log('fixture');\n");
+
+    let invoked = current;
+    try {
+      await fs.mkdir(path.dirname(linked), { recursive: true });
+      await fs.symlink(current, linked);
+      invoked = linked;
+    } catch {
+      invoked = current;
+    }
+
+    expect(isCliEntrypoint(invoked, current)).toBe(true);
   });
 
   it("fails preflight when package and CLI versions differ", async () => {

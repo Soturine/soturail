@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
@@ -59,8 +60,28 @@ export function buildProgram(): Command {
   return program;
 }
 
+function canonicalEntrypointPath(inputPath: string): string {
+  const resolved = path.resolve(inputPath);
+  try {
+    return path.normalize(realpathSync.native(resolved));
+  } catch {
+    try {
+      return path.normalize(realpathSync(resolved));
+    } catch {
+      return path.normalize(resolved);
+    }
+  }
+}
+
+export function isCliEntrypoint(invokedPath: string | undefined, currentFile: string): boolean {
+  if (!invokedPath) return false;
+  const invoked = canonicalEntrypointPath(invokedPath);
+  const current = canonicalEntrypointPath(currentFile);
+  return process.platform === "win32" ? invoked.toLowerCase() === current.toLowerCase() : invoked === current;
+}
+
 const currentFile = fileURLToPath(import.meta.url);
-if (process.argv[1] && path.resolve(process.argv[1]) === currentFile) {
+if (isCliEntrypoint(process.argv[1], currentFile)) {
   buildProgram().parseAsync(process.argv).catch((error: unknown) => {
     const message = error instanceof Error ? error.message : String(error);
     process.stderr.write(`SotuRail error: ${message}\n`);
