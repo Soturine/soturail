@@ -20,7 +20,7 @@ import { compressOutput } from "../src/compressors/index.js";
 import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { buildProgram } from "../src/cli.js";
-import { expandRawLog } from "../src/commands/expand.js";
+import { expandRawLog, redactProbableSecrets } from "../src/commands/expand.js";
 import { exportHook, hooksDoctor, installHooks, promptOnly } from "../src/commands/hooks.js";
 import { runIndex } from "../src/commands/index.js";
 import { ingestCommand } from "../src/commands/ingest.js";
@@ -30,6 +30,8 @@ import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
 import { checkRules, listRules } from "../src/commands/rules.js";
 import { collectStats, formatStats } from "../src/commands/stats.js";
+import { applyBlockDedupe } from "../src/core/block-dedupe.js";
+import { DedupeStore } from "../src/core/dedupe-store.js";
 import { runReleasePreflight, verifyPackedPackage } from "../src/core/release-preflight.js";
 import { selfDoctor, writeSelfReport } from "../src/core/self-dogfood.js";
 import { SOTURAIL_VERSION } from "../src/core/version.js";
@@ -214,6 +216,18 @@ describe("expand", () => {
     expect(Buffer.compare(expanded, raw)).toBe(0);
     expect(metrics.some((event) => event.type === "expand" && event.raw_id === log.rawId)).toBe(true);
   });
+
+  it("redacts probable secrets by default for CLI-facing expansion", () => {
+    const redacted = redactProbableSecrets([
+      "Authorization: Bearer abcdefghijklmnopqrstuvwxyz123456",
+      "OPENAI_API_KEY=sk-proj-abcdefghijklmnopqrstuvwxyz123456",
+      "GITHUB_TOKEN=ghp_abcdefghijklmnopqrstuvwxyz123456"
+    ].join("\n"));
+
+    expect(redacted).toContain("Bearer [SOTURAIL_REDACTED]");
+    expect(redacted).toContain("OPENAI_API_KEY=[SOTURAIL_REDACTED]");
+    expect(redacted).not.toContain("abcdefghijklmnopqrstuvwxyz123456");
+  });
 });
 
 describe("safety policy", () => {
@@ -276,6 +290,46 @@ describe("dedupe", () => {
     expect(second.summary).toContain(`Output identical to previous raw_id ${first.rawId}`);
     expect(records).toHaveLength(2);
   });
+
+  it("reuses safe blocks without removing error blocks", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    const store = new DedupeStore(root);
+    const safeBlock = Array.from({ length: 8 }, (_, index) => `cache hit package-${index}`).join("\n");
+    const errorBlock = [
+      "ERROR failed test",
+      "AssertionError: expected 1 to be 2",
+      "    at tests/app.test.ts:8:12",
+      "security warning",
+      "line 5",
+      "line 6",
+      "line 7",
+      "line 8"
+    ].join("\n");
+    const first = await applyBlockDedupe(safeBlock, store, {
+      rawId: "raw-one",
+      blockMinLines: 8,
+      recentWindow: 10,
+      preserveErrorBlocks: true,
+      similarMode: "off"
+    });
+    for (const block of first.newBlocks) {
+      await store.appendBlock({ kind: "block", ...block });
+    }
+
+    const second = await applyBlockDedupe(`${safeBlock}\n${errorBlock}`, store, {
+      rawId: "raw-two",
+      blockMinLines: 8,
+      recentWindow: 10,
+      preserveErrorBlocks: true,
+      similarMode: "off"
+    });
+
+    expect(second.output).toContain("[deduped block:");
+    expect(second.output).toContain("AssertionError");
+    expect(second.output).toContain("tests/app.test.ts:8:12");
+    expect(second.reusedBlocks).toHaveLength(1);
+  });
 });
 
 describe("branding assets", () => {
@@ -335,11 +389,11 @@ describe("reducers and benchmarks", () => {
     const results = await runBenchmarks({ engine: "ts" }, root);
     const report = await fs.readFile(path.join(root, "benchmarks", "reports", "latest.md"), "utf8");
     const categories = [...new Set(results.map((result) => result.category))];
-    const json = results.find((result) => result.case_id === "json-tool-payload");
+    const json = results.find((result) => result.case_id === "json_tool_payload");
     const rules = results.find((result) => result.category === "knowledge_structuring");
 
     expect(categories).toEqual(expect.arrayContaining([
-      "terminal_compression",
+      "terminal_reducer",
       "agent_response_compression",
       "knowledge_structuring",
       "cache_stability",
@@ -776,6 +830,10 @@ describe("stats", () => {
     expect(stats.estimated_compressed_tokens).toBe(50);
     expect(stats.estimated_reduced_payload_tokens).toBe(50);
     expect(stats.estimated_net_tokens_sent).toBeGreaterThan(50);
+    expect(stats.terminal_reducer_estimated_tokens_saved).toBe(60);
+    expect(stats.metadata_overhead_tokens).toBe(stats.summary_overhead_tokens);
+    expect(stats.net_estimated_tokens_saved).toBe(stats.estimated_raw_tokens - stats.estimated_net_tokens_sent);
+    expect(stats.dedupe_recent_window).toBe(10);
     expect(stats.compression_ratio).toBe(2);
     expect(stats.command_count).toBe(2);
     expect(stats.expansion_count).toBe(1);
