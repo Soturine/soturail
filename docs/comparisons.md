@@ -28,8 +28,10 @@ MemPalace-like memory/evidence ideas are related. SotuRail uses local JSONL memo
 
 Nicole-style knowledge-to-rules workflows are related. SotuRail has `ingest` and `rules` with future hardened PDF extraction.
 
-## Skills And Workflow Orchestration
+## Skills, Agent Integrations And Workflow Orchestration
 
-Agent-skills and SkillsMP-like ecosystems are related to Skill Rail exports. Compozy, Superpowers and OpenSpec-style orchestration are future Workflow Rail territory.
+Agent-skills and SkillsMP-like ecosystems are related to Skill Rail exports. SotuRail v0.4.0 exports prompt/context files and MCP snippets for Claude, Codex, Gemini, Cursor, Antigravity and generic agents without claiming host-native superiority.
+
+Compozy, Superpowers and OpenSpec-style orchestration are related to Workflow Rail. SotuRail's Workflow Rail is a local state machine with optional Git worktree isolation; it does not push, merge or delete user work automatically.
 
 SotuRail should not be described as better than these projects unless a specific local benchmark proves a specific metric.

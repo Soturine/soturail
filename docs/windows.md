@@ -78,7 +78,10 @@ PowerShell examples:
 ```powershell
 soturail mcp doctor
 soturail mcp manifest
+soturail mcp smoke
+soturail mcp config --agent generic
 soturail context pack --target generic
+soturail context pack --target all
 ```
 
 CMD examples:
@@ -86,10 +89,33 @@ CMD examples:
 ```bat
 soturail mcp doctor
 soturail mcp manifest
+soturail mcp smoke
+soturail mcp config --agent generic
 soturail context pack --target generic
+soturail context pack --target all
 ```
 
 When testing `soturail mcp serve --transport stdio`, send one JSON object per line. See `examples\mcp\` for payloads.
+
+## Agent And Workflow Commands
+
+PowerShell:
+
+```powershell
+soturail agents doctor
+soturail agents export --agent all
+soturail workflow new "Try SotuRail"
+```
+
+CMD:
+
+```bat
+soturail agents doctor
+soturail agents export --agent all
+soturail workflow new "Try SotuRail"
+```
+
+Quote workflow titles and paths with spaces.
 
 ## Safety
 
@@ -107,7 +133,7 @@ npm run release:check
 
 `package.json`, `package-lock.json`, `node dist/cli.js --version`, the npm tarball name, the changelog and the release notes must all agree on the same version.
 
-v0.3.2 also verifies the packed tarball by installing it in a temporary clean project and running the installed CLI. This helps catch stale generated version files before publish.
+v0.4.0 also verifies the packed tarball by installing it in a temporary clean project and running the installed CLI. This helps catch stale generated version files before publish.
 
 Use browser-based npm login when needed:
 

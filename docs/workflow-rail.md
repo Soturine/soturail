@@ -1,32 +1,54 @@
 # Workflow Rail
 
-Workflow Rail is planned for v0.4.0. It is not implemented in v0.3.x.
-
-The goal is to describe repeatable engineering workflows as local, auditable artifacts that can later export into Skill Rail or an MCP server.
-
-Planned commands:
+Workflow Rail is a local task state system for SotuRail v0.4.0. It stores auditable workflow artifacts under `.soturail/workflows/` and can optionally plan or create local Git worktrees.
 
 ```bash
-soturail workflow new <name>
-soturail workflow from-template <name>
-soturail workflow validate
-soturail workflow export skill
+soturail workflow new "Implement feature"
+soturail workflow list
+soturail workflow show <id>
+soturail workflow plan <id>
+soturail workflow start <id> --worktree --dry-run
+soturail workflow status <id>
+soturail workflow verify <id>
+soturail workflow close <id>
 ```
 
-## Security Requirements
+## State Machine
 
-- Keep generated workflows local-first by default.
-- Validate workflow files before execution or export.
-- Scan for prompt injection.
-- Scan for destructive shell commands.
-- Scan for secret exfiltration.
-- Scan for downloaded script execution such as `curl ... | sh` and `wget ... | bash`.
-- Require human approval before enabling generated workflows or exported skills.
+Workflows use explicit states:
 
-Workflow Rail should complement, not replace, the existing SotuRail rails: `soturail run`, raw log recovery, Knowledge-to-Rules, benchmarks, cache-normalized payloads and self-dogfooding reports.
+- `draft`
+- `planned`
+- `active`
+- `verifying`
+- `ready_for_review`
+- `closed`
+- `blocked`
 
-## Current Road
+## Storage
 
-- v0.3.1: real usage polish, installed workflow examples and clean-folder smoke tests.
-- v0.3.2: stronger reducers and deduplication.
-- v0.4.0: real agent integrations and Workflow Rail.
+Each workflow uses:
+
+```txt
+.soturail/workflows/<id>/
+├── workflow.yml
+├── plan.md
+├── tasks.md
+├── verification.md
+└── logs/
+```
+
+## Worktrees
+
+`soturail workflow start <id> --worktree --dry-run` prints a local worktree plan. If run without `--dry-run` inside a Git repository, SotuRail may create a local worktree under `.soturail/worktrees/<id>/`.
+
+Safety rules:
+
+- SotuRail does not push.
+- SotuRail does not merge.
+- SotuRail does not delete user work without explicit confirmation.
+- Rollback instructions are printed when worktrees are planned.
+
+## Verification
+
+`soturail workflow verify <id>` only runs configured safe checks when they are explicit. Without configured checks, it prints a checklist instead of inventing commands.

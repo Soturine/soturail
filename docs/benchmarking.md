@@ -22,14 +22,15 @@ The suite groups results as:
 - cache stability;
 - native engine availability/performance when available;
 - skill rail validation/export;
-- MCP resource listing/reading;
+- MCP resource listing/reading/smoke;
 - context pack generation;
-- agent hook export;
+- agent hook and agent integration export;
+- Workflow Rail dry-run state;
 - memory approval workflow.
 
 Terminal reducer cases include npm install noise, npm test success, Vitest failures, TypeScript diagnostics, git diff/status noise, Docker logs, ESLint failures, Vite/Next build output, Java stack traces, Maven/Gradle failures, JSON/tool payload output, tiny-output overhead and dedupe fixtures.
 
-Each v0.3.2 reducer case reports:
+Each reducer and integration case reports:
 
 - `raw_tokens`;
 - `reduced_tokens`;

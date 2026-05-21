@@ -85,3 +85,20 @@ soturail release check
 MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution in v0.3.0.
 
 For a first clean-folder walkthrough, see [first-real-workflow.md](first-real-workflow.md).
+
+## v0.4.0 Workflows
+
+```bash
+soturail agents list
+soturail agents doctor
+soturail agents export --agent all
+soturail agents install --agent claude --mode mcp --dry-run
+soturail mcp config --agent generic
+soturail mcp smoke
+soturail context pack --target all
+soturail workflow new "Implement feature"
+soturail workflow list
+soturail workflow start <id> --worktree --dry-run
+```
+
+Agent exports are written to `.soturail/exports/agents/`. Workflow Rail stores local task state under `.soturail/workflows/`.

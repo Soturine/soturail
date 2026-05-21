@@ -5,6 +5,8 @@ SotuRail includes a local MCP-compatible server over stdio using JSON-RPC 2.0 st
 ```bash
 soturail mcp doctor
 soturail mcp manifest
+soturail mcp config --agent generic
+soturail mcp smoke
 soturail mcp serve --transport stdio
 ```
 
@@ -58,3 +60,17 @@ Security defaults:
 - no `soturail.run` MCP tool by default;
 - raw log expansion redacts probable secrets unless `allow_raw=true`;
 - provider cache hits are never invented.
+
+## Host Config Helpers
+
+`soturail mcp config --agent claude|cursor|generic` writes a reviewed stdio snippet under `.soturail/exports/mcp/<agent>/mcp-config.json`.
+
+The snippet runs:
+
+```bash
+soturail mcp serve --transport stdio
+```
+
+It does not assume a global application config path. Review it before adding it to an agent host.
+
+`soturail mcp smoke` verifies `initialize`, `resources/list`, `resources/read` and `tools/list` without starting a long-running process, and confirms `soturail.run` is not exposed by default.

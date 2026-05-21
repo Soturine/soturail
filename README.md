@@ -24,7 +24,7 @@ It wraps a repository and terminal session with reversible evidence rails: heuri
 
 ## Project Status
 
-v0.3.x is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP and context packs are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.4.0 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
 
 ## Built With SotuRail
 
@@ -101,13 +101,13 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.3.3 --help
+npx soturail@0.4.0 --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail@0.3.3
+npm install -g soturail@0.4.0
 soturail --help
 soturail --version
 ```
@@ -147,6 +147,10 @@ soturail init
 soturail index
 soturail read README.md --query "quick start"
 soturail context pack --target generic
+soturail agents doctor
+soturail agents export --agent all
+soturail mcp smoke
+soturail workflow new "Try SotuRail"
 soturail skills init demo-skill
 soturail skills validate
 soturail mcp doctor
@@ -172,6 +176,12 @@ soturail dedupe stats
 soturail bench prepare
 soturail bench run --engine ts
 soturail hooks list
+soturail agents list
+soturail agents export --agent all
+soturail mcp smoke
+soturail mcp config --agent generic
+soturail context pack --target all
+soturail workflow list
 soturail format README.md --mode concise
 soturail ingest README.md --type docs
 soturail rules check
@@ -238,6 +248,44 @@ soturail hooks install claude --dry-run
 soturail hooks prompt-only codex
 ```
 
+## Agent Integrations
+
+SotuRail v0.4.0 adds reviewed agent integration profiles for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+
+```bash
+soturail agents list
+soturail agents doctor
+soturail agents export --agent all
+soturail agents install --agent claude --mode mcp --dry-run
+soturail agents install --agent cursor --mode rules --dry-run
+```
+
+Exports live under `.soturail/exports/agents/`. Install commands are dry-run-first, backup-first and project-local by default. SotuRail does not auto-enable arbitrary shell execution or unknown global host configs.
+
+## Workflow Rail
+
+Workflow Rail stores local task state under `.soturail/workflows/` and can optionally plan Git worktree isolation.
+
+```bash
+soturail workflow new "Implement feature"
+soturail workflow list
+soturail workflow start <id> --worktree --dry-run
+soturail workflow verify <id>
+```
+
+SotuRail does not push, merge or delete worktrees automatically.
+
+## MCP Config Helpers
+
+```bash
+soturail mcp config --agent claude
+soturail mcp config --agent cursor
+soturail mcp config --agent generic
+soturail mcp smoke
+```
+
+MCP remains local stdio and does not expose arbitrary shell execution by default.
+
 Host APIs vary, so SotuRail never writes guessed config without showing the target and creating backups for existing files.
 
 Review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.
@@ -270,11 +318,13 @@ soturail context pack --target claude
 soturail context pack --target codex
 soturail context pack --target gemini
 soturail context pack --target cursor
+soturail context pack --target antigravity
 soturail context pack --target generic
+soturail context pack --target all
 soturail context explain
 ```
 
-MCP does not expose arbitrary shell execution in v0.3.0. Raw log expansion redacts probable secrets unless raw output is explicitly requested.
+MCP does not expose arbitrary shell execution. Raw log expansion redacts probable secrets unless raw output is explicitly requested.
 
 Context packs are written to `.soturail/context/<target>-context.md`. JSON-RPC examples live under [examples/mcp](examples/mcp).
 
@@ -329,9 +379,9 @@ Raw logs may contain secrets because they preserve real terminal output. Treat `
 
 Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShell quoting, global install, `npx`, local tarball testing and common paste mistakes such as copying Markdown code-fence labels into CMD.
 
-## Road To Workflow Rail
+## Road To Agent And Workflow Rails
 
-Skill Rail ships in v0.3.0. Workflow Rail remains planned; see [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
+Skill Rail shipped in v0.3.0. Agent integrations and Workflow Rail ship in v0.4.0; see [docs/agents.md](docs/agents.md) and [docs/workflow-rail.md](docs/workflow-rail.md).
 
 ## Comparison Philosophy
 
@@ -339,7 +389,7 @@ SotuRail is inspired by the broader context-engineering ecosystem, including ter
 
 ## 14. Roadmap
 
-See [ROADMAP.md](ROADMAP.md). v0.4.0 focuses on Workflow Rail and Git worktrees; later releases target hardened PDF ingestion, semantic memory, deeper native integration and a stable API.
+See [ROADMAP.md](ROADMAP.md). v0.4.0 focuses on real agent integrations and Workflow Rail; later releases target native performance, hardened knowledge ingestion, semantic memory and a stable API.
 
 ## 15. Contributing
 

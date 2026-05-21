@@ -16,14 +16,14 @@
 - Benchmark reports with dedupe savings, metadata overhead and net token savings.
 - Packed-package verification to prevent package/CLI version drift.
 
-## v0.4.0 - Real Agent Integrations
+## v0.4.0 - Real Agent Integrations And Workflow Rail
 
-- Claude Code / Claude CLI deeper integration.
-- Codex prompt/context pack integration.
-- Gemini prompt/context pack integration.
-- Cursor rules integration.
-- Antigravity prompt-only/context-pack support if format is clear.
-- Stronger MCP host docs.
+- Agent registry for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+- Agent prompt/context exports.
+- MCP host config helper and smoke command.
+- Cursor rule export and Claude safe-hooks/MCP export.
+- Workflow Rail local state machine.
+- Optional local Git worktree isolation without push or merge.
 
 ## v0.5.0 - Native Performance
 
@@ -32,13 +32,12 @@
 - Optional native binaries.
 - No Rust required for npm install.
 
-## v0.6.0 - Workflow Rail And Git Worktrees
+## v0.6.0 - Semantic Memory And Hardened Knowledge Ingestion
 
-- `soturail workflow new <name>`.
-- Workflow templates and validation.
-- Git worktree-aware task rails.
-- Export workflow artifacts into Skill Rail.
-- Safer multi-agent orchestration.
+- Hardened PDF extraction.
+- Optional local embeddings for approved memory and rules.
+- Stale evidence detection across richer file graphs.
+- Rules search and citation workflows.
 
 ## v1.0.0 - Stable API And Plugin Ecosystem
 

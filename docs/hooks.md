@@ -1,6 +1,6 @@
 # Agent Hooks
 
-SotuRail hook support is cautious. Claude gets conservative safe-hooks and MCP guidance first; Codex, Gemini and Cursor use prompt-only fallbacks when stable native hook APIs are unavailable.
+SotuRail hook support is cautious. Claude gets conservative safe-hooks and MCP guidance first; Codex, Gemini, Cursor and Antigravity use prompt-only fallbacks when stable native hook APIs are unavailable.
 
 ```bash
 soturail hooks list
@@ -10,9 +10,12 @@ soturail hooks install --agent claude --mode mcp
 soturail hooks install --agent codex --mode prompt-only
 soturail hooks install --agent gemini --mode prompt-only
 soturail hooks install --agent cursor --mode prompt-only
+soturail hooks install --agent antigravity --mode prompt-only --dry-run
 soturail hooks uninstall --agent claude
+soturail hooks uninstall --agent claude --dry-run
 soturail hooks export --agent claude
 soturail hooks export --agent codex
+soturail hooks export --agent antigravity
 ```
 
 Installers create backups before modifying existing files. Dry-run prints every file that would change. If a host config location is uncertain, SotuRail generates prompt-only guidance instead of guessing.
@@ -24,6 +27,6 @@ Always review generated hooks before enabling them. SotuRail should never auto-i
 `soturail hooks doctor` prints safe modes and next commands:
 
 - Claude: `safe-hooks` and `mcp`.
-- Codex, Gemini and Cursor: `prompt-only`.
+- Codex, Gemini, Cursor and Antigravity: `prompt-only`.
 - Start with `--dry-run`.
 - Export guidance with `soturail hooks export --agent claude`.

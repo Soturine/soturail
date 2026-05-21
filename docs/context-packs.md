@@ -7,7 +7,9 @@ soturail context pack --target claude
 soturail context pack --target codex
 soturail context pack --target gemini
 soturail context pack --target cursor
+soturail context pack --target antigravity
 soturail context pack --target generic
+soturail context pack --target all
 soturail context explain
 soturail context doctor
 ```
@@ -20,6 +22,7 @@ Common generated files:
 - `.soturail/context/codex-context.md`
 - `.soturail/context/gemini-context.md`
 - `.soturail/context/cursor-context.md`
+- `.soturail/context/antigravity-context.md`
 - `.soturail/context/generic-context.md`
 
 Stable-cache order:
@@ -32,7 +35,9 @@ Stable-cache order:
 6. Approved specs.
 7. Approved memory.
 8. Skills summary.
-9. Dynamic footer with timestamps, current commit, raw IDs and recent command notes.
+9. Workflow summary.
+10. MCP resource list.
+11. Dynamic footer with timestamps, current commit, raw IDs and recent command notes.
 
 Dynamic data never appears before stable blocks.
 
