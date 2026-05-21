@@ -4,13 +4,15 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildCachePayload, readCacheBlocks } from "../src/core/cache-normalizer.js";
-import { buildContextPack } from "../src/core/context-pack.js";
+import { buildAllContextPacks, buildContextPack } from "../src/core/context-pack.js";
 import { appendJsonl, defaultConfig, ensureWorkspace, getWorkspacePaths } from "../src/core/config.js";
 import { isAlwaysIgnored, normalizeForIgnore, scanRepository } from "../src/core/file-scanner.js";
-import { handleMcpMessage, mcpDoctor, mcpManifest } from "../src/core/mcp-server.js";
+import { handleMcpMessage, mcpDoctor, mcpManifest, mcpSmoke } from "../src/core/mcp-server.js";
 import { readMcpResource } from "../src/core/mcp-resources.js";
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
+import { agentDoctor, exportAgents, installAgent, mcpConfig } from "../src/core/agent-exporter.js";
+import { formatAgentList } from "../src/core/agent-registry.js";
 import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src/core/safety-policy.js";
 import { createSkill, renderSkillList } from "../src/core/skill-store.js";
 import { exportSkills } from "../src/core/skill-exporter.js";
@@ -35,6 +37,16 @@ import { DedupeStore } from "../src/core/dedupe-store.js";
 import { runReleasePreflight, verifyPackedPackage } from "../src/core/release-preflight.js";
 import { selfDoctor, writeSelfReport } from "../src/core/self-dogfood.js";
 import { SOTURAIL_VERSION } from "../src/core/version.js";
+import {
+  closeWorkflow,
+  createWorkflow,
+  listWorkflows,
+  planWorkflow,
+  readWorkflow,
+  renderWorkflowList,
+  startWorkflow,
+  verifyWorkflow
+} from "../src/core/workflow-store.js";
 
 const tempRoots: string[] = [];
 
@@ -522,6 +534,38 @@ describe("hooks", () => {
   });
 });
 
+describe("agent integrations", () => {
+  it("lists profiles and exports all supported agent targets", async () => {
+    const root = await tempRoot();
+    const list = formatAgentList();
+    const exported = await exportAgents("all", root);
+    const doctor = await agentDoctor(root);
+
+    expect(list).toContain("agents_count: 6");
+    expect(list).toContain("- antigravity [low]");
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/claude/CLAUDE.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/codex/AGENTS.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/gemini/GEMINI.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/cursor/cursor-rules.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/antigravity/prompt-only.md"));
+    expect(doctor).toContain("SotuRail Agent Integration Doctor");
+    expect(doctor).toContain("safe_default: true");
+  });
+
+  it("keeps install dry-runs local and creates backups before overwriting", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "AGENTS.md"), "existing codex guidance\n");
+    const dryRun = await installAgent("codex", { dryRun: true, mode: "prompt-only" }, root);
+    expect(dryRun.lines.join("\n")).toContain("Would write AGENTS.md");
+    expect(dryRun.lines.join("\n")).toContain("Would create backup AGENTS.md.soturail.bak");
+    expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe("existing codex guidance\n");
+
+    const installed = await installAgent("codex", { mode: "prompt-only" }, root);
+    expect(installed.lines.join("\n")).toContain("Create backup AGENTS.md.soturail.bak");
+    await expect(fs.access(path.join(root, "AGENTS.md.soturail.bak"))).resolves.toBeUndefined();
+  });
+});
+
 describe("skill rail", () => {
   it("creates, validates and exports a Claude skill", async () => {
     const root = await tempRoot();
@@ -575,6 +619,18 @@ describe("context packs", () => {
     expect(first.payload.split(marker)[0]).toBe(second.payload.split(marker)[0]);
     expect(first.payload).toContain("## Dynamic Footer");
   });
+
+  it("builds all agent context targets with workflow and MCP summaries", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await createWorkflow("Context pack task", root, "2026-05-21T00:00:00.000Z");
+    const packs = await buildAllContextPacks(root, { now: "2026-05-21T00:00:00.000Z" });
+
+    expect(packs.map((pack) => pack.target)).toEqual(["claude", "codex", "gemini", "cursor", "antigravity", "generic"]);
+    expect(packs[0]?.payload).toContain("## Workflow Summary");
+    expect(packs[0]?.payload).toContain("## MCP Resource List");
+    await expect(fs.access(path.join(root, ".soturail", "context", "antigravity-context.md"))).resolves.toBeUndefined();
+  });
 });
 
 describe("mcp", () => {
@@ -610,6 +666,53 @@ describe("mcp", () => {
     expect(repoMap.result.contents[0].text).toContain("Heuristic Repo Map");
     expect(toolNames).toContain("soturail.context.pack");
     expect(toolNames).not.toContain("soturail.run");
+  });
+
+  it("exports MCP config and passes smoke without exposing raw shell execution", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    const config = mcpConfig("generic");
+    const smoke = await mcpSmoke(root, "0.4.0");
+    const tools = config.tools as string[];
+
+    expect(config.command).toBe("soturail");
+    expect(config.args).toEqual(["mcp", "serve", "--transport", "stdio"]);
+    expect(tools).toContain("soturail.context.pack");
+    expect(tools).not.toContain("soturail.run");
+    expect(smoke.ok).toBe(true);
+    expect(smoke.output).toContain("arbitrary_shell_tool_exposed: no");
+  });
+
+  it("redacts env, secrets and raw log paths from MCP resources", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "ROADMAP.md"), "Uses .env and token=sk-testSECRETSECRETSECRET and .soturail/raw/2026/x.log\n");
+    const resource = await readMcpResource("soturail://roadmap", root);
+
+    expect(resource.text).not.toContain(".soturail/raw/2026/x.log");
+    expect(resource.text).not.toContain("sk-testSECRETSECRETSECRET");
+    expect(resource.text).toContain("[raw-log-path-redacted]");
+    expect(resource.text).toContain("[env-file-redacted]");
+  });
+});
+
+describe("workflow rail", () => {
+  it("creates, lists, shows and transitions workflow state", async () => {
+    const root = await tempRoot();
+    const created = await createWorkflow("Fix parser bug", root, "2026-05-21T00:00:00.000Z");
+    const listed = renderWorkflowList(await listWorkflows(root));
+    const planned = await planWorkflow(created.id, root);
+    const started = await startWorkflow(created.id, { dryRun: true, worktree: true }, root);
+    const verify = await verifyWorkflow(created.id, root);
+    const closed = await closeWorkflow(created.id, root);
+
+    expect(created.state).toBe("draft");
+    expect(listed).toContain("Fix parser bug");
+    expect(planned.state).toBe("planned");
+    expect(started).toContain("Dry-run only");
+    expect(started).toContain("would_update_state");
+    expect(verify).toContain("No commands were run.");
+    expect(closed.state).toBe("closed");
+    expect((await readWorkflow(created.id, root)).state).toBe("closed");
   });
 });
 
@@ -745,7 +848,7 @@ describe("release reliability", () => {
     expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
   });
 
-  it("has v0.3.3 release notes, changelog entry and lockfile version sync", async () => {
+  it("has v0.4.0 release notes, changelog entry and lockfile version sync", async () => {
     const root = process.cwd();
     const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
     const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
@@ -754,11 +857,11 @@ describe("release reliability", () => {
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
 
-    expect(packageJson.version).toBe("0.3.3");
+    expect(packageJson.version).toBe("0.4.0");
     expect(packageLock.version).toBe(packageJson.version);
     expect(packageLock.packages[""].version).toBe(packageJson.version);
-    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.3.3.md"))).resolves.toBeUndefined();
-    expect(changelog).toContain("## [0.3.3]");
+    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.4.0.md"))).resolves.toBeUndefined();
+    expect(changelog).toContain("## [0.4.0]");
   });
 
   it("requires release notes and changelog entries during preflight", async () => {
