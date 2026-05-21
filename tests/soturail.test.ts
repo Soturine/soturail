@@ -727,7 +727,7 @@ describe("release reliability", () => {
     expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
   });
 
-  it("has v0.3.1 release notes, changelog entry and lockfile version sync", async () => {
+  it("has v0.3.2 release notes, changelog entry and lockfile version sync", async () => {
     const root = process.cwd();
     const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
     const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
@@ -736,11 +736,11 @@ describe("release reliability", () => {
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
 
-    expect(packageJson.version).toBe("0.3.1");
+    expect(packageJson.version).toBe("0.3.2");
     expect(packageLock.version).toBe(packageJson.version);
     expect(packageLock.packages[""].version).toBe(packageJson.version);
-    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.3.1.md"))).resolves.toBeUndefined();
-    expect(changelog).toContain("## [0.3.1]");
+    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.3.2.md"))).resolves.toBeUndefined();
+    expect(changelog).toContain("## [0.3.2]");
   });
 
   it("requires release notes and changelog entries during preflight", async () => {

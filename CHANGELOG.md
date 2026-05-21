@@ -8,6 +8,33 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.3.2] - 2026-05-21
+
+### Added
+
+- Added package verification gate that installs the packed tarball in a clean temporary directory before release.
+- Added stronger reducers for common developer outputs.
+- Added block-level deduplication.
+- Added dedupe statistics.
+- Added expanded reducer benchmark cases.
+- Added safer raw log redaction for `soturail expand`.
+
+### Changed
+
+- Improved `soturail stats` with reducer, dedupe and metadata accounting.
+- Improved benchmark reports with net token savings and dedupe savings.
+- Improved release validation to prevent package/CLI version mismatch.
+
+### Fixed
+
+- Fixed release process gap where a published package could pass local version checks but still ship stale CLI metadata.
+- Fixed reducer behavior for noisy command outputs where important failures could be buried.
+
+### Security
+
+- Raw log expansion redacts probable secrets by default.
+- Full raw output requires explicit opt-in.
+
 ## [0.3.1] - 2026-05-21
 
 ### Added
