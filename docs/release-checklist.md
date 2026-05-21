@@ -11,9 +11,21 @@ Before publishing:
 - [ ] `node dist/cli.js self all`
 - [ ] `npm pack --dry-run`
 - [ ] `npm run release:check`
+- [ ] `node dist/cli.js --version` matches `package.json`.
 - [ ] Confirm docs mention limitations honestly.
 - [ ] Confirm no telemetry exists.
 - [ ] Confirm no `git push` is routed through `soturail run`.
+
+## Version Sync
+
+Check four separate release identifiers before publishing:
+
+- npm package version: `package.json` and `package-lock.json`.
+- CLI runtime version: `node dist/cli.js --version`.
+- Git tag: created only when the release process calls for it.
+- GitHub release: created only after npm publish succeeds.
+
+The package version and CLI runtime version must match. `npm run build` regenerates the CLI version source from `package.json`, and `npm run release:check` verifies the built CLI before publication.
 
 ## Audit Distinction
 
@@ -23,7 +35,35 @@ Before publishing:
 
 Runtime audit is clean with `npm audit --omit=dev`. Remaining audit findings, if any, are development dependency findings and should be upgraded safely without `--force`.
 
-For v0.2.2, the full audit findings are in the Vitest/Vite development test stack. npm's suggested fix is a semver-major Vitest upgrade, so do not run `npm audit fix --force` blindly.
+For v0.2.x, the full audit findings are in the Vitest/Vite development test stack when present. npm's suggested fix may be a semver-major Vitest upgrade, so do not run `npm audit fix --force` blindly.
+
+## npm Login And 2FA
+
+Use browser-based npm login before publishing:
+
+```bash
+npm login --auth-type=web
+npm whoami
+```
+
+If npm requires a one-time password during publish, provide a fresh authenticator code through `NPM_CONFIG_OTP` or `--otp`. Do not commit tokens, OTPs or npm credentials.
+
+PowerShell example:
+
+```powershell
+$env:NPM_CONFIG_OTP="<code>"
+npm run release:publish -- --version X.Y.Z
+Remove-Item Env:NPM_CONFIG_OTP
+```
+
+After npm publish succeeds, verify:
+
+```bash
+npm view soturail version
+npx --yes soturail@X.Y.Z --version
+```
+
+Create or update the GitHub release only after those npm checks pass.
 
 ## Windows Paste Safety
 

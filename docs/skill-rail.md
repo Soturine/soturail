@@ -1,6 +1,6 @@
 # Skill Rail
 
-Skill Rail is planned for v0.3.0. It is not implemented in v0.2.2.
+Skill Rail is planned for v0.3.0. It is not implemented in v0.2.x.
 
 The goal is to turn approved SotuRail specs, rules and workflows into portable, reviewable agent skills without installing untrusted marketplace content automatically.
 

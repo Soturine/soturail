@@ -8,6 +8,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.2.3] - 2026-05-21
+
+### Fixed
+
+- Fixed stale CLI version output after npm publish.
+- Ensured CLI version is derived from package metadata through a single generated source of truth.
+
+### Added
+
+- Added release preflight validation to catch version mismatches before publish.
+- Added tests for CLI/package version synchronization.
+- Added release notes for v0.2.3.
+
+### Changed
+
+- Improved release process documentation for npm and GitHub releases.
+
 ## [0.2.2] - 2026-05-21
 
 ### Added

@@ -6,6 +6,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const versionArg = readArg("--version");
+const otpArg = readArg("--otp");
 const mode = process.argv[2] ?? "check";
 const generatedFiles = [
   path.resolve(root, "benchmarks", "reports", "latest.md"),
@@ -181,6 +182,7 @@ async function runValidation() {
   results.audit = await run("npm", ["audit", "--omit=dev"]);
   results.self = await preserveGeneratedFiles(() => run("node", ["dist/cli.js", "self", "all"]));
   results.pack = await run("npm", ["pack", "--dry-run"]);
+  results.preflight = await run("node", ["dist/cli.js", "release", "check"]);
   return {
     results,
     summary: {
@@ -188,17 +190,15 @@ async function runValidation() {
       test: summarize("test", results.test),
       audit: summarize("audit", results.audit),
       self: summarize("self", results.self),
-      pack: summarize("pack", results.pack)
+      pack: summarize("pack", results.pack),
+      preflight: summarize("preflight", results.preflight)
     }
   };
 }
 
 async function updateVersion(version) {
   await run("npm", ["version", version, "--no-git-tag-version"]);
-  const cliPath = path.resolve(root, "src", "cli.ts");
-  let cli = await fs.readFile(cliPath, "utf8");
-  cli = cli.replace(/\.version\(".*?"\)/, `.version("${version}")`);
-  await fs.writeFile(cliPath, cli, "utf8");
+  await run("node", ["scripts/sync-version.mjs"]);
 }
 
 function changelogSection(version, date) {
@@ -321,6 +321,7 @@ async function checkMode() {
   console.log(`validation_build: ${validation.summary.build}`);
   console.log(`validation_test: ${validation.summary.test}`);
   console.log(`validation_pack: ${validation.summary.pack}`);
+  console.log(`validation_preflight: ${validation.summary.preflight}`);
 }
 
 async function prepareMode(version) {
@@ -329,7 +330,7 @@ async function prepareMode(version) {
   await updateChangelog(version);
   const validation = await runValidation();
   await createReleaseNotes(version, validation);
-  await run("git", ["add", "package.json", "package-lock.json", "src/cli.ts", "CHANGELOG.md", `RELEASE_NOTES_v${version}.md`]);
+  await run("git", ["add", "package.json", "package-lock.json", "src/core/version.ts", "CHANGELOG.md", `RELEASE_NOTES_v${version}.md`]);
   const status = await gitStatusShort();
   if (status.length === 0) {
     console.log(`No release preparation changes to commit for v${version}.`);
@@ -359,7 +360,9 @@ async function publishMode(version, options = {}) {
     throw new Error(`git status is not clean:\n${status}`);
   }
   await runValidation();
-  await run("npm", ["publish"]).catch((error) => {
+  const publishArgs = ["publish"];
+  if (otpArg) publishArgs.push(`--otp=${otpArg}`);
+  await run("npm", publishArgs).catch((error) => {
     console.error("npm publish did not complete.");
     console.error("If npm requested 2FA/authentication, rerun with a fresh one-time password:");
     console.error(`PowerShell: $env:NPM_CONFIG_OTP="<code>"; npm run release:publish -- --version ${version}; Remove-Item Env:NPM_CONFIG_OTP`);
@@ -375,8 +378,8 @@ async function publishMode(version, options = {}) {
 
 async function createOrUpdateGitHubRelease(version) {
   const tag = `v${version}`;
-  const title = `SotuRail v${version} - Self-Dogfooding & Reliability`;
   const notes = `RELEASE_NOTES_v${version}.md`;
+  const title = await releaseTitleFromNotes(version, `SotuRail v${version}`);
   const ghStatus = await run("gh", ["auth", "status"], { quiet: true, allowFailure: true });
   if (ghStatus.code !== 0) {
     console.log(`GitHub CLI is unavailable or unauthenticated. Manual command: gh release create ${tag} --title "${title}" --notes-file ${notes}`);
@@ -391,6 +394,13 @@ async function createOrUpdateGitHubRelease(version) {
   const url = (await run("gh", ["release", "view", tag, "--json", "url", "--jq", ".url"], { quiet: true })).stdout.trim();
   console.log(`github_release_url: ${url}`);
   return url;
+}
+
+async function releaseTitleFromNotes(version, fallback) {
+  const notesPath = path.resolve(root, `RELEASE_NOTES_v${version}.md`);
+  if (!existsSync(notesPath)) return fallback;
+  const firstLine = (await fs.readFile(notesPath, "utf8")).split(/\r?\n/)[0]?.trim();
+  return firstLine?.startsWith("# ") ? firstLine.slice(2).trim() : fallback;
 }
 
 async function fullMode(version) {

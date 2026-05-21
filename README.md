@@ -57,6 +57,17 @@ npm run release:full -- --version X.Y.Z
 
 The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
 
+## Release Reliability
+
+SotuRail includes a release preflight check to prevent stale package metadata, broken npm CLI binaries, missing release notes, and changelog/version mismatches.
+
+```bash
+npm run build
+npm test
+npm run release:check
+npm pack --dry-run
+```
+
 ## 2. Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -88,7 +99,7 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.2.2 --help
+npx soturail@0.2.3 --help
 ```
 
 Install globally:
@@ -96,6 +107,7 @@ Install globally:
 ```bash
 npm install -g soturail
 soturail --help
+soturail --version
 ```
 
 For local development from source:
@@ -255,7 +267,7 @@ Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShel
 
 ## Road To Skill Rail
 
-Skill Rail and Workflow Rail are planned, not implemented in v0.2.2. See [docs/skill-rail.md](docs/skill-rail.md) and [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
+Skill Rail and Workflow Rail are planned, not implemented in v0.2.x. See [docs/skill-rail.md](docs/skill-rail.md) and [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
 
 ## Comparison Philosophy
 

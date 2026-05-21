@@ -21,7 +21,9 @@ import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
 import { checkRules, listRules } from "../src/commands/rules.js";
 import { collectStats, formatStats } from "../src/commands/stats.js";
+import { runReleasePreflight } from "../src/core/release-preflight.js";
 import { selfDoctor, writeSelfReport } from "../src/core/self-dogfood.js";
+import { SOTURAIL_VERSION } from "../src/core/version.js";
 
 const tempRoots: string[] = [];
 
@@ -453,6 +455,56 @@ describe("self dogfooding", () => {
     expect(report.indexOf("## Stable Project Description")).toBeLessThan(report.indexOf("## Dynamic Execution Data"));
     expect(report).toContain("package_name: soturail");
     expect(report).toContain("build_raw_id: build123");
+  });
+});
+
+describe("release reliability", () => {
+  it("keeps CLI version output in sync with package.json", async () => {
+    const packageJson = JSON.parse(await fs.readFile(path.join(process.cwd(), "package.json"), "utf8")) as { version: string };
+    const program = buildProgram();
+
+    expect(SOTURAIL_VERSION).toBe(packageJson.version);
+    expect(program.version()).toBe(packageJson.version);
+  });
+
+  it("fails preflight when package and CLI versions differ", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ name: "soturail", version: "1.2.3" }, null, 2));
+    await writeFile(path.join(root, "package-lock.json"), JSON.stringify({
+      name: "soturail",
+      version: "1.2.3",
+      lockfileVersion: 3,
+      packages: { "": { name: "soturail", version: "1.2.3" } }
+    }, null, 2));
+    await writeFile(path.join(root, "README.md"), "npx soturail --help\nnpm install -g soturail\nsoturail --version\n");
+    await writeFile(path.join(root, "CHANGELOG.md"), "## [1.2.3]\n");
+    await writeFile(path.join(root, "RELEASE_NOTES_v1.2.3.md"), "# Notes\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(
+      path.join(root, "dist", "cli.js"),
+      "if (process.argv.includes('--version')) console.log('1.2.2');\n"
+    );
+
+    const result = await runReleasePreflight(root, { runAudit: false, runPack: false });
+
+    expect(result.ok).toBe(false);
+    expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
+  });
+
+  it("has v0.2.3 release notes, changelog entry and lockfile version sync", async () => {
+    const root = process.cwd();
+    const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
+    const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
+      version: string;
+      packages: { "": { version: string } };
+    };
+    const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
+
+    expect(packageJson.version).toBe("0.2.3");
+    expect(packageLock.version).toBe(packageJson.version);
+    expect(packageLock.packages[""].version).toBe(packageJson.version);
+    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.2.3.md"))).resolves.toBeUndefined();
+    expect(changelog).toContain("## [0.2.3]");
   });
 });
 

@@ -19,13 +19,15 @@ import { registerRulesCommand } from "./commands/rules.js";
 import { registerSelfCommand } from "./commands/self.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
+import { registerReleaseCommand } from "./commands/release.js";
+import { SOTURAIL_VERSION } from "./core/version.js";
 
 export function buildProgram(): Command {
   const program = new Command();
   program
     .name("soturail")
     .description("Local-first Context OS rails for AI coding agents.")
-    .version("0.2.2")
+    .version(SOTURAIL_VERSION)
     .showHelpAfterError();
 
   registerInitCommand(program);
@@ -42,6 +44,7 @@ export function buildProgram(): Command {
   registerMemoryCommand(program);
   registerNativeCommand(program);
   registerRulesCommand(program);
+  registerReleaseCommand(program);
   registerSelfCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);

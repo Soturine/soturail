@@ -26,7 +26,7 @@ From a source checkout:
 npm run build
 npm pack --dry-run
 npm pack
-npm install -g .\soturail-0.2.1.tgz
+npm install -g .\soturail-0.2.3.tgz
 soturail --version
 ```
 
@@ -74,3 +74,24 @@ npx soturail --help
 ## Safety
 
 SotuRail blocks destructive command shapes through `soturail run`, including `rm -rf`, `sudo`, `del /s`, downloaded script piping and automatic `git push`.
+
+## Release Checks On Windows
+
+Before publishing from Windows, run:
+
+```powershell
+npm run build
+node .\dist\cli.js --version
+npm run release:check
+```
+
+`package.json`, `package-lock.json`, `node dist/cli.js --version`, the npm tarball name, the changelog and the release notes must all agree on the same version.
+
+Use browser-based npm login when needed:
+
+```powershell
+npm login --auth-type=web
+npm whoami
+```
+
+Only create the GitHub release after npm publish succeeds and `npx --yes soturail@X.Y.Z --version` prints the published version.
