@@ -506,6 +506,28 @@ describe("mcp", () => {
     expect(resource.text).toContain("Roadmap");
     expect(response.result.resources.length).toBeGreaterThan(0);
   });
+
+  it("handles JSON-RPC smoke messages without exposing shell execution", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await writeFile(path.join(root, ".soturail", "indexes", "repo-map.json"), JSON.stringify({ kind: "Heuristic Repo Map", files: [] }, null, 2));
+    const initialize = await handleMcpMessage({ jsonrpc: "2.0", id: 1, method: "initialize" }, root, "0.3.1");
+    const resources = await handleMcpMessage({ jsonrpc: "2.0", id: 2, method: "resources/list" }, root, "0.3.1");
+    const repoMap = await handleMcpMessage({
+      jsonrpc: "2.0",
+      id: 3,
+      method: "resources/read",
+      params: { uri: "soturail://repo-map" }
+    }, root, "0.3.1");
+    const tools = await handleMcpMessage({ jsonrpc: "2.0", id: 4, method: "tools/list" }, root, "0.3.1");
+    const toolNames = tools.result.tools.map((tool: { name: string }) => tool.name);
+
+    expect(initialize.result.serverInfo.version).toBe("0.3.1");
+    expect(resources.result.resources.map((item: { uri: string }) => item.uri)).toContain("soturail://repo-map");
+    expect(repoMap.result.contents[0].text).toContain("Heuristic Repo Map");
+    expect(toolNames).toContain("soturail.context.pack");
+    expect(toolNames).not.toContain("soturail.run");
+  });
 });
 
 describe("memory approval workflow", () => {
