@@ -1,0 +1,4 @@
+> Task :test FAILED
+UserServiceTest > shouldSaveUser FAILED
+    org.opentest4j.AssertionFailedError at UserServiceTest.java:27
+FAILURE: Build failed with an exception.

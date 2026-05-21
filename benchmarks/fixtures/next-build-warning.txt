@@ -1,0 +1,5 @@
+▲ Next.js 15.0.0
+Creating an optimized production build ...
+warn  - Large page data detected in app/dashboard/page.tsx
+Route (app) /dashboard  125 kB
+✓ Compiled successfully

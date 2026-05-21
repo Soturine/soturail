@@ -3,7 +3,7 @@
 Generated from deterministic local fixtures. No external RTK/Squeez/NTK comparison numbers are included unless a user runs optional comparison locally.
 
 Categories:
-- terminal_compression: 6 case(s)
+- terminal_reducer: 17 case(s)
 - agent_response_compression: 3 case(s)
 - knowledge_structuring: 1 case(s)
 - cache_stability: 1 case(s)
@@ -14,27 +14,38 @@ Categories:
 - agent_integration: 1 case(s)
 - memory_workflow: 1 case(s)
 
-| case_id | category | engine | raw_tokens | reduced_tokens | reduction_percent | runtime_ms | quality | notes |
-|---|---|---:|---:|---:|---:|---:|---|---|
-| npm-install-noisy | terminal_compression | ts | 4143 | 2364 | 42.94% | 1.399 | pass | Terminal output reducer preserved required signals. |
-| vitest-failure-stacktrace | terminal_compression | ts | 1167 | 128 | 89.03% | 0.82 | pass | Terminal output reducer preserved required signals. |
-| tsc-error | terminal_compression | ts | 1184 | 569 | 51.94% | 0.185 | pass | Terminal output reducer preserved required signals. |
-| git-diff-multiple | terminal_compression | ts | 2006 | 628 | 68.69% | 1.223 | pass | Terminal output reducer preserved required signals. |
-| git-status-many | terminal_compression | ts | 958 | 1653 | -72.55% | 0.135 | pass | Terminal output reducer preserved required signals. |
-| json-tool-payload | terminal_compression | ts | 2726 | 152 | 94.42% | 1.67 | pass | Terminal output reducer preserved required signals. |
-| verbose-ai-answer-concise | agent_response_compression | ts | 760 | 99 | 86.97% | 1.177 | pass | Agent response compression mode: concise. |
-| verbose-ai-answer-review | agent_response_compression | ts | 760 | 101 | 86.71% | 0.526 | pass | Agent response compression mode: review. |
-| readme-doc-docs | agent_response_compression | ts | 1468 | 66 | 95.5% | 0.207 | pass | Agent response compression mode: docs. |
-| rules-extraction-markdown | knowledge_structuring | ts | 67 | 990 | n/a | 4.057 | pass | Knowledge-to-Rules is reusable structuring, not pure compression. |
-| cache-stable-prefix | cache_stability | ts | 67198 | 67198 | n/a | 12.206 | pass | Verifies dynamic footer changes do not move stable cache-friendly prefix blocks. |
-| native-engine-availability | native_engine | unavailable | 18 | 18 | n/a | 86.953 | pass | Native binary unavailable; TypeScript benchmark remains authoritative. |
-| skill-validation | skill_rail | ts | 395 | 14 | n/a | 22.472 | pass | Skill Rail benchmark validates safe schema/export behavior. |
-| skill-export-claude | skill_rail | ts | 391 | 57 | n/a | 25.892 | pass | Skill Rail benchmark validates safe schema/export behavior. |
-| mcp-resource-list | mcp | ts | 2 | 537 | n/a | 0.068 | pass | MCP benchmark uses local resources without arbitrary shell execution. |
-| mcp-resource-read | mcp | ts | 1 | 512 | n/a | 0.402 | pass | MCP benchmark uses local resources without arbitrary shell execution. |
-| context-pack-generic | context_pack | ts | 68276 | 68352 | n/a | 61.527 | pass | Context pack benchmark preserves stable-before-dynamic ordering. |
-| hook-export-claude | agent_integration | ts | 5 | 14 | n/a | 7.69 | pass | Hook export benchmark creates reviewable local files. |
-| memory-approval-workflow | memory_workflow | ts | 9 | 262 | n/a | 67.019 | pass | Memory workflow benchmark proposes, approves and lists local memory. |
+| case_id | category | engine | raw_tokens | reduced_tokens | dedupe_tokens_saved | metadata_overhead_tokens | net_tokens_saved | reduction_percent | runtime_ms | quality | notes |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| npm_install_noisy | terminal_reducer | ts | 4143 | 3434 | 0 | 12 | 697 | 17.11% | 2.576 | pass | Terminal output reducer preserved required signals. |
+| npm_test_success | terminal_reducer | ts | 1628 | 85 | 0 | 12 | 1531 | 94.78% | 1.543 | pass | Terminal output reducer preserved required signals. |
+| vitest_failure | terminal_reducer | ts | 1167 | 123 | 0 | 12 | 1032 | 89.46% | 0.483 | pass | Terminal output reducer preserved required signals. |
+| tsc_error | terminal_reducer | ts | 1184 | 1463 | 0 | 10 | -289 | -23.56% | 0.544 | pass | Terminal output reducer preserved required signals. |
+| git_diff_large | terminal_reducer | ts | 2006 | 626 | 0 | 12 | 1368 | 68.79% | 0.992 | pass | Terminal output reducer preserved required signals. |
+| git_status_many_files | terminal_reducer | ts | 958 | 1654 | 0 | 13 | -709 | -72.65% | 0.155 | pass | Terminal output reducer preserved required signals. |
+| json_tool_payload | terminal_reducer | ts | 2726 | 152 | 0 | 12 | 2562 | 94.42% | 2.051 | pass | Terminal output reducer preserved required signals. |
+| docker_logs_noisy | terminal_reducer | ts | 1870 | 707 | 0 | 12 | 1151 | 62.19% | 0.459 | pass | Terminal output reducer preserved required signals. |
+| eslint_failure | terminal_reducer | ts | 49 | 174 | 0 | 12 | -137 | -255.1% | 0.357 | pass | Terminal output reducer preserved required signals. |
+| vite_build_success | terminal_reducer | ts | 968 | 1225 | 0 | 13 | -270 | -26.55% | 0.262 | pass | Terminal output reducer preserved required signals. |
+| next_build_warning | terminal_reducer | ts | 44 | 135 | 0 | 13 | -104 | -206.82% | 0.044 | pass | Terminal output reducer preserved required signals. |
+| java_stacktrace | terminal_reducer | ts | 1097 | 2489 | 0 | 12 | -1404 | -126.89% | 0.66 | pass | Terminal output reducer preserved required signals. |
+| maven_failure | terminal_reducer | ts | 81 | 239 | 0 | 11 | -169 | -195.06% | 0.126 | pass | Terminal output reducer preserved required signals. |
+| gradle_failure | terminal_reducer | ts | 42 | 140 | 0 | 12 | -110 | -233.33% | 0.08 | pass | Terminal output reducer preserved required signals. |
+| tiny_output_overhead | terminal_reducer | ts | 1 | 23 | 0 | 13 | -35 | -2200% | 0.727 | pass | Terminal output reducer preserved required signals. |
+| dedupe_repeated_output | terminal_reducer | ts | 109 | 78 | 46 | 6 | 71 | 28.44% | 3.626 | pass | Block-level dedupe reused repeated safe output while preserving risky lines. |
+| similar_output_dedupe | terminal_reducer | ts | 240 | 38 | 232 | 6 | 428 | 84.17% | 1.893 | pass | Experimental conservative similar-output dedupe normalized timestamps and temp paths. |
+| verbose-ai-answer-concise | agent_response_compression | ts | 760 | 99 | 0 | 0 | 661 | 86.97% | 0.993 | pass | Agent response compression mode: concise. |
+| verbose-ai-answer-review | agent_response_compression | ts | 760 | 101 | 0 | 0 | 659 | 86.71% | 0.492 | pass | Agent response compression mode: review. |
+| readme-doc-docs | agent_response_compression | ts | 1468 | 66 | 0 | 0 | 1402 | 95.5% | 0.386 | pass | Agent response compression mode: docs. |
+| rules-extraction-markdown | knowledge_structuring | ts | 67 | 990 | 0 | 0 | -923 | n/a | 3.056 | pass | Knowledge-to-Rules is reusable structuring, not pure compression. |
+| cache-stable-prefix | cache_stability | ts | 72650 | 72650 | 0 | 0 | 0 | n/a | 12.085 | pass | Verifies dynamic footer changes do not move stable cache-friendly prefix blocks. |
+| native-engine-availability | native_engine | unavailable | 18 | 18 | 0 | 0 | 0 | n/a | 87.201 | pass | Native binary unavailable; TypeScript benchmark remains authoritative. |
+| skill-validation | skill_rail | ts | 395 | 14 | 0 | 0 | 381 | n/a | 24.603 | pass | Skill Rail benchmark validates safe schema/export behavior. |
+| skill-export-claude | skill_rail | ts | 391 | 57 | 0 | 0 | 334 | n/a | 22.453 | pass | Skill Rail benchmark validates safe schema/export behavior. |
+| mcp-resource-list | mcp | ts | 2 | 537 | 0 | 0 | -535 | n/a | 0.091 | pass | MCP benchmark uses local resources without arbitrary shell execution. |
+| mcp-resource-read | mcp | ts | 1 | 551 | 0 | 0 | -550 | n/a | 0.581 | pass | MCP benchmark uses local resources without arbitrary shell execution. |
+| context-pack-generic | context_pack | ts | 73503 | 73579 | 0 | 0 | -76 | n/a | 57.496 | pass | Context pack benchmark preserves stable-before-dynamic ordering. |
+| hook-export-claude | agent_integration | ts | 5 | 14 | 0 | 0 | -9 | n/a | 7.065 | pass | Hook export benchmark creates reviewable local files. |
+| memory-approval-workflow | memory_workflow | ts | 9 | 322 | 0 | 0 | -313 | n/a | 60.285 | pass | Memory workflow benchmark proposes, approves and lists local memory. |
 
 Knowledge structuring cases are extraction and validation tasks, not failed compression cases.
 Native engine rows never fabricate native speed numbers when the native binary is unavailable.

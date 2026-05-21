@@ -1,0 +1,16 @@
+2026-05-21T10:00:00Z cache hit package-0 in C:\Temp\build\a
+2026-05-21T10:00:01Z cache hit package-1 in C:\Temp\build\a
+2026-05-21T10:00:02Z cache hit package-2 in C:\Temp\build\a
+2026-05-21T10:00:03Z cache hit package-3 in C:\Temp\build\a
+2026-05-21T10:00:04Z cache hit package-4 in C:\Temp\build\a
+2026-05-21T10:00:05Z cache hit package-5 in C:\Temp\build\a
+2026-05-21T10:00:06Z cache hit package-6 in C:\Temp\build\a
+2026-05-21T10:00:07Z cache hit package-7 in C:\Temp\build\a
+2026-05-21T10:05:00Z cache hit package-0 in C:\Temp\build\b
+2026-05-21T10:05:01Z cache hit package-1 in C:\Temp\build\b
+2026-05-21T10:05:02Z cache hit package-2 in C:\Temp\build\b
+2026-05-21T10:05:03Z cache hit package-3 in C:\Temp\build\b
+2026-05-21T10:05:04Z cache hit package-4 in C:\Temp\build\b
+2026-05-21T10:05:05Z cache hit package-5 in C:\Temp\build\b
+2026-05-21T10:05:06Z cache hit package-6 in C:\Temp\build\b
+2026-05-21T10:05:07Z cache hit package-7 in C:\Temp\build\b
