@@ -16,6 +16,7 @@ import { createSkill, renderSkillList } from "../src/core/skill-store.js";
 import { exportSkills } from "../src/core/skill-exporter.js";
 import { validateSkills } from "../src/core/skill-validator.js";
 import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
+import { compressOutput } from "../src/compressors/index.js";
 import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { buildProgram } from "../src/cli.js";
@@ -291,6 +292,23 @@ describe("branding assets", () => {
 });
 
 describe("reducers and benchmarks", () => {
+  it("preserves critical developer command signals and raw recovery hints", () => {
+    const tsc = compressOutput("tsc --noEmit", "src/app.ts(12,7): error TS2322: Type 'string' is not assignable to type 'number'.\n", "raw-tsc");
+    const vitest = compressOutput("npm test", "FAIL tests/app.test.ts > saves user\nAssertionError: expected 1 to be 2\n    at tests/app.test.ts:8:12\n", "raw-vitest");
+    const npmInstall = compressOutput("npm install", "npm WARN deprecated left-pad@1.0.0\n3 moderate severity vulnerabilities\nRun npm audit for details\n", "raw-npm");
+    const docker = compressOutput("docker logs app", "2026-05-21T00:00:00Z info ok\n2026-05-21T00:00:01Z ERROR connection refused\n", "raw-docker");
+    const java = compressOutput("java Main", "Exception in thread \"main\" java.lang.NullPointerException\n\tat com.example.Main.main(Main.java:12)\n", "raw-java");
+
+    expect(tsc.summary).toContain("src/app.ts(12,7)");
+    expect(tsc.summary).toContain("Raw log: soturail expand raw-tsc");
+    expect(vitest.summary).toContain("saves user");
+    expect(vitest.summary).toContain("AssertionError");
+    expect(npmInstall.summary).toContain("vulnerabilities");
+    expect(docker.summary).toContain("ERROR connection refused");
+    expect(java.summary).toContain("NullPointerException");
+    expect(java.summary).toContain("Main.java:12");
+  });
+
   it("reduces the default noisy JSON shape while preserving important values", () => {
     const raw = JSON.stringify({
       status: "error",

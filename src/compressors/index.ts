@@ -4,6 +4,7 @@ import { reduceGenericStream } from "./generic-stream.js";
 import { isGitCommand, reduceGitOutput } from "./git-reducer.js";
 import { compactJsonToonWithMetrics } from "./json-toon.js";
 import { isTestCommand, reduceTestOutput } from "./test-reducer.js";
+import { developerReducerKind, reduceDeveloperOutput } from "./developer-reducer.js";
 
 export interface CompressionResult {
   compressor: string;
@@ -30,6 +31,17 @@ export function compressOutput(command: string, raw: string, rawId: string): Com
     const summary = reduceGitOutput(raw, rawId);
     return {
       compressor: "git-reducer",
+      summary,
+      compressed_tokens_estimated: estimateTokens(summary),
+      engine: "ts"
+    };
+  }
+
+  const developerKind = developerReducerKind(command, raw);
+  if (developerKind) {
+    const summary = reduceDeveloperOutput(command, raw, rawId, developerKind);
+    return {
+      compressor: `${developerKind}-reducer`,
       summary,
       compressed_tokens_estimated: estimateTokens(summary),
       engine: "ts"
