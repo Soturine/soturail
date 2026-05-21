@@ -2,7 +2,8 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Command } from "commander";
 import { readCacheBlocks } from "../core/cache-normalizer.js";
-import { getWorkspacePaths } from "../core/config.js";
+import { getWorkspacePaths, loadConfig } from "../core/config.js";
+import { DedupeStore } from "../core/dedupe-store.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { RawStore } from "../core/raw-store.js";
 import { estimateTokens } from "../core/token-estimator.js";
@@ -16,6 +17,12 @@ export interface StatsReport {
   summary_overhead_tokens: number;
   compression_effective: boolean;
   small_output_warning: boolean;
+  terminal_reducer_estimated_tokens_saved: number;
+  dedupe_estimated_tokens_saved: number;
+  metadata_overhead_tokens: number;
+  net_estimated_tokens_saved: number;
+  dedupe_blocks_reused: number;
+  dedupe_recent_window: number;
   compression_ratio: number | null;
   command_count: number;
   expansion_count: number;
@@ -46,10 +53,24 @@ export async function collectStats(root = process.cwd()): Promise<StatsReport> {
   const records = await rawStore.readManifest();
   const events = await metrics.readAll();
   const blocks = await readCacheBlocks(root);
+  const config = await loadConfig(root);
+  const dedupeStats = await new DedupeStore(root).stats();
   const rawTokens = records.reduce((sum, record) => sum + record.raw_tokens_estimated, 0);
   const compressedTokens = records.reduce((sum, record) => sum + record.compressed_tokens_estimated, 0);
   const metadataTokens = records.reduce((sum, record) => sum + estimateMetadataTokens(record), 0);
   const netTokens = compressedTokens + metadataTokens;
+  const terminalSaved = records.reduce(
+    (sum, record) => sum + Math.max(0, record.raw_tokens_estimated - record.compressed_tokens_estimated),
+    0
+  );
+  const dedupeSavedFromEvents = events.reduce((sum, event) => {
+    const value = event.details?.dedupe_estimated_tokens_saved ?? event.details?.estimated_tokens_saved;
+    return sum + (typeof value === "number" && Number.isFinite(value) ? value : 0);
+  }, 0);
+  const dedupeBlocksReused = events.reduce((sum, event) => {
+    const value = event.details?.dedupe_blocks_reused ?? event.details?.reused_blocks;
+    return sum + (typeof value === "number" && Number.isFinite(value) ? value : 0);
+  }, 0);
   const expansionCount = events.filter((event) => event.type === "expand").length;
   const omissionCount = events.filter((event) => event.type === "omission_report").length;
   const failureCount = records.filter((record) => record.exit_code !== 0).length;
@@ -73,6 +94,12 @@ export async function collectStats(root = process.cwd()): Promise<StatsReport> {
     summary_overhead_tokens: metadataTokens,
     compression_effective: netTokens <= rawTokens,
     small_output_warning: netTokens > rawTokens,
+    terminal_reducer_estimated_tokens_saved: terminalSaved,
+    dedupe_estimated_tokens_saved: dedupeSavedFromEvents || dedupeStats.estimatedTokensSaved,
+    metadata_overhead_tokens: metadataTokens,
+    net_estimated_tokens_saved: rawTokens - netTokens,
+    dedupe_blocks_reused: dedupeBlocksReused || dedupeStats.dedupedBlocks,
+    dedupe_recent_window: config.dedupe.recentWindow,
     compression_ratio: compressedTokens > 0 ? Number((rawTokens / compressedTokens).toFixed(2)) : null,
     command_count: records.length,
     expansion_count: expansionCount,
@@ -106,6 +133,12 @@ export function formatStats(report: StatsReport): string {
     `estimated_soturail_metadata_tokens: ${report.estimated_soturail_metadata_tokens}`,
     `estimated_net_tokens_sent: ${report.estimated_net_tokens_sent}`,
     `summary_overhead_tokens: ${report.summary_overhead_tokens}`,
+    `terminal_reducer_estimated_tokens_saved: ${report.terminal_reducer_estimated_tokens_saved}`,
+    `dedupe_estimated_tokens_saved: ${report.dedupe_estimated_tokens_saved}`,
+    `metadata_overhead_tokens: ${report.metadata_overhead_tokens}`,
+    `net_estimated_tokens_saved: ${report.net_estimated_tokens_saved}`,
+    `dedupe_blocks_reused: ${report.dedupe_blocks_reused}`,
+    `dedupe_recent_window: ${report.dedupe_recent_window}`,
     `compression_effective: ${report.compression_effective}`,
     `small_output_warning: ${report.small_output_warning}`,
     `compression_ratio: ${report.compression_ratio === null ? "n/a" : `${report.compression_ratio}:1`}`,
