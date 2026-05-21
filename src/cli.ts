@@ -27,6 +27,7 @@ import { SOTURAIL_VERSION } from "./core/version.js";
 
 export function buildProgram(): Command {
   const program = new Command();
+  program.enablePositionalOptions();
   program
     .name("soturail")
     .description("Local-first Context OS rails for AI coding agents.")

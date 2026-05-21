@@ -21,7 +21,7 @@ The check also verifies:
 ## Publish
 
 ```bash
-npm run release:publish -- --version X.Y.Z
+npm run release:publish -- X.Y.Z
 ```
 
 Publish mode refuses to publish if build, tests, release preflight or runtime audit fail, if the git tree is dirty, or if the version already exists on npm.
@@ -37,14 +37,14 @@ If npm asks for 2FA during publish, use a fresh authenticator code:
 
 ```powershell
 $env:NPM_CONFIG_OTP="<code>"
-npm run release:publish -- --version X.Y.Z
+npm run release:publish -- X.Y.Z
 Remove-Item Env:NPM_CONFIG_OTP
 ```
 
 ## Full
 
 ```bash
-npm run release:full -- --version X.Y.Z --publish-npm --github-release
+npm run release:full -- X.Y.Z --publish-npm --github-release
 ```
 
 Full mode runs release gates, then publishes to npm only when `--publish-npm` is supplied, and creates or updates the GitHub release only when `--github-release` is supplied.
@@ -52,10 +52,12 @@ Full mode runs release gates, then publishes to npm only when `--publish-npm` is
 For explicit CLI usage:
 
 ```bash
-soturail release publish --version X.Y.Z
-soturail release github --version X.Y.Z
-soturail release full --version X.Y.Z --publish-npm --github-release
+soturail release publish X.Y.Z
+soturail release github X.Y.Z
+soturail release full X.Y.Z --publish-npm --github-release
 ```
+
+Release commands also accept `--target-version X.Y.Z`. The older `--version X.Y.Z` form remains supported for npm scripts, but the positional form avoids confusion with the global `soturail --version` flag.
 
 Only create or update the GitHub release after npm publish succeeds and these checks pass:
 

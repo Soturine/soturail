@@ -50,12 +50,12 @@ Release automation is local-first and conservative:
 
 ```bash
 npm run release:check
-npm run release:publish -- --version X.Y.Z
-npm run release:github -- --version X.Y.Z
-npm run release:full -- --version X.Y.Z --publish-npm --github-release
+npm run release:publish -- X.Y.Z
+npm run release:github -- X.Y.Z
+npm run release:full -- X.Y.Z --publish-npm --github-release
 ```
 
-The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
+The release commands accept a positional version, `--target-version X.Y.Z`, or the backward-compatible `--version X.Y.Z` option. The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
 
 ## Release Reliability
 

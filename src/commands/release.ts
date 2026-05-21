@@ -23,50 +23,74 @@ export function registerReleaseCommand(program: Command): void {
   release
     .command("notes")
     .description("Create a release notes skeleton for a version.")
-    .requiredOption("--version <version>", "Release version, for example X.Y.Z")
-    .action(async (options: { version: string }) => {
-      const filePath = await writeReleaseNotesSkeleton(options.version, process.cwd());
+    .argument("[version]", "Release version, for example X.Y.Z")
+    .option("--target-version <version>", "Release version, for example X.Y.Z")
+    .option("--version <version>", "Release version, kept for backward-compatible npm scripts")
+    .action(async (versionArg: string | undefined, options: ReleaseVersionOptions) => {
+      const version = resolveReleaseVersion(versionArg, options);
+      const filePath = await writeReleaseNotesSkeleton(version, process.cwd());
       process.stdout.write(`Release notes written: ${path.relative(process.cwd(), filePath)}\n`);
     });
 
   release
-    .command("publish")
+    .command("publish [version]")
     .description("Validate and publish the package to npm.")
-    .requiredOption("--version <version>", "Release version")
+    .option("--target-version <version>", "Release version")
+    .option("--version <version>", "Release version, kept for backward-compatible npm scripts")
     .option("--otp <code>", "npm one-time password when required")
-    .action(async (options: { version: string; otp?: string }) => {
-      await runReleaseGate(options.version);
+    .action(async (versionArg: string | undefined, options: ReleaseVersionOptions & { otp?: string }) => {
+      const version = resolveReleaseVersion(versionArg, options);
+      await runReleaseGate(version);
       await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
       await runChecked("npm", ["view", "soturail", "version"]);
-      await runChecked("npx", ["--yes", "--package", `soturail@${options.version}`, "soturail", "--version"]);
+      await runChecked("npx", ["--yes", "--package", `soturail@${version}`, "soturail", "--version"]);
     });
 
   release
-    .command("github")
+    .command("github [version]")
     .description("Create or update the GitHub release after npm publish succeeds.")
-    .requiredOption("--version <version>", "Release version")
-    .action(async (options: { version: string }) => {
-      await createOrUpdateGithubRelease(options.version);
+    .option("--target-version <version>", "Release version")
+    .option("--version <version>", "Release version, kept for backward-compatible npm scripts")
+    .action(async (versionArg: string | undefined, options: ReleaseVersionOptions) => {
+      await createOrUpdateGithubRelease(resolveReleaseVersion(versionArg, options));
     });
 
   release
-    .command("full")
+    .command("full [version]")
     .description("Run release gates, optionally publish npm, then optionally create/update GitHub release.")
-    .requiredOption("--version <version>", "Release version")
+    .option("--target-version <version>", "Release version")
+    .option("--version <version>", "Release version, kept for backward-compatible npm scripts")
     .option("--publish-npm", "Publish to npm after gates pass")
     .option("--github-release", "Create or update GitHub release after npm publish is verified")
     .option("--otp <code>", "npm one-time password when required")
-    .action(async (options: { version: string; publishNpm?: boolean; githubRelease?: boolean; otp?: string }) => {
-      await runReleaseGate(options.version);
+    .action(async (versionArg: string | undefined, options: ReleaseVersionOptions & { publishNpm?: boolean; githubRelease?: boolean; otp?: string }) => {
+      const version = resolveReleaseVersion(versionArg, options);
+      await runReleaseGate(version);
       if (options.publishNpm) {
         await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
         await runChecked("npm", ["view", "soturail", "version"]);
-        await runChecked("npx", ["--yes", "--package", `soturail@${options.version}`, "soturail", "--version"]);
+        await runChecked("npx", ["--yes", "--package", `soturail@${version}`, "soturail", "--version"]);
       }
       if (options.githubRelease) {
-        await createOrUpdateGithubRelease(options.version);
+        await createOrUpdateGithubRelease(version);
       }
     });
+}
+
+type ReleaseVersionOptions = {
+  version?: string;
+  targetVersion?: string;
+};
+
+function resolveReleaseVersion(versionArg: string | undefined, options: ReleaseVersionOptions): string {
+  const version = versionArg ?? options.targetVersion ?? options.version;
+  if (!version) {
+    throw new Error("Release version is required. Use `soturail release publish 0.3.0` or `--target-version 0.3.0`.");
+  }
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version)) {
+    throw new Error(`Invalid version: ${version}`);
+  }
+  return version;
 }
 
 export async function writeReleaseNotesSkeleton(version: string, root = process.cwd()): Promise<string> {

@@ -18,6 +18,7 @@ soturail --version
 - Hooks now support reviewed exports and the `--agent` / `--mode` command shape.
 - Benchmarks include Skill Rail, MCP, context packs, hook export and memory workflow cases.
 - Release automation validates package/CLI version sync, changelog, release notes, runtime audit and npm pack contents before publication.
+- Release commands now accept a positional version such as `soturail release publish 0.3.0`, while preserving `--target-version` and backward-compatible `--version` usage.
 
 ## Safety
 
