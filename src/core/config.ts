@@ -12,6 +12,7 @@ export const DEFAULT_BINARY_EXTENSIONS = [
   "webp",
   "pdf",
   "zip",
+  "tgz",
   "exe",
   "dll",
   "so",

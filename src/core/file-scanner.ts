@@ -3,8 +3,9 @@ import path from "node:path";
 import type { SotuRailConfig } from "./config.js";
 import { writeJson } from "./config.js";
 
-const ALWAYS_IGNORED_DIRS = new Set([".git", "node_modules", "dist", "build", "coverage"]);
-const ALWAYS_IGNORED_PATH_PREFIXES = [".soturail/raw"];
+const ALWAYS_IGNORED_DIRS = new Set([".git", ".soturail", "node_modules", "dist", "build", "coverage"]);
+const ALWAYS_IGNORED_PATH_PREFIXES = ["benchmarks/reports", "benchmarks/results"];
+const ALWAYS_IGNORED_FILES = [/\.tgz$/i, /npm-debug\.log$/i];
 
 export interface GitignoreRule {
   pattern: string;
@@ -125,6 +126,9 @@ export function isAlwaysIgnored(relativePath: string, isDirectory: boolean): boo
     return true;
   }
   if (ALWAYS_IGNORED_DIRS.has(firstSegment)) {
+    return true;
+  }
+  if (!isDirectory && ALWAYS_IGNORED_FILES.some((pattern) => pattern.test(normalized))) {
     return true;
   }
   return ALWAYS_IGNORED_PATH_PREFIXES.some(

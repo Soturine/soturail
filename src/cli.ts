@@ -16,6 +16,7 @@ import { registerNativeCommand } from "./commands/native.js";
 import { registerReadCommand } from "./commands/read.js";
 import { registerRunCommand } from "./commands/run.js";
 import { registerRulesCommand } from "./commands/rules.js";
+import { registerSelfCommand } from "./commands/self.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
 
@@ -41,6 +42,7 @@ export function buildProgram(): Command {
   registerMemoryCommand(program);
   registerNativeCommand(program);
   registerRulesCommand(program);
+  registerSelfCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);
 
