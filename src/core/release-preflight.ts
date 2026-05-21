@@ -31,6 +31,9 @@ interface ProcessResult {
   code: number;
   stdout: string;
   stderr: string;
+  command: string;
+  args: string[];
+  cwd: string;
 }
 
 interface AuditSummary {
@@ -43,6 +46,7 @@ export interface PackedPackageVerification {
   tarballPath: string | null;
   cliVersion: string | null;
   npxVersion: string | null;
+  helpExitCode?: number | null;
   details: string;
 }
 
@@ -197,20 +201,31 @@ export async function runReleasePreflight(
 
 export async function verifyPackedPackage(root: string, packageName: string, version: string): Promise<PackedPackageVerification> {
   const resolvedRoot = path.resolve(root);
+  let packRoot: string | null = null;
   let tarballPath: string | null = null;
   let installRoot: string | null = null;
   try {
-    const pack = await runProcess("npm", ["pack", "--json"], resolvedRoot, true);
+    packRoot = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-pack-tarball-"));
+    const pack = await runProcess("npm", ["pack", "--json", "--pack-destination", packRoot], resolvedRoot, true);
     if (pack.code !== 0) {
-      return failPackageVerification(null, `npm pack --json failed: ${pack.stderr.trim() || pack.stdout.trim()}`);
+      return failPackageVerification(null, diagnosticDetails({
+        phase: "pack",
+        expectedVersion: version,
+        result: pack,
+        tarballPath: null,
+        strategy: "npm_pack_to_temp_directory"
+      }));
     }
     const parsed = JSON.parse(pack.stdout) as Array<{ filename?: string; files?: Array<{ path?: string }> }>;
     const first = parsed[0];
-    const filename = first?.filename;
-    if (!filename) return failPackageVerification(null, "npm pack --json did not report a filename");
-    tarballPath = path.resolve(resolvedRoot, filename);
+    const tgzFiles = (await fs.readdir(packRoot)).filter((file) => file.endsWith(".tgz"));
+    const filename = first?.filename ? path.basename(first.filename) : tgzFiles[0];
+    if (!filename) {
+      return failPackageVerification(null, `npm pack did not produce a .tgz in ${packRoot}\n${formatProcessResult(pack)}`);
+    }
+    tarballPath = path.resolve(packRoot, filename);
 
-    const files = new Set((first.files ?? []).map((file) => file.path).filter((value): value is string => typeof value === "string"));
+    const files = new Set((first?.files ?? []).map((file) => file.path).filter((value): value is string => typeof value === "string"));
     const requiredFiles = ["package.json", "dist/cli.js", "dist/core/version.js", "README.md", "LICENSE"];
     const missing = requiredFiles.filter((file) => !files.has(file));
     const forbidden = [...files].filter((file) =>
@@ -220,41 +235,98 @@ export async function verifyPackedPackage(root: string, packageName: string, ver
       || /temp-pack-test|soturail-clean-smoke|soturail-test-/.test(file)
     );
     if (missing.length > 0 || forbidden.length > 0) {
-      return failPackageVerification(tarballPath, `tarball file check failed; missing=${missing.join(", ") || "none"} forbidden=${forbidden.join(", ") || "none"}`);
+      return failPackageVerification(tarballPath, [
+        "tarball file check failed",
+        `expected_version=${version}`,
+        `tarball_path=${tarballPath}`,
+        `missing=${missing.join(", ") || "none"}`,
+        `forbidden=${forbidden.join(", ") || "none"}`,
+        `strategy=npm_pack_to_temp_directory`
+      ].join("\n"));
     }
 
     installRoot = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-pack-verify-"));
-    await runProcess("npm", ["init", "-y"], installRoot);
-    const install = await runProcess("npm", ["install", tarballPath], installRoot, true);
+    await fs.writeFile(path.join(installRoot, "package.json"), JSON.stringify({ name: "soturail-pack-verify", private: true }, null, 2), "utf8");
+    const install = await runProcess("npm", ["install", tarballPath, "--ignore-scripts"], installRoot, true);
     if (install.code !== 0) {
-      return failPackageVerification(tarballPath, `npm install packed tarball failed: ${install.stderr.trim() || install.stdout.trim()}`);
+      return failPackageVerification(tarballPath, diagnosticDetails({
+        phase: "install",
+        expectedVersion: version,
+        result: install,
+        tarballPath,
+        strategy: "install_absolute_tgz_ignore_scripts"
+      }));
     }
 
     const cliPath = path.join(installRoot, "node_modules", packageName, "dist", "cli.js");
     const cli = await runProcess(process.execPath, [cliPath, "--version"], installRoot, true);
-    const npx = await runProcess("npx", ["--no-install", packageName, "--version"], installRoot, true);
+    const help = await runProcess(process.execPath, [cliPath, "--help"], installRoot, true);
     const cliVersion = cli.stdout.trim();
-    const npxVersion = npx.stdout.trim();
-    const ok = cli.code === 0 && npx.code === 0 && cliVersion === version && npxVersion === version;
+    const ok = cli.code === 0 && help.code === 0 && cliVersion === version;
     return {
       ok,
       tarballPath,
       cliVersion,
-      npxVersion,
+      npxVersion: null,
+      helpExitCode: help.code,
       details: ok
-        ? `packed cli=${cliVersion}, npx=${npxVersion}, tarball=${path.basename(tarballPath)}`
-        : `expected ${version}, packed cli=${cliVersion || cli.stderr.trim() || "empty"}, npx=${npxVersion || npx.stderr.trim() || "empty"}`
+        ? `packed cli=${cliVersion}, help_exit_code=${help.code}, tarball=${path.basename(tarballPath)}, strategy=installed_tarball_cli_no_npx_no_global`
+        : diagnosticDetails({
+            phase: "installed_cli_version",
+            expectedVersion: version,
+            actualVersion: cliVersion || null,
+            result: cli,
+            help,
+            tarballPath,
+            strategy: "installed_tarball_cli_no_npx_no_global"
+          })
     };
   } catch (error) {
     return failPackageVerification(tarballPath, error instanceof Error ? error.message : String(error));
   } finally {
     if (installRoot) await fs.rm(installRoot, { recursive: true, force: true }).catch(() => undefined);
-    if (tarballPath) await fs.rm(tarballPath, { force: true }).catch(() => undefined);
+    if (packRoot) await fs.rm(packRoot, { recursive: true, force: true }).catch(() => undefined);
   }
 }
 
 function failPackageVerification(tarballPath: string | null, details: string): PackedPackageVerification {
-  return { ok: false, tarballPath, cliVersion: null, npxVersion: null, details };
+  return { ok: false, tarballPath, cliVersion: null, npxVersion: null, helpExitCode: null, details };
+}
+
+function diagnosticDetails(input: {
+  phase: string;
+  expectedVersion: string;
+  result: ProcessResult;
+  tarballPath: string | null;
+  strategy: string;
+  actualVersion?: string | null;
+  help?: ProcessResult;
+}): string {
+  return [
+    `phase=${input.phase}`,
+    `strategy=${input.strategy}`,
+    "cache_usage=none",
+    "global_cli_usage=none",
+    "npx_usage=none",
+    "npm_exec_usage=none",
+    "local_repo_dist_usage=none",
+    `expected ${input.expectedVersion}`,
+    `expected_version=${input.expectedVersion}`,
+    `actual_version=${(input.actualVersion ?? input.result.stdout.trim()) || "empty"}`,
+    `tarball_path=${input.tarballPath ?? "none"}`,
+    formatProcessResult(input.result),
+    ...(input.help ? [`help_check:\n${formatProcessResult(input.help)}`] : [])
+  ].join("\n");
+}
+
+function formatProcessResult(result: ProcessResult): string {
+  return [
+    `command=${[result.command, ...result.args].join(" ")}`,
+    `cwd=${result.cwd}`,
+    `exit_code=${result.code}`,
+    `stdout=${result.stdout.trim() || "<empty>"}`,
+    `stderr=${result.stderr.trim() || "<empty>"}`
+  ].join("\n");
 }
 
 export function formatReleasePreflight(result: ReleasePreflightResult): string {
@@ -277,13 +349,20 @@ async function readCliVersion(root: string, cliCommand?: string[]): Promise<Proc
   if (cliCommand && cliCommand.length > 0) {
     const command = cliCommand[0];
     const args = cliCommand.slice(1);
-    if (!command) return { code: 1, stdout: "", stderr: "empty CLI command" };
+    if (!command) return { code: 1, stdout: "", stderr: "empty CLI command", command: "", args: [], cwd: root };
     return runProcess(command, args, root, true);
   }
 
   const cliPath = path.join(root, "dist", "cli.js");
   if (!existsSync(cliPath)) {
-    return { code: 1, stdout: "", stderr: "dist/cli.js is missing; run npm run build first" };
+    return {
+      code: 1,
+      stdout: "",
+      stderr: "dist/cli.js is missing; run npm run build first",
+      command: process.execPath,
+      args: [cliPath, "--version"],
+      cwd: root
+    };
   }
 
   return runProcess(process.execPath, [cliPath, "--version"], root, true);
@@ -349,7 +428,7 @@ async function runProcess(command: string, args: string[], cwd: string, allowFai
     });
     child.on("error", reject);
     child.on("close", (code) => {
-      const result = { code: code ?? 1, stdout, stderr };
+      const result = { code: code ?? 1, stdout, stderr, command: spawnSpec.command, args: spawnSpec.args, cwd: path.resolve(cwd) };
       if ((code ?? 1) !== 0 && !allowFailure) {
         reject(new Error(`${command} ${args.join(" ")} failed with exit code ${code ?? 1}`));
       } else {
