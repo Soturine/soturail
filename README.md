@@ -44,6 +44,19 @@ soturail self all
 
 Reports are written to `.soturail/reports/self-dogfood.md` with stable project context first and dynamic raw IDs, command status and benchmark data later.
 
+## Release Workflow
+
+Release automation is local-first and conservative:
+
+```bash
+npm run release:check
+npm run release:prepare -- --version X.Y.Z
+npm run release:publish -- --version X.Y.Z
+npm run release:full -- --version X.Y.Z
+```
+
+The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
+
 ## 2. Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -75,7 +88,7 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.2.1 --version
+npx soturail@0.2.2 --help
 ```
 
 Install globally:
