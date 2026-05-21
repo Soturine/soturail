@@ -8,6 +8,33 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.3.0] - 2026-05-21
+
+### Added
+
+- Added Skill Rail with `soturail skills init`, validation, export and pack commands.
+- Added local MCP-compatible JSON-RPC stdio server with read-only resources and safe tools.
+- Added cache-friendly context pack builder for Claude, Codex, Gemini, Cursor and generic targets.
+- Added v0.3 benchmark categories for Skill Rail, MCP, context packs, hook export and memory workflow.
+- Added release automation commands for preflight, npm publish and GitHub release steps.
+- Added v0.3.0 release notes.
+
+### Changed
+
+- Strengthened hook command shape with `--agent`, `--mode`, dry-run and export support.
+- Expanded release checks to guard pack contents and prevent raw log artifacts in npm packages.
+- Updated documentation for Skill Rail, MCP, context packs, comparisons and release workflow.
+
+### Fixed
+
+- Kept CLI version sync through the generated version source introduced in v0.2.3.
+
+### Security
+
+- MCP does not expose arbitrary shell execution in v0.3.0.
+- MCP raw log expansion redacts probable secrets unless explicitly requested with `allow_raw=true`.
+- Skill validation checks for prompt-injection style instructions, destructive commands and probable embedded secrets.
+
 ## [0.2.3] - 2026-05-21
 
 ### Fixed

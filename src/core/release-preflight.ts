@@ -94,8 +94,16 @@ export async function runReleasePreflight(
       Boolean(pack.code === 0 && expectedTarball && combined.includes(expectedTarball)),
       expectedTarball ? `expected ${expectedTarball}` : "missing package name or version"
     );
+    addGate(
+      gates,
+      "npm_pack_no_raw_logs",
+      "npm pack excludes raw logs",
+      !combined.includes(".soturail/raw") && !combined.includes("benchmarks/results/latest.json"),
+      "pack output must not include .soturail/raw or generated benchmark JSON"
+    );
   } else {
     addGate(gates, "npm_pack_metadata", "npm pack metadata", true, "skipped by test options", false);
+    addGate(gates, "npm_pack_no_raw_logs", "npm pack excludes raw logs", true, "skipped by test options", false);
   }
 
   const readme = await readOptionalText(path.join(resolvedRoot, "README.md"));

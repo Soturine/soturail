@@ -8,13 +8,22 @@ import type { Command } from "commander";
 import { reduceAgentResponse } from "../compressors/agent-response-reducer.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
 import { buildCachePayload } from "../core/cache-normalizer.js";
+import { buildContextPack } from "../core/context-pack.js";
 import { ensureWorkspace, writeJson } from "../core/config.js";
 import { ingestDocument } from "../core/document-ingest.js";
+import { exportHook } from "./hooks.js";
+import { approveMemory, listMemory, proposeMemory } from "./memory.js";
 import { MetricsStore } from "../core/metrics-store.js";
+import { mcpManifest } from "../core/mcp-server.js";
+import { readMcpResource } from "../core/mcp-resources.js";
 import { detectNativeEngine, type ReducerEngine } from "../core/native-engine.js";
 import { extractRules } from "../core/rule-extractor.js";
 import { estimateTokens } from "../core/token-estimator.js";
 import { validateRules } from "../core/rule-validator.js";
+import { createSkill } from "../core/skill-store.js";
+import { exportSkills } from "../core/skill-exporter.js";
+import { validateSkills } from "../core/skill-validator.js";
+import { SOTURAIL_VERSION } from "../core/version.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -28,7 +37,12 @@ export type BenchmarkCategory =
   | "agent_response_compression"
   | "knowledge_structuring"
   | "cache_stability"
-  | "native_engine";
+  | "native_engine"
+  | "skill_rail"
+  | "mcp"
+  | "context_pack"
+  | "agent_integration"
+  | "memory_workflow";
 
 export interface BenchResult {
   case_id: string;
@@ -317,6 +331,116 @@ async function nativeEngineResult(root: string): Promise<BenchResult> {
   });
 }
 
+async function skillRailResult(root: string, mode: "validation" | "export"): Promise<BenchResult> {
+  const start = performance.now();
+  const skill = await createSkill(`benchmark ${mode}`, root);
+  const raw = `${skill.metadata.id}\n${skill.markdown}`;
+  const output = mode === "validation"
+    ? JSON.stringify(await validateSkills(root), null, 2)
+    : await exportSkills("claude", root);
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: mode === "validation" ? "skill-validation" : "skill-export-claude",
+    category: "skill_rail",
+    engine: "ts",
+    raw,
+    reduced: output,
+    rawTokens: estimateTokens(raw),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: output.includes(mode === "validation" ? "skills_count" : "Exported"),
+    notes: "Skill Rail benchmark validates safe schema/export behavior.",
+    details: { mode }
+  });
+}
+
+async function mcpResult(root: string, mode: "manifest" | "read"): Promise<BenchResult> {
+  const start = performance.now();
+  const raw = mode;
+  const output = mode === "manifest"
+    ? JSON.stringify(await mcpManifest(SOTURAIL_VERSION), null, 2)
+    : JSON.stringify(await readMcpResource("soturail://roadmap", root), null, 2);
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: mode === "manifest" ? "mcp-resource-list" : "mcp-resource-read",
+    category: "mcp",
+    engine: "ts",
+    raw,
+    reduced: output,
+    rawTokens: estimateTokens(raw),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: output.includes(mode === "manifest" ? "soturail://repo-map" : "roadmap"),
+    notes: "MCP benchmark uses local resources without arbitrary shell execution.",
+    details: { mode }
+  });
+}
+
+async function contextPackResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const pack = await buildContextPack("generic", root, { now: "2026-05-21T00:00:00.000Z" });
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "context-pack-generic",
+    category: "context_pack",
+    engine: "ts",
+    raw: pack.stablePrefix,
+    reduced: pack.payload,
+    rawTokens: estimateTokens(pack.stablePrefix),
+    reducedTokens: estimateTokens(pack.payload),
+    reduction: null,
+    runtime,
+    quality: pack.payload.includes("Dynamic Footer"),
+    notes: "Context pack benchmark preserves stable-before-dynamic ordering.",
+    details: { target: "generic" }
+  });
+}
+
+async function hookExportResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const output = await exportHook("claude", root);
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "hook-export-claude",
+    category: "agent_integration",
+    engine: "ts",
+    raw: "claude hook export",
+    reduced: output,
+    rawTokens: estimateTokens("claude hook export"),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: output.includes(".soturail"),
+    notes: "Hook export benchmark creates reviewable local files.",
+    details: { agent: "claude" }
+  });
+}
+
+async function memoryWorkflowResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const pending = await proposeMemory("Benchmark memory approval workflow.", {}, root);
+  const approved = await approveMemory(pending.id, root);
+  const list = await listMemory("approved", root);
+  const runtime = performance.now() - start;
+  const output = JSON.stringify({ pending, approved, list }, null, 2);
+  return makeResult({
+    case_id: "memory-approval-workflow",
+    category: "memory_workflow",
+    engine: "ts",
+    raw: pending.text,
+    reduced: output,
+    rawTokens: estimateTokens(pending.text),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: approved.status === "approved" && list.includes(pending.id),
+    notes: "Memory workflow benchmark proposes, approves and lists local memory.",
+    details: { memory_id: pending.id }
+  });
+}
+
 function qualityCheck(caseId: string, text: string): { ok: boolean; reason?: string; note?: string } {
   if (caseId.includes("vitest") && (!text.includes("AssertionError") || !text.includes("tests/app.test.ts"))) {
     return { ok: false, reason: "Vitest assertion or path missing" };
@@ -408,7 +532,14 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
     await responseResult(root, "readme-doc.md", "docs"),
     await rulesResult(root),
     await cacheStabilityResult(root),
-    await nativeEngineResult(root)
+    await nativeEngineResult(root),
+    await skillRailResult(root, "validation"),
+    await skillRailResult(root, "export"),
+    await mcpResult(root, "manifest"),
+    await mcpResult(root, "read"),
+    await contextPackResult(root),
+    await hookExportResult(root),
+    await memoryWorkflowResult(root)
   ];
   await writeBenchmarkFiles(root, engine, results);
   await new MetricsStore(root).append({ type: "bench_run", details: { engine, results_count: results.length } });
@@ -511,7 +642,10 @@ export async function compareOptional(tool: string, root = process.cwd()): Promi
 }
 
 export function registerBenchCommand(program: Command): void {
-  const bench = program.command("bench").description("Run reproducible local SotuRail benchmarks.");
+  const bench = program.command("bench").description("Run reproducible local SotuRail benchmarks.").action(async () => {
+    const results = await runBenchmarks({ engine: "ts" });
+    process.stdout.write(`Benchmark results written: ${results.length} cases\nbenchmarks/results/latest.json\nbenchmarks/reports/latest.md\n`);
+  });
   bench.command("prepare").description("Generate deterministic benchmark fixtures.").action(async () => {
     process.stdout.write(await prepareBenchmarks());
   });

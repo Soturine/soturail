@@ -7,9 +7,10 @@ SotuRail does not assume private Codex host hook APIs. The fallback rules descri
 Useful commands:
 
 ```bash
-soturail hooks install codex --dry-run
-soturail hooks install codex
-soturail hooks uninstall codex
+soturail hooks install --agent codex --mode prompt-only --dry-run
+soturail hooks install --agent codex --mode prompt-only
+soturail hooks uninstall --agent codex
+soturail hooks export --agent codex
 soturail hooks prompt-only codex
 ```
 

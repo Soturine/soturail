@@ -1,6 +1,6 @@
 {
   "name": "soturail",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
   "type": "module",
   "bin": {
@@ -30,10 +30,11 @@
     "bench:report": "node dist/cli.js bench report",
     "bench:native": "node dist/cli.js bench run --engine native",
     "bench:compare": "node dist/cli.js bench compare-engines",
-    "release:check": "node scripts/release.mjs check",
-    "release:prepare": "node scripts/release.mjs prepare",
-    "release:publish": "node scripts/release.mjs publish",
-    "release:full": "node scripts/release.mjs full"
+    "release:check": "npm run build && node dist/cli.js release check",
+    "release:notes": "npm run build && node dist/cli.js release notes",
+    "release:publish": "npm run build && node dist/cli.js release publish",
+    "release:github": "npm run build && node dist/cli.js release github",
+    "release:full": "npm run build && node dist/cli.js release full"
   },
   "keywords": [
     "ai-agents",

@@ -24,7 +24,7 @@ It wraps a repository and terminal session with reversible evidence rails: heuri
 
 ## Project Status
 
-v0.2.x is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Benchmarks are local and reproducible. External comparisons are optional and user-provided.
+v0.3.x is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP and context packs are local-first and benchmarkable. External comparisons are optional and user-provided.
 
 ## Built With SotuRail
 
@@ -50,9 +50,9 @@ Release automation is local-first and conservative:
 
 ```bash
 npm run release:check
-npm run release:prepare -- --version X.Y.Z
 npm run release:publish -- --version X.Y.Z
-npm run release:full -- --version X.Y.Z
+npm run release:github -- --version X.Y.Z
+npm run release:full -- --version X.Y.Z --publish-npm --github-release
 ```
 
 The release script never runs `npm audit fix --force`, never publishes when build/tests/runtime audit fail and never creates a GitHub release before npm publish succeeds. See [docs/release-workflow.md](docs/release-workflow.md).
@@ -99,7 +99,7 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.2.3 --help
+npx soturail@0.3.0 --help
 ```
 
 Install globally:
@@ -164,6 +164,11 @@ soturail hooks list
 soturail format README.md --mode concise
 soturail ingest README.md --type docs
 soturail rules check
+soturail skills init demo-skill
+soturail skills validate
+soturail skills export --target claude
+soturail context pack --target generic
+soturail mcp doctor
 soturail spec status
 soturail memory propose "decision"
 soturail doctor cache
@@ -213,6 +218,34 @@ soturail hooks prompt-only codex
 Host APIs vary, so SotuRail never writes guessed config without showing the target and creating backups for existing files.
 
 Review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.
+
+## Skill Rail
+
+Skill Rail creates, validates, exports and packs safe local agent skills without depending on external skill ecosystems.
+
+```bash
+soturail skills init demo-skill
+soturail skills list
+soturail skills validate
+soturail skills export --target claude
+soturail skills pack --format markdown
+```
+
+Exports are written under `.soturail/exports/skills/` and should be reviewed before enabling in an agent host.
+
+## MCP And Context Packs
+
+SotuRail exposes local context through a minimal MCP-compatible stdio server and cache-friendly context packs.
+
+```bash
+soturail mcp doctor
+soturail mcp manifest
+soturail mcp serve --transport stdio
+soturail context pack --target generic
+soturail context explain
+```
+
+MCP does not expose arbitrary shell execution in v0.3.0. Raw log expansion redacts probable secrets unless raw output is explicitly requested.
 
 ## 10. Agent Response Compression
 
@@ -265,17 +298,17 @@ Raw logs may contain secrets because they preserve real terminal output. Treat `
 
 Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShell quoting, global install, `npx`, local tarball testing and common paste mistakes such as copying Markdown code-fence labels into CMD.
 
-## Road To Skill Rail
+## Road To Workflow Rail
 
-Skill Rail and Workflow Rail are planned, not implemented in v0.2.x. See [docs/skill-rail.md](docs/skill-rail.md) and [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
+Skill Rail ships in v0.3.0. Workflow Rail remains planned; see [docs/workflow-rail.md](docs/workflow-rail.md) for the security-first roadmap.
 
 ## Comparison Philosophy
 
-SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks and skill registries. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest.
+SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks and skill registries. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest. See [docs/comparisons.md](docs/comparisons.md).
 
 ## 14. Roadmap
 
-See [ROADMAP.md](ROADMAP.md). v0.3.0 focuses on deeper native paths, MCP, hardened PDF extraction, semantic memory approval, Tree-sitter repo maps and optional local embeddings.
+See [ROADMAP.md](ROADMAP.md). v0.4.0 focuses on Workflow Rail and Git worktrees; later releases target hardened PDF ingestion, semantic memory, deeper native integration and a stable API.
 
 ## 15. Contributing
 

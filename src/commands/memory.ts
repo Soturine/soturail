@@ -36,6 +36,7 @@ export interface ApprovedMemoryRecord {
   source: "manual" | "agent" | "import";
   file_hashes?: Record<string, string>;
   stale?: boolean;
+  status: "approved";
 }
 
 export async function addMemory(content: string, options: MemoryAddOptions = {}, root = process.cwd()): Promise<MemoryRecord> {
@@ -110,7 +111,8 @@ export async function approveMemory(id: string, root = process.cwd()): Promise<A
     approved_at: new Date().toISOString(),
     git_commit: record.git_commit,
     text: record.text,
-    source: record.source
+    source: record.source,
+    status: "approved"
   };
   if (record.file_hashes) {
     approved.file_hashes = record.file_hashes;

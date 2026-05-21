@@ -1,11 +1,13 @@
 # Claude Hooks
 
-SotuRail v0.2.1 includes a conservative Claude Code hook template.
+SotuRail v0.3.0 includes conservative Claude safe-hooks and MCP guidance.
 
 ```bash
-soturail hooks install claude --dry-run
-soturail hooks install claude
-soturail hooks uninstall claude
+soturail hooks install --agent claude --mode safe-hooks --dry-run
+soturail hooks install --agent claude --mode safe-hooks
+soturail hooks install --agent claude --mode mcp
+soturail hooks uninstall --agent claude
+soturail hooks export --agent claude
 soturail hooks prompt-only claude
 ```
 

@@ -20,7 +20,12 @@ The suite groups results as:
 - agent response compression;
 - knowledge structuring;
 - cache stability;
-- native engine availability/performance when available.
+- native engine availability/performance when available;
+- skill rail validation/export;
+- MCP resource listing/reading;
+- context pack generation;
+- agent hook export;
+- memory approval workflow.
 
 Terminal compression includes npm install noise, Vitest failures, TypeScript diagnostics, git diff/status noise and JSON/tool payload output.
 

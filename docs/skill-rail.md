@@ -1,28 +1,22 @@
 # Skill Rail
 
-Skill Rail is planned for v0.3.0. It is not implemented in v0.2.x.
-
-The goal is to turn approved SotuRail specs, rules and workflows into portable, reviewable agent skills without installing untrusted marketplace content automatically.
-
-Planned commands:
+Skill Rail exports safe local agent skills without depending on external skill ecosystems.
 
 ```bash
-soturail skills init <name>
-soturail skills from-spec <spec-id>
-soturail skills from-rules <rules-file>
-soturail skills validate <path>
-soturail skills export claude|codex|gemini|cursor
+soturail skills init demo-skill
+soturail skills list
+soturail skills validate
+soturail skills export --target claude
+soturail skills export --target codex
+soturail skills export --target gemini
+soturail skills export --target cursor
+soturail skills export --target generic
+soturail skills pack --format json
+soturail skills pack --format markdown
 ```
 
-## Security Requirements
+Skills live in `.soturail/skills/<skill-id>/` with `skill.yml`, `SKILL.md`, examples and validators.
 
-- No automatic marketplace install.
-- Validate `SKILL.md` before use.
-- Scan for prompt injection.
-- Scan for destructive shell commands.
-- Scan for secret exfiltration language.
-- Scan for `curl`/`wget` pipe execution.
-- Warn about untrusted scripts.
-- Require human approval before enabling generated skills.
+Validation checks required metadata, target names, duplicate IDs, deterministic content hashes, destructive shell patterns, prompt-injection style instructions and probable embedded secrets.
 
-Skill Rail should preserve SotuRail's local-first evidence model: generated skills must cite the spec, rule or workflow that produced them.
+Exports are written to `.soturail/exports/skills/<target>/`. Review every generated file before enabling it in Claude, Codex, Gemini, Cursor or another host.

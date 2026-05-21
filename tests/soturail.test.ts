@@ -4,18 +4,25 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildCachePayload, readCacheBlocks } from "../src/core/cache-normalizer.js";
+import { buildContextPack } from "../src/core/context-pack.js";
 import { appendJsonl, defaultConfig, ensureWorkspace, getWorkspacePaths } from "../src/core/config.js";
 import { isAlwaysIgnored, normalizeForIgnore, scanRepository } from "../src/core/file-scanner.js";
+import { handleMcpMessage, mcpManifest } from "../src/core/mcp-server.js";
+import { readMcpResource } from "../src/core/mcp-resources.js";
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
 import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src/core/safety-policy.js";
+import { createSkill } from "../src/core/skill-store.js";
+import { exportSkills } from "../src/core/skill-exporter.js";
+import { validateSkills } from "../src/core/skill-validator.js";
 import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
 import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { buildProgram } from "../src/cli.js";
 import { expandRawLog } from "../src/commands/expand.js";
-import { installHooks, promptOnly } from "../src/commands/hooks.js";
+import { exportHook, installHooks, promptOnly } from "../src/commands/hooks.js";
 import { ingestCommand } from "../src/commands/ingest.js";
+import { approveMemory, listMemory, proposeMemory, rejectMemory } from "../src/commands/memory.js";
 import { runInit } from "../src/commands/init.js";
 import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
@@ -288,7 +295,12 @@ describe("reducers and benchmarks", () => {
       "agent_response_compression",
       "knowledge_structuring",
       "cache_stability",
-      "native_engine"
+      "native_engine",
+      "skill_rail",
+      "mcp",
+      "context_pack",
+      "agent_integration",
+      "memory_workflow"
     ]));
     expect(report).toContain("cache_stability");
     expect(report).toContain("Knowledge structuring cases are extraction and validation tasks");
@@ -380,17 +392,80 @@ describe("hooks", () => {
     const root = await tempRoot();
     await writeFile(path.join(root, ".claude", "settings.json"), "{\"existing\":true}\n");
     const dryRun = await installHooks("claude", { dryRun: true }, root);
+    const newShapeDryRun = await installHooks("claude", { dryRun: true, mode: "safe-hooks" }, root);
     expect(dryRun).toContain("Would write .claude/settings.json");
     expect(dryRun).toContain("Would write .claude/hooks/soturail-pre-tool-use.js");
+    expect(newShapeDryRun).toContain("--mode safe-hooks");
 
     const installed = await installHooks("claude", {}, root);
+    const exported = await exportHook("claude", root);
     const hook = await fs.readFile(path.join(root, ".claude", "hooks", "soturail-pre-tool-use.js"), "utf8");
     const backup = await fs.readFile(path.join(root, ".claude", "settings.json.soturail.bak"), "utf8");
 
     expect(installed).toContain("Claude hook template is conservative");
+    expect(exported).toContain(".soturail/exports/hooks/claude.md");
     expect(backup).toContain("existing");
     expect(hook).toContain("git push");
     expect(hook).toContain("SotuRail blocked a destructive Claude shell command");
+  });
+});
+
+describe("skill rail", () => {
+  it("creates, validates and exports a Claude skill", async () => {
+    const root = await tempRoot();
+    const skill = await createSkill("Demo Skill", root);
+    const validation = await validateSkills(root);
+    const exported = await exportSkills("claude", root);
+
+    expect(skill.metadata.id).toBe("demo-skill");
+    expect(validation.ok).toBe(true);
+    expect(exported).toContain(".soturail");
+    await expect(fs.access(path.join(root, ".soturail", "exports", "skills", "claude", "demo-skill.md"))).resolves.toBeUndefined();
+  });
+});
+
+describe("context packs", () => {
+  it("keeps stable prefix identical when dynamic timestamp changes", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await writeFile(path.join(root, "AGENTS.md"), "Stable governance\n");
+    const first = await buildContextPack("generic", root, { now: "2026-05-21T00:00:00.000Z" });
+    const second = await buildContextPack("generic", root, { now: "2026-05-21T00:01:00.000Z" });
+    const marker = "<!-- soturail:dynamic-footer -->";
+
+    expect(first.payload.split(marker)[0]).toBe(second.payload.split(marker)[0]);
+    expect(first.payload).toContain("## Dynamic Footer");
+  });
+});
+
+describe("mcp", () => {
+  it("generates a manifest and reads resources without starting the server", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "ROADMAP.md"), "# Roadmap\n");
+    const manifest = await mcpManifest("0.3.0");
+    const resource = await readMcpResource("soturail://roadmap", root);
+    const response = await handleMcpMessage({ jsonrpc: "2.0", id: 1, method: "resources/list" }, root, "0.3.0");
+
+    expect(manifest.resources.map((item) => item.uri)).toContain("soturail://repo-map");
+    expect(resource.text).toContain("Roadmap");
+    expect(response.result.resources.length).toBeGreaterThan(0);
+  });
+});
+
+describe("memory approval workflow", () => {
+  it("proposes, approves, rejects and lists local memory", async () => {
+    const root = await tempRoot();
+    const pending = await proposeMemory("Remember this for v0.3 tests.", {}, root);
+    const approved = await approveMemory(pending.id, root);
+    const rejected = await proposeMemory("Reject this memory.", {}, root);
+    const rejectOutput = await rejectMemory(rejected.id, root);
+    const approvedList = await listMemory("approved", root);
+    const pendingList = await listMemory("pending", root);
+
+    expect(approved.status).toBe("approved");
+    expect(rejectOutput).toContain(rejected.id);
+    expect(approvedList).toContain(pending.id);
+    expect(pendingList).not.toContain(rejected.id);
   });
 });
 
@@ -491,7 +566,7 @@ describe("release reliability", () => {
     expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
   });
 
-  it("has v0.2.3 release notes, changelog entry and lockfile version sync", async () => {
+  it("has v0.3.0 release notes, changelog entry and lockfile version sync", async () => {
     const root = process.cwd();
     const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
     const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
@@ -500,12 +575,40 @@ describe("release reliability", () => {
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
 
-    expect(packageJson.version).toBe("0.2.3");
+    expect(packageJson.version).toBe("0.3.0");
     expect(packageLock.version).toBe(packageJson.version);
     expect(packageLock.packages[""].version).toBe(packageJson.version);
-    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.2.3.md"))).resolves.toBeUndefined();
-    expect(changelog).toContain("## [0.2.3]");
+    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.3.0.md"))).resolves.toBeUndefined();
+    expect(changelog).toContain("## [0.3.0]");
   });
+
+  it("requires release notes and changelog entries during preflight", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ name: "soturail", version: "9.9.9" }, null, 2));
+    await writeFile(path.join(root, "package-lock.json"), JSON.stringify({
+      name: "soturail",
+      version: "9.9.9",
+      lockfileVersion: 3,
+      packages: { "": { name: "soturail", version: "9.9.9" } }
+    }, null, 2));
+    await writeFile(path.join(root, "README.md"), "npx soturail --help\nnpm install -g soturail\nsoturail --version\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(path.join(root, "CHANGELOG.md"), "## [9.9.8]\n");
+    await writeFile(path.join(root, "dist", "cli.js"), "if (process.argv.includes('--version')) console.log('9.9.9');\n");
+
+    const result = await runReleasePreflight(root, { runAudit: false, runPack: false });
+
+    expect(result.ok).toBe(false);
+    expect(result.gates.find((gate) => gate.id === "changelog_entry")?.ok).toBe(false);
+    expect(result.gates.find((gate) => gate.id === "release_notes")?.ok).toBe(false);
+  });
+
+  it("keeps runtime audit and npm pack release gates clean", async () => {
+    const result = await runReleasePreflight(process.cwd(), { runAudit: true, runPack: true });
+
+    expect(result.gates.find((gate) => gate.id === "runtime_audit")?.ok).toBe(true);
+    expect(result.gates.find((gate) => gate.id === "npm_pack_no_raw_logs")?.ok).toBe(true);
+  }, 20000);
 });
 
 describe("stats", () => {

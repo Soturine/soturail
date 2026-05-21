@@ -7,9 +7,10 @@ Existing files are backed up before SotuRail adds its rules.
 Useful commands:
 
 ```bash
-soturail hooks install cursor --dry-run
-soturail hooks install cursor
-soturail hooks uninstall cursor
+soturail hooks install --agent cursor --mode prompt-only --dry-run
+soturail hooks install --agent cursor --mode prompt-only
+soturail hooks uninstall --agent cursor
+soturail hooks export --agent cursor
 soturail hooks prompt-only cursor
 ```
 

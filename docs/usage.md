@@ -62,3 +62,18 @@ soturail rules check
 soturail native doctor
 soturail bench compare-engines
 ```
+
+## v0.3.0 Workflows
+
+```bash
+soturail skills init demo-skill
+soturail skills validate
+soturail skills export --target claude
+soturail context pack --target generic
+soturail mcp doctor
+soturail mcp manifest
+soturail hooks install --agent claude --mode safe-hooks --dry-run
+soturail release check
+```
+
+MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution in v0.3.0.

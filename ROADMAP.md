@@ -1,50 +1,44 @@
 # Roadmap
 
-## v0.2.2 - Self-Dogfooding and Reliability
+## v0.3.0 - Skill Rail, MCP And Context Packs
 
-- `soturail self` command namespace.
-- Self-dogfood report under `.soturail/reports/self-dogfood.md`.
-- Build, test and benchmark orchestration through SotuRail itself.
-- Tiny-output metadata overhead accounting.
-- Expanded benchmark fixtures and categories.
-- Windows usage documentation.
-- Skill Rail and Workflow Rail planning docs.
+- Skill Rail for local skill creation, validation, export and packing.
+- MCP-compatible stdio server for read-only resources and safe tools.
+- Cache-friendly context pack builder for Claude, Codex, Gemini, Cursor and generic targets.
+- Stronger hook exports and reviewed agent integration guidance.
+- Benchmarks for Skill Rail, MCP, context packs, hook export and memory workflow.
 
-## v0.2.1 - Native Performance and Public Polish
-
-- Branding cleanup.
-- Native Rust runner hot path.
-- Benchmark category cleanup.
-- JSON reducer improvement.
-- Real Claude hook installer.
-
-## v0.3.0 - Skill Rail
-
-- Draft `soturail skills init <name>`.
-- Generate skills from approved specs and rules.
-- Validate `SKILL.md` before use.
-- Export reviewed skills for Claude, Codex, Gemini and Cursor.
-- Prompt-injection and destructive-command scans before enabling generated skills.
-
-## v0.4.0 - Workflow Rail and MCP Server
+## v0.4.0 - Workflow Rail And Git Worktrees
 
 - `soturail workflow new <name>`.
 - Workflow templates and validation.
+- Git worktree-aware task rails.
 - Export workflow artifacts into Skill Rail.
-- MCP server for local repo maps, logs, rules and memory.
+- Safer multi-agent orchestration.
 
-## v0.5.0 - Semantic Memory and Knowledge Depth
+## v0.5.0 - Hardened Knowledge And Semantic Memory
 
-- Tree-sitter repo map.
-- Hardened PDF extraction.
+- Hardened PDF ingestion.
 - Deeper semantic memory with optional local embeddings.
 - Stronger Knowledge-to-Rules search and citation workflows.
+- Tree-sitter repo map.
+- Real provider cache metadata import when available.
+
+## v0.6.0 - Deeper Native Runner Integration
+
 - Native runner packaging for npm prebuilds.
-- External benchmark comparison docs.
-- Real provider cache metadata import.
+- More streaming reducers in Rust.
+- Larger benchmark matrix for TypeScript/native tradeoffs.
 
-## Later
+## v1.0.0 - Stable API And Plugin Ecosystem
 
-- Pluggable policy packs.
-- TUI review surface for raw logs, specs, memory and rules.
-- More host integrations as public APIs stabilize.
+- Stable CLI and local API contracts.
+- Plugin and policy pack interfaces.
+- Long-term compatibility guarantees.
+
+## Completed
+
+- v0.2.3: release preflight and CLI/package version synchronization.
+- v0.2.2: self-dogfooding and reliability reports.
+- v0.2.1: native runner hot path, public polish and Claude hook template.
+- v0.2.0: benchmarks, hooks foundation, response compression, Knowledge-to-Rules and memory approval workflow.

@@ -12,11 +12,14 @@ import { registerIngestCommand } from "./commands/ingest.js";
 import { registerIndexCommand } from "./commands/index.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerMemoryCommand } from "./commands/memory.js";
+import { registerMcpCommand } from "./commands/mcp.js";
 import { registerNativeCommand } from "./commands/native.js";
+import { registerContextCommand } from "./commands/context.js";
 import { registerReadCommand } from "./commands/read.js";
 import { registerRunCommand } from "./commands/run.js";
 import { registerRulesCommand } from "./commands/rules.js";
 import { registerSelfCommand } from "./commands/self.js";
+import { registerSkillsCommand } from "./commands/skills.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
 import { registerReleaseCommand } from "./commands/release.js";
@@ -35,6 +38,7 @@ export function buildProgram(): Command {
   registerReadCommand(program);
   registerRunCommand(program);
   registerBenchCommand(program);
+  registerContextCommand(program);
   registerDedupeCommand(program);
   registerExpandCommand(program);
   registerFormatCommand(program);
@@ -42,10 +46,12 @@ export function buildProgram(): Command {
   registerIngestCommand(program);
   registerSpecCommand(program);
   registerMemoryCommand(program);
+  registerMcpCommand(program);
   registerNativeCommand(program);
   registerRulesCommand(program);
   registerReleaseCommand(program);
   registerSelfCommand(program);
+  registerSkillsCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);
 

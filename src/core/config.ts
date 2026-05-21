@@ -73,6 +73,11 @@ export interface WorkspacePaths {
   rulesValidatorsDir: string;
   memoryPendingFile: string;
   memoryApprovedFile: string;
+  skillsDir: string;
+  exportsDir: string;
+  skillExportsDir: string;
+  hookExportsDir: string;
+  contextDir: string;
 }
 
 export interface EnsureResult {
@@ -108,7 +113,12 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     rulesCitations: path.resolve(workspace, "rules", "citations.json"),
     rulesValidatorsDir: path.resolve(workspace, "rules", "validators"),
     memoryPendingFile: path.resolve(workspace, "memory", "pending.jsonl"),
-    memoryApprovedFile: path.resolve(workspace, "memory", "approved.jsonl")
+    memoryApprovedFile: path.resolve(workspace, "memory", "approved.jsonl"),
+    skillsDir: path.resolve(workspace, "skills"),
+    exportsDir: path.resolve(workspace, "exports"),
+    skillExportsDir: path.resolve(workspace, "exports", "skills"),
+    hookExportsDir: path.resolve(workspace, "exports", "hooks"),
+    contextDir: path.resolve(workspace, "context")
   };
 }
 
@@ -170,7 +180,12 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.dedupeDir,
     paths.hooksDir,
     paths.rulesDir,
-    paths.rulesValidatorsDir
+    paths.rulesValidatorsDir,
+    paths.skillsDir,
+    paths.exportsDir,
+    paths.skillExportsDir,
+    paths.hookExportsDir,
+    paths.contextDir
   ];
 
   for (const dir of dirs) {

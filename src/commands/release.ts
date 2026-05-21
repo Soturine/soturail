@@ -1,4 +1,6 @@
 import { promises as fs } from "node:fs";
+import { existsSync } from "node:fs";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import type { Command } from "commander";
 import { formatReleasePreflight, runReleasePreflight } from "../core/release-preflight.js";
@@ -12,9 +14,10 @@ export function registerReleaseCommand(program: Command): void {
     .command("check")
     .description("Validate package, CLI, changelog, release notes, pack metadata and runtime audit.")
     .action(async () => {
-      const result = await runReleasePreflight(process.cwd());
-      process.stdout.write(`${formatReleasePreflight(result)}\n`);
-      if (!result.ok) process.exitCode = 1;
+      const packageJson = JSON.parse(await fs.readFile(path.resolve(process.cwd(), "package.json"), "utf8")) as { version?: string };
+      if (!packageJson.version) throw new Error("package.json version is missing.");
+      await runReleaseGate(packageJson.version);
+      process.stdout.write("Release check passed.\n");
     });
 
   release
@@ -24,6 +27,45 @@ export function registerReleaseCommand(program: Command): void {
     .action(async (options: { version: string }) => {
       const filePath = await writeReleaseNotesSkeleton(options.version, process.cwd());
       process.stdout.write(`Release notes written: ${path.relative(process.cwd(), filePath)}\n`);
+    });
+
+  release
+    .command("publish")
+    .description("Validate and publish the package to npm.")
+    .requiredOption("--version <version>", "Release version")
+    .option("--otp <code>", "npm one-time password when required")
+    .action(async (options: { version: string; otp?: string }) => {
+      await runReleaseGate(options.version);
+      await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
+      await runChecked("npm", ["view", "soturail", "version"]);
+      await runChecked("npx", ["--yes", "--package", `soturail@${options.version}`, "soturail", "--version"]);
+    });
+
+  release
+    .command("github")
+    .description("Create or update the GitHub release after npm publish succeeds.")
+    .requiredOption("--version <version>", "Release version")
+    .action(async (options: { version: string }) => {
+      await createOrUpdateGithubRelease(options.version);
+    });
+
+  release
+    .command("full")
+    .description("Run release gates, optionally publish npm, then optionally create/update GitHub release.")
+    .requiredOption("--version <version>", "Release version")
+    .option("--publish-npm", "Publish to npm after gates pass")
+    .option("--github-release", "Create or update GitHub release after npm publish is verified")
+    .option("--otp <code>", "npm one-time password when required")
+    .action(async (options: { version: string; publishNpm?: boolean; githubRelease?: boolean; otp?: string }) => {
+      await runReleaseGate(options.version);
+      if (options.publishNpm) {
+        await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
+        await runChecked("npm", ["view", "soturail", "version"]);
+        await runChecked("npx", ["--yes", "--package", `soturail@${options.version}`, "soturail", "--version"]);
+      }
+      if (options.githubRelease) {
+        await createOrUpdateGithubRelease(options.version);
+      }
     });
 }
 
@@ -59,4 +101,108 @@ export async function writeReleaseNotesSkeleton(version: string, root = process.
 `;
   await fs.writeFile(filePath, contents, "utf8");
   return filePath;
+}
+
+async function runReleaseGate(version: string): Promise<void> {
+  const packageJson = JSON.parse(await fs.readFile(path.resolve(process.cwd(), "package.json"), "utf8")) as { version?: string };
+  if (packageJson.version !== version) throw new Error(`package.json version is ${packageJson.version}, expected ${version}.`);
+  const status = await runCapture("git", ["status", "--short"]);
+  if (status.stdout.trim()) throw new Error(`git working tree is dirty:\n${status.stdout}`);
+  await runChecked("npm", ["run", "build"]);
+  const preflight = await runReleasePreflight(process.cwd());
+  process.stdout.write(`${formatReleasePreflight(preflight)}\n`);
+  if (!preflight.ok) throw new Error("Release preflight failed.");
+  await runChecked("npm", ["test"]);
+  await runChecked("npm", ["audit", "--omit=dev"]);
+  await preserveGeneratedFiles(() => runChecked("node", ["dist/cli.js", "self", "all"]));
+  await runChecked("npm", ["pack", "--dry-run"]);
+}
+
+async function preserveGeneratedFiles(fn: () => Promise<void>): Promise<void> {
+  const files = [
+    path.resolve(process.cwd(), "benchmarks", "reports", "latest.md"),
+    path.resolve(process.cwd(), "benchmarks", "results", "latest.json")
+  ];
+  const snapshots = await Promise.all(files.map(async (filePath) => ({
+    filePath,
+    exists: await fs.access(filePath).then(() => true).catch(() => false),
+    content: await fs.readFile(filePath, "utf8").catch(() => "")
+  })));
+  try {
+    await fn();
+  } finally {
+    for (const snapshot of snapshots) {
+      if (snapshot.exists) {
+        await fs.writeFile(snapshot.filePath, snapshot.content, "utf8");
+      } else {
+        await fs.rm(snapshot.filePath, { force: true });
+      }
+    }
+  }
+}
+
+async function createOrUpdateGithubRelease(version: string): Promise<void> {
+  const published = (await runCapture("npm", ["view", "soturail", "version"])).stdout.trim();
+  if (published !== version) {
+    throw new Error(`npm reports soturail@${published}; refusing to create GitHub release for ${version}.`);
+  }
+  const tag = `v${version}`;
+  const title = version === "0.3.0"
+    ? "SotuRail v0.3.0 - Skill Rail, MCP & Context Packs"
+    : `SotuRail v${version}`;
+  const notes = `RELEASE_NOTES_v${version}.md`;
+  const view = await runCapture("gh", ["release", "view", tag], true);
+  if (view.code === 0) {
+    await runChecked("gh", ["release", "edit", tag, "--title", title, "--notes-file", notes, "--latest"]);
+  } else {
+    await runChecked("gh", ["release", "create", tag, "--title", title, "--notes-file", notes, "--latest"]);
+  }
+}
+
+async function runChecked(command: string, args: string[]): Promise<void> {
+  const result = await runCapture(command, args);
+  process.stdout.write(result.stdout);
+  process.stderr.write(result.stderr);
+  if (result.code !== 0) throw new Error(`${command} ${args.join(" ")} failed with exit code ${result.code}`);
+}
+
+async function runCapture(command: string, args: string[], allowFailure = false): Promise<{ code: number; stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const spawnSpec = resolveSpawn(command, args);
+    const child = spawn(spawnSpec.command, spawnSpec.args, { cwd: process.cwd(), shell: false, windowsHide: true, env: process.env });
+    let stdout = "";
+    let stderr = "";
+    child.stdout?.on("data", (chunk) => { stdout += chunk.toString(); });
+    child.stderr?.on("data", (chunk) => { stderr += chunk.toString(); });
+    child.on("error", reject);
+    child.on("close", (code) => {
+      const result = { code: code ?? 1, stdout, stderr };
+      if (result.code !== 0 && !allowFailure) reject(new Error(`${command} ${args.join(" ")} failed with exit code ${result.code}`));
+      else resolve(result);
+    });
+  });
+}
+
+function resolveSpawn(command: string, args: string[]): { command: string; args: string[] } {
+  if (process.platform !== "win32") return { command, args };
+  if (command === "node") return { command: process.execPath, args };
+  const npmExecPath = process.env.npm_execpath;
+  if ((command === "npm" || command === "npx") && npmExecPath) {
+    const cli = path.resolve(path.dirname(npmExecPath), command === "npm" ? "npm-cli.js" : "npx-cli.js");
+    return { command: process.execPath, args: [cli, ...args] };
+  }
+  return { command: resolveWindowsCommand(command), args };
+}
+
+function resolveWindowsCommand(command: string): string {
+  if (path.isAbsolute(command) && existsSync(command)) return command;
+  const extensions = path.extname(command) ? [""] : [".exe", ".cmd", ".bat", ""];
+  const entries = (process.env.PATH ?? "").split(path.delimiter).filter(Boolean);
+  for (const entry of entries) {
+    for (const extension of extensions) {
+      const candidate = path.resolve(entry, `${command}${extension}`);
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+  return command;
 }

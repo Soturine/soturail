@@ -1,26 +1,22 @@
 # Agent Hooks
 
-SotuRail hook support is cautious. Claude gets a conservative hook template first; Codex, Gemini and Cursor remain prompt-only fallbacks because host APIs are not all stable.
+SotuRail hook support is cautious. Claude gets conservative safe-hooks and MCP guidance first; Codex, Gemini and Cursor use prompt-only fallbacks when stable native hook APIs are unavailable.
 
 ```bash
 soturail hooks list
 soturail hooks doctor
-soturail hooks install claude --dry-run
-soturail hooks install claude
-soturail hooks uninstall claude
-soturail hooks install all --dry-run
-soturail hooks prompt-only codex
+soturail hooks install --agent claude --mode safe-hooks --dry-run
+soturail hooks install --agent claude --mode mcp
+soturail hooks install --agent codex --mode prompt-only
+soturail hooks install --agent gemini --mode prompt-only
+soturail hooks install --agent cursor --mode prompt-only
+soturail hooks uninstall --agent claude
+soturail hooks export --agent claude
+soturail hooks export --agent codex
 ```
 
-Installers create backups before modifying existing files. If a host config location is uncertain, SotuRail generates prompt-only guidance instead of guessing.
+Installers create backups before modifying existing files. Dry-run prints every file that would change. If a host config location is uncertain, SotuRail generates prompt-only guidance instead of guessing.
 
-Claude install writes `.claude/settings.json` and hook scripts under `.claude/hooks/`. Dry-run prints every file that would change.
+Claude safe-hooks write `.claude/settings.json` and hook scripts under `.claude/hooks/`. The pre-tool hook blocks destructive command shapes and suggests `soturail run` for tests, builds and logs.
 
-Always review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts. Prompt-only fallback remains available for every host:
-
-```bash
-soturail hooks prompt-only claude
-soturail hooks prompt-only codex
-soturail hooks prompt-only gemini
-soturail hooks prompt-only cursor
-```
+Always review generated hooks before enabling them. SotuRail should never auto-install unreviewed third-party skills, hooks or scripts.

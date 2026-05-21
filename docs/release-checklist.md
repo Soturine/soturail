@@ -9,6 +9,9 @@ Before publishing:
 - [ ] `npm test`
 - [ ] `npm audit --omit=dev`
 - [ ] `node dist/cli.js self all`
+- [ ] `node dist/cli.js skills --help`
+- [ ] `node dist/cli.js mcp --help`
+- [ ] `node dist/cli.js context --help`
 - [ ] `npm pack --dry-run`
 - [ ] `npm run release:check`
 - [ ] `node dist/cli.js --version` matches `package.json`.

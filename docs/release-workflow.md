@@ -1,6 +1,6 @@
 # Release Workflow
 
-SotuRail releases should be repeatable and evidence-backed. The release helper lives at `scripts/release.mjs`.
+SotuRail releases should be repeatable and evidence-backed. v0.3.0 exposes release helpers through `soturail release`.
 
 ## Check
 
@@ -17,23 +17,6 @@ The check also verifies:
 - npm pack dry-run emits the matching tarball name;
 - `CHANGELOG.md` and `RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
 - README install instructions and `LICENSE` exist.
-
-## Prepare
-
-```bash
-npm run release:prepare -- --version X.Y.Z
-```
-
-Prepare mode:
-
-- validates the version argument;
-- updates `package.json`, `package-lock.json` and CLI version text;
-- updates `CHANGELOG.md`;
-- creates `RELEASE_NOTES_vX.Y.Z.md`;
-- runs validation;
-- commits `chore(release): prepare vX.Y.Z`;
-- pushes `main`;
-- never publishes to npm.
 
 ## Publish
 
@@ -61,10 +44,18 @@ Remove-Item Env:NPM_CONFIG_OTP
 ## Full
 
 ```bash
-npm run release:full -- --version X.Y.Z
+npm run release:full -- --version X.Y.Z --publish-npm --github-release
 ```
 
-Full mode runs prepare, publish and then creates or updates the GitHub release using `gh` when available. If the npm version already exists, full mode skips npm publish and only creates or updates the GitHub release.
+Full mode runs release gates, then publishes to npm only when `--publish-npm` is supplied, and creates or updates the GitHub release only when `--github-release` is supplied.
+
+For explicit CLI usage:
+
+```bash
+soturail release publish --version X.Y.Z
+soturail release github --version X.Y.Z
+soturail release full --version X.Y.Z --publish-npm --github-release
+```
 
 Only create or update the GitHub release after npm publish succeeds and these checks pass:
 

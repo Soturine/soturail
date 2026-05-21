@@ -1,6 +1,6 @@
 # Workflow Rail
 
-Workflow Rail is planned for v0.4.0. It is not implemented in v0.2.x.
+Workflow Rail is planned for v0.4.0. It is not implemented in v0.3.0.
 
 The goal is to describe repeatable engineering workflows as local, auditable artifacts that can later export into Skill Rail or an MCP server.
 

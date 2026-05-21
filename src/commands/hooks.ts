@@ -9,6 +9,8 @@ const hosts: HookHost[] = ["claude", "codex", "gemini", "cursor"];
 
 export interface HookInstallOptions {
   dryRun?: boolean;
+  agent?: string;
+  mode?: "safe-hooks" | "mcp" | "prompt-only";
 }
 
 interface HookTarget {
@@ -210,16 +212,20 @@ export async function installHooks(hostValue: string, options: HookInstallOption
   const parsed = parseHost(hostValue);
   const selected = parsed === "all" ? hosts : [parsed];
   const dryRun = options.dryRun === true;
-  const lines = [`SotuRail hooks install ${hostValue}${dryRun ? " --dry-run" : ""}`];
+  const mode = options.mode ?? (hostValue === "claude" ? "safe-hooks" : "prompt-only");
+  const lines = [`SotuRail hooks install ${hostValue} --mode ${mode}${dryRun ? " --dry-run" : ""}`];
   const installed: Record<string, unknown>[] = [];
   for (const host of selected) {
-    if (host === "claude") {
+    if (host === "claude" && mode !== "prompt-only") {
       lines.push(...(await installClaude(root, dryRun)));
-      installed.push({ host, target: ".claude/settings.json", mode: "adapter-template", installed_at: new Date().toISOString() });
+      installed.push({ host, target: ".claude/settings.json", mode, installed_at: new Date().toISOString() });
+      if (mode === "mcp") {
+        lines.push("Claude MCP mode: add soturail mcp serve --transport stdio in the host's reviewed MCP server configuration.");
+      }
     } else {
       const target = targetFor(host);
       lines.push(...(await installTarget(target, root, dryRun)));
-      installed.push({ host, target: target.file, mode: target.mode, installed_at: new Date().toISOString() });
+      installed.push({ host, target: target.file, mode: "prompt-only", installed_at: new Date().toISOString() });
     }
   }
   if (!dryRun) {
@@ -254,6 +260,24 @@ export async function promptOnly(hostValue: string): Promise<string> {
   return selected.map((host) => targetFor(host).content).join("\n---\n") + "\n";
 }
 
+export async function exportHook(hostValue: string, root = process.cwd()): Promise<string> {
+  await ensureWorkspace(root);
+  const parsed = parseHost(hostValue);
+  const selected = parsed === "all" ? hosts : [parsed];
+  const paths = getWorkspacePaths(root);
+  await fs.mkdir(paths.hookExportsDir, { recursive: true });
+  const written: string[] = [];
+  for (const host of selected) {
+    const content = host === "claude"
+      ? `# SotuRail Claude Hook Export\n\nReview before enabling.\n\n## Prompt Rules\n\n${rules(host)}\n## Pre Tool Hook\n\n\`\`\`js\n${claudePreToolHook}\n\`\`\`\n`
+      : `# SotuRail ${host} Prompt-Only Export\n\n${rules(host)}\n`;
+    const filePath = path.join(paths.hookExportsDir, `${host}.md`);
+    await fs.writeFile(filePath, content, "utf8");
+    written.push(path.normalize(path.relative(root, filePath)).replace(/\\/g, "/"));
+  }
+  return `Hook export written:\n${written.join("\n")}\n`;
+}
+
 export function registerHooksCommand(program: Command): void {
   const hooks = program.command("hooks").description("Install or inspect agent hook and prompt-only integrations.");
   hooks.command("list").description("List supported hook hosts.").action(async () => {
@@ -262,13 +286,16 @@ export function registerHooksCommand(program: Command): void {
   hooks.command("doctor").description("Check hook registry state.").action(async () => {
     process.stdout.write(await hooksDoctor());
   });
-  hooks.command("install").description("Install hook rules for a host.").argument("<host>", "claude, codex, gemini, cursor, or all").option("--dry-run", "Print changes without writing").action(async (host: string, options: HookInstallOptions) => {
-    process.stdout.write(await installHooks(host, options));
+  hooks.command("install").description("Install hook rules for a host.").argument("[host]", "claude, codex, gemini, cursor, or all").option("--agent <agent>", "Agent host").option("--mode <mode>", "safe-hooks, mcp, or prompt-only").option("--dry-run", "Print changes without writing").action(async (host: string | undefined, options: HookInstallOptions) => {
+    process.stdout.write(await installHooks(host ?? options.agent ?? "all", options));
   });
-  hooks.command("uninstall").description("Restore backed up host files when available.").argument("<host>", "claude, codex, gemini, cursor, or all").action(async (host: string) => {
-    process.stdout.write(await uninstallHooks(host));
+  hooks.command("uninstall").description("Restore backed up host files when available.").argument("[host]", "claude, codex, gemini, cursor, or all").option("--agent <agent>", "Agent host").action(async (host: string | undefined, options: { agent?: string }) => {
+    process.stdout.write(await uninstallHooks(host ?? options.agent ?? "all"));
   });
   hooks.command("prompt-only").description("Print prompt-only fallback rules.").argument("<host>", "claude, codex, gemini, cursor, or all").action(async (host: string) => {
     process.stdout.write(await promptOnly(host));
+  });
+  hooks.command("export").description("Export hook or prompt-only guidance for review.").option("--agent <agent>", "claude, codex, gemini, cursor, or all", "all").action(async (options: { agent: string }) => {
+    process.stdout.write(await exportHook(options.agent));
   });
 }

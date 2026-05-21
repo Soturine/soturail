@@ -7,9 +7,10 @@ The generated rules keep repository scans, progressive file reads and raw log re
 Useful commands:
 
 ```bash
-soturail hooks install gemini --dry-run
-soturail hooks install gemini
-soturail hooks uninstall gemini
+soturail hooks install --agent gemini --mode prompt-only --dry-run
+soturail hooks install --agent gemini --mode prompt-only
+soturail hooks uninstall --agent gemini
+soturail hooks export --agent gemini
 soturail hooks prompt-only gemini
 ```
 

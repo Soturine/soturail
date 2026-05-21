@@ -26,7 +26,7 @@ From a source checkout:
 npm run build
 npm pack --dry-run
 npm pack
-npm install -g .\soturail-0.2.3.tgz
+npm install -g .\soturail-0.3.0.tgz
 soturail --version
 ```
 
