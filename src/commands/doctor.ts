@@ -4,6 +4,7 @@ import type { Command } from "commander";
 import { buildCachePayload } from "../core/cache-normalizer.js";
 import { getWorkspacePaths, validateConfigFile } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
+import { agentDoctor } from "../core/agent-exporter.js";
 
 interface Check {
   name: string;
@@ -131,5 +132,12 @@ export function registerDoctorCommand(program: Command): void {
       if (result.checks.some((check) => !check.ok)) {
         process.exitCode = 1;
       }
+    });
+
+  doctor
+    .command("agents")
+    .description("Check agent integration readiness.")
+    .action(async () => {
+      process.stdout.write(await agentDoctor());
     });
 }

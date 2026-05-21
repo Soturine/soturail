@@ -4,8 +4,8 @@ import type { Command } from "commander";
 import { ensureWorkspace, getWorkspacePaths, writeJson } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 
-export type HookHost = "claude" | "codex" | "gemini" | "cursor";
-const hosts: HookHost[] = ["claude", "codex", "gemini", "cursor"];
+export type HookHost = "claude" | "codex" | "gemini" | "cursor" | "antigravity";
+const hosts: HookHost[] = ["claude", "codex", "gemini", "cursor", "antigravity"];
 
 export interface HookInstallOptions {
   dryRun?: boolean;
@@ -82,6 +82,8 @@ function targetFor(host: HookHost): HookTarget {
       return { host, file: "GEMINI.md", mode: "prompt-only", content: rules(host) };
     case "cursor":
       return { host, file: ".cursor/rules/soturail.mdc", mode: "prompt-only", content: rules(host) };
+    case "antigravity":
+      return { host, file: ".soturail/exports/hooks/antigravity-prompt-only.md", mode: "prompt-only", content: rules(host) };
   }
 }
 
@@ -208,11 +210,13 @@ export async function hooksDoctor(root = process.cwd()): Promise<string> {
     "- codex: prompt-only",
     "- gemini: prompt-only",
     "- cursor: prompt-only",
+    "- antigravity: prompt-only",
     "",
     "Next steps:",
     "- soturail hooks list",
     "- soturail hooks install --agent claude --mode safe-hooks --dry-run",
     "- soturail hooks install --agent codex --mode prompt-only --dry-run",
+    "- soturail hooks install --agent antigravity --mode prompt-only --dry-run",
     "- soturail hooks export --agent claude",
     "- Review generated hooks before enabling.",
     "",
@@ -249,17 +253,17 @@ export async function installHooks(hostValue: string, options: HookInstallOption
   return `${lines.join("\n")}\n`;
 }
 
-export async function uninstallHooks(hostValue: string, root = process.cwd()): Promise<string> {
+export async function uninstallHooks(hostValue: string, root = process.cwd(), options: { dryRun?: boolean } = {}): Promise<string> {
   const parsed = parseHost(hostValue);
   const selected = parsed === "all" ? hosts : [parsed];
-  const lines = [`SotuRail hooks uninstall ${hostValue}`];
+  const lines = [`SotuRail hooks uninstall ${hostValue}${options.dryRun ? " --dry-run" : ""}`];
   for (const host of selected) {
     const target = targetFor(host);
     const absolute = path.resolve(root, target.file);
     const backup = `${absolute}.soturail.bak`;
     if (await fs.access(backup).then(() => true).catch(() => false)) {
-      await fs.copyFile(backup, absolute);
-      lines.push(`Restored backup for ${target.file}`);
+      if (!options.dryRun) await fs.copyFile(backup, absolute);
+      lines.push(`${options.dryRun ? "Would restore" : "Restored"} backup for ${target.file}`);
     } else {
       lines.push(`No backup found for ${target.file}; left file unchanged`);
     }
@@ -299,16 +303,16 @@ export function registerHooksCommand(program: Command): void {
   hooks.command("doctor").description("Check hook registry state.").action(async () => {
     process.stdout.write(await hooksDoctor());
   });
-  hooks.command("install").description("Install hook rules for a host.").argument("[host]", "claude, codex, gemini, cursor, or all").option("--agent <agent>", "Agent host").option("--mode <mode>", "safe-hooks, mcp, or prompt-only").option("--dry-run", "Print changes without writing").action(async (host: string | undefined, options: HookInstallOptions) => {
+  hooks.command("install").description("Install hook rules for a host.").argument("[host]", "claude, codex, gemini, cursor, antigravity, or all").option("--agent <agent>", "Agent host").option("--mode <mode>", "safe-hooks, mcp, or prompt-only").option("--dry-run", "Print changes without writing").action(async (host: string | undefined, options: HookInstallOptions) => {
     process.stdout.write(await installHooks(host ?? options.agent ?? "all", options));
   });
-  hooks.command("uninstall").description("Restore backed up host files when available.").argument("[host]", "claude, codex, gemini, cursor, or all").option("--agent <agent>", "Agent host").action(async (host: string | undefined, options: { agent?: string }) => {
-    process.stdout.write(await uninstallHooks(host ?? options.agent ?? "all"));
+  hooks.command("uninstall").description("Restore backed up host files when available.").argument("[host]", "claude, codex, gemini, cursor, antigravity, or all").option("--agent <agent>", "Agent host").option("--dry-run", "Print rollback without writing").action(async (host: string | undefined, options: { agent?: string; dryRun?: boolean }) => {
+    process.stdout.write(await uninstallHooks(host ?? options.agent ?? "all", process.cwd(), options.dryRun === undefined ? {} : { dryRun: options.dryRun }));
   });
-  hooks.command("prompt-only").description("Print prompt-only fallback rules.").argument("<host>", "claude, codex, gemini, cursor, or all").action(async (host: string) => {
+  hooks.command("prompt-only").description("Print prompt-only fallback rules.").argument("<host>", "claude, codex, gemini, cursor, antigravity, or all").action(async (host: string) => {
     process.stdout.write(await promptOnly(host));
   });
-  hooks.command("export").description("Export hook or prompt-only guidance for review.").option("--agent <agent>", "claude, codex, gemini, cursor, or all", "all").action(async (options: { agent: string }) => {
+  hooks.command("export").description("Export hook or prompt-only guidance for review.").option("--agent <agent>", "claude, codex, gemini, cursor, antigravity, or all", "all").action(async (options: { agent: string }) => {
     process.stdout.write(await exportHook(options.agent));
   });
 }

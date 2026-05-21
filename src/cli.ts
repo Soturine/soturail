@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { registerBenchCommand } from "./commands/bench.js";
+import { registerAgentsCommand } from "./commands/agents.js";
 import { registerDedupeCommand } from "./commands/dedupe.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerExpandCommand } from "./commands/expand.js";
@@ -24,6 +25,7 @@ import { registerSkillsCommand } from "./commands/skills.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
 import { registerReleaseCommand } from "./commands/release.js";
+import { registerWorkflowCommand } from "./commands/workflow.js";
 import { SOTURAIL_VERSION } from "./core/version.js";
 
 export function buildProgram(): Command {
@@ -36,6 +38,7 @@ export function buildProgram(): Command {
     .showHelpAfterError();
 
   registerInitCommand(program);
+  registerAgentsCommand(program);
   registerIndexCommand(program);
   registerReadCommand(program);
   registerRunCommand(program);
@@ -56,6 +59,7 @@ export function buildProgram(): Command {
   registerSkillsCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);
+  registerWorkflowCommand(program);
 
   return program;
 }

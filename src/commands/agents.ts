@@ -1,0 +1,56 @@
+import type { Command } from "commander";
+import { agentDoctor, exportAgents, installAgent, uninstallAgent } from "../core/agent-exporter.js";
+import { formatAgentList } from "../core/agent-registry.js";
+
+interface AgentOptions {
+  agent?: string;
+  mode?: string;
+  dryRun?: boolean;
+  yes?: boolean;
+  backup?: boolean;
+  output?: string;
+}
+
+export function registerAgentsCommand(program: Command): void {
+  const agents = program.command("agents").description("Export and install safe agent integration profiles.");
+
+  agents.command("list").description("List supported agent integration profiles.").action(() => {
+    process.stdout.write(formatAgentList());
+  });
+
+  agents.command("doctor").description("Check agent integration readiness.").action(async () => {
+    process.stdout.write(await agentDoctor());
+  });
+
+  agents
+    .command("export")
+    .description("Export prompt/context integration files for review.")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .action(async (options: AgentOptions) => {
+      const result = await exportAgents(options.agent ?? "all");
+      process.stdout.write(`Agent exports written:\n${result.written.join("\n")}\n`);
+    });
+
+  agents
+    .command("install")
+    .description("Install reviewed project-local agent integration files.")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .option("--mode <mode>", "prompt-only, mcp, safe-hooks, or rules")
+    .option("--dry-run", "Print planned changes without writing")
+    .option("--yes", "Acknowledge reviewed project-local install")
+    .option("--backup", "Create backups before modifying existing files", true)
+    .option("--output <path>", "Override output path for single-agent install")
+    .action(async (options: AgentOptions) => {
+      const result = await installAgent(options.agent ?? "all", options);
+      process.stdout.write(`${result.lines.join("\n")}\n`);
+    });
+
+  agents
+    .command("uninstall")
+    .description("Restore backups for project-local agent integration files when available.")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .option("--dry-run", "Print planned rollback without writing")
+    .action(async (options: AgentOptions) => {
+      process.stdout.write(await uninstallAgent(options.agent ?? "all", options.dryRun === undefined ? {} : { dryRun: options.dryRun }));
+    });
+}

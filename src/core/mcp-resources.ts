@@ -49,9 +49,18 @@ export async function readMcpResource(uri: string, root = process.cwd()): Promis
 }
 
 function resource(uri: string, mimeType: string, text: string): { uri: string; mimeType: string; text: string } {
-  return { uri, mimeType, text };
+  return { uri, mimeType, text: sanitizeMcpResourceText(text) };
 }
 
 async function readOptional(filePath: string, fallback: string): Promise<string> {
   return fs.readFile(filePath, "utf8").catch(() => fallback);
+}
+
+function sanitizeMcpResourceText(text: string): string {
+  return text
+    .replace(/\.soturail[\\/]+raw[^\s)"']*/gi, "[raw-log-path-redacted]")
+    .replace(/(^|\s)\.env(\.[A-Za-z0-9_-]+)?/g, "$1[env-file-redacted]")
+    .replace(/Bearer\s+[A-Za-z0-9._~+/-]+=*/gi, "Bearer [REDACTED]")
+    .replace(/(npm_[A-Za-z0-9]{24,}|gh[pousr]_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9_-]{16,})/g, "[REDACTED_TOKEN]")
+    .replace(/(api[_-]?key|token|secret|password)\s*[:=]\s*["']?[^"'\s]+/gi, "$1=[REDACTED]");
 }

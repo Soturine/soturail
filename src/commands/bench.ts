@@ -14,9 +14,10 @@ import { ensureWorkspace, writeJson } from "../core/config.js";
 import { DedupeStore } from "../core/dedupe-store.js";
 import { ingestDocument } from "../core/document-ingest.js";
 import { exportHook } from "./hooks.js";
+import { exportAgents } from "../core/agent-exporter.js";
 import { approveMemory, listMemory, proposeMemory } from "./memory.js";
 import { MetricsStore } from "../core/metrics-store.js";
-import { mcpManifest } from "../core/mcp-server.js";
+import { mcpManifest, mcpSmoke } from "../core/mcp-server.js";
 import { readMcpResource } from "../core/mcp-resources.js";
 import { detectNativeEngine, type ReducerEngine } from "../core/native-engine.js";
 import { extractRules } from "../core/rule-extractor.js";
@@ -26,6 +27,7 @@ import { createSkill } from "../core/skill-store.js";
 import { exportSkills } from "../core/skill-exporter.js";
 import { validateSkills } from "../core/skill-validator.js";
 import { SOTURAIL_VERSION } from "../core/version.js";
+import { createWorkflow, listWorkflows, startWorkflow } from "../core/workflow-store.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -45,7 +47,8 @@ export type BenchmarkCategory =
   | "mcp"
   | "context_pack"
   | "agent_integration"
-  | "memory_workflow";
+  | "memory_workflow"
+  | "workflow_rail";
 
 export interface BenchResult {
   case_id: string;
@@ -481,15 +484,17 @@ async function skillRailResult(root: string, mode: "validation" | "export"): Pro
   });
 }
 
-async function mcpResult(root: string, mode: "manifest" | "read"): Promise<BenchResult> {
+async function mcpResult(root: string, mode: "manifest" | "read" | "smoke"): Promise<BenchResult> {
   const start = performance.now();
   const raw = mode;
   const output = mode === "manifest"
     ? JSON.stringify(await mcpManifest(SOTURAIL_VERSION), null, 2)
-    : JSON.stringify(await readMcpResource("soturail://roadmap", root), null, 2);
+    : mode === "smoke"
+      ? (await mcpSmoke(root, SOTURAIL_VERSION)).output
+      : JSON.stringify(await readMcpResource("soturail://roadmap", root), null, 2);
   const runtime = performance.now() - start;
   return makeResult({
-    case_id: mode === "manifest" ? "mcp-resource-list" : "mcp-resource-read",
+    case_id: mode === "manifest" ? "mcp-resource-list" : mode === "smoke" ? "mcp-smoke" : "mcp-resource-read",
     category: "mcp",
     engine: "ts",
     raw,
@@ -498,7 +503,7 @@ async function mcpResult(root: string, mode: "manifest" | "read"): Promise<Bench
     reducedTokens: estimateTokens(output),
     reduction: null,
     runtime,
-    quality: output.includes(mode === "manifest" ? "soturail://repo-map" : "roadmap"),
+    quality: output.includes(mode === "manifest" ? "soturail://repo-map" : mode === "smoke" ? "result: pass" : "roadmap"),
     notes: "MCP benchmark uses local resources without arbitrary shell execution.",
     details: { mode }
   });
@@ -541,6 +546,50 @@ async function hookExportResult(root: string): Promise<BenchResult> {
     quality: output.includes(".soturail"),
     notes: "Hook export benchmark creates reviewable local files.",
     details: { agent: "claude" }
+  });
+}
+
+async function agentExportResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const result = await exportAgents("all", root);
+  const output = result.written.join("\n");
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "agent-export-all",
+    category: "agent_integration",
+    engine: "ts",
+    raw: "all agent exports",
+    reduced: output,
+    rawTokens: estimateTokens("all agent exports"),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: output.includes("antigravity") && output.includes("claude"),
+    notes: "Agent integration benchmark exports all reviewed prompt/context artifacts.",
+    details: { agents: 6 }
+  });
+}
+
+async function workflowRailResult(root: string): Promise<BenchResult> {
+  const start = performance.now();
+  const workflow = await createWorkflow("Benchmark Workflow Rail", root);
+  const dryRun = await startWorkflow(workflow.id, { worktree: true, dryRun: true }, root);
+  const list = (await listWorkflows(root)).map((item) => item.id).join("\n");
+  const output = `${dryRun}\n${list}`;
+  const runtime = performance.now() - start;
+  return makeResult({
+    case_id: "workflow-rail-dry-run",
+    category: "workflow_rail",
+    engine: "ts",
+    raw: workflow.title,
+    reduced: output,
+    rawTokens: estimateTokens(workflow.title),
+    reducedTokens: estimateTokens(output),
+    reduction: null,
+    runtime,
+    quality: output.includes("Dry-run") && output.includes(workflow.id),
+    notes: "Workflow Rail benchmark creates local task state and plans worktree isolation without pushing or merging.",
+    details: { workflow_id: workflow.id }
   });
 }
 
@@ -698,8 +747,11 @@ export async function runBenchmarks(options: BenchOptions = {}, root = process.c
     await skillRailResult(root, "export"),
     await mcpResult(root, "manifest"),
     await mcpResult(root, "read"),
+    await mcpResult(root, "smoke"),
     await contextPackResult(root),
     await hookExportResult(root),
+    await agentExportResult(root),
+    await workflowRailResult(root),
     await memoryWorkflowResult(root)
   ];
   await writeBenchmarkFiles(root, engine, results);

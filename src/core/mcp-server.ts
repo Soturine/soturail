@@ -35,6 +35,35 @@ export async function mcpDoctor(version: string): Promise<string> {
   ].join("\n") + "\n";
 }
 
+export async function mcpSmoke(root = process.cwd(), version = "0.0.0"): Promise<{ ok: boolean; output: string }> {
+  const initialize = await handleMcpMessage({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }, root, version);
+  const resources = await handleMcpMessage({ jsonrpc: "2.0", id: 2, method: "resources/list", params: {} }, root, version);
+  const repoMap = await handleMcpMessage({ jsonrpc: "2.0", id: 3, method: "resources/read", params: { uri: "soturail://repo-map" } }, root, version);
+  const tools = await handleMcpMessage({ jsonrpc: "2.0", id: 4, method: "tools/list", params: {} }, root, version);
+  const toolNames = Array.isArray(tools?.result?.tools)
+    ? tools.result.tools.map((tool: { name?: unknown }) => tool.name).filter((name: unknown): name is string => typeof name === "string")
+    : [];
+  const ok = Boolean(
+    initialize?.result?.serverInfo?.name === "soturail"
+    && Array.isArray(resources?.result?.resources)
+    && repoMap?.result?.contents?.[0]?.uri === "soturail://repo-map"
+    && toolNames.length > 0
+    && !toolNames.includes("soturail.run")
+  );
+  return {
+    ok,
+    output: [
+      "SotuRail MCP smoke",
+      `initialize: ${initialize?.result?.serverInfo?.name === "soturail" ? "pass" : "fail"}`,
+      `resources_list: ${Array.isArray(resources?.result?.resources) ? "pass" : "fail"}`,
+      `repo_map_read: ${repoMap?.result?.contents?.[0]?.uri === "soturail://repo-map" ? "pass" : "fail"}`,
+      `tools_list: ${toolNames.length > 0 ? "pass" : "fail"}`,
+      `arbitrary_shell_tool_exposed: ${toolNames.includes("soturail.run") ? "yes" : "no"}`,
+      `result: ${ok ? "pass" : "fail"}`
+    ].join("\n") + "\n"
+  };
+}
+
 export async function handleMcpMessage(message: any, root = process.cwd(), version = "0.0.0"): Promise<any> {
   const id = message?.id ?? null;
   try {

@@ -2,9 +2,11 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, loadConfig, readJsonl } from "./config.js";
 import { getCurrentGitCommit } from "./git.js";
+import { listMcpResources } from "./mcp-resources.js";
 import { readSkills } from "./skill-store.js";
+import { listWorkflows } from "./workflow-store.js";
 
-export type ContextTarget = "claude" | "codex" | "gemini" | "cursor" | "generic";
+export type ContextTarget = "claude" | "codex" | "gemini" | "cursor" | "antigravity" | "generic";
 
 export interface ContextPackOptions {
   now?: string;
@@ -15,6 +17,16 @@ export interface ContextPackResult {
   path: string;
   payload: string;
   stablePrefix: string;
+}
+
+export const contextTargets: ContextTarget[] = ["claude", "codex", "gemini", "cursor", "antigravity", "generic"];
+
+export async function buildAllContextPacks(root = process.cwd(), options: ContextPackOptions = {}): Promise<ContextPackResult[]> {
+  const results: ContextPackResult[] = [];
+  for (const target of contextTargets) {
+    results.push(await buildContextPack(target, root, options));
+  }
+  return results;
 }
 
 export async function buildContextPack(
@@ -33,7 +45,9 @@ export async function buildContextPack(
     ["Approved Rules", await readOptional(paths.rulesFile, "No approved rules found.")],
     ["Approved Specs", await approvedSpecs(root)],
     ["Approved Memory", await approvedMemory(root)],
-    ["Skills Summary", await skillsSummary(root)]
+    ["Skills Summary", await skillsSummary(root)],
+    ["Workflow Summary", await workflowSummary(root)],
+    ["MCP Resource List", await mcpResourceSummary()]
   ] as const;
   const stable = sections.map(([title, content]) => `## ${title}\n\n${content.trim()}\n`).join("\n");
   const dynamic = [
@@ -68,7 +82,7 @@ export async function contextDoctor(root = process.cwd()): Promise<string> {
 export function explainContextPacks(): string {
   return [
     "SotuRail context packs keep stable content before dynamic session data.",
-    "Order: static header -> governance -> config -> repo map -> approved rules -> approved specs -> approved memory -> skills -> dynamic footer.",
+    "Order: static header -> governance -> config -> repo map -> approved rules -> approved specs -> approved memory -> skills -> workflows -> MCP resources -> dynamic footer.",
     "Timestamps, raw_ids, recent command status and transient logs stay in the dynamic footer."
   ].join("\n") + "\n";
 }
@@ -109,6 +123,17 @@ async function skillsSummary(root: string): Promise<string> {
   return skills.length > 0
     ? skills.map((skill) => `- ${skill.metadata.id}: ${skill.metadata.description} [${skill.metadata.risk_level}]`).join("\n")
     : "No skills found.";
+}
+
+async function workflowSummary(root: string): Promise<string> {
+  const workflows = await listWorkflows(root);
+  return workflows.length > 0
+    ? workflows.map((workflow) => `- ${workflow.id}: ${workflow.title} [${workflow.state}]`).join("\n")
+    : "No workflows found.";
+}
+
+async function mcpResourceSummary(): Promise<string> {
+  return (await listMcpResources()).map((resource) => `- ${resource.uri}: ${resource.description}`).join("\n");
 }
 
 async function readOptional(filePath: string, fallback: string): Promise<string> {

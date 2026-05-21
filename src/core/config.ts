@@ -94,7 +94,11 @@ export interface WorkspacePaths {
   exportsDir: string;
   skillExportsDir: string;
   hookExportsDir: string;
+  agentExportsDir: string;
+  mcpExportsDir: string;
   contextDir: string;
+  workflowsDir: string;
+  worktreesDir: string;
 }
 
 export interface EnsureResult {
@@ -135,7 +139,11 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     exportsDir: path.resolve(workspace, "exports"),
     skillExportsDir: path.resolve(workspace, "exports", "skills"),
     hookExportsDir: path.resolve(workspace, "exports", "hooks"),
-    contextDir: path.resolve(workspace, "context")
+    agentExportsDir: path.resolve(workspace, "exports", "agents"),
+    mcpExportsDir: path.resolve(workspace, "exports", "mcp"),
+    contextDir: path.resolve(workspace, "context"),
+    workflowsDir: path.resolve(workspace, "workflows"),
+    worktreesDir: path.resolve(workspace, "worktrees")
   };
 }
 
@@ -202,7 +210,11 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.exportsDir,
     paths.skillExportsDir,
     paths.hookExportsDir,
-    paths.contextDir
+    paths.agentExportsDir,
+    paths.mcpExportsDir,
+    paths.contextDir,
+    paths.workflowsDir,
+    paths.worktreesDir
   ];
 
   for (const dir of dirs) {

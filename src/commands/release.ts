@@ -55,7 +55,7 @@ export function registerReleaseCommand(program: Command): void {
       await runReleaseGate(version);
       await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
       await runChecked("npm", ["view", "soturail", "version"]);
-      await runChecked("npx", ["--yes", "--package", `soturail@${version}`, "soturail", "--version"]);
+      await runChecked("npm", ["exec", "--yes", `--package=soturail@${version}`, "--", "soturail", "--version"]);
     });
 
   release
@@ -81,7 +81,7 @@ export function registerReleaseCommand(program: Command): void {
       if (options.publishNpm) {
         await runChecked("npm", ["publish", "--access", "public", "--auth-type=web", ...(options.otp ? [`--otp=${options.otp}`] : [])]);
         await runChecked("npm", ["view", "soturail", "version"]);
-        await runChecked("npx", ["--yes", "--package", `soturail@${version}`, "soturail", "--version"]);
+        await runChecked("npm", ["exec", "--yes", `--package=soturail@${version}`, "--", "soturail", "--version"]);
       }
       if (options.githubRelease) {
         await createOrUpdateGithubRelease(version);
@@ -185,6 +185,8 @@ async function createOrUpdateGithubRelease(version: string): Promise<void> {
   const tag = `v${version}`;
   const title = version === "0.3.0"
     ? "SotuRail v0.3.0 - Skill Rail, MCP & Context Packs"
+    : version === "0.4.0"
+      ? "SotuRail v0.4.0 - Real Agent Integrations & Workflow Rail"
     : `SotuRail v${version}`;
   const notes = `RELEASE_NOTES_v${version}.md`;
   const view = await runCapture("gh", ["release", "view", tag], true);

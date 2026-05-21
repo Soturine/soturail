@@ -1,5 +1,9 @@
 import type { Command } from "commander";
-import { mcpDoctor, mcpManifest, serveMcpStdio } from "../core/mcp-server.js";
+import { promises as fs } from "node:fs";
+import path from "node:path";
+import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "../core/config.js";
+import { mcpConfig } from "../core/agent-exporter.js";
+import { mcpDoctor, mcpManifest, mcpSmoke, serveMcpStdio } from "../core/mcp-server.js";
 import { SOTURAIL_VERSION } from "../core/version.js";
 
 export function registerMcpCommand(program: Command): void {
@@ -11,6 +15,30 @@ export function registerMcpCommand(program: Command): void {
 
   mcp.command("manifest").description("Print MCP resources and tools manifest.").action(async () => {
     process.stdout.write(`${JSON.stringify(await mcpManifest(SOTURAIL_VERSION), null, 2)}\n`);
+  });
+
+  mcp
+    .command("config")
+    .description("Export a safe MCP host configuration snippet.")
+    .requiredOption("--agent <agent>", "claude, cursor, or generic")
+    .action(async (options: { agent: string }) => {
+      if (!["claude", "cursor", "generic"].includes(options.agent)) {
+        throw new Error("MCP config supports --agent claude, cursor, or generic.");
+      }
+      await ensureWorkspace();
+      const paths = getWorkspacePaths();
+      const dir = path.join(paths.mcpExportsDir, options.agent);
+      const filePath = path.join(dir, "mcp-config.json");
+      await fs.mkdir(dir, { recursive: true });
+      await fs.writeFile(filePath, `${JSON.stringify(mcpConfig(options.agent as "claude" | "cursor" | "generic"), null, 2)}\n`, "utf8");
+      process.stdout.write(`MCP config written: ${relativeToRoot(process.cwd(), filePath)}\n`);
+      process.stdout.write("Review this snippet before adding it to a host application.\n");
+    });
+
+  mcp.command("smoke").description("Run a non-hanging local JSON-RPC smoke test.").action(async () => {
+    const result = await mcpSmoke(process.cwd(), SOTURAIL_VERSION);
+    process.stdout.write(result.output);
+    if (!result.ok) process.exitCode = 1;
   });
 
   mcp
