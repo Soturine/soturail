@@ -12,6 +12,7 @@ import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src
 import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
 import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
+import { buildProgram } from "../src/cli.js";
 import { expandRawLog } from "../src/commands/expand.js";
 import { installHooks, promptOnly } from "../src/commands/hooks.js";
 import { ingestCommand } from "../src/commands/ingest.js";
@@ -20,6 +21,7 @@ import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
 import { checkRules, listRules } from "../src/commands/rules.js";
 import { collectStats, formatStats } from "../src/commands/stats.js";
+import { selfDoctor, writeSelfReport } from "../src/core/self-dogfood.js";
 
 const tempRoots: string[] = [];
 
@@ -38,6 +40,20 @@ function drainedPassThrough(): PassThrough {
   const stream = new PassThrough();
   stream.resume();
   return stream;
+}
+
+async function makeSotuRailLikeFixture(): Promise<string> {
+  const root = await tempRoot();
+  await writeFile(path.join(root, "package.json"), JSON.stringify({ name: "soturail", version: "0.0.0-test" }));
+  await writeFile(path.join(root, "README.md"), "# SotuRail\n");
+  await writeFile(path.join(root, "CHANGELOG.md"), "# Changelog\n");
+  await writeFile(path.join(root, "ROADMAP.md"), "# Roadmap\n");
+  await writeFile(path.join(root, "src", "cli.ts"), "export const cli = true;\n");
+  await writeFile(path.join(root, "src", "commands", "index.ts"), "export const command = true;\n");
+  await writeFile(path.join(root, "src", "core", "index.ts"), "export const core = true;\n");
+  await writeFile(path.join(root, "tests", "fixture.test.ts"), "export const test = true;\n");
+  await writeFile(path.join(root, "docs", "usage.md"), "# Usage\n");
+  return root;
 }
 
 afterEach(async () => {
@@ -261,12 +277,20 @@ describe("reducers and benchmarks", () => {
     await writeFile(path.join(root, ".github", "workflows", "ci.yml"), "name: CI\n");
     const results = await runBenchmarks({ engine: "ts" }, root);
     const report = await fs.readFile(path.join(root, "benchmarks", "reports", "latest.md"), "utf8");
-    const json = results.find((result) => result.category === "json_tool_payload_compression");
+    const categories = [...new Set(results.map((result) => result.category))];
+    const json = results.find((result) => result.case_id === "json-tool-payload");
     const rules = results.find((result) => result.category === "knowledge_structuring");
 
-    expect(report).toContain("json_tool_payload_compression");
-    expect(report).toContain("Knowledge-to-Rules is reported as reusable structuring");
-    expect(json?.compression_ratio_percent).toBeGreaterThan(0);
+    expect(categories).toEqual(expect.arrayContaining([
+      "terminal_compression",
+      "agent_response_compression",
+      "knowledge_structuring",
+      "cache_stability",
+      "native_engine"
+    ]));
+    expect(report).toContain("cache_stability");
+    expect(report).toContain("Knowledge structuring cases are extraction and validation tasks");
+    expect(json?.reduction_percent).toBeGreaterThan(0);
     expect(rules?.compression_ratio_percent).toBeNull();
   });
 
@@ -387,6 +411,51 @@ describe("native explicit mode", () => {
   });
 });
 
+describe("self dogfooding", () => {
+  it("exposes the self command in the CLI", () => {
+    const program = buildProgram();
+    expect(program.commands.map((command) => command.name())).toContain("self");
+  });
+
+  it("self doctor succeeds in a SotuRail-like fixture", async () => {
+    const root = await makeSotuRailLikeFixture();
+    const result = await selfDoctor(root);
+
+    expect(result.ok).toBe(true);
+    expect(result.package_name).toBe("soturail");
+  });
+
+  it("self doctor fails outside a SotuRail-like fixture", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "package.json"), JSON.stringify({ name: "not-soturail" }));
+    const result = await selfDoctor(root);
+
+    expect(result.ok).toBe(false);
+    expect(result.missing.length).toBeGreaterThan(0);
+  });
+
+  it("writes a cache-friendly self report with stable information before dynamic metadata", async () => {
+    const root = await makeSotuRailLikeFixture();
+    await ensureWorkspace(root);
+    const doctor = await selfDoctor(root);
+    const reportPath = await writeSelfReport({
+      root,
+      doctor,
+      index: { indexed_files_count: 7, ignored_files_count: 2, ignored_directories_count: 1 },
+      build: { ok: true, exit_code: 0, raw_id: "build123", raw_tokens: 2, reduced_tokens: 10, summary: "" },
+      test: { ok: true, exit_code: 0, raw_id: "test123", raw_tokens: 2, reduced_tokens: 10, summary: "" },
+      bench: { ok: true, raw_id: "bench123", cases_count: 1, summary: "cases_count: 1", results: [] },
+      errors: []
+    });
+    const report = await fs.readFile(reportPath, "utf8");
+
+    expect(path.normalize(reportPath)).toContain(path.normalize(".soturail/reports/self-dogfood.md"));
+    expect(report.indexOf("## Stable Project Description")).toBeLessThan(report.indexOf("## Dynamic Execution Data"));
+    expect(report).toContain("package_name: soturail");
+    expect(report).toContain("build_raw_id: build123");
+  });
+});
+
 describe("stats", () => {
   it("reads local manifests honestly without inventing provider cache hits", async () => {
     const root = await tempRoot();
@@ -422,6 +491,8 @@ describe("stats", () => {
 
     expect(stats.estimated_raw_tokens).toBe(100);
     expect(stats.estimated_compressed_tokens).toBe(50);
+    expect(stats.estimated_reduced_payload_tokens).toBe(50);
+    expect(stats.estimated_net_tokens_sent).toBeGreaterThan(50);
     expect(stats.compression_ratio).toBe(2);
     expect(stats.command_count).toBe(2);
     expect(stats.expansion_count).toBe(1);
@@ -429,5 +500,37 @@ describe("stats", () => {
     expect(stats.estimated_cache_stability_score).toBe(0.75);
     expect(stats.provider_cache_hits).toBeNull();
     expect(formatted).toContain("real_provider_cache_hits: not imported");
+  });
+
+  it("marks tiny outputs ineffective when metadata overhead is larger than the raw output", async () => {
+    const root = await tempRoot();
+    await ensureWorkspace(root);
+    await new RawStore(root).appendRunRecord({
+      raw_id: "tiny",
+      path: ".soturail/raw/2026-05-21/tiny.log",
+      command: "node -e \"console.log('ok')\"",
+      exit_code: 0,
+      created_at: "2026-05-21T12:00:00.000Z",
+      compressor: "generic-stream",
+      raw_tokens_estimated: 1,
+      compressed_tokens_estimated: 2
+    });
+
+    const stats = await collectStats(root);
+    const formatted = formatStats(stats);
+
+    expect(stats.compression_effective).toBe(false);
+    expect(stats.small_output_warning).toBe(true);
+    expect(formatted).toContain("Compression was not effective for this small command");
+  });
+});
+
+describe("documentation files", () => {
+  it("includes Windows, Skill Rail and Workflow Rail docs", async () => {
+    const root = process.cwd();
+
+    await expect(fs.access(path.join(root, "docs", "windows.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "skill-rail.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "workflow-rail.md"))).resolves.toBeUndefined();
   });
 });
