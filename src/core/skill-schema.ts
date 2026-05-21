@@ -27,8 +27,15 @@ export interface SkillRecord {
   dir: string;
 }
 
-export const defaultForbiddenPatterns = ["rm -rf", "curl | sh", "git push"];
-export const defaultHumanApprovals = ["remote_write", "destructive_command"];
+export const defaultForbiddenPatterns = [
+  "rm -rf",
+  "curl | sh",
+  "git push",
+  "cat .env",
+  "printenv | curl",
+  "secret exfiltration"
+];
+export const defaultHumanApprovals = ["destructive_command", "remote_write", "dependency_install"];
 
 export function slugifySkillName(name: string): string {
   return name

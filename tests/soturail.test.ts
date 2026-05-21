@@ -12,7 +12,7 @@ import { readMcpResource } from "../src/core/mcp-resources.js";
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
 import { isDangerousCommand, UNSAFE_CONFIRMATION, validateCommand } from "../src/core/safety-policy.js";
-import { createSkill } from "../src/core/skill-store.js";
+import { createSkill, renderSkillList } from "../src/core/skill-store.js";
 import { exportSkills } from "../src/core/skill-exporter.js";
 import { validateSkills } from "../src/core/skill-validator.js";
 import { reduceAgentResponse } from "../src/compressors/agent-response-reducer.js";
@@ -450,6 +450,33 @@ describe("skill rail", () => {
     expect(validation.ok).toBe(true);
     expect(exported).toContain(".soturail");
     await expect(fs.access(path.join(root, ".soturail", "exports", "skills", "claude", "demo-skill.md"))).resolves.toBeUndefined();
+  });
+
+  it("creates a richer starter skill and renders readable list output", async () => {
+    const root = await tempRoot();
+    const emptyList = renderSkillList([], root);
+    const skill = await createSkill("Demo Skill", root);
+    const validation = await validateSkills(root);
+    const listOutput = renderSkillList([skill], root);
+    const yaml = await fs.readFile(path.join(root, ".soturail", "skills", "demo-skill", "skill.yml"), "utf8");
+    const markdown = await fs.readFile(path.join(root, ".soturail", "skills", "demo-skill", "SKILL.md"), "utf8");
+
+    expect(emptyList).toContain("No local skills found.");
+    expect(emptyList).toContain("soturail skills init <name>");
+    expect(validation.ok).toBe(true);
+    expect(yaml).toContain("  - generic");
+    expect(yaml).toContain("  - summarize");
+    expect(yaml).toContain("  - dependency_install");
+    expect(markdown).toContain("## Safe Workflow");
+    expect(markdown).toContain("## Verification Checklist");
+    expect(listOutput).toContain("SotuRail skills");
+    expect(listOutput).toContain("skills_count: 1");
+    expect(listOutput).toContain("- demo-skill [low]");
+    expect(listOutput).toContain("Name: Demo Skill");
+    expect(listOutput).toContain("Targets: claude, codex, gemini, cursor, generic");
+    expect(listOutput).toContain(`Path: ${path.normalize(path.join(".soturail", "skills", "demo-skill"))}`);
+    await expect(fs.access(path.join(root, ".soturail", "skills", "demo-skill", "examples", "README.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".soturail", "skills", "demo-skill", "validators", "README.md"))).resolves.toBeUndefined();
   });
 });
 

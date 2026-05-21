@@ -21,13 +21,43 @@ export async function createSkill(name: string, root = process.cwd()): Promise<S
   const markdown = [
     `# ${name}`,
     "",
-    "Use this skill when the task matches the description and the repository owner has approved it.",
+    `Use this skill when an agent needs a safe, local-first workflow for ${name}.`,
+    "",
+    "## Description",
+    "",
+    `Guide the agent through a reviewed ${name} workflow using SotuRail context, progressive reads and reversible command evidence.`,
+    "",
+    "## Safe Workflow",
+    "",
+    "1. Start with `soturail index` when repository context may be stale.",
+    "2. Use `soturail read <file> --query \"goal\"` for large or unfamiliar files.",
+    "3. Use `soturail context pack --target generic` when a compact project brief is needed.",
+    "4. Run tests, builds or diagnostics through `soturail run <command>` so raw logs remain recoverable.",
+    "5. Summarize findings with file paths, commands run and verification status.",
     "",
     "## Safety",
     "",
     "- Do not run destructive shell commands.",
-    "- Do not exfiltrate secrets.",
-    "- Ask for human approval before remote writes or destructive actions.",
+    "- Do not expose secrets or environment values.",
+    "- Ask for human approval before remote writes, dependency installation or destructive actions.",
+    "- Treat generated hooks, skills and scripts as review-required artifacts.",
+    "",
+    "## Verification Checklist",
+    "",
+    "- [ ] Relevant files were read through SotuRail or referenced explicitly.",
+    "- [ ] Commands that produce logs were run through SotuRail when practical.",
+    "- [ ] Security-sensitive actions were avoided or explicitly approved.",
+    "- [ ] Final response includes next action and recovery path when raw logs exist.",
+    "",
+    "## Example Input",
+    "",
+    "> Review the current change and suggest the safest next verification command.",
+    "",
+    "## Example Output",
+    "",
+    "- Summary: concise finding or confirmation.",
+    "- Evidence: file paths and commands reviewed.",
+    "- Verification: next command to run through SotuRail.",
     ""
   ].join("\n");
   const base: Omit<SkillMetadata, "content_hash"> = {
@@ -37,8 +67,8 @@ export async function createSkill(name: string, root = process.cwd()): Promise<S
     version: "0.1.0",
     author: "Rafael Ryan Ramos de Souza",
     risk_level: "low",
-    targets: ["claude", "codex", "gemini", "cursor"],
-    allowed_tools: ["read", "search"],
+    targets: ["claude", "codex", "gemini", "cursor", "generic"],
+    allowed_tools: ["read", "search", "summarize", "format"],
     forbidden_patterns: defaultForbiddenPatterns,
     requires_human_approval: defaultHumanApprovals,
     created_at: new Date().toISOString()
@@ -49,6 +79,14 @@ export async function createSkill(name: string, root = process.cwd()): Promise<S
   await fs.mkdir(path.join(dir, "validators"), { recursive: true });
   await fs.writeFile(path.join(dir, "skill.yml"), stringifySkillYaml(metadata), "utf8");
   await fs.writeFile(path.join(dir, "SKILL.md"), markdown, "utf8");
+  await fs.writeFile(path.join(dir, "examples", "README.md"), `# ${name} Examples
+
+Add reviewed examples here. Keep inputs and outputs free of secrets.
+`, "utf8");
+  await fs.writeFile(path.join(dir, "validators", "README.md"), `# ${name} Validators
+
+Add optional local validation notes or scripts here. Review scripts before running them.
+`, "utf8");
   return { metadata, markdown, dir };
 }
 
@@ -95,7 +133,25 @@ export async function readSkills(root = process.cwd()): Promise<SkillRecord[]> {
   return skills.sort((left, right) => left.metadata.id.localeCompare(right.metadata.id));
 }
 
-export function renderSkillList(skills: SkillRecord[]): string {
-  if (skills.length === 0) return "No skills found. Run soturail skills init <name> first.\n";
-  return skills.map((skill) => `${skill.metadata.id} [${skill.metadata.risk_level}] ${skill.metadata.name}`).join("\n") + "\n";
+export function renderSkillList(skills: SkillRecord[], root = process.cwd()): string {
+  if (skills.length === 0) {
+    return "No local skills found.\nCreate one with: soturail skills init <name>\n";
+  }
+  const lines = [
+    "SotuRail skills",
+    `skills_count: ${skills.length}`,
+    ""
+  ];
+  for (const skill of skills) {
+    lines.push(
+      `- ${skill.metadata.id} [${skill.metadata.risk_level}]`,
+      `  Name: ${skill.metadata.name}`,
+      `  Description: ${skill.metadata.description}`,
+      `  Version: ${skill.metadata.version}`,
+      `  Targets: ${skill.metadata.targets.join(", ")}`,
+      `  Path: ${path.normalize(path.relative(root, skill.dir))}`,
+      ""
+    );
+  }
+  return `${lines.join("\n").trimEnd()}\n`;
 }

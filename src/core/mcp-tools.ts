@@ -43,7 +43,7 @@ export async function callMcpTool(name: string, args: Record<string, unknown> = 
     case "soturail.rules.check":
       return checkRules(root);
     case "soturail.skills.list":
-      return renderSkillList(await readSkills(root));
+      return renderSkillList(await readSkills(root), root);
     case "soturail.context.pack": {
       const target = (stringArg(args.target) ?? "generic") as any;
       const pack = await buildContextPack(target, root);
