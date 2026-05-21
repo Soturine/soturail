@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import type { Command } from "commander";
-import { formatReleasePreflight, runReleasePreflight } from "../core/release-preflight.js";
+import { formatReleasePreflight, runReleasePreflight, verifyPackedPackage } from "../core/release-preflight.js";
 
 export function registerReleaseCommand(program: Command): void {
   const release = program
@@ -18,6 +18,18 @@ export function registerReleaseCommand(program: Command): void {
       if (!packageJson.version) throw new Error("package.json version is missing.");
       await runReleaseGate(packageJson.version);
       process.stdout.write("Release check passed.\n");
+    });
+
+  release
+    .command("verify-package")
+    .description("Pack, install and verify the npm tarball CLI version in a clean temporary directory.")
+    .action(async () => {
+      const packageJson = JSON.parse(await fs.readFile(path.resolve(process.cwd(), "package.json"), "utf8")) as { name?: string; version?: string };
+      if (!packageJson.name || !packageJson.version) throw new Error("package.json name/version is missing.");
+      await runChecked("npm", ["run", "build"]);
+      const result = await verifyPackedPackage(process.cwd(), packageJson.name, packageJson.version);
+      process.stdout.write(`Package verification: ${result.ok ? "passed" : "failed"}\n${result.details}\n`);
+      if (!result.ok) throw new Error("Packed package verification failed.");
     });
 
   release

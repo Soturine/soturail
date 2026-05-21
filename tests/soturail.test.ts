@@ -29,7 +29,7 @@ import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
 import { checkRules, listRules } from "../src/commands/rules.js";
 import { collectStats, formatStats } from "../src/commands/stats.js";
-import { runReleasePreflight } from "../src/core/release-preflight.js";
+import { runReleasePreflight, verifyPackedPackage } from "../src/core/release-preflight.js";
 import { selfDoctor, writeSelfReport } from "../src/core/self-dogfood.js";
 import { SOTURAIL_VERSION } from "../src/core/version.js";
 
@@ -697,7 +697,28 @@ describe("release reliability", () => {
 
     expect(result.gates.find((gate) => gate.id === "runtime_audit")?.ok).toBe(true);
     expect(result.gates.find((gate) => gate.id === "npm_pack_no_raw_logs")?.ok).toBe(true);
-  }, 20000);
+    expect(result.gates.find((gate) => gate.id === "packed_package_cli_version")?.ok).toBe(true);
+  }, 40000);
+
+  it("detects stale CLI metadata inside a packed tarball", async () => {
+    const root = await tempRoot();
+    await writeFile(path.join(root, "package.json"), JSON.stringify({
+      name: "soturail",
+      version: "1.2.3",
+      type: "module",
+      bin: { soturail: "dist/cli.js" },
+      files: ["dist", "README.md", "LICENSE"]
+    }, null, 2));
+    await writeFile(path.join(root, "README.md"), "# Fixture\n");
+    await writeFile(path.join(root, "LICENSE"), "MIT\n");
+    await writeFile(path.join(root, "dist", "core", "version.js"), "export const SOTURAIL_VERSION = \"1.2.2\";\n");
+    await writeFile(path.join(root, "dist", "cli.js"), "#!/usr/bin/env node\nconsole.log('1.2.2');\n");
+
+    const result = await verifyPackedPackage(root, "soturail", "1.2.3");
+
+    expect(result.ok).toBe(false);
+    expect(result.details).toContain("expected 1.2.3");
+  }, 40000);
 });
 
 describe("stats", () => {

@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { promises as fs } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 export interface ReleaseGateResult {
@@ -35,6 +36,14 @@ interface ProcessResult {
 interface AuditSummary {
   total: number;
   names: string[];
+}
+
+export interface PackedPackageVerification {
+  ok: boolean;
+  tarballPath: string | null;
+  cliVersion: string | null;
+  npxVersion: string | null;
+  details: string;
 }
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
@@ -101,9 +110,20 @@ export async function runReleasePreflight(
       !combined.includes(".soturail/raw") && !combined.includes("benchmarks/results/latest.json"),
       "pack output must not include .soturail/raw or generated benchmark JSON"
     );
+    const packageVerification = packageName && version
+      ? await verifyPackedPackage(resolvedRoot, packageName, version)
+      : { ok: false, tarballPath: null, cliVersion: null, npxVersion: null, details: "missing package name or version" };
+    addGate(
+      gates,
+      "packed_package_cli_version",
+      "packed package CLI version",
+      packageVerification.ok,
+      packageVerification.details
+    );
   } else {
     addGate(gates, "npm_pack_metadata", "npm pack metadata", true, "skipped by test options", false);
     addGate(gates, "npm_pack_no_raw_logs", "npm pack excludes raw logs", true, "skipped by test options", false);
+    addGate(gates, "packed_package_cli_version", "packed package CLI version", true, "skipped by test options", false);
   }
 
   const readme = await readOptionalText(path.join(resolvedRoot, "README.md"));
@@ -173,6 +193,68 @@ export async function runReleasePreflight(
     fullAuditFindings: fullAudit.names,
     gates
   };
+}
+
+export async function verifyPackedPackage(root: string, packageName: string, version: string): Promise<PackedPackageVerification> {
+  const resolvedRoot = path.resolve(root);
+  let tarballPath: string | null = null;
+  let installRoot: string | null = null;
+  try {
+    const pack = await runProcess("npm", ["pack", "--json"], resolvedRoot, true);
+    if (pack.code !== 0) {
+      return failPackageVerification(null, `npm pack --json failed: ${pack.stderr.trim() || pack.stdout.trim()}`);
+    }
+    const parsed = JSON.parse(pack.stdout) as Array<{ filename?: string; files?: Array<{ path?: string }> }>;
+    const first = parsed[0];
+    const filename = first?.filename;
+    if (!filename) return failPackageVerification(null, "npm pack --json did not report a filename");
+    tarballPath = path.resolve(resolvedRoot, filename);
+
+    const files = new Set((first.files ?? []).map((file) => file.path).filter((value): value is string => typeof value === "string"));
+    const requiredFiles = ["package.json", "dist/cli.js", "dist/core/version.js", "README.md", "LICENSE"];
+    const missing = requiredFiles.filter((file) => !files.has(file));
+    const forbidden = [...files].filter((file) =>
+      file.startsWith(".soturail/raw")
+      || file === "benchmarks/results/latest.json"
+      || /^soturail-\d+\.\d+\.\d+.*\.tgz$/.test(file)
+      || /temp-pack-test|soturail-clean-smoke|soturail-test-/.test(file)
+    );
+    if (missing.length > 0 || forbidden.length > 0) {
+      return failPackageVerification(tarballPath, `tarball file check failed; missing=${missing.join(", ") || "none"} forbidden=${forbidden.join(", ") || "none"}`);
+    }
+
+    installRoot = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-pack-verify-"));
+    await runProcess("npm", ["init", "-y"], installRoot);
+    const install = await runProcess("npm", ["install", tarballPath], installRoot, true);
+    if (install.code !== 0) {
+      return failPackageVerification(tarballPath, `npm install packed tarball failed: ${install.stderr.trim() || install.stdout.trim()}`);
+    }
+
+    const cliPath = path.join(installRoot, "node_modules", packageName, "dist", "cli.js");
+    const cli = await runProcess(process.execPath, [cliPath, "--version"], installRoot, true);
+    const npx = await runProcess("npx", ["--no-install", packageName, "--version"], installRoot, true);
+    const cliVersion = cli.stdout.trim();
+    const npxVersion = npx.stdout.trim();
+    const ok = cli.code === 0 && npx.code === 0 && cliVersion === version && npxVersion === version;
+    return {
+      ok,
+      tarballPath,
+      cliVersion,
+      npxVersion,
+      details: ok
+        ? `packed cli=${cliVersion}, npx=${npxVersion}, tarball=${path.basename(tarballPath)}`
+        : `expected ${version}, packed cli=${cliVersion || cli.stderr.trim() || "empty"}, npx=${npxVersion || npx.stderr.trim() || "empty"}`
+    };
+  } catch (error) {
+    return failPackageVerification(tarballPath, error instanceof Error ? error.message : String(error));
+  } finally {
+    if (installRoot) await fs.rm(installRoot, { recursive: true, force: true }).catch(() => undefined);
+    if (tarballPath) await fs.rm(tarballPath, { force: true }).catch(() => undefined);
+  }
+}
+
+function failPackageVerification(tarballPath: string | null, details: string): PackedPackageVerification {
+  return { ok: false, tarballPath, cliVersion: null, npxVersion: null, details };
 }
 
 export function formatReleasePreflight(result: ReleasePreflightResult): string {
