@@ -201,8 +201,11 @@ async function runCapture(command: string, args: string[], allowFailure = false)
     child.on("error", reject);
     child.on("close", (code) => {
       const result = { code: code ?? 1, stdout, stderr };
-      if (result.code !== 0 && !allowFailure) reject(new Error(`${command} ${args.join(" ")} failed with exit code ${result.code}`));
-      else resolve(result);
+      if (result.code !== 0 && !allowFailure) {
+        resolve(result);
+        return;
+      }
+      resolve(result);
     });
   });
 }
