@@ -1,8 +1,9 @@
 import type { Writable } from "node:stream";
 import { promises as fs } from "node:fs";
 import type { Command } from "commander";
+import { applyBlockDedupe, type SimilarDedupeMode } from "../core/block-dedupe.js";
 import { DedupeStore, sha256Text } from "../core/dedupe-store.js";
-import { ensureWorkspace } from "../core/config.js";
+import { ensureWorkspace, loadConfig } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { NativeRunnerAdapter, type RunnerOptions } from "../core/native-runner-adapter.js";
 import { RawStore, type RawRunRecord } from "../core/raw-store.js";
@@ -16,6 +17,7 @@ export interface RunCliOptions {
   unsafeConfirm?: string;
   native?: boolean;
   engine?: ReducerEngine;
+  similarDedupe?: SimilarDedupeMode;
 }
 
 export interface RunExecutionOptions extends RunCliOptions {
@@ -63,6 +65,7 @@ export async function executeRunCommand(
   root = process.cwd()
 ): Promise<RunExecutionResult> {
   await ensureWorkspace(root);
+  const config = await loadConfig(root);
   const command = commandFromParts(commandParts);
   if (command.length === 0) {
     throw new Error("No command provided. Example: soturail run npm test");
@@ -100,6 +103,17 @@ export async function executeRunCommand(
     : await runTypeScriptPath(command, log.stream, options, root);
   const outputHash = sha256Text(result.rawText);
   const previous = await dedupe.findReusable(outputHash, result.exitCode);
+  const similarMode = options.similarDedupe ?? config.dedupe.similar_dedupe;
+  const blockDedupe = !previous && config.dedupe.enabled
+    ? await applyBlockDedupe(result.rawText, dedupe, {
+        rawId: log.rawId,
+        blockMinLines: config.dedupe.blockMinLines,
+        recentWindow: config.dedupe.recentWindow,
+        preserveErrorBlocks: config.dedupe.preserveErrorBlocks,
+        similarMode
+      })
+    : null;
+  const reducibleText = blockDedupe?.output ?? result.rawText;
   const compression = previous
     ? {
         compressor: "dedupe",
@@ -107,7 +121,7 @@ export async function executeRunCommand(
         compressed_tokens_estimated: estimateTokens(`Output identical to previous raw_id ${previous.raw_id}.`),
         engine: "ts" as const
       }
-    : await compressOutputWithEngine(command, result.rawText, log.rawId, nativeInfo.available ? requestedEngine : "ts", root);
+    : await compressOutputWithEngine(command, reducibleText, log.rawId, nativeInfo.available ? requestedEngine : "ts", root);
   const record: RawRunRecord = {
     raw_id: log.rawId,
     path: log.relativePath,
@@ -128,6 +142,14 @@ export async function executeRunCommand(
   ].join("\n"));
   const netTokens = record.compressed_tokens_estimated + metadataTokens;
   await rawStore.appendRunRecord(record);
+  if (blockDedupe) {
+    for (const block of blockDedupe.newBlocks) {
+      await dedupe.appendBlock({ kind: "block", ...block });
+    }
+    for (const hit of blockDedupe.reusedBlocks) {
+      await dedupe.appendBlockHit({ kind: "block_hit", ...hit });
+    }
+  }
   await dedupe.append({
     output_sha256: outputHash,
     raw_id: log.rawId,
@@ -140,7 +162,18 @@ export async function executeRunCommand(
     await metrics.append({
       type: "dedupe_hit",
       raw_id: log.rawId,
-      details: { previous_raw_id: previous.raw_id, output_sha256: outputHash }
+    details: { previous_raw_id: previous.raw_id, output_sha256: outputHash }
+    });
+  }
+  if (blockDedupe && blockDedupe.reusedBlocks.length > 0) {
+    await metrics.append({
+      type: "dedupe_hit",
+      raw_id: log.rawId,
+      details: {
+        mode: "block",
+        reused_blocks: blockDedupe.reusedBlocks.length,
+        estimated_tokens_saved: blockDedupe.tokensSaved
+      }
     });
   }
   await metrics.append({
@@ -156,7 +189,14 @@ export async function executeRunCommand(
     estimated_net_tokens_sent: netTokens,
     summary_overhead_tokens: metadataTokens,
     compression_effective: netTokens <= record.raw_tokens_estimated,
-    small_output_warning: netTokens > record.raw_tokens_estimated
+    small_output_warning: netTokens > record.raw_tokens_estimated,
+    details: {
+      terminal_reducer_estimated_tokens_saved: Math.max(0, record.raw_tokens_estimated - record.compressed_tokens_estimated),
+      dedupe_estimated_tokens_saved: blockDedupe?.tokensSaved ?? (previous ? record.raw_tokens_estimated : 0),
+      dedupe_blocks_reused: blockDedupe?.reusedBlocks.length ?? 0,
+      dedupe_recent_window: config.dedupe.recentWindow,
+      similar_dedupe: similarMode
+    }
   });
 
   const summary = [
@@ -167,6 +207,9 @@ export async function executeRunCommand(
     `Engine: ${compression.engine}`,
     `raw_id: ${log.rawId}`,
     `Recovery: soturail expand ${log.rawId}`,
+    ...(blockDedupe && blockDedupe.reusedBlocks.length > 0
+      ? [`Dedupe: reused ${blockDedupe.reusedBlocks.length} block(s), estimated_tokens_saved: ${blockDedupe.tokensSaved}`]
+      : []),
     ...(netTokens > record.raw_tokens_estimated
       ? ["Compression was not effective for this small command, but raw recovery paths and audit metadata were preserved."]
       : []),
@@ -254,6 +297,7 @@ export function registerRunCommand(program: Command): void {
     .option("--interactive", "Forward stdin/TTY behavior when possible")
     .option("--native", "Prefer the optional native reducer engine")
     .option("--engine <engine>", "Reducer engine: auto, ts, or native", "auto")
+    .option("--similar-dedupe <mode>", "Experimental similar-output dedupe mode: off or conservative", "off")
     .option("--unsafe-confirm <phrase>", "Exact phrase required to bypass dangerous-command blocking")
     .argument("[command...]", "Command and arguments to execute")
     .action(async (commandParts: string[] = [], options: RunCliOptions) => {
@@ -272,6 +316,9 @@ export function registerRunCommand(program: Command): void {
       }
       if (options.engine !== undefined) {
         runOptions.engine = options.engine;
+      }
+      if (options.similarDedupe !== undefined) {
+        runOptions.similarDedupe = options.similarDedupe;
       }
       const result = await executeRunCommand(commandParts, runOptions);
       process.stdout.write(result.summary);

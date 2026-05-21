@@ -40,7 +40,24 @@ export const ConfigSchema = z.object({
     .object({
       dynamic_footer_token_budget: z.number().int().positive().max(10000).default(800)
     })
-    .default({ dynamic_footer_token_budget: 800 })
+    .default({ dynamic_footer_token_budget: 800 }),
+  dedupe: z
+    .object({
+      enabled: z.boolean().default(true),
+      mode: z.enum(["conservative"]).default("conservative"),
+      blockMinLines: z.number().int().positive().max(1000).default(8),
+      recentWindow: z.number().int().positive().max(1000).default(10),
+      preserveErrorBlocks: z.boolean().default(true),
+      similar_dedupe: z.enum(["off", "conservative"]).default("off")
+    })
+    .default({
+      enabled: true,
+      mode: "conservative",
+      blockMinLines: 8,
+      recentWindow: 10,
+      preserveErrorBlocks: true,
+      similar_dedupe: "off"
+    })
 });
 
 export type SotuRailConfig = z.infer<typeof ConfigSchema>;
