@@ -360,7 +360,11 @@ async function publishMode(version, options = {}) {
   }
   await runValidation();
   await run("npm", ["publish"]).catch((error) => {
-    console.error(`npm publish did not complete. If npm requested 2FA/authentication, rerun: npm run release:publish -- --version ${version}`);
+    console.error("npm publish did not complete.");
+    console.error("If npm requested 2FA/authentication, rerun with a fresh one-time password:");
+    console.error(`PowerShell: $env:NPM_CONFIG_OTP="<code>"; npm run release:publish -- --version ${version}; Remove-Item Env:NPM_CONFIG_OTP`);
+    console.error(`cmd.exe: set NPM_CONFIG_OTP=<code> && npm run release:publish -- --version ${version} && set NPM_CONFIG_OTP=`);
+    console.error(`macOS/Linux: NPM_CONFIG_OTP=<code> npm run release:publish -- --version ${version}`);
     throw error;
   });
   const published = await getPublishedVersion();
