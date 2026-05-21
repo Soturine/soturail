@@ -6,19 +6,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+- No unreleased changes yet.
+
+## [0.2.2] - 2026-05-21
+
 ### Added
 
-- v0.2.2 Self-Dogfooding & Reliability work in progress.
-- Added self-dogfooding command namespace.
-- Added self-dogfood markdown report.
-- Added build/test/bench orchestration through SotuRail itself.
-- Expanded benchmark categories and fixtures.
+- Added `soturail self` namespace.
+- Added `soturail self all`.
+- Added self-dogfooding report generation at `.soturail/reports/self-dogfood.md`.
+- Added cache-friendly self-report structure with stable project data before dynamic execution data.
+- Added expanded benchmark categories.
 - Added Windows usage documentation.
-- Added Skill Rail and Workflow Rail planning docs.
+- Added Skill Rail and Workflow Rail planning documentation.
 
 ### Changed
 
-- Improved tiny-output compression accounting.
+- Improved release validation flow around build, tests, audit, benchmarks and self-dogfooding.
+- Improved stats accounting for tiny terminal outputs.
+
+### Fixed
+
+- Stats now reports when compression is not effective for tiny command outputs because metadata overhead is larger than the raw output.
+
+### Security
+
+- Runtime package audit remains clean with `npm audit --omit=dev`.
+- Documented how to evaluate development-only audit findings without using `npm audit fix --force` blindly.
+
 
 ## [0.2.1] - 2026-05-20
 
