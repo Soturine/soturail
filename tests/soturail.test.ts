@@ -20,7 +20,7 @@ import { compactJsonToonWithMetrics } from "../src/compressors/json-toon.js";
 import { compareEngines, runBenchmarks } from "../src/commands/bench.js";
 import { buildProgram } from "../src/cli.js";
 import { expandRawLog } from "../src/commands/expand.js";
-import { exportHook, installHooks, promptOnly } from "../src/commands/hooks.js";
+import { exportHook, hooksDoctor, installHooks, promptOnly } from "../src/commands/hooks.js";
 import { ingestCommand } from "../src/commands/ingest.js";
 import { approveMemory, listMemory, proposeMemory, rejectMemory } from "../src/commands/memory.js";
 import { runInit } from "../src/commands/init.js";
@@ -402,6 +402,16 @@ describe("knowledge to rules", () => {
 });
 
 describe("hooks", () => {
+  it("prints safe modes and next steps from doctor", async () => {
+    const root = await tempRoot();
+    const output = await hooksDoctor(root);
+
+    expect(output).toContain("safe_modes:");
+    expect(output).toContain("- claude: safe-hooks, mcp");
+    expect(output).toContain("soturail hooks install --agent claude --mode safe-hooks --dry-run");
+    expect(output).toContain("Review generated hooks before enabling.");
+  });
+
   it("supports dry-run, prompt-only output and backup creation", async () => {
     const root = await tempRoot();
     await writeFile(path.join(root, "AGENTS.md"), "existing\n");

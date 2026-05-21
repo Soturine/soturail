@@ -203,6 +203,19 @@ export async function hooksDoctor(root = process.cwd()): Promise<string> {
     "SotuRail hooks doctor",
     `supported_hosts: ${hosts.join(", ")}`,
     `registry: ${registryExists ? ".soturail/hooks/hosts.json exists" : "not installed yet"}`,
+    "safe_modes:",
+    "- claude: safe-hooks, mcp",
+    "- codex: prompt-only",
+    "- gemini: prompt-only",
+    "- cursor: prompt-only",
+    "",
+    "Next steps:",
+    "- soturail hooks list",
+    "- soturail hooks install --agent claude --mode safe-hooks --dry-run",
+    "- soturail hooks install --agent codex --mode prompt-only --dry-run",
+    "- soturail hooks export --agent claude",
+    "- Review generated hooks before enabling.",
+    "",
     "host APIs vary; prompt-only fallback is always available"
   ].join("\n") + "\n";
 }
