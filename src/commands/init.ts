@@ -26,7 +26,7 @@ Prefer repo maps and progressive reads over dumping entire repositories into pro
 `,
   architecture: `# Architecture
 
-SotuRail v0.1.0 is local-first TypeScript/Node.js software.
+SotuRail is local-first TypeScript/Node.js software.
 
 Core loops:
 
@@ -38,7 +38,7 @@ Core loops:
 `,
   mvp: `# MVP
 
-SotuRail v0.1.0 focuses on functional local rails:
+SotuRail focuses on local context rails for AI coding agents:
 
 - init
 - index
@@ -70,7 +70,7 @@ Bypass requires the exact unsafe confirmation phrase and should be used rarely.
 
 SotuRail separates stable and dynamic blocks. Dynamic data such as timestamps, raw ids, command status and recent logs belongs after stable governance, config, repo maps, approved specs and approved memory.
 
-v0.1.0 reports estimated cache stability only. It does not claim provider cache hits.
+SotuRail reports estimated cache stability only unless provider metadata is imported.
 `,
   metrics: `# Metrics
 
@@ -121,6 +121,20 @@ soturail ingest turns Markdown, TXT, JSON and YAML into structured local rules a
 
 Rules are stored under .soturail/rules and can be listed, checked and exported.
 `,
+  agentsDoc: `# Agent Integrations
+
+SotuRail exports reviewed, project-local agent integration files for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+
+\`\`\`bash
+soturail agents list
+soturail agents doctor
+soturail agents export --agent all
+soturail agents install --agent claude --mode mcp --dry-run
+soturail agents install --agent cursor --mode rules --dry-run
+\`\`\`
+
+Exports live under .soturail/exports/agents/<agent>/ and should be reviewed before use. Install commands are dry-run-first and backup-first.
+`,
   specWorkflow: `# Spec-Driven Workflow
 
 soturail spec manages constitution, spec, plan, tasks, verification, context budget and security impact files.
@@ -167,7 +181,17 @@ It is an independent implementation inspired by common workflow patterns around 
 `,
   workflowRail: `# Workflow Rail
 
-Workflow Rail is planned for future releases. v0.3.x focuses on Skill Rail, MCP, context packs and real installed usage polish.
+Workflow Rail stores local task state under .soturail/workflows and can optionally plan Git worktree isolation.
+
+\`\`\`bash
+soturail workflow new "Implement feature"
+soturail workflow list
+soturail workflow show <id>
+soturail workflow start <id> --worktree --dry-run
+soturail workflow close <id>
+\`\`\`
+
+SotuRail does not push, merge or delete worktrees automatically.
 `,
   firstWorkflow: `# First Real Workflow
 
@@ -215,6 +239,103 @@ Send one JSON-RPC object per line to soturail mcp serve --transport stdio.
   examplesHooksReadme: `# Hook Examples
 
 Use dry-run first and review generated files before enabling hooks.
+`,
+  examplesAgentsReadme: `# Agent Examples
+
+These examples show prompt-only and context-pack integration patterns for supported coding agents.
+
+Run:
+
+\`\`\`bash
+soturail agents export --agent all
+\`\`\`
+
+Review generated files before enabling them in an agent host.
+`,
+  exampleAgentClaude: `# Claude Agent Export
+
+Use:
+
+\`\`\`bash
+soturail agents export --agent claude
+soturail mcp config --agent claude
+\`\`\`
+
+Review CLAUDE.md, context-pack.md, mcp-config.json and safe-hooks.md before enabling them.
+`,
+  exampleAgentCodex: `# Codex Agent Export
+
+Use:
+
+\`\`\`bash
+soturail agents export --agent codex
+\`\`\`
+
+Review AGENTS.md and context-pack.md before copying guidance into a repository.
+`,
+  exampleAgentGemini: `# Gemini Agent Export
+
+Use:
+
+\`\`\`bash
+soturail agents export --agent gemini
+\`\`\`
+
+Review GEMINI.md and prompt-only.md before use.
+`,
+  exampleAgentCursor: `# Cursor Agent Export
+
+Use:
+
+\`\`\`bash
+soturail agents export --agent cursor
+soturail agents install --agent cursor --mode rules --dry-run
+\`\`\`
+
+Review cursor-rules.md before adding it to Cursor project rules.
+`,
+  exampleAgentAntigravity: `# Antigravity Agent Export
+
+Use:
+
+\`\`\`bash
+soturail agents export --agent antigravity
+\`\`\`
+
+SotuRail treats Antigravity as prompt-only/context-pack unless a stable local config format is reviewed.
+`,
+  examplesWorkflowsReadme: `# Workflow Examples
+
+Workflow Rail stores local task state under .soturail/workflows.
+
+\`\`\`bash
+soturail workflow new "Fix bug"
+soturail workflow list
+soturail workflow show <id>
+\`\`\`
+
+Worktree operations are optional, local and dry-run friendly.
+`,
+  exampleWorkflowBugfix: `# Bugfix Workflow
+
+\`\`\`bash
+soturail workflow new "Fix parser bug"
+soturail workflow plan <id>
+soturail workflow start <id> --worktree --dry-run
+soturail workflow verify <id>
+\`\`\`
+
+Keep verification explicit and reviewed.
+`,
+  exampleWorkflowRelease: `# Release Workflow
+
+\`\`\`bash
+soturail workflow new "Prepare release"
+soturail workflow plan <id>
+soturail workflow verify <id>
+\`\`\`
+
+Run release checks outside Workflow Rail until the verification file is reviewed.
 `,
   exampleCodeReviewSkill: `id: code-review
 name: Code Review
@@ -299,6 +420,63 @@ requires_human_approval:
 created_at: 2026-05-21T00:00:00.000Z
 content_hash: 0000000000000000000000000000000000000000000000000000000000000000
 `,
+  exampleJavaStudentSkill: `id: java-student-helper
+name: Java Student Helper
+description: Help review small Java exercises with clear explanations and safe local commands.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: low
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - rm -rf
+  - curl | sh
+  - git push
+  - secret exfiltration
+requires_human_approval:
+  - destructive_command
+  - dependency_install
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
+`,
+  examplePhpWebReviewerSkill: `id: php-web-reviewer
+name: PHP Web Reviewer
+description: Review PHP web code for correctness, security basics and missing tests.
+version: 0.1.0
+author: Rafael Ryan Ramos de Souza
+risk_level: medium
+targets:
+  - claude
+  - codex
+  - gemini
+  - cursor
+  - generic
+allowed_tools:
+  - read
+  - search
+  - summarize
+  - format
+forbidden_patterns:
+  - rm -rf
+  - curl | sh
+  - git push
+  - secret exfiltration
+requires_human_approval:
+  - destructive_command
+  - remote_write
+  - dependency_install
+created_at: 2026-05-21T00:00:00.000Z
+content_hash: 0000000000000000000000000000000000000000000000000000000000000000
+`,
   mcpInitialize: `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"manual-smoke","version":"0.1.0"}}}
 `,
   mcpResourcesList: `{"jsonrpc":"2.0","id":2,"method":"resources/list"}
@@ -344,6 +522,7 @@ function documentationTemplates(root: string): Array<{ path: string; content: st
     { path: path.resolve(root, "docs", "response-compression.md"), content: text.responseCompression },
     { path: path.resolve(root, "docs", "knowledge-to-rules.md"), content: text.knowledgeToRules },
     { path: path.resolve(root, "docs", "rules.md"), content: text.rules },
+    { path: path.resolve(root, "docs", "agents.md"), content: text.agentsDoc },
     { path: path.resolve(root, "docs", "spec-driven-workflow.md"), content: text.specWorkflow },
     { path: path.resolve(root, "docs", "mcp.md"), content: text.mcp },
     { path: path.resolve(root, "docs", "skill-rail.md"), content: text.skillRail },
@@ -359,9 +538,20 @@ function documentationTemplates(root: string): Array<{ path: string; content: st
     { path: path.resolve(root, "examples", "context-packs", "README.md"), content: text.examplesContextReadme },
     { path: path.resolve(root, "examples", "mcp", "README.md"), content: text.examplesMcpReadme },
     { path: path.resolve(root, "examples", "hooks", "README.md"), content: text.examplesHooksReadme },
+    { path: path.resolve(root, "examples", "agents", "README.md"), content: text.examplesAgentsReadme },
+    { path: path.resolve(root, "examples", "agents", "claude.md"), content: text.exampleAgentClaude },
+    { path: path.resolve(root, "examples", "agents", "codex.md"), content: text.exampleAgentCodex },
+    { path: path.resolve(root, "examples", "agents", "gemini.md"), content: text.exampleAgentGemini },
+    { path: path.resolve(root, "examples", "agents", "cursor.md"), content: text.exampleAgentCursor },
+    { path: path.resolve(root, "examples", "agents", "antigravity.md"), content: text.exampleAgentAntigravity },
+    { path: path.resolve(root, "examples", "workflows", "README.md"), content: text.examplesWorkflowsReadme },
+    { path: path.resolve(root, "examples", "workflows", "bugfix-workflow.md"), content: text.exampleWorkflowBugfix },
+    { path: path.resolve(root, "examples", "workflows", "release-workflow.md"), content: text.exampleWorkflowRelease },
     { path: path.resolve(root, "examples", "skills", "code-review-skill.yml"), content: text.exampleCodeReviewSkill },
     { path: path.resolve(root, "examples", "skills", "release-manager-skill.yml"), content: text.exampleReleaseSkill },
     { path: path.resolve(root, "examples", "skills", "bug-triage-skill.yml"), content: text.exampleBugSkill },
+    { path: path.resolve(root, "examples", "skills", "java-student-helper-skill.yml"), content: text.exampleJavaStudentSkill },
+    { path: path.resolve(root, "examples", "skills", "php-web-reviewer-skill.yml"), content: text.examplePhpWebReviewerSkill },
     { path: path.resolve(root, "examples", "mcp", "initialize.json"), content: text.mcpInitialize },
     { path: path.resolve(root, "examples", "mcp", "resources-list.json"), content: text.mcpResourcesList },
     { path: path.resolve(root, "examples", "mcp", "resources-read-repo-map.json"), content: text.mcpResourcesReadRepoMap },
