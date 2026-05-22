@@ -91,6 +91,12 @@ export async function agentDoctor(root = process.cwd()): Promise<string> {
   const contextPacks = await fs.readdir(paths.contextDir).catch(() => []);
   const skills = await fs.readdir(paths.skillsDir).catch(() => []);
   const workflows = await fs.readdir(paths.workflowsDir).catch(() => []);
+  const nextSteps = [
+    ...(contextPacks.length === 0 ? ["- soturail context pack --target all"] : []),
+    ...(exports.length === 0 ? ["- soturail agents export --agent all"] : []),
+    "- soturail mcp smoke",
+    "- soturail workflow new \"Implement feature\""
+  ];
   return [
     "SotuRail Agent Integration Doctor",
     `version: ${SOTURAIL_VERSION}`,
@@ -105,9 +111,7 @@ export async function agentDoctor(root = process.cwd()): Promise<string> {
     "safe_default: true",
     "",
     "Next steps:",
-    "- soturail agents export --agent all",
-    "- soturail mcp smoke",
-    "- soturail workflow new \"Implement feature\""
+    ...nextSteps
   ].join("\n") + "\n";
 }
 
@@ -208,7 +212,7 @@ function promptOnly(agent: AgentId): string {
     "",
     profile.supports_mcp
       ? "Use `soturail mcp config --agent " + agent + "` to export a reviewed stdio server snippet."
-      : "MCP host configuration is not assumed for this agent in v0.4.0; use prompt-only/context-pack guidance.",
+      : "MCP host configuration is not assumed for this agent; use prompt-only/context-pack guidance.",
     ""
   ].join("\n");
 }
