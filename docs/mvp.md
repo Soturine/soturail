@@ -1,6 +1,6 @@
 # MVP Scope
 
-SotuRail v0.1.0 validates the core foundation:
+SotuRail validates the core local-first foundation:
 
 - local workspace creation;
 - cross-platform file scanning with deny rules;

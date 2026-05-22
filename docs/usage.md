@@ -8,6 +8,8 @@ soturail init
 
 Creates `.soturail/` and starter docs without overwriting existing files.
 
+The scaffold includes docs and examples for agents, MCP, context packs, hooks, skills and workflows.
+
 ## Index
 
 ```bash
@@ -63,7 +65,7 @@ soturail native doctor
 soturail bench compare-engines
 ```
 
-## v0.3.0 Workflows
+## Skill, MCP And Context Workflows
 
 ```bash
 soturail skills init demo-skill
@@ -82,11 +84,11 @@ soturail hooks install --agent claude --mode safe-hooks --dry-run
 soturail release check
 ```
 
-MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution in v0.3.0.
+MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution.
 
 For a first clean-folder walkthrough, see [first-real-workflow.md](first-real-workflow.md).
 
-## v0.4.0 Workflows
+## Agent And Workflow Rail Commands
 
 ```bash
 soturail agents list

@@ -46,7 +46,7 @@ export function registerMcpCommand(program: Command): void {
     .description("Serve JSON-RPC 2.0 style MCP messages over stdio.")
     .option("--transport <transport>", "stdio", "stdio")
     .action(async (options: { transport: string }) => {
-      if (options.transport !== "stdio") throw new Error("Only --transport stdio is supported in v0.3.0.");
+      if (options.transport !== "stdio") throw new Error("Only --transport stdio is currently supported.");
       await serveMcpStdio(process.cwd(), SOTURAIL_VERSION);
     });
 }

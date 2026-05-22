@@ -30,7 +30,7 @@ Nicole-style knowledge-to-rules workflows are related. SotuRail has `ingest` and
 
 ## Skills, Agent Integrations And Workflow Orchestration
 
-Agent-skills and SkillsMP-like ecosystems are related to Skill Rail exports. SotuRail v0.4.0 exports prompt/context files and MCP snippets for Claude, Codex, Gemini, Cursor, Antigravity and generic agents without claiming host-native superiority.
+Agent-skills and SkillsMP-like ecosystems are related to Skill Rail exports. SotuRail exports prompt/context files and MCP snippets for Claude, Codex, Gemini, Cursor, Antigravity and generic agents without claiming host-native superiority.
 
 Compozy, Superpowers and OpenSpec-style orchestration are related to Workflow Rail. SotuRail's Workflow Rail is a local state machine with optional Git worktree isolation; it does not push, merge or delete user work automatically.
 

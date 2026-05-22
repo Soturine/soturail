@@ -117,6 +117,22 @@ soturail workflow new "Try SotuRail"
 
 Quote workflow titles and paths with spaces.
 
+## Clean Project Flow
+
+PowerShell and CMD:
+
+```powershell
+soturail init
+soturail context pack --target all
+soturail agents doctor
+soturail agents export --agent all
+soturail mcp smoke
+soturail workflow new "Try SotuRail"
+soturail workflow list
+```
+
+`soturail init` creates agent and workflow examples without overwriting existing files.
+
 ## Safety
 
 SotuRail blocks destructive command shapes through `soturail run`, including `rm -rf`, `sudo`, `del /s`, downloaded script piping and automatic `git push`.
@@ -133,7 +149,7 @@ npm run release:check
 
 `package.json`, `package-lock.json`, `node dist/cli.js --version`, the npm tarball name, the changelog and the release notes must all agree on the same version.
 
-v0.4.0 also verifies the packed tarball by installing it in a temporary clean project and running the installed CLI. This helps catch stale generated version files before publish.
+SotuRail also verifies the packed tarball by installing it in a temporary clean project and running the installed CLI. This helps catch stale generated version files before publish.
 
 Use browser-based npm login when needed:
 

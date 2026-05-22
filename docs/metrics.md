@@ -36,7 +36,7 @@ Small command outputs can be larger after SotuRail adds raw recovery metadata. W
 
 ## Token Estimation
 
-v0.1.0 uses:
+SotuRail uses:
 
 ```text
 Math.ceil(text.length / 4)
