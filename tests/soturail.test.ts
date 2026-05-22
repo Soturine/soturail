@@ -40,9 +40,11 @@ import { SOTURAIL_VERSION } from "../src/core/version.js";
 import {
   closeWorkflow,
   createWorkflow,
+  cleanupClosedWorkflows,
   listWorkflows,
   planWorkflow,
   readWorkflow,
+  renderWorkflow,
   renderWorkflowList,
   startWorkflow,
   verifyWorkflow
@@ -99,10 +101,11 @@ describe("soturail init", () => {
     expect(second.skipped).toContain("AGENTS.md");
   });
 
-  it("scaffolds v0.3 docs and examples in a clean workspace", async () => {
+  it("scaffolds v0.4 docs and examples in a clean workspace", async () => {
     const root = await tempRoot();
     const report = await runInit(root);
     const expected = [
+      path.join("docs", "agents.md"),
       path.join("docs", "mcp.md"),
       path.join("docs", "skill-rail.md"),
       path.join("docs", "context-packs.md"),
@@ -110,10 +113,21 @@ describe("soturail init", () => {
       path.join("docs", "workflow-rail.md"),
       path.join("docs", "first-real-workflow.md"),
       path.join("examples", "README.md"),
+      path.join("examples", "agents", "README.md"),
+      path.join("examples", "agents", "claude.md"),
+      path.join("examples", "agents", "codex.md"),
+      path.join("examples", "agents", "gemini.md"),
+      path.join("examples", "agents", "cursor.md"),
+      path.join("examples", "agents", "antigravity.md"),
+      path.join("examples", "workflows", "README.md"),
+      path.join("examples", "workflows", "bugfix-workflow.md"),
+      path.join("examples", "workflows", "release-workflow.md"),
       path.join("examples", "skills", "README.md"),
       path.join("examples", "skills", "code-review-skill.yml"),
       path.join("examples", "skills", "release-manager-skill.yml"),
       path.join("examples", "skills", "bug-triage-skill.yml"),
+      path.join("examples", "skills", "java-student-helper-skill.yml"),
+      path.join("examples", "skills", "php-web-reviewer-skill.yml"),
       path.join("examples", "mcp", "initialize.json"),
       path.join("examples", "mcp", "resources-list.json"),
       path.join("examples", "mcp", "resources-read-repo-map.json"),
@@ -126,6 +140,23 @@ describe("soturail init", () => {
       await expect(fs.access(path.join(root, relative))).resolves.toBeUndefined();
       expect(report.created).toContain(path.normalize(relative));
     }
+  });
+
+  it("keeps generated docs free of stale fixed-version wording", async () => {
+    const root = await tempRoot();
+    await runInit(root);
+    const files = [
+      path.join(root, "docs", "architecture.md"),
+      path.join(root, "docs", "mvp.md"),
+      path.join(root, "docs", "prompt-caching.md"),
+      path.join(root, "docs", "workflow-rail.md")
+    ];
+    const generated = (await Promise.all(files.map((file) => fs.readFile(file, "utf8")))).join("\n");
+
+    expect(generated).not.toContain("v0.1.0");
+    expect(generated).not.toContain("v0.3.0");
+    expect(generated).toContain("SotuRail is local-first TypeScript/Node.js software.");
+    expect(generated).toContain("SotuRail reports estimated cache stability only unless provider metadata is imported.");
   });
 });
 
@@ -538,6 +569,7 @@ describe("agent integrations", () => {
   it("lists profiles and exports all supported agent targets", async () => {
     const root = await tempRoot();
     const list = formatAgentList();
+    const cleanDoctor = await agentDoctor(root);
     const exported = await exportAgents("all", root);
     const doctor = await agentDoctor(root);
 
@@ -548,7 +580,11 @@ describe("agent integrations", () => {
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/gemini/GEMINI.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/cursor/cursor-rules.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/antigravity/prompt-only.md"));
-    expect(doctor).toContain("SotuRail Agent Integration Doctor");
+    expect(cleanDoctor).toContain("SotuRail Agent Integration Doctor");
+    expect(cleanDoctor).toContain("context_packs: none yet");
+    expect(cleanDoctor).toContain("- soturail context pack --target all");
+    expect(cleanDoctor).toContain("- soturail agents export --agent all");
+    expect(doctor).toContain("context_packs: ready");
     expect(doctor).toContain("safe_default: true");
   });
 
@@ -700,19 +736,36 @@ describe("workflow rail", () => {
     const root = await tempRoot();
     const created = await createWorkflow("Fix parser bug", root, "2026-05-21T00:00:00.000Z");
     const listed = renderWorkflowList(await listWorkflows(root));
+    const shown = renderWorkflow(await readWorkflow(created.id, root), root);
     const planned = await planWorkflow(created.id, root);
     const started = await startWorkflow(created.id, { dryRun: true, worktree: true }, root);
     const verify = await verifyWorkflow(created.id, root);
     const closed = await closeWorkflow(created.id, root);
+    const closedAgain = await closeWorkflow(created.id, root);
+    const cleanup = await cleanupClosedWorkflows({ dryRun: true }, root);
 
     expect(created.state).toBe("draft");
     expect(listed).toContain("Fix parser bug");
+    expect(listed).toContain("workflows_count: 1");
+    expect(shown).toContain(`path: ${path.normalize(path.join(".soturail", "workflows", created.id))}`);
+    expect(shown).toContain(`plan_path: ${path.normalize(path.join(".soturail", "workflows", created.id, "plan.md"))}`);
+    expect(shown).toContain(`tasks_path: ${path.normalize(path.join(".soturail", "workflows", created.id, "tasks.md"))}`);
+    expect(shown).toContain(`verification_path: ${path.normalize(path.join(".soturail", "workflows", created.id, "verification.md"))}`);
     expect(planned.state).toBe("planned");
     expect(started).toContain("Dry-run only");
     expect(started).toContain("would_update_state");
     expect(verify).toContain("No commands were run.");
     expect(closed.state).toBe("closed");
+    expect(closedAgain.state).toBe("closed");
+    expect(cleanup.lines.join("\n")).toContain("Would remove");
     expect((await readWorkflow(created.id, root)).state).toBe("closed");
+  });
+
+  it("gives helpful workflow errors for missing ids", async () => {
+    const root = await tempRoot();
+    const created = await createWorkflow("Known workflow", root, "2026-05-21T00:00:00.000Z");
+
+    await expect(readWorkflow("missing-workflow", root)).rejects.toThrow(`Valid workflow ids: ${created.id}`);
   });
 });
 
@@ -848,7 +901,7 @@ describe("release reliability", () => {
     expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
   });
 
-  it("has v0.4.0 release notes, changelog entry and lockfile version sync", async () => {
+  it("has v0.4.1 release notes, changelog entry and lockfile version sync", async () => {
     const root = process.cwd();
     const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
     const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
@@ -857,11 +910,11 @@ describe("release reliability", () => {
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
 
-    expect(packageJson.version).toBe("0.4.0");
+    expect(packageJson.version).toBe("0.4.1");
     expect(packageLock.version).toBe(packageJson.version);
     expect(packageLock.packages[""].version).toBe(packageJson.version);
-    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.4.0.md"))).resolves.toBeUndefined();
-    expect(changelog).toContain("## [0.4.0]");
+    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.4.1.md"))).resolves.toBeUndefined();
+    expect(changelog).toContain("## [0.4.1]");
   });
 
   it("requires release notes and changelog entries during preflight", async () => {
@@ -891,6 +944,7 @@ describe("release reliability", () => {
 
     expect(result.gates.find((gate) => gate.id === "runtime_audit")?.ok).toBe(true);
     expect(result.gates.find((gate) => gate.id === "npm_pack_no_raw_logs")?.ok).toBe(true);
+    expect(result.gates.find((gate) => gate.id === "required_github_files_present")?.ok).toBe(true);
     expect(packedGate?.ok, packedGate?.details).toBe(true);
     expect(packedGate?.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
     expect(packedGate?.details).toContain("help_exit_code=0");
@@ -955,6 +1009,15 @@ describe("release reliability", () => {
       process.env.PATH = oldPath;
     }
   }, 40000);
+});
+
+describe("stale generated text checks", () => {
+  it("does not mention the old MCP transport version in runtime source", async () => {
+    const source = await fs.readFile(path.join(process.cwd(), "src", "commands", "mcp.ts"), "utf8");
+
+    expect(source).toContain("Only --transport stdio is currently supported.");
+    expect(source).not.toContain("Only --transport stdio is supported in v0.3.0.");
+  });
 });
 
 describe("stats", () => {
@@ -1031,12 +1094,17 @@ describe("stats", () => {
 });
 
 describe("documentation files", () => {
-  it("includes Windows, Skill Rail and Workflow Rail docs", async () => {
+  it("includes Windows, Skill Rail, Workflow Rail and required GitHub files", async () => {
     const root = process.cwd();
 
     await expect(fs.access(path.join(root, "docs", "windows.md"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, "docs", "skill-rail.md"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, "docs", "workflow-rail.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".gitattributes"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".github", "workflows", "ci.yml"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".github", "ISSUE_TEMPLATE", "bug_report.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".github", "ISSUE_TEMPLATE", "feature_request.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, ".github", "pull_request_template.md"))).resolves.toBeUndefined();
   });
 });
 
