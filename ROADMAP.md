@@ -25,6 +25,15 @@
 - Workflow Rail local state machine.
 - Optional local Git worktree isolation without push or merge.
 
+## v0.4.1 - Agent Scaffold, Docs And UX Polish
+
+- v0.4 agent and workflow docs scaffolded by `soturail init`.
+- Agent and workflow examples scaffolded in clean projects.
+- Version-neutral generated docs and MCP messages.
+- Clearer `soturail agents doctor` next steps.
+- Workflow list/show/close polish and cleanup preview.
+- `.gitattributes` for reduced Windows line-ending noise.
+
 ## v0.5.0 - Native Performance
 
 - Rust reducer improvements.

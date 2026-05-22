@@ -1,6 +1,6 @@
 # Agent Integrations
 
-SotuRail v0.4.0 adds reviewed, project-local agent integration exports for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+SotuRail provides reviewed, project-local agent integration exports for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
 
 ```bash
 soturail agents list
@@ -20,8 +20,21 @@ Exports are written under `.soturail/exports/agents/<agent>/`. They are meant to
 - Install commands support `--dry-run`.
 - Existing project files get `.soturail.bak` backups before modification.
 - Unknown global app config locations are not modified.
-- Antigravity support is prompt-only/context-pack in v0.4.0.
+- Antigravity support is prompt-only/context-pack unless a stable local config format is reviewed.
 - SotuRail does not enable arbitrary shell execution through MCP.
+
+## Doctor Guidance
+
+In a clean project, `soturail agents doctor` points users toward the safest setup order:
+
+```bash
+soturail context pack --target all
+soturail agents export --agent all
+soturail mcp smoke
+soturail workflow new "Implement feature"
+```
+
+If context packs or exports already exist, the doctor omits those setup steps and keeps the remaining checks visible.
 
 ## Outputs
 

@@ -1,6 +1,6 @@
 # Release Workflow
 
-SotuRail releases should be repeatable and evidence-backed. v0.3.0 exposes release helpers through `soturail release`.
+SotuRail releases should be repeatable and evidence-backed. Release helpers are exposed through `soturail release`.
 
 ## Check
 
@@ -19,6 +19,7 @@ The check also verifies:
 - expected package files are present and forbidden generated files are absent;
 - `CHANGELOG.md` and `RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
 - README install instructions and `LICENSE` exist.
+- required GitHub CI and community files exist under `.github/`.
 
 You can run only the package verification gate with:
 
@@ -30,7 +31,7 @@ This catches stale generated version files that local source checks might miss.
 
 As of v0.3.3, release verification installs the packed `.tgz` into a clean temporary project and executes the CLI from `node_modules/soturail/dist/cli.js`. It does not call global `soturail`, `npx soturail` or `npm exec --package=soturail`, which avoids npm cache/global CLI false positives.
 
-For v0.4.0 and later, keep using this packed-package gate before publishing. `npm exec --package=soturail@<version>` is a post-publish registry verification, not the pre-publish source of truth.
+Keep using this packed-package gate before publishing. `npm exec --package=soturail@<version>` is a post-publish registry verification, not the pre-publish source of truth.
 
 ## Publish
 

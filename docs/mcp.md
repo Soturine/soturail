@@ -74,3 +74,5 @@ soturail mcp serve --transport stdio
 It does not assume a global application config path. Review it before adding it to an agent host.
 
 `soturail mcp smoke` verifies `initialize`, `resources/list`, `resources/read` and `tools/list` without starting a long-running process, and confirms `soturail.run` is not exposed by default.
+
+`soturail init` scaffolds copyable MCP JSON-RPC examples under `examples/mcp/`.

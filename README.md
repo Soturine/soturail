@@ -24,7 +24,7 @@ It wraps a repository and terminal session with reversible evidence rails: heuri
 
 ## Project Status
 
-v0.4.0 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.4.1 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
 
 ## Built With SotuRail
 
@@ -101,13 +101,13 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.4.0 --help
+npx soturail@0.4.1 --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail@0.4.0
+npm install -g soturail@0.4.1
 soturail --help
 soturail --version
 ```
@@ -160,6 +160,20 @@ soturail stats
 ```
 
 For an installed clean-folder walkthrough, see [docs/first-real-workflow.md](docs/first-real-workflow.md).
+
+## First clean project flow
+
+```bash
+soturail init
+soturail context pack --target all
+soturail agents doctor
+soturail agents export --agent all
+soturail mcp smoke
+soturail workflow new "Try SotuRail"
+soturail workflow list
+```
+
+`soturail init` scaffolds agent, MCP, context pack, hook, skill and workflow examples without overwriting user-edited files.
 
 ## 7. Commands
 
@@ -250,7 +264,7 @@ soturail hooks prompt-only codex
 
 ## Agent Integrations
 
-SotuRail v0.4.0 adds reviewed agent integration profiles for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+SotuRail adds reviewed agent integration profiles for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
 
 ```bash
 soturail agents list
@@ -381,7 +395,7 @@ Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShel
 
 ## Road To Agent And Workflow Rails
 
-Skill Rail shipped in v0.3.0. Agent integrations and Workflow Rail ship in v0.4.0; see [docs/agents.md](docs/agents.md) and [docs/workflow-rail.md](docs/workflow-rail.md).
+Skill Rail, agent integrations and Workflow Rail are documented in [docs/skill-rail.md](docs/skill-rail.md), [docs/agents.md](docs/agents.md) and [docs/workflow-rail.md](docs/workflow-rail.md).
 
 ## Comparison Philosophy
 
@@ -389,7 +403,7 @@ SotuRail is inspired by the broader context-engineering ecosystem, including ter
 
 ## 14. Roadmap
 
-See [ROADMAP.md](ROADMAP.md). v0.4.0 focuses on real agent integrations and Workflow Rail; later releases target native performance, hardened knowledge ingestion, semantic memory and a stable API.
+See [ROADMAP.md](ROADMAP.md). v0.4.1 focuses on scaffold and UX polish; later releases target native performance, hardened knowledge ingestion, semantic memory and a stable API.
 
 ## 15. Contributing
 
