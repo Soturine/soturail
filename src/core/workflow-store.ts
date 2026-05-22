@@ -20,6 +20,10 @@ export interface WorkflowStartOptions {
   dryRun?: boolean;
 }
 
+export interface WorkflowCleanupResult {
+  lines: string[];
+}
+
 const states: WorkflowState[] = ["draft", "planned", "active", "verifying", "ready_for_review", "closed", "blocked"];
 
 export async function createWorkflow(title: string, root = process.cwd(), now = new Date().toISOString()): Promise<WorkflowRecord> {
@@ -49,7 +53,10 @@ export async function listWorkflows(root = process.cwd()): Promise<WorkflowRecor
 
 export async function readWorkflow(id: string, root = process.cwd()): Promise<WorkflowRecord> {
   const filePath = path.join(getWorkspacePaths(root).workflowsDir, id, "workflow.yml");
-  const raw = await fs.readFile(filePath, "utf8");
+  const raw = await fs.readFile(filePath, "utf8").catch(async (error: NodeJS.ErrnoException) => {
+    if (error.code !== "ENOENT") throw error;
+    throw new Error(await missingWorkflowMessage(id, root));
+  });
   const record = parseWorkflow(raw);
   if (!states.includes(record.state)) throw new Error(`Invalid workflow state: ${record.state}`);
   return record;
@@ -110,12 +117,41 @@ export async function verifyWorkflow(id: string, root = process.cwd()): Promise<
   return [
     `SotuRail workflow verify ${id}`,
     `configured_checks: ${configured}`,
-    "SotuRail v0.4.0 only runs explicitly configured safe checks through reviewed workflow docs."
+    "SotuRail only runs explicitly configured safe checks through reviewed workflow docs."
   ].join("\n") + "\n";
 }
 
 export async function closeWorkflow(id: string, root = process.cwd()): Promise<WorkflowRecord> {
+  const record = await readWorkflow(id, root);
+  if (record.state === "closed") return record;
   return updateWorkflow(id, root, { state: "closed" });
+}
+
+export async function cleanupClosedWorkflows(options: { dryRun?: boolean; yes?: boolean } = {}, root = process.cwd()): Promise<WorkflowCleanupResult> {
+  const records = await listWorkflows(root);
+  const closed = records.filter((record) => record.state === "closed");
+  const paths = getWorkspacePaths(root);
+  const lines = [
+    "SotuRail workflow cleanup",
+    `closed_workflows_count: ${closed.length}`,
+    `dry_run: ${options.dryRun === true}`,
+    `confirmed: ${options.yes === true}`
+  ];
+  if (closed.length === 0) {
+    lines.push("No closed workflows found.");
+    return { lines };
+  }
+  for (const record of closed) {
+    const dir = path.join(paths.workflowsDir, record.id);
+    lines.push(`${options.dryRun || !options.yes ? "Would remove" : "Removed"} ${relativeToRoot(root, dir)}`);
+    if (!options.dryRun && options.yes) {
+      await fs.rm(dir, { recursive: true, force: true });
+    }
+  }
+  if (!options.dryRun && !options.yes) {
+    lines.push("No files removed. Re-run with --closed --yes after review.");
+  }
+  return { lines };
 }
 
 export function renderWorkflowList(records: WorkflowRecord[]): string {
@@ -129,15 +165,21 @@ export function renderWorkflowList(records: WorkflowRecord[]): string {
 }
 
 export function renderWorkflow(record: WorkflowRecord, root = process.cwd()): string {
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workflowsDir, record.id);
   return [
     "SotuRail workflow",
+    `path: ${relativeToRoot(root, dir)}`,
     `id: ${record.id}`,
     `title: ${record.title}`,
     `state: ${record.state}`,
     `created_at: ${record.created_at}`,
     `updated_at: ${record.updated_at}`,
     `branch: ${record.branch ?? "none"}`,
-    `worktree_path: ${record.worktree_path ? relativeToRoot(root, record.worktree_path) : "none"}`
+    `worktree_path: ${record.worktree_path ? relativeToRoot(root, record.worktree_path) : "none"}`,
+    `plan_path: ${relativeToRoot(root, path.join(dir, "plan.md"))}`,
+    `tasks_path: ${relativeToRoot(root, path.join(dir, "tasks.md"))}`,
+    `verification_path: ${relativeToRoot(root, path.join(dir, "verification.md"))}`
   ].join("\n") + "\n";
 }
 
@@ -198,6 +240,15 @@ async function appendIfMissing(filePath: string, content: string): Promise<void>
 
 function slug(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48) || "workflow";
+}
+
+async function missingWorkflowMessage(id: string, root: string): Promise<string> {
+  const records = await listWorkflows(root).catch(() => []);
+  return [
+    `Workflow not found: ${id}`,
+    records.length > 0 ? `Valid workflow ids: ${records.map((record) => record.id).join(", ")}` : "No workflows found.",
+    "Create one with: soturail workflow new \"Task title\""
+  ].join("\n");
 }
 
 function quote(value: string): string {

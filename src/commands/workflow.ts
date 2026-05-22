@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import {
   closeWorkflow,
   createWorkflow,
+  cleanupClosedWorkflows,
   listWorkflows,
   planWorkflow,
   readWorkflow,
@@ -55,6 +56,23 @@ export function registerWorkflowCommand(program: Command): void {
   });
 
   workflow.command("close").description("Close a workflow.").argument("<id>", "Workflow id").action(async (id: string) => {
-    process.stdout.write(renderWorkflow(await closeWorkflow(id)));
+    const before = await readWorkflow(id);
+    const closed = await closeWorkflow(id);
+    process.stdout.write(renderWorkflow(closed));
+    process.stdout.write(before.state === "closed" ? "already_closed: true\n" : "closed: true\n");
   });
+
+  workflow
+    .command("cleanup")
+    .description("Review or remove closed workflow records.")
+    .option("--closed", "Target closed workflows")
+    .option("--dry-run", "Print planned cleanup without deleting")
+    .option("--yes", "Confirm reviewed cleanup")
+    .action(async (options: { closed?: boolean; dryRun?: boolean; yes?: boolean }) => {
+      if (!options.closed) throw new Error("Only workflow cleanup --closed is currently supported.");
+      const cleanupOptions: { dryRun?: boolean; yes?: boolean } = { dryRun: options.dryRun ?? !options.yes };
+      if (options.yes !== undefined) cleanupOptions.yes = options.yes;
+      const result = await cleanupClosedWorkflows(cleanupOptions);
+      process.stdout.write(`${result.lines.join("\n")}\n`);
+    });
 }
