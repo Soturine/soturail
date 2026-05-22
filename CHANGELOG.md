@@ -8,6 +8,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.4.1] - 2026-05-22
+
+### Added
+
+- Added v0.4 agent and workflow docs to the `soturail init` scaffold.
+- Added agent examples to the `soturail init` scaffold.
+- Added workflow examples to the `soturail init` scaffold.
+- Added `.gitattributes` to reduce line-ending noise on Windows.
+- Added release/preflight protection for required GitHub workflow files.
+
+### Changed
+
+- Improved `soturail agents doctor` next-step guidance.
+- Improved Workflow Rail list/show/close UX.
+- Updated generated docs to avoid stale fixed-version language.
+- Improved first clean project documentation.
+
+### Fixed
+
+- Fixed incomplete v0.4 scaffold output from `soturail init`.
+- Fixed stale generated text referencing older SotuRail versions.
+- Fixed stale MCP message that referenced v0.3.0.
+
+### Security
+
+- Agent and workflow polish keeps dry-run-first and safe-default behavior.
+- No arbitrary shell execution is exposed through MCP.
+
 ## [0.4.0] - 2026-05-21
 
 ### Added

@@ -185,9 +185,11 @@ async function createOrUpdateGithubRelease(version: string): Promise<void> {
   const tag = `v${version}`;
   const title = version === "0.3.0"
     ? "SotuRail v0.3.0 - Skill Rail, MCP & Context Packs"
+    : version === "0.4.1"
+      ? "SotuRail v0.4.1 - Agent Scaffold, Docs & UX Polish"
     : version === "0.4.0"
       ? "SotuRail v0.4.0 - Real Agent Integrations & Workflow Rail"
-    : `SotuRail v${version}`;
+      : `SotuRail v${version}`;
   const notes = `RELEASE_NOTES_v${version}.md`;
   const view = await runCapture("gh", ["release", "view", tag], true);
   if (view.code === 0) {
