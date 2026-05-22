@@ -159,6 +159,21 @@ export async function runReleasePreflight(
 
   addGate(gates, "license", "LICENSE file", existsSync(path.join(resolvedRoot, "LICENSE")), "LICENSE");
 
+  const requiredGitHubFiles = [
+    ".github/workflows/ci.yml",
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/ISSUE_TEMPLATE/feature_request.md",
+    ".github/pull_request_template.md"
+  ];
+  const missingGitHubFiles = requiredGitHubFiles.filter((file) => !existsSync(path.join(resolvedRoot, file)));
+  addGate(
+    gates,
+    "required_github_files_present",
+    "required GitHub community and CI files",
+    missingGitHubFiles.length === 0,
+    missingGitHubFiles.length === 0 ? "all required .github files present" : `missing: ${missingGitHubFiles.join(", ")}`
+  );
+
   let fullAudit: AuditSummary = { total: 0, names: [] };
   let runtimeAudit: AuditSummary = { total: 0, names: [] };
   if (runAudit) {
