@@ -6,7 +6,7 @@
 
 [![Node.js >=20](https://img.shields.io/badge/node-%3E%3D20-3c873a)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](tsconfig.json)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![License: Reserved Rights](https://img.shields.io/badge/license-reserved--rights-red)](LICENSE)
 [![CI](https://github.com/Soturine/soturail/actions/workflows/ci.yml/badge.svg)](https://github.com/Soturine/soturail/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/soturail.svg)](https://www.npmjs.com/package/soturail)
 [![npm downloads](https://img.shields.io/npm/dm/soturail.svg)](https://www.npmjs.com/package/soturail)
@@ -409,6 +409,12 @@ See [ROADMAP.md](ROADMAP.md). v0.4.1 focuses on scaffold and UX polish; later re
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Reducers, hooks and rules should include tests, safety notes and benchmark impact when relevant.
 
-## 16. License
+## 16. License Status
 
-MIT © Rafael Ryan Ramos de Souza
+SotuRail is not currently licensed as open source for the current repository state or future versions.
+
+All rights are reserved unless a later LICENSE file or written agreement explicitly grants permissions. This repository may be public for portfolio, planning, research, documentation and evaluation visibility, but broad copying, redistribution, sublicensing, commercial use or derivative works are not granted by default.
+
+Important: older SotuRail versions or copies that were explicitly released under MIT remain governed by the MIT terms that applied to those specific versions at the time of release.
+
+See [docs/licensing-strategy.md](docs/licensing-strategy.md).
