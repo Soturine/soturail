@@ -1,8 +1,24 @@
 # Roadmap
 
-SotuRail is evolving toward a local-first Context OS for AI coding agents: context packs, reducers, dedupe, memory, MCP resources, agent exports, workflows, and safe release gates in one small CLI.
+SotuRail is evolving toward a local-first Context OS for AI coding agents: context packs, reducers, dedupe, memory, MCP resources, agent exports, workflows, governance, reports and safe release gates in one small CLI.
 
 This roadmap keeps the historical plan intact while updating the next major direction after the v0.4.x agent-integration milestone.
+
+## Product Identity
+
+SotuRail should stay small, local-first and plug-in friendly.
+
+- SotuRail is not the agent.
+- SotuRail is not a heavy production gateway.
+- SotuRail is the local rail layer that gives agents better context, memory, compression, safety, logs, workflows and release evidence.
+
+Useful mental model:
+
+```txt
+Hermes-like systems: the agent brain and execution loop.
+Plano-like systems: the gateway, router and production data plane.
+SotuRail: the local Context OS that prepares, filters, remembers, governs and reports what agents need.
+```
 
 ## Roadmap Policy
 
@@ -12,7 +28,47 @@ This roadmap keeps the historical plan intact while updating the next major dire
 - Treat full-audit Vitest/Vite/esbuild findings as dev-only unless they affect packed/runtime users.
 - Do not expose arbitrary shell execution through MCP by default.
 - Keep native acceleration optional. A TypeScript fallback must always work.
+- Do not claim SotuRail is faster or more accurate than adjacent projects without reproducible benchmarks.
 - Every major feature should have clean-folder smoke tests, Windows coverage, docs, release notes, and package/CLI version verification.
+
+## Strategic Influences To Absorb, Not Copy
+
+The next stages are influenced by the broader context-engineering and agent-infrastructure ecosystem. SotuRail should absorb patterns, not vendor or clone other projects.
+
+### Agent Brain Patterns
+
+Inspired by Hermes-style agent systems:
+
+- memory across sessions;
+- compact tool definitions;
+- session and trajectory summaries;
+- curated skills;
+- safe sub-agent/task handoff ideas;
+- explicit action and observation evidence.
+
+SotuRail should use these ideas to improve `memory`, `skills`, `workflow` and `report` rails, not to become a full autonomous agent runtime.
+
+### Gateway And Observability Patterns
+
+Inspired by Plano-style agent infrastructure:
+
+- agent capability matrix;
+- local traces;
+- guardrails before agent handoff;
+- workflow observability;
+- event-like records for commands, context packs, memory recall and agent exports.
+
+SotuRail should keep this local and lightweight first. A future gateway mode can be explored only after memory, context selection and reports are stable.
+
+### Compression And Context Patterns
+
+Inspired by Squeez/SQZ, LLMLingua, TOON, SWE-pruning and benchmark-driven context work:
+
+- compress structure, not meaning;
+- preserve errors, paths, exact values and security warnings;
+- select context by query and reason, not only by file size;
+- measure quality, not only token savings;
+- provide deterministic compact formats when JSON/Markdown are too verbose.
 
 ## v0.5.0 - Memory Rail, Context Intelligence And Native Reliability
 
@@ -33,9 +89,11 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - `soturail memory recall` for query-based retrieval.
 - `soturail memory capture` for safe, local agent-session summaries.
 - `soturail memory consolidate` for merging repeated or stale memories.
+- `soturail memory doctor` for local storage, redaction and approval status.
 - Memory records with source, path, confidence, tags, timestamps and privacy flags.
 - Approved-memory-only mode for agent/MCP exposure.
 - Redaction before storage and before MCP/resource export.
+- Session summaries that record what changed, which commands ran, which raw IDs were created and which decisions were made.
 
 ### Context Intelligence
 
@@ -45,6 +103,16 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Reasoned context output: why a file/block/memory was included.
 - Token budget controls for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
 - Smaller generated `CLAUDE.md`/`AGENTS.md` with optional references to larger `agent_docs/` or `.soturail/context/` files.
+- A compact structured payload mode for JSON/YAML/log-heavy context where repeated keys or repeated rows waste tokens.
+
+### Policy And Governance Rail
+
+- `soturail policy doctor` for local safety checks.
+- `soturail policy validate` for project policy files.
+- `soturail policy explain` to show why a command, export or MCP resource is allowed or denied.
+- Local policy checks for secrets, unsafe raw expansion and MCP resource exposure.
+- Maintain default safe behavior: raw logs require explicit `--allow-raw --yes` style confirmation.
+- Add docs comparing SotuRail memory/context behavior with agent-memory style tools without claiming unsupported superiority.
 
 ### Native Reliability, Not Native-Only
 
@@ -54,12 +122,6 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Keep npm install working without Rust, Cargo or native build tools.
 - Expand `soturail native doctor` and fallback diagnostics.
 
-### Governance And Safety
-
-- Add local policy checks for secrets, unsafe raw expansion and MCP resource exposure.
-- Maintain default safe behavior: raw logs require explicit `--allow-raw --yes` style confirmation.
-- Add docs comparing SotuRail memory/context behavior with agent-memory style tools without claiming unsupported superiority.
-
 ## v0.5.1 - Memory And Context Polish
 
 - Improve `memory recall` output readability.
@@ -68,6 +130,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Improve stale-memory detection and dedupe.
 - Improve docs for small `CLAUDE.md` plus larger referenced context files.
 - Add migration notes for users coming from v0.4.x.
+- Add safer export examples for approved memory only.
 
 ## v0.5.2 - Evaluation Suite
 
@@ -76,6 +139,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Measure not only token savings, but whether selected context preserves the correct file, error, command and rule.
 - Add reducer quality checks for npm, Vitest, tsc, Java, Maven/Gradle, Docker, git diff, git status, ESLint and Vite/Next output.
 - Add before/after reports for raw context vs selected/pruned context.
+- Add small local evaluation fixtures inspired by long-code and SWE-style bug workflows without requiring paid APIs.
 
 ## v0.6.0 - Real Agent Runtime Integration
 
@@ -83,8 +147,9 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - `soturail agents install --agent cursor --dry-run`.
 - `soturail agents install --agent gemini --dry-run`.
 - `soturail agents status` and `soturail agents doctor --verbose`.
+- `soturail agents capabilities` for a host capability matrix.
 - Safer backups before modifying agent config files.
-- Host capability matrix for Claude Code, Codex, Gemini CLI, Cursor, Antigravity and generic agents.
+- Host capability matrix for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, OpenCode/Amp/Kiro-style hosts and generic agents.
 - Prompt-only fallback remains available for every host.
 - Codex and Antigravity stay conservative until stable hook/config surfaces are confirmed.
 
@@ -107,6 +172,8 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - `soturail workflow issue`.
 - `soturail workflow tdd`.
 - `soturail workflow release`.
+- `soturail workflow trace`.
+- `soturail workflow report`.
 - Optional GitHub Issues integration.
 - Worktree-per-task workflows with verification checklists.
 - Release workflow reports that connect tests, build, audit, pack and npm/GitHub release state.
@@ -119,6 +186,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Rules search with cited source paths and line ranges where possible.
 - Stale evidence detection across richer project graphs.
 - Safer knowledge-to-rules pipeline.
+- Project Brain summaries for architecture, decisions, bugs, releases and recurring commands.
 
 ## v0.9.0 - Native Engine Real
 
@@ -132,10 +200,24 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 ## v0.10.0 - Local Reports And Dashboard
 
 - `soturail report`.
+- `soturail trace list`.
+- `soturail trace show`.
 - Local HTML reports for token savings, dedupe, memory recall, context selection and release gates.
 - Workflow report pages.
 - CI failure analysis reports.
 - Public demo assets for README and release pages.
+
+## Later Exploration - Gateway Lite
+
+A future gateway mode can be explored only after memory, context selection, policy and reports are stable.
+
+Possible direction:
+
+- local event records for command outputs, context selection, memory recall and workflow status;
+- safe local routing between SotuRail resources and agent hosts;
+- no cloud dependency by default;
+- no arbitrary shell execution through MCP;
+- no production proxy claims until benchmarks and real use justify them.
 
 ## v1.0.0 - Stable Context OS
 
@@ -146,6 +228,17 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Good docs and clean-folder onboarding.
 - CI green on Windows, Linux and macOS.
 - Long-term compatibility guarantees.
+
+## Internal Module Ideas
+
+These are not separate products yet. They are submodules that can grow inside SotuRail.
+
+- SotuRail Memory: local approved memory for coding agents.
+- SotuRail Context Select: query-aware context selection with reasons and line ranges.
+- SotuRail Mini Structured Payloads: deterministic compact JSON/YAML/log formats.
+- SotuRail Agent Reports: what changed, what commands ran, what raw IDs exist and what to do next.
+- SotuRail Project Brain: architecture, decisions, bugs, rules and release history.
+- SotuRail Gateway Lite: future local event router after the core rails mature.
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
 
