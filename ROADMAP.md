@@ -20,6 +20,13 @@ Plano-like systems: the gateway, router and production data plane.
 SotuRail: the local Context OS that prepares, filters, remembers, governs and reports what agents need.
 ```
 
+Newer v0.5 planning model:
+
+```txt
+Dense-agent setup: every task gets every instruction, file and rule.
+SotuRail setup: route the task to the right local context expert, memory, rule set and workflow evidence.
+```
+
 ## Roadmap Policy
 
 - Prefer small patch releases after large feature releases.
@@ -34,6 +41,8 @@ SotuRail: the local Context OS that prepares, filters, remembers, governs and re
 ## Strategic Influences To Absorb, Not Copy
 
 The next stages are influenced by the broader context-engineering and agent-infrastructure ecosystem. SotuRail should absorb patterns, not vendor or clone other projects.
+
+See also [docs/comparisons.md](docs/comparisons.md) and [docs/ecosystem-influences.md](docs/ecosystem-influences.md).
 
 ### Agent Brain Patterns
 
@@ -62,7 +71,7 @@ SotuRail should keep this local and lightweight first. A future gateway mode can
 
 ### Compression And Context Patterns
 
-Inspired by Squeez/SQZ, LLMLingua, TOON, SWE-pruning and benchmark-driven context work:
+Inspired by Squeez/SQZ, RTK, LLMLingua, TOON, SWE-pruning and benchmark-driven context work:
 
 - compress structure, not meaning;
 - preserve errors, paths, exact values and security warnings;
@@ -70,7 +79,24 @@ Inspired by Squeez/SQZ, LLMLingua, TOON, SWE-pruning and benchmark-driven contex
 - measure quality, not only token savings;
 - provide deterministic compact formats when JSON/Markdown are too verbose.
 
-## v0.5.0 - Memory Rail, Context Intelligence And Native Reliability
+### Agent Harness Patterns
+
+Inspired by agent harness engineering and real community workflows:
+
+- the useful system is model + prompts + tools + memory + traces + policies + recovery paths;
+- repeated agent failures should become local rules, docs, hooks or workflow checks;
+- root agent docs should be short, accurate and reference richer docs instead of becoming huge wikis;
+- context should be routed like an expert system, not dumped wholesale into every session.
+
+### Agent UI And Protocol Patterns
+
+Inspired by MCP UI, AG-UI and OpenUI-style ideas:
+
+- agents increasingly need structured progress, cards, tables, approvals and live reports;
+- SotuRail should start with local reports and trace pages before any heavy UI;
+- future UI/event surfaces must remain safe, local and optional.
+
+## v0.5.0 - Memory Rail, Context Intelligence, Harness And Native Reliability
 
 This release absorbs the originally planned `v0.4.2` CI/release hotfix into the v0.5 reliability gate instead of creating a separate patch, unless an emergency production bug appears before v0.5.0.
 
@@ -105,11 +131,41 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Smaller generated `CLAUDE.md`/`AGENTS.md` with optional references to larger `agent_docs/` or `.soturail/context/` files.
 - A compact structured payload mode for JSON/YAML/log-heavy context where repeated keys or repeated rows waste tokens.
 
+### Context Expert Router
+
+This is not a neural MoE implementation. It is a local routing metaphor: use only the context expert needed for the task.
+
+- `soturail context route --query "..."` as a future alias/layer over `context select`.
+- Built-in expert profiles:
+  - code expert: source files, symbols, failing tests;
+  - docs expert: README, roadmap, usage guides;
+  - release expert: changelog, release notes, npm/GitHub state;
+  - security expert: raw logs, redaction, policy, secrets;
+  - workflow expert: current plan, tasks, verification;
+  - memory expert: approved memories and historical decisions.
+- Output should include selected expert, included evidence, omitted context and reason.
+
+### Harness Failure Ledger
+
+- `soturail harness note "..."` to record an agent mistake, repeated bug, missed test or bad context decision.
+- `soturail harness doctor` to check whether a project has enough rails: short agent docs, safe hooks, context packs, MCP smoke, workflow verification and release evidence.
+- Convert harness notes into candidate rules, docs, memory records or workflow verification items.
+- Link failures to evidence: raw IDs, commands, files, workflow IDs and release reports.
+
+### Agent Docs Hygiene
+
+- `soturail agents lint` to warn when `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` or Cursor rules are too long, stale or missing key project facts.
+- `soturail agents split-context` to suggest moving large details into `agent_docs/` or `.soturail/context/`.
+- Keep root agent files short and reference-based.
+- Explain what each host receives and what remains as linked context.
+
 ### Policy And Governance Rail
 
 - `soturail policy doctor` for local safety checks.
 - `soturail policy validate` for project policy files.
 - `soturail policy explain` to show why a command, export or MCP resource is allowed or denied.
+- `soturail policy auth-check` for projects that need agent-readable auth docs.
+- Optional `AUTH.md` / `docs/auth.md` scaffold for safe auth setup notes.
 - Local policy checks for secrets, unsafe raw expansion and MCP resource exposure.
 - Maintain default safe behavior: raw logs require explicit `--allow-raw --yes` style confirmation.
 - Add docs comparing SotuRail memory/context behavior with agent-memory style tools without claiming unsupported superiority.
@@ -122,7 +178,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Keep npm install working without Rust, Cargo or native build tools.
 - Expand `soturail native doctor` and fallback diagnostics.
 
-## v0.5.1 - Memory And Context Polish
+## v0.5.1 - Memory, Context And Agent Docs Polish
 
 - Improve `memory recall` output readability.
 - Add examples for project decisions, bug history, recurring test failures and architecture preferences.
@@ -131,6 +187,8 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Improve docs for small `CLAUDE.md` plus larger referenced context files.
 - Add migration notes for users coming from v0.4.x.
 - Add safer export examples for approved memory only.
+- Add `agents lint` docs and examples.
+- Add `AUTH.md` scaffold docs if the policy/auth-check work lands in v0.5.0.
 
 ## v0.5.2 - Evaluation Suite
 
@@ -140,6 +198,8 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Add reducer quality checks for npm, Vitest, tsc, Java, Maven/Gradle, Docker, git diff, git status, ESLint and Vite/Next output.
 - Add before/after reports for raw context vs selected/pruned context.
 - Add small local evaluation fixtures inspired by long-code and SWE-style bug workflows without requiring paid APIs.
+- Add context-router quality fixtures: the selected expert must match the task type and preserve expected evidence.
+- Add agent-doc hygiene fixtures: short root docs plus referenced larger docs should pass.
 
 ## v0.6.0 - Real Agent Runtime Integration
 
@@ -152,6 +212,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Host capability matrix for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, OpenCode/Amp/Kiro-style hosts and generic agents.
 - Prompt-only fallback remains available for every host.
 - Codex and Antigravity stay conservative until stable hook/config surfaces are confirmed.
+- Add host-specific docs for short agent files, rules, settings, hooks and context pack exports.
 
 ## v0.6.1 - Agent UX Polish
 
@@ -162,6 +223,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Tutorial: SotuRail with Gemini CLI.
 - Tutorial: SotuRail with Cursor.
 - Tutorial: SotuRail with Antigravity prompt-only workflow.
+- Tutorial: short `CLAUDE.md` plus `agent_docs/` references.
 
 ## v0.7.0 - Workflow Rail 2.0
 
@@ -174,9 +236,11 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - `soturail workflow release`.
 - `soturail workflow trace`.
 - `soturail workflow report`.
+- `soturail workflow scaffold --type feature|bugfix|release`.
 - Optional GitHub Issues integration.
 - Worktree-per-task workflows with verification checklists.
 - Release workflow reports that connect tests, build, audit, pack and npm/GitHub release state.
+- Role-based context packs for planner, executor, reviewer and release-manager.
 
 ## v0.8.0 - Knowledge Rail And Project Brain
 
@@ -187,6 +251,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Stale evidence detection across richer project graphs.
 - Safer knowledge-to-rules pipeline.
 - Project Brain summaries for architecture, decisions, bugs, releases and recurring commands.
+- Connect harness failure notes with knowledge/rules suggestions.
 
 ## v0.9.0 - Native Engine Real
 
@@ -197,24 +262,29 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - TypeScript fallback remains mandatory.
 - Benchmarks must prove native speed/quality gains before the feature is promoted.
 
-## v0.10.0 - Local Reports And Dashboard
+## v0.10.0 - Local Reports, Trace Viewer And Dashboard
 
 - `soturail report`.
 - `soturail trace list`.
 - `soturail trace show`.
+- `soturail report serve` or `soturail trace serve` for a local-only HTML view.
 - Local HTML reports for token savings, dedupe, memory recall, context selection and release gates.
 - Workflow report pages.
 - CI failure analysis reports.
+- Context router visual report: selected expert, included evidence, omitted context and reasons.
+- Policy/MCP exposure report.
 - Public demo assets for README and release pages.
 
-## Later Exploration - Gateway Lite
+## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 
-A future gateway mode can be explored only after memory, context selection, policy and reports are stable.
+Future UI and gateway modes can be explored only after memory, context selection, policy and reports are stable.
 
 Possible direction:
 
 - local event records for command outputs, context selection, memory recall and workflow status;
 - safe local routing between SotuRail resources and agent hosts;
+- MCP Apps / MCP-UI compatible local resources for safe report visualization;
+- AG-UI-style event stream only if it remains local, optional and safe;
 - no cloud dependency by default;
 - no arbitrary shell execution through MCP;
 - no production proxy claims until benchmarks and real use justify them.
@@ -235,9 +305,14 @@ These are not separate products yet. They are submodules that can grow inside So
 
 - SotuRail Memory: local approved memory for coding agents.
 - SotuRail Context Select: query-aware context selection with reasons and line ranges.
+- SotuRail Context Router: MoE-inspired routing to the smallest useful context expert.
+- SotuRail Harness Ledger: repeated agent mistakes converted into rules, checks and workflow evidence.
+- SotuRail Agent Docs Linter: short, useful root agent docs with referenced rich context.
+- SotuRail Auth Rail: agent-readable auth docs and local redaction checks.
 - SotuRail Mini Structured Payloads: deterministic compact JSON/YAML/log formats.
 - SotuRail Agent Reports: what changed, what commands ran, what raw IDs exist and what to do next.
 - SotuRail Project Brain: architecture, decisions, bugs, rules and release history.
+- SotuRail Local Dashboard: local reports and trace viewer before any gateway mode.
 - SotuRail Gateway Lite: future local event router after the core rails mature.
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
