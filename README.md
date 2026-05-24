@@ -28,7 +28,7 @@ SotuRail is not the agent and it is not a heavy production gateway. It is the lo
 
 v0.4.1 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next major direction is v0.5.0: Memory Rail, Context Intelligence, policy checks and native reliability where benchmarks justify it. See [ROADMAP.md](ROADMAP.md).
+The next major direction is v0.5.0: Memory Rail, Context Intelligence, policy checks, harness failure capture, context routing and native reliability where benchmarks justify it. See [ROADMAP.md](ROADMAP.md).
 
 ## Why SotuRail Exists
 
@@ -51,7 +51,14 @@ Plano-like systems: gateway, router and production data plane.
 SotuRail: local Context OS for context, memory, reducers, policy, logs, workflows and reports.
 ```
 
-SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default.
+A newer mental model from the v0.5 planning cycle:
+
+```txt
+Dense-agent setup: every task gets every instruction, file and rule.
+SotuRail setup: route the task to the right local context expert, memory, rule set and workflow evidence.
+```
+
+SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default. Research notes and product ideas live in [docs/ecosystem-influences.md](docs/ecosystem-influences.md).
 
 ## Built With SotuRail
 
@@ -93,10 +100,14 @@ The next roadmap stage adds the missing pieces for a stronger Context OS:
 
 - Memory Rail: `memory remember`, `memory recall`, `memory capture`, `memory consolidate` and memory redaction/approval.
 - Context Intelligence: `context select --query`, `context prune`, line ranges, scores and reasons.
+- Context Expert Router: task-specific bundles for code, docs, release, security, workflow and approved memory.
+- Harness Failure Ledger: turn repeated agent mistakes into rules, checks, docs or workflow verification items.
 - Policy/Governance Rail: local checks for secrets, raw expansion, MCP exposure and release safety.
 - Agent Capability Matrix: safer guidance for Claude, Codex, Gemini, Cursor, Antigravity, generic hosts and future hosts.
+- Agent Docs Linting: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short, useful and reference-based.
 - Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall and workflow state.
 - Evaluation Suite: token savings plus quality checks, not token savings alone.
+- Future local UI/report mode: HTML reports first, MCP Apps/AG-UI-style event surfaces later.
 
 ## Installation
 
@@ -365,7 +376,7 @@ Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShel
 
 ## Comparison Philosophy
 
-SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks, skill registries, agent memory and gateway/observability ideas. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest. See [docs/comparisons.md](docs/comparisons.md).
+SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks, skill registries, agent memory and gateway/observability ideas. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest. See [docs/comparisons.md](docs/comparisons.md) and [docs/ecosystem-influences.md](docs/ecosystem-influences.md).
 
 ## Roadmap
 
@@ -374,14 +385,14 @@ See [ROADMAP.md](ROADMAP.md).
 Near-term direction:
 
 ```txt
-v0.5.0  Memory Rail + Context Intelligence + CI/native reliability
-v0.5.1  Memory/context polish
-v0.5.2  Evaluation suite
-v0.6.0  Real agent runtime integration
-v0.7.0  Workflow Rail 2.0
+v0.5.0  Memory Rail + Context Intelligence + Harness/Policy reliability
+v0.5.1  Memory/context polish + agent docs hygiene
+v0.5.2  Evaluation suite + context quality benchmarks
+v0.6.0  Real agent runtime integration + host capability matrix
+v0.7.0  Workflow Rail 2.0 + spec/TDD/release templates
 v0.8.0  Knowledge Rail and Project Brain
 v0.9.0  Native Engine Real
-v0.10.0 Local reports and dashboard
+v0.10.0 Local reports, traces and dashboard
 v1.0.0  Stable Context OS
 ```
 
