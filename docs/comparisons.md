@@ -2,7 +2,7 @@
 
 SotuRail aims to unify adjacent context-engineering workflow ideas into one local-first, auditable, cache-friendly developer tool.
 
-SotuRail is an independent implementation. It does not vendor, copy, wrap or depend on RTK, Squeez, SQZ, Caveman, LLMLingua, TOON, SWE-Pruner, AgentMemory, Hermes-Agent, Plano, MemPalace, Spec Kit, agent-skills, SkillsMP, Compozy, Superpowers, OpenSpec, Istara, Kiro, OpenCode, Amp, Gemini CLI or similar projects.
+SotuRail is an independent implementation. It does not vendor, copy, wrap or depend on RTK, Squeez, SQZ, Caveman, LLMLingua, TOON, SWE-Pruner, AgentMemory, Hermes-Agent, Deep Agents, Plano, MemPalace, Spec Kit, agent-skills, SkillsMP, Compozy, Superpowers, OpenSpec, Istara, Kiro, OpenCode, Amp, Gemini CLI or similar projects.
 
 SotuRail should not be described as better, faster or more accurate than these projects unless a specific reproducible benchmark proves a specific metric.
 
@@ -10,6 +10,7 @@ SotuRail should not be described as better, faster or more accurate than these p
 
 ```txt
 Hermes-like systems: the agent brain and execution loop.
+Deep Agents-style systems: the batteries-included harness with sub-agents, tools, filesystem, memory and approvals.
 Plano-like systems: the gateway, router and production data plane.
 SotuRail: the local Context OS that prepares, filters, compresses, remembers, governs and reports what agents need.
 ```
@@ -38,8 +39,9 @@ SotuRail's product identity is deliberately narrower than a full agent runtime a
 | TOON | Compact structured data representation | Add deterministic compact structured payload modes for repeated JSON/YAML/log data | `format --mode compact`, future structured payload modes |
 | SWE-Pruner / long-code pruning | Task-aware code context pruning | Select context by query, file, symbol and reason; do not only truncate by size | `context select --query` |
 | AgentMemory / SimpleMem / TencentDB-Agent-Memory-style systems | Persistent memory for coding/agent sessions | Store approved local memory, recall by query and avoid secret leakage | `memory remember`, `memory recall`, `memory capture` |
-| Agent governance tools | Policies, approvals, audit logs, least privilege and tool safety | Add local policy checks before raw expansion, MCP exposure and global config writes | `policy doctor`, `policy validate`, `policy explain` |
+| Agent governance tools | Policies, approvals, audit logs, least privilege and tool safety | Add local policy checks before raw expansion, MCP exposure and global config writes | `policy doctor`, `policy validate`, `policy explain`, `policy queue` |
 | Hermes-Agent-style systems | Agent loop, memory, skills, session/trajectory compression | Use memory, skills and trajectory summaries without becoming the agent runtime itself | `memory`, `skills`, `workflow`, `report` |
+| Deep Agents-style systems | Batteries-included harness: sub-agents, filesystem, context offload, persistent memory, human approval, skills and tools | Add role packs, context offload, filesystem evidence, approval queues and role-aware skill routing without becoming the runtime | `context pack --role`, `context offload`, `fs snapshot`, `policy queue`, `skills route`, `workflow` |
 | Plano-style systems | Gateway, routing, observability, traces, guardrails | Add local traces and reports before exploring any gateway mode | `trace`, `report`, future Gateway Lite |
 | Kiro-style workflows | Specs, steering, hooks and smart context | Strengthen PRD/tasks/TDD/release workflows and safe steering docs | `workflow`, `spec`, `rules` |
 | Gemini CLI / Claude Code / Codex / Cursor / Antigravity / OpenCode / Amp-like hosts | Agent hosts with different context, hook, MCP and config surfaces | Maintain a host capability matrix and conservative prompt-only fallback | `agents capabilities`, `agents export`, `mcp` |
@@ -99,6 +101,30 @@ SotuRail v0.5.x should prioritize:
 - preservation checks for errors, commands, paths and expected/actual values;
 - quality benchmarks, not token savings alone.
 
+## Role Packs And Sub-Agent Context
+
+Deep Agents-style sub-agent systems reinforce the value of isolated context windows. SotuRail should translate this into role-based context packs rather than running sub-agents itself.
+
+Future SotuRail role packs:
+
+- planner: roadmap, PRD, specs, architecture notes and constraints;
+- executor: task, target files, repo map, failing tests and safe commands;
+- reviewer: diff summary, rules, tests, acceptance criteria and security notes;
+- release-manager: version, changelog, release notes, npm/GitHub state and release checks;
+- researcher: docs, external notes, citations and comparison constraints.
+
+These packs should be attachable to workflows and exportable through agent exports without requiring a specific runtime.
+
+## Context Offload And Filesystem Evidence
+
+Deep Agents-style systems manage long tool outputs and filesystem work as part of the agent harness. SotuRail should keep the evidence local and reversible:
+
+- offload long raw logs into local storage;
+- provide summaries and recovery IDs;
+- snapshot touched files and diffs;
+- connect filesystem evidence to workflow IDs and raw IDs;
+- keep editing responsibility outside SotuRail's core unless explicitly implemented as a safe, reviewed feature.
+
 ## Structured Payload Compression
 
 TOON-style structured data formats show that repeated JSON/YAML keys can waste tokens. SotuRail should explore a deterministic compact structured payload mode for:
@@ -147,9 +173,13 @@ Compozy, Superpowers and OpenSpec-style orchestration are related to Workflow Ra
 
 Kiro-style workflows reinforce the value of specs, steering files, hooks and repeatable task plans. SotuRail should strengthen PRD -> tasks -> TDD -> verification -> release workflows in v0.7.x.
 
+Deep Agents-style workflows reinforce planner/executor/reviewer/release-manager role separation. SotuRail should provide role packs, workflow phase traces and role-aware skill routing without becoming the execution framework.
+
 ## Agent Runtime And Gateway Ideas
 
 Hermes-Agent-style systems are useful inspiration for memory, skills, trajectory summaries and tool definitions. SotuRail should not become a full autonomous agent runtime by default.
+
+Deep Agents-style systems are useful inspiration for sub-agent context isolation, context offload, filesystem evidence, human-in-the-loop approvals and skills loaded on demand. SotuRail should not become a LangChain/LangGraph/Deep Agents clone.
 
 Plano-style systems are useful inspiration for routing, traces, observability and guardrails. SotuRail should not become a heavy production gateway before the local rails are stable.
 
@@ -166,6 +196,7 @@ Different agent hosts expose different levels of control. SotuRail should docume
 | Gemini CLI | MCP/context files/prompt fallback where supported |
 | Cursor | rules/context exports, no unsafe global overwrite |
 | Antigravity | prompt-only/context-pack until stable official integration surfaces are verified |
+| Deep Agents / deepagents-js | export context/config/role packs only until stable safe integration surfaces are reviewed |
 | OpenCode/Amp/Kiro-style hosts | prompt/context exports first, deeper integrations only after official surfaces are clear |
 | Generic agents | Markdown/context packs and MCP read-only resources |
 
