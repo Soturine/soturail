@@ -68,6 +68,77 @@ Future verification should also connect workflow evidence to:
 
 `soturail workflow cleanup --closed --dry-run` previews closed workflow records that could be removed. It does not delete anything unless rerun with `--closed --yes` after review.
 
+## Harness-Style Workflow Direction
+
+Harness-style development reinforces a simple delivery loop:
+
+```txt
+setup -> plan -> work -> review -> release
+```
+
+SotuRail should absorb this as local workflow evidence, not as a Claude-only plugin or a full agent runtime.
+
+Possible future commands or templates:
+
+```bash
+soturail workflow setup
+soturail workflow plan
+soturail workflow work
+soturail workflow review
+soturail workflow release
+soturail workflow evidence <id>
+```
+
+Review should be perspective-aware:
+
+```bash
+soturail workflow review --perspective security
+soturail workflow review --perspective quality
+soturail workflow review --perspective performance
+soturail workflow review --perspective accessibility
+soturail workflow review --all
+```
+
+The review output should eventually write a stable `review.md` or evidence section with:
+
+- security findings;
+- quality findings;
+- performance findings;
+- accessibility findings when relevant;
+- release-readiness findings;
+- commands and raw IDs used as evidence.
+
+See also [harness-rail.md](harness-rail.md).
+
+## Diagram-Driven Workflow Direction
+
+Diagram Rail adds visual contracts to Workflow Rail. The target flow is:
+
+```txt
+Idea -> PRD -> Diagram -> Tasks -> TDD -> Work -> Review -> Release -> Evidence
+```
+
+Possible future commands:
+
+```bash
+soturail workflow diagram <id>
+soturail diagram from-workflow <id>
+soturail diagram validate
+```
+
+Useful workflow diagrams:
+
+- state machine for the current workflow;
+- release pipeline;
+- policy approval flow;
+- agent context handoff;
+- failure recovery path;
+- context router decision path.
+
+A diagram should not replace tests or review. It should make state transitions and constraints explicit before the agent implements code.
+
+See also [diagram-rail.md](diagram-rail.md).
+
 ## Future Workflow Rail 2.0
 
 The v0.7 roadmap turns Workflow Rail into a stronger `Idea -> PRD -> Tasks -> TDD -> Implementation -> Review -> Release` system.
@@ -106,6 +177,28 @@ soturail context pack --role reviewer
 soturail context pack --role release-manager
 soturail context pack --role researcher
 ```
+
+## Future Evidence Pack Model
+
+Each workflow or release should eventually be able to produce an evidence pack with:
+
+- workflow id and state;
+- plan path;
+- tasks path;
+- verification path;
+- diagram path when available;
+- build result;
+- test result;
+- audit result;
+- package verification result;
+- changed files;
+- raw command IDs;
+- offload IDs;
+- selected context pack;
+- selected role pack;
+- policy approvals or rejections;
+- release notes path;
+- benchmark report path when relevant.
 
 ## Future Trace And Evidence Model
 
