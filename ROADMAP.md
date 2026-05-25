@@ -16,6 +16,7 @@ Useful mental model:
 
 ```txt
 Hermes-like systems: the agent brain and execution loop.
+Deep Agents-style systems: the batteries-included harness with sub-agents, tools, filesystem, memory and approvals.
 Plano-like systems: the gateway, router and production data plane.
 SotuRail: the local Context OS that prepares, filters, remembers, governs and reports what agents need.
 ```
@@ -24,7 +25,7 @@ Newer v0.5 planning model:
 
 ```txt
 Dense-agent setup: every task gets every instruction, file and rule.
-SotuRail setup: route the task to the right local context expert, memory, rule set and workflow evidence.
+SotuRail setup: route the task to the right local context expert, memory, role pack, rule set and workflow evidence.
 ```
 
 ## Roadmap Policy
@@ -37,25 +38,32 @@ SotuRail setup: route the task to the right local context expert, memory, rule s
 - Keep native acceleration optional. A TypeScript fallback must always work.
 - Do not claim SotuRail is faster or more accurate than adjacent projects without reproducible benchmarks.
 - Every major feature should have clean-folder smoke tests, Windows coverage, docs, release notes, and package/CLI version verification.
+- Do not turn SotuRail into a LangChain, LangGraph, Deep Agents, CrewAI or gateway clone. SotuRail should export rails and evidence that those systems can consume.
 
 ## Strategic Influences To Absorb, Not Copy
 
 The next stages are influenced by the broader context-engineering and agent-infrastructure ecosystem. SotuRail should absorb patterns, not vendor or clone other projects.
 
-See also [docs/comparisons.md](docs/comparisons.md) and [docs/ecosystem-influences.md](docs/ecosystem-influences.md).
+See also:
+
+- [docs/comparisons.md](docs/comparisons.md)
+- [docs/ecosystem-influences.md](docs/ecosystem-influences.md)
+- [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md)
 
 ### Agent Brain Patterns
 
-Inspired by Hermes-style agent systems:
+Inspired by Hermes-style and Deep Agents-style agent systems:
 
 - memory across sessions;
 - compact tool definitions;
 - session and trajectory summaries;
 - curated skills;
 - safe sub-agent/task handoff ideas;
-- explicit action and observation evidence.
+- explicit action and observation evidence;
+- filesystem evidence around changes;
+- human approval queues for risky tool calls.
 
-SotuRail should use these ideas to improve `memory`, `skills`, `workflow` and `report` rails, not to become a full autonomous agent runtime.
+SotuRail should use these ideas to improve `memory`, `skills`, `workflow`, `policy`, `context`, `trace` and `report` rails, not to become a full autonomous agent runtime.
 
 ### Gateway And Observability Patterns
 
@@ -67,7 +75,7 @@ Inspired by Plano-style agent infrastructure:
 - workflow observability;
 - event-like records for commands, context packs, memory recall and agent exports.
 
-SotuRail should keep this local and lightweight first. A future gateway mode can be explored only after memory, context selection and reports are stable.
+SotuRail should keep this local and lightweight first. A future gateway mode can be explored only after memory, context selection, policy and reports are stable.
 
 ### Compression And Context Patterns
 
@@ -79,14 +87,18 @@ Inspired by Squeez/SQZ, RTK, LLMLingua, TOON, SWE-pruning and benchmark-driven c
 - measure quality, not only token savings;
 - provide deterministic compact formats when JSON/Markdown are too verbose.
 
-### Agent Harness Patterns
+### Agent Harness And Deep Agents Patterns
 
-Inspired by agent harness engineering and real community workflows:
+Inspired by agent harness engineering, Deep Agents-style sub-agents and real community workflows:
 
 - the useful system is model + prompts + tools + memory + traces + policies + recovery paths;
 - repeated agent failures should become local rules, docs, hooks or workflow checks;
 - root agent docs should be short, accurate and reference richer docs instead of becoming huge wikis;
-- context should be routed like an expert system, not dumped wholesale into every session.
+- context should be routed like an expert system, not dumped wholesale into every session;
+- sub-agent roles should receive isolated context packs, not the full repository;
+- long tool outputs should be offloaded to local raw/trace storage with recovery IDs;
+- filesystem changes should be snapshotted and explained instead of silently edited;
+- risky commands should be explainable and reviewable before execution.
 
 ### Agent UI And Protocol Patterns
 
@@ -125,6 +137,8 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 
 - `soturail context select --query "..."` to choose the best repo/docs/memory/rules context for a task.
 - `soturail context prune` to reduce context while preserving files, line ranges and reasons.
+- `soturail context offload <raw_id>` to offload long command/tool output into local evidence and return a compact recovery pointer.
+- `soturail context restore <offload_id>` to recover offloaded context when a human or agent needs the full evidence.
 - Local ranking that combines keyword matches, file paths, recent workflow state, approved memory and rules.
 - Reasoned context output: why a file/block/memory was included.
 - Token budget controls for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
@@ -142,8 +156,29 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
   - release expert: changelog, release notes, npm/GitHub state;
   - security expert: raw logs, redaction, policy, secrets;
   - workflow expert: current plan, tasks, verification;
-  - memory expert: approved memories and historical decisions.
+  - memory expert: approved memories and historical decisions;
+  - research expert: ecosystem notes, citations and comparison constraints.
 - Output should include selected expert, included evidence, omitted context and reason.
+
+### Role-Based Context Packs
+
+Inspired by sub-agent systems, SotuRail should generate role-specific context bundles while staying independent from any agent runtime.
+
+- `soturail context pack --role planner`.
+- `soturail context pack --role executor`.
+- `soturail context pack --role reviewer`.
+- `soturail context pack --role release-manager`.
+- `soturail context pack --role researcher`.
+- Each role pack should declare purpose, included sources, omitted sources, token estimate and recovery pointers.
+- Role packs should be exportable through `agents export` and attachable to workflow phases.
+
+Suggested mapping:
+
+- planner: roadmap, PRD, specs, constraints, previous decisions;
+- executor: task, target files, repo map, failing tests, safe commands;
+- reviewer: diff, tests, rules, acceptance criteria, security notes;
+- release-manager: version, changelog, release notes, pack, npm/GitHub state;
+- researcher: docs, ecosystem influence notes, comparison constraints and citations.
 
 ### Harness Failure Ledger
 
@@ -151,6 +186,31 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - `soturail harness doctor` to check whether a project has enough rails: short agent docs, safe hooks, context packs, MCP smoke, workflow verification and release evidence.
 - Convert harness notes into candidate rules, docs, memory records or workflow verification items.
 - Link failures to evidence: raw IDs, commands, files, workflow IDs and release reports.
+
+### Filesystem Evidence Rail
+
+This is inspired by agent harnesses with filesystem access, but SotuRail should stay evidence-focused rather than becoming an editing agent.
+
+- `soturail fs snapshot` to record current file state for a workflow.
+- `soturail fs diff` to summarize changed files and important hunks.
+- `soturail fs touched` to list files changed since a workflow started.
+- `soturail fs plan-edit` to describe intended edits before an agent or user changes files.
+- Connect filesystem evidence to workflow IDs, raw IDs and command traces.
+
+### Policy Approval Queue
+
+- `soturail policy queue` to list pending risky actions.
+- `soturail policy approve <id>` for explicit human approval.
+- `soturail policy reject <id>` for explicit human rejection.
+- `soturail policy explain <id>` to show command, risk, reason, evidence and safer alternatives.
+- Good first gated actions: npm publish, GitHub release, global config write, raw log expansion, destructive shell command, MCP exposure change.
+
+### Skills Routing
+
+- `soturail skills suggest --query "..."` to recommend a relevant skill.
+- `soturail skills route --task "..."` to pair a skill with a context expert, role pack and policy checks.
+- `soturail skills export --role reviewer` or similar role-aware export.
+- Output must explain why the skill was selected and what evidence it should receive.
 
 ### Agent Docs Hygiene
 
@@ -188,6 +248,7 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Add migration notes for users coming from v0.4.x.
 - Add safer export examples for approved memory only.
 - Add `agents lint` docs and examples.
+- Add role-pack examples for planner, executor, reviewer, release-manager and researcher.
 - Add `AUTH.md` scaffold docs if the policy/auth-check work lands in v0.5.0.
 
 ## v0.5.2 - Evaluation Suite
@@ -199,7 +260,9 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Add before/after reports for raw context vs selected/pruned context.
 - Add small local evaluation fixtures inspired by long-code and SWE-style bug workflows without requiring paid APIs.
 - Add context-router quality fixtures: the selected expert must match the task type and preserve expected evidence.
+- Add role-pack quality fixtures: planner/executor/reviewer/release-manager packs must not receive unrelated context by default.
 - Add agent-doc hygiene fixtures: short root docs plus referenced larger docs should pass.
+- Add offload/restore fixtures: summaries must preserve recovery pointers and critical failure lines.
 
 ## v0.6.0 - Real Agent Runtime Integration
 
@@ -208,11 +271,12 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - `soturail agents install --agent gemini --dry-run`.
 - `soturail agents status` and `soturail agents doctor --verbose`.
 - `soturail agents capabilities` for a host capability matrix.
+- Experimental `deepagents` and `deepagents-js` export targets as prompt/config/context outputs only.
 - Safer backups before modifying agent config files.
-- Host capability matrix for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, OpenCode/Amp/Kiro-style hosts and generic agents.
+- Host capability matrix for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, OpenCode/Amp/Kiro-style hosts, Deep Agents-style harnesses and generic agents.
 - Prompt-only fallback remains available for every host.
-- Codex and Antigravity stay conservative until stable hook/config surfaces are confirmed.
-- Add host-specific docs for short agent files, rules, settings, hooks and context pack exports.
+- Codex, Antigravity and Deep Agents-style targets stay conservative until stable hook/config surfaces are confirmed.
+- Add host-specific docs for short agent files, rules, settings, hooks, role packs and context pack exports.
 
 ## v0.6.1 - Agent UX Polish
 
@@ -223,6 +287,7 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Tutorial: SotuRail with Gemini CLI.
 - Tutorial: SotuRail with Cursor.
 - Tutorial: SotuRail with Antigravity prompt-only workflow.
+- Tutorial: SotuRail with Deep Agents-style role packs.
 - Tutorial: short `CLAUDE.md` plus `agent_docs/` references.
 
 ## v0.7.0 - Workflow Rail 2.0
@@ -240,7 +305,9 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Optional GitHub Issues integration.
 - Worktree-per-task workflows with verification checklists.
 - Release workflow reports that connect tests, build, audit, pack and npm/GitHub release state.
-- Role-based context packs for planner, executor, reviewer and release-manager.
+- Role-based context packs for planner, executor, reviewer, release-manager and researcher.
+- Sub-agent-style workflow phases without requiring a specific agent runtime.
+- Phase traces that record which role pack, skill, memory recall, commands and raw IDs were used.
 
 ## v0.8.0 - Knowledge Rail And Project Brain
 
@@ -252,6 +319,7 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Safer knowledge-to-rules pipeline.
 - Project Brain summaries for architecture, decisions, bugs, releases and recurring commands.
 - Connect harness failure notes with knowledge/rules suggestions.
+- Connect filesystem evidence with Project Brain decisions and recurring bug patterns.
 
 ## v0.9.0 - Native Engine Real
 
@@ -272,6 +340,9 @@ This is not a neural MoE implementation. It is a local routing metaphor: use onl
 - Workflow report pages.
 - CI failure analysis reports.
 - Context router visual report: selected expert, included evidence, omitted context and reasons.
+- Role-pack report: selected role, evidence included, offloaded logs and recovery pointers.
+- Policy approval report: queued/approved/rejected risky actions.
+- Filesystem evidence report: snapshots, touched files and workflow diffs.
 - Policy/MCP exposure report.
 - Public demo assets for README and release pages.
 
@@ -306,6 +377,11 @@ These are not separate products yet. They are submodules that can grow inside So
 - SotuRail Memory: local approved memory for coding agents.
 - SotuRail Context Select: query-aware context selection with reasons and line ranges.
 - SotuRail Context Router: MoE-inspired routing to the smallest useful context expert.
+- SotuRail Role Packs: planner/executor/reviewer/release-manager/researcher context bundles.
+- SotuRail Context Offload: long output summaries with raw recovery pointers.
+- SotuRail Filesystem Evidence: snapshots, touched files and diffs tied to workflows.
+- SotuRail Policy Queue: human approval for risky commands and exports.
+- SotuRail Skill Router: task-aware skill suggestions with evidence and policy checks.
 - SotuRail Harness Ledger: repeated agent mistakes converted into rules, checks and workflow evidence.
 - SotuRail Agent Docs Linter: short, useful root agent docs with referenced rich context.
 - SotuRail Auth Rail: agent-readable auth docs and local redaction checks.
