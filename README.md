@@ -22,13 +22,13 @@ SotuRail is a local-first Context OS for AI coding agents such as Claude Code, C
 
 It wraps a repository and terminal session with reversible evidence rails: heuristic repo maps, progressive file reading, safe command execution, raw log recovery, reducers, prompt-cache-friendly blocks, Spec-Driven Development artifacts, local memory, hooks, benchmarks, rules extraction, context packs, agent exports and workflow records.
 
-SotuRail is not the agent and it is not a heavy production gateway. It is the local rail layer that helps agents work with better context, safer logs, smaller prompts, approved memory and auditable workflows.
+SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflow tool and not a heavy production gateway. It is the local rail layer that helps agents work with better context, safer logs, smaller prompts, approved memory, structured payloads, diagrams, policies and auditable workflows.
 
 ## Project Status
 
 v0.4.1 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next major direction is v0.5.0: Memory Rail, Context Intelligence, context routing, role packs, context offload, policy checks, harness failure capture and native reliability where benchmarks justify it. See [ROADMAP.md](ROADMAP.md).
+The next major direction is v0.5.0+: Memory Rail, Context Intelligence, context routing, role packs, context offload, policy checks, harness failure capture, evidence packs, structured payload formats, Diagram Rail planning and native reliability where benchmarks justify it. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## Why SotuRail Exists
 
@@ -38,7 +38,7 @@ The long-term product direction is simple:
 
 ```txt
 SotuRail does not replace Claude, Codex, Gemini, Cursor or other agents.
-SotuRail prepares the local context, memory, logs, policies and reports those agents need.
+SotuRail prepares the local context, memory, logs, diagrams, policies, payload formats and reports those agents need.
 ```
 
 ## Where It Fits
@@ -48,18 +48,20 @@ Useful mental model:
 ```txt
 Hermes-like systems: agent brain and execution loop.
 Deep Agents-style systems: batteries-included harness with sub-agents, tools, filesystem, memory and approvals.
+Claude Code Harness-style systems: disciplined setup/plan/work/review/release loops with guardrails and evidence.
+MDDD-style systems: Mermaid/.spec.md visual contracts before implementation.
 Plano-like systems: gateway, router and production data plane.
-SotuRail: local Context OS for context, memory, reducers, policy, logs, workflows and reports.
+SotuRail: local Context OS for context, memory, reducers, policy, logs, workflows, diagrams, payload formats and reports.
 ```
 
 A newer mental model from the v0.5 planning cycle:
 
 ```txt
 Dense-agent setup: every task gets every instruction, file and rule.
-SotuRail setup: route the task to the right local context expert, memory, role pack, rule set and workflow evidence.
+SotuRail setup: route the task to the right local context expert, memory, role pack, rule set, payload format, diagram and workflow evidence.
 ```
 
-SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default. Research notes and product ideas live in [docs/ecosystem-influences.md](docs/ecosystem-influences.md), [docs/comparisons.md](docs/comparisons.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
+SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default. Research notes and product ideas live in [docs/ecosystem-influences.md](docs/ecosystem-influences.md), [docs/comparisons.md](docs/comparisons.md), [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md), [docs/future-rails-index.md](docs/future-rails-index.md), [docs/harness-rail.md](docs/harness-rail.md), [docs/policy-rail.md](docs/policy-rail.md), [docs/diagram-rail.md](docs/diagram-rail.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md).
 
 ## Built With SotuRail
 
@@ -104,15 +106,29 @@ The next roadmap stage adds the missing pieces for a stronger Context OS:
 - Context Expert Router: task-specific bundles for code, docs, release, security, workflow, research and approved memory.
 - Role-Based Context Packs: planner, executor, reviewer, release-manager and researcher context bundles.
 - Context Offload: keep long tool/terminal outputs local with compact summaries and recovery IDs.
-- Harness Failure Ledger: turn repeated agent mistakes into rules, checks, docs or workflow verification items.
+- Harness Rail: setup/plan/work/review/release discipline, review perspectives, evidence packs and failure ledger.
 - Filesystem Evidence Rail: snapshots, touched files and diffs tied to workflows and raw IDs.
-- Policy/Governance Rail: local checks for secrets, raw expansion, MCP exposure, risky commands and release safety.
+- Policy/Governance Rail: local checks for secrets, raw expansion, MCP exposure, risky commands, auth docs and release safety.
+- Structured Payload Rail: target-aware Markdown, JSON, XML-like tagged context, TOON/table-like compact data and Mermaid context.
+- Diagram Rail: Mermaid diagrams, `.spec.md` visual contracts, workflow diagrams, release diagrams and policy/context-router diagrams.
 - Agent Capability Matrix: safer guidance for Claude, Codex, Gemini, Cursor, Antigravity, Deep Agents-style hosts, generic hosts and future hosts.
-- Agent Docs Linting: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short, useful and reference-based.
+- Agent Docs Hygiene: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short, useful and reference-based.
 - Skill Routing: suggest skills by task, role, context expert and policy checks.
-- Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall and workflow state.
+- Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall, diagrams, policy decisions and workflow state.
 - Evaluation Suite: token savings plus quality checks, not token savings alone.
-- Future local UI/report mode: HTML reports first, MCP Apps/AG-UI-style event surfaces later.
+- Future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
+
+## Future Rails Documentation
+
+Future planning is split across focused docs so the roadmap does not become the only source of truth:
+
+- [Future Rails Index](docs/future-rails-index.md)
+- [Harness Rail](docs/harness-rail.md)
+- [Policy Rail](docs/policy-rail.md)
+- [Diagram Rail](docs/diagram-rail.md)
+- [Structured Payload Rail](docs/structured-payload-rail.md)
+- [Agent Docs Hygiene](docs/agent-docs-hygiene.md)
+- [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
 
 ## Installation
 
@@ -277,7 +293,7 @@ MCP does not expose arbitrary shell execution. Raw log expansion redacts probabl
 
 Context packs are written to `.soturail/context/<target>-context.md`. JSON-RPC examples live under [examples/mcp](examples/mcp).
 
-Future role packs and offload flows are tracked in [docs/context-packs.md](docs/context-packs.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
+Future role packs, structured payload formats and offload flows are tracked in [docs/context-packs.md](docs/context-packs.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
 
 ## Workflow Rail
 
@@ -294,7 +310,7 @@ soturail workflow verify <id>
 
 SotuRail does not push, merge or delete worktrees automatically.
 
-Future role-phase workflows are tracked in [docs/workflow-rail.md](docs/workflow-rail.md).
+Future role-phase workflows, harness-style phases and diagram-driven workflows are tracked in [docs/workflow-rail.md](docs/workflow-rail.md), [docs/harness-rail.md](docs/harness-rail.md) and [docs/diagram-rail.md](docs/diagram-rail.md).
 
 ## Skill Rail
 
@@ -338,6 +354,8 @@ The latest report is written to [benchmarks/reports/latest.md](benchmarks/report
 
 Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
 
+Future benchmarks will also cover context quality, role-pack quality, diagram validation, evidence-pack completeness and format quality for Markdown vs tagged vs JSON vs compact payloads.
+
 ## Knowledge-to-Rules Engine
 
 SotuRail can ingest Markdown, TXT, JSON and YAML into structured YAML/JSON rules, checklists, citations and simple validators.
@@ -349,7 +367,7 @@ soturail rules check
 soturail rules export --format yaml
 ```
 
-This makes heavy docs smaller, reusable and auditable without inventing rules that do not appear in the source. See [docs/knowledge-to-rules.md](docs/knowledge-to-rules.md).
+This makes heavy docs smaller, reusable and auditable without inventing rules that do not appear in the source. See [docs/knowledge-to-rules.md](docs/knowledge-to-rules.md), [docs/rules.md](docs/rules.md) and [docs/policy-rail.md](docs/policy-rail.md).
 
 ## Prompt Caching Design
 
@@ -381,13 +399,15 @@ SotuRail does not claim native speedups unless local benchmark results show them
 
 Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material. `soturail expand <raw_id>` redacts probable secrets by default; use `--allow-raw --yes` only when you intentionally need exact raw output.
 
+Future policy queue, auth checks and MCP exposure reports are tracked in [docs/policy-rail.md](docs/policy-rail.md) and [docs/security-model.md](docs/security-model.md).
+
 ## Windows Notes
 
 Windows users should see [docs/windows.md](docs/windows.md) for CMD vs PowerShell quoting, global install, `npx`, local tarball testing and common paste mistakes such as copying Markdown code-fence labels into CMD.
 
 ## Comparison Philosophy
 
-SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks, skill registries, agent memory and gateway/observability ideas. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest. See [docs/comparisons.md](docs/comparisons.md), [docs/ecosystem-influences.md](docs/ecosystem-influences.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
+SotuRail is inspired by the broader context-engineering ecosystem, including terminal reducers, agent response compression, spec-driven workflows, local memory, rules extraction, hooks, benchmarks, skill registries, agent memory, harness workflows, Mermaid diagram-driven development, structured prompt payloads and gateway/observability ideas. SotuRail does not vendor or depend on those projects. It aims to unify similar ideas into one local-first workflow while keeping benchmarks honest. See [docs/comparisons.md](docs/comparisons.md), [docs/ecosystem-influences.md](docs/ecosystem-influences.md), [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## Roadmap
 
@@ -396,14 +416,14 @@ See [ROADMAP.md](ROADMAP.md).
 Near-term direction:
 
 ```txt
-v0.5.0  Memory Rail + Context Intelligence + Role Packs + Harness/Policy reliability
-v0.5.1  Memory/context polish + agent docs hygiene + role-pack examples
-v0.5.2  Evaluation suite + context/role-pack quality benchmarks
-v0.6.0  Real agent runtime integration + host capability matrix
-v0.7.0  Workflow Rail 2.0 + spec/TDD/release role phases
-v0.8.0  Knowledge Rail and Project Brain
+v0.5.0  Memory Rail + Context Intelligence + Role Packs + Harness/Policy seeds + reliability
+v0.5.1  Memory/context polish + Structured Payload Rail + Agent Docs Hygiene + Diagram docs
+v0.5.2  Evaluation suite + context/role-pack/format/evidence/diagram quality benchmarks
+v0.6.0  Real agent runtime integration + host capability matrix + host-aware payload/policy docs
+v0.7.0  Workflow Rail 2.0 + Harness Rail + Diagram Rail + .spec.md visual contracts
+v0.8.0  Knowledge Rail and Project Brain with specs, diagrams and recurring failures
 v0.9.0  Native Engine Real
-v0.10.0 Local reports, traces and dashboard
+v0.10.0 Local reports, traces, Mermaid rendering and dashboard
 v1.0.0  Stable Context OS
 ```
 
