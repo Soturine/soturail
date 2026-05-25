@@ -51,7 +51,8 @@ What to add to SotuRail:
   - release expert: changelog, release notes, npm/GitHub state;
   - security expert: raw logs, redaction, policy, secrets;
   - workflow expert: current plan, tasks, verification;
-  - memory expert: approved memory and historical decisions.
+  - memory expert: approved memory and historical decisions;
+  - research expert: ecosystem notes, citations and comparison constraints.
 - `soturail context route --query "..."` as a later alias or layer over `context select`.
 - Route reports showing which expert was selected, what was omitted and why.
 
@@ -64,9 +65,9 @@ Where it maps:
 - `workflow trace`
 - `bench context-quality`
 
-## Deep Agent And Sub-Agent Patterns
+## Deep Agents And Sub-Agent Patterns
 
-Deep agent frameworks emphasize task planning, scoped sub-agents, filesystem state, tool loops and durable working memory.
+Deep agent frameworks emphasize task planning, scoped sub-agents, filesystem state, tool loops, durable working memory, human approval, skills and context offloading.
 
 What to add to SotuRail:
 
@@ -75,9 +76,15 @@ What to add to SotuRail:
   - planner context pack;
   - executor context pack;
   - reviewer context pack;
-  - release-manager context pack.
+  - release-manager context pack;
+  - researcher context pack.
 - Add workflow templates that split complex work into plan, implementation, review and verification records.
 - Add report output that says which context pack was meant for which role.
+- Add `context offload` / `context restore` so long logs and tool outputs can stay local with recovery pointers.
+- Add filesystem evidence commands such as `fs snapshot`, `fs diff`, `fs touched` and `fs plan-edit` so agents can review changed files without SotuRail becoming the editing agent.
+- Add policy approval queues for risky commands, raw expansion, publish/release actions and config writes.
+- Add role-aware skill suggestions and exports.
+- Add experimental future exports for `deepagents` and `deepagents-js` as context/config artifacts only.
 
 Where it maps:
 
@@ -85,7 +92,13 @@ Where it maps:
 - `skills`
 - `agents export`
 - `context pack`
+- `context offload`
+- `policy queue`
+- `fs snapshot`
+- `trace`
 - `report`
+
+See [deep-agents-patterns.md](deep-agents-patterns.md).
 
 ## Claude Code, AGENTS.md And Minimal Context Hygiene
 
@@ -121,6 +134,7 @@ What to add to SotuRail:
   - release evidence.
 - `soturail workflow scaffold --type feature|bugfix|release`.
 - `soturail workflow verify` should connect tasks, tests, commands and raw logs.
+- Role-based workflow phases should connect to role context packs.
 
 Where it maps:
 
@@ -142,6 +156,9 @@ What to add to SotuRail later:
   - memory recall;
   - command traces;
   - workflow state;
+  - role packs;
+  - policy approvals;
+  - filesystem evidence;
   - release gates;
   - reducer/dedupe savings.
 - Optional AG-UI-style event stream for UIs, but only after CLI reports are stable.
@@ -180,6 +197,8 @@ What to add to SotuRail:
 
 - Continue reducers and dedupe, but measure quality.
 - Add context quality fixtures where expected files, errors, commands and rules must survive pruning.
+- Add role-pack quality fixtures where each role receives only its necessary context.
+- Add offload/restore fixtures where full raw evidence remains recoverable.
 - Add compact structured payload modes for repetitive JSON/YAML/log data.
 - Add before/after reports that separate:
   - raw tokens;
@@ -225,6 +244,7 @@ Agent governance projects reinforce policy, least privilege, audit logs, approva
 What to add to SotuRail:
 
 - `policy doctor`, `policy validate`, `policy explain`.
+- `policy queue`, `policy approve` and `policy reject` for risky local actions.
 - Explain why a tool/resource/export is safe or blocked.
 - MCP exposure report listing every resource and tool.
 - Explicit confirmation for raw log expansion and config writes.
@@ -242,7 +262,12 @@ These ideas are intentionally staged after the core rails are stable:
 
 1. **Harness Rail**: record agent failures and turn them into rules, checks or docs.
 2. **Context Expert Router**: route tasks to specialized context bundles.
-3. **Agent Docs Linter**: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short and useful.
-4. **Auth Rail**: optional agent-readable auth docs and redaction checks.
-5. **UI/Report Rail**: local HTML dashboard and optional MCP Apps/AG-UI-style event outputs.
-6. **Gateway Lite**: local event routing only after memory, context selection, policy and reports are mature.
+3. **Role Pack Rail**: planner/executor/reviewer/release-manager/researcher context packs.
+4. **Context Offload Rail**: keep long tool outputs on disk with summaries and recovery IDs.
+5. **Filesystem Evidence Rail**: snapshots, touched files and workflow diffs.
+6. **Policy Approval Queue**: human review for risky commands and config changes.
+7. **Skill Router**: suggest skills based on task, role and policy.
+8. **Agent Docs Linter**: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short and useful.
+9. **Auth Rail**: optional agent-readable auth docs and redaction checks.
+10. **UI/Report Rail**: local HTML dashboard and optional MCP Apps/AG-UI-style event outputs.
+11. **Gateway Lite**: local event routing only after memory, context selection, policy and reports are mature.
