@@ -10,22 +10,26 @@ SotuRail should stay small, local-first and plug-in friendly.
 
 - SotuRail is not the agent.
 - SotuRail is not a heavy production gateway.
-- SotuRail is the local rail layer that gives agents better context, memory, compression, safety, logs, workflows and release evidence.
+- SotuRail is not a Claude-only harness.
+- SotuRail is not a Mermaid-only workflow tool.
+- SotuRail is the local rail layer that gives agents better context, memory, compression, safety, logs, workflows, diagrams, structured payloads and release evidence.
 
 Useful mental model:
 
 ```txt
 Hermes-like systems: the agent brain and execution loop.
 Deep Agents-style systems: the batteries-included harness with sub-agents, tools, filesystem, memory and approvals.
+Claude Code Harness-style systems: disciplined setup/plan/work/review/release loops with guardrails and evidence.
+MDDD-style systems: Mermaid/.spec.md visual contracts before implementation.
 Plano-like systems: the gateway, router and production data plane.
-SotuRail: the local Context OS that prepares, filters, remembers, governs and reports what agents need.
+SotuRail: the local Context OS that prepares, filters, formats, remembers, governs and reports what agents need.
 ```
 
-Newer v0.5 planning model:
+Newer v0.5+ planning model:
 
 ```txt
 Dense-agent setup: every task gets every instruction, file and rule.
-SotuRail setup: route the task to the right local context expert, memory, role pack, rule set and workflow evidence.
+SotuRail setup: route the task to the right local context expert, memory, role pack, rule set, diagram, payload format and workflow evidence.
 ```
 
 ## Roadmap Policy
@@ -38,7 +42,8 @@ SotuRail setup: route the task to the right local context expert, memory, role p
 - Keep native acceleration optional. A TypeScript fallback must always work.
 - Do not claim SotuRail is faster or more accurate than adjacent projects without reproducible benchmarks.
 - Every major feature should have clean-folder smoke tests, Windows coverage, docs, release notes, and package/CLI version verification.
-- Do not turn SotuRail into a LangChain, LangGraph, Deep Agents, CrewAI or gateway clone. SotuRail should export rails and evidence that those systems can consume.
+- Do not turn SotuRail into a LangChain, LangGraph, Deep Agents, CrewAI, Claude plugin, Mermaid-only CLI or gateway clone. SotuRail should export rails and evidence that those systems can consume.
+- New planned rails should be staged across versions instead of overloading a single release.
 
 ## Strategic Influences To Absorb, Not Copy
 
@@ -49,6 +54,12 @@ See also:
 - [docs/comparisons.md](docs/comparisons.md)
 - [docs/ecosystem-influences.md](docs/ecosystem-influences.md)
 - [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md)
+- [docs/harness-rail.md](docs/harness-rail.md)
+- [docs/policy-rail.md](docs/policy-rail.md)
+- [docs/diagram-rail.md](docs/diagram-rail.md)
+- [docs/structured-payload-rail.md](docs/structured-payload-rail.md)
+- [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md)
+- [docs/roadmap-harness-diagram-payload-addendum.md](docs/roadmap-harness-diagram-payload-addendum.md)
 
 ### Agent Brain Patterns
 
@@ -75,7 +86,7 @@ Inspired by Plano-style agent infrastructure:
 - workflow observability;
 - event-like records for commands, context packs, memory recall and agent exports.
 
-SotuRail should keep this local and lightweight first. A future gateway mode can be explored only after memory, context selection, policy and reports are stable.
+SotuRail should keep this local and lightweight first. A future gateway mode can be explored only after memory, context selection, policy, evidence and reports are stable.
 
 ### Compression And Context Patterns
 
@@ -87,9 +98,20 @@ Inspired by Squeez/SQZ, RTK, LLMLingua, TOON, SWE-pruning and benchmark-driven c
 - measure quality, not only token savings;
 - provide deterministic compact formats when JSON/Markdown are too verbose.
 
+### Structured Payload Patterns
+
+Inspired by tagged-prompt practices, XML-like prompt boundaries, JSON safety discussions and TOON-style compact data:
+
+- JSON remains the machine/config/MCP/tool-contract format.
+- Markdown remains the human documentation format.
+- XML-like tagged blocks can delimit long LLM prompt context.
+- TOON/table-like formats can reduce repetitive structured data.
+- Mermaid can represent visual workflow, architecture and state context.
+- Duplicate JSON keys, giant arrays, probable secrets and ambiguous machine payloads should be detected before they become agent prompt context.
+
 ### Agent Harness And Deep Agents Patterns
 
-Inspired by agent harness engineering, Deep Agents-style sub-agents and real community workflows:
+Inspired by agent harness engineering, Claude Code Harness-style workflows, Deep Agents-style sub-agents and real community workflows:
 
 - the useful system is model + prompts + tools + memory + traces + policies + recovery paths;
 - repeated agent failures should become local rules, docs, hooks or workflow checks;
@@ -98,7 +120,19 @@ Inspired by agent harness engineering, Deep Agents-style sub-agents and real com
 - sub-agent roles should receive isolated context packs, not the full repository;
 - long tool outputs should be offloaded to local raw/trace storage with recovery IDs;
 - filesystem changes should be snapshotted and explained instead of silently edited;
-- risky commands should be explainable and reviewable before execution.
+- risky commands should be explainable and reviewable before execution;
+- setup/plan/work/review/release should become an optional Workflow Rail discipline;
+- review perspectives should be explicit: security, quality, performance, accessibility and release.
+
+### Diagram-Driven Development Patterns
+
+Inspired by Mermaid Diagram Driven Development and `.spec.md` as a visual source of truth:
+
+- diagrams should be text-based, versionable and local;
+- diagrams should clarify state, sequence, policy and workflow constraints;
+- `.spec.md` files can combine Markdown, Mermaid, decision matrices, requirements and acceptance criteria;
+- diagrams should guide implementation, not replace tests, code review or human approval;
+- SotuRail can generate workflow/release/context/policy diagrams as evidence.
 
 ### Agent UI And Protocol Patterns
 
@@ -108,7 +142,7 @@ Inspired by MCP UI, AG-UI and OpenUI-style ideas:
 - SotuRail should start with local reports and trace pages before any heavy UI;
 - future UI/event surfaces must remain safe, local and optional.
 
-## v0.5.0 - Memory Rail, Context Intelligence, Harness And Native Reliability
+## v0.5.0 - Memory Rail, Context Intelligence, Harness Seeds And Native Reliability
 
 This release absorbs the originally planned `v0.4.2` CI/release hotfix into the v0.5 reliability gate instead of creating a separate patch, unless an emergency production bug appears before v0.5.0.
 
@@ -144,6 +178,7 @@ This release absorbs the originally planned `v0.4.2` CI/release hotfix into the 
 - Token budget controls for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
 - Smaller generated `CLAUDE.md`/`AGENTS.md` with optional references to larger `agent_docs/` or `.soturail/context/` files.
 - A compact structured payload mode for JSON/YAML/log-heavy context where repeated keys or repeated rows waste tokens.
+- Early tagged context blocks for long LLM prompt context where boundaries matter.
 
 ### Context Expert Router
 
@@ -186,6 +221,14 @@ Suggested mapping:
 - `soturail harness doctor` to check whether a project has enough rails: short agent docs, safe hooks, context packs, MCP smoke, workflow verification and release evidence.
 - Convert harness notes into candidate rules, docs, memory records or workflow verification items.
 - Link failures to evidence: raw IDs, commands, files, workflow IDs and release reports.
+
+### Early Evidence Pack
+
+- Record enough evidence for workflows and releases to be audited later.
+- Attach command raw IDs, offload IDs, workflow IDs, changed files, policy decisions and release checks where available.
+- Prepare later commands:
+  - `soturail workflow evidence <id>`;
+  - `soturail release evidence`.
 
 ### Filesystem Evidence Rail
 
@@ -238,7 +281,7 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Keep npm install working without Rust, Cargo or native build tools.
 - Expand `soturail native doctor` and fallback diagnostics.
 
-## v0.5.1 - Memory, Context And Agent Docs Polish
+## v0.5.1 - Memory, Context, Payload And Agent Docs Polish
 
 - Improve `memory recall` output readability.
 - Add examples for project decisions, bug history, recurring test failures and architecture preferences.
@@ -250,6 +293,11 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Add `agents lint` docs and examples.
 - Add role-pack examples for planner, executor, reviewer, release-manager and researcher.
 - Add `AUTH.md` scaffold docs if the policy/auth-check work lands in v0.5.0.
+- Add Structured Payload Rail docs and examples for Markdown, JSON, tagged context and compact table/TOON-like output.
+- Add `soturail validate json --strict` plan/tests for duplicate keys and invalid prompt payloads.
+- Add `soturail format compare` plan for Markdown vs tagged vs JSON vs compact output.
+- Add early Diagram Rail docs and basic Mermaid validation plan.
+- Add Agent Docs Hygiene docs for short root files and referenced rich context.
 
 ## v0.5.2 - Evaluation Suite
 
@@ -263,6 +311,11 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Add role-pack quality fixtures: planner/executor/reviewer/release-manager packs must not receive unrelated context by default.
 - Add agent-doc hygiene fixtures: short root docs plus referenced larger docs should pass.
 - Add offload/restore fixtures: summaries must preserve recovery pointers and critical failure lines.
+- Add format quality fixtures: Markdown vs tagged vs JSON vs TOON/table-like output must preserve critical evidence.
+- Add strict JSON fixtures: duplicate keys, probable secrets, huge arrays and invalid machine payloads must be detected.
+- Add evidence-pack fixtures: workflow/release evidence must include expected commands, raw IDs, changed files and policy decisions.
+- Add harness scenario fixtures: repeated agent failures should become candidate rules, docs, memory or workflow checks.
+- Add diagram validation fixtures: invalid Mermaid, unreachable states and missing verification transitions should fail clearly.
 
 ## v0.6.0 - Real Agent Runtime Integration
 
@@ -277,6 +330,9 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Prompt-only fallback remains available for every host.
 - Codex, Antigravity and Deep Agents-style targets stay conservative until stable hook/config surfaces are confirmed.
 - Add host-specific docs for short agent files, rules, settings, hooks, role packs and context pack exports.
+- Add optional Claude Code Harness-style compatibility notes without requiring SotuRail to become a Claude plugin.
+- Add host-aware payload-format recommendations: Markdown, JSON, tagged blocks and prompt-only fallbacks.
+- Add host-aware policy notes for config writes, hooks, MCP exposure and raw-log access.
 
 ## v0.6.1 - Agent UX Polish
 
@@ -289,8 +345,11 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Tutorial: SotuRail with Antigravity prompt-only workflow.
 - Tutorial: SotuRail with Deep Agents-style role packs.
 - Tutorial: short `CLAUDE.md` plus `agent_docs/` references.
+- Tutorial: SotuRail with harness-style setup/plan/work/review/release workflow.
+- Tutorial: SotuRail with Diagram Rail and `.spec.md` visual contracts.
+- Tutorial: choosing context formats for Claude, Gemini, Codex, Cursor and MCP.
 
-## v0.7.0 - Workflow Rail 2.0
+## v0.7.0 - Workflow Rail 2.0, Harness Rail And Diagram Rail
 
 - Workflow templates for `Idea -> PRD -> Issues -> TASKS.md -> TDD -> Deploy`.
 - `soturail workflow plan`.
@@ -309,6 +368,36 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Sub-agent-style workflow phases without requiring a specific agent runtime.
 - Phase traces that record which role pack, skill, memory recall, commands and raw IDs were used.
 
+### Harness Rail Expansion
+
+- `soturail workflow setup`.
+- `soturail workflow work`.
+- `soturail workflow review`.
+- `soturail workflow evidence <id>`.
+- `soturail release evidence`.
+- Review perspectives:
+  - `soturail workflow review --perspective security`;
+  - `soturail workflow review --perspective quality`;
+  - `soturail workflow review --perspective performance`;
+  - `soturail workflow review --perspective accessibility`;
+  - `soturail workflow review --all`.
+- Evidence packs with build, tests, audit, npm pack, changed files, raw IDs, offload IDs, release notes and policy approvals.
+- Harness Failure Ledger integration with workflow verification.
+
+### Diagram Rail Expansion
+
+- `soturail diagram init`.
+- `soturail diagram new <feature>`.
+- `soturail diagram audit <file>`.
+- `soturail diagram validate`.
+- `soturail diagram sync`.
+- `soturail diagram from-workflow <id>`.
+- `soturail diagram from-repo`.
+- `soturail workflow diagram <id>`.
+- Mermaid workflow diagrams for states, release flows, policy flows, MCP flows and context-router flows.
+- `.spec.md` visual contracts with Mermaid, decision matrix, requirements, acceptance criteria and test plan.
+- Diagram validation for invalid Mermaid syntax, unreachable states, missing verification, unlabeled risky transitions and release paths without evidence.
+
 ## v0.8.0 - Knowledge Rail And Project Brain
 
 - Ingest project docs, changelogs, release notes, issues and workflow decisions.
@@ -320,17 +409,21 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Project Brain summaries for architecture, decisions, bugs, releases and recurring commands.
 - Connect harness failure notes with knowledge/rules suggestions.
 - Connect filesystem evidence with Project Brain decisions and recurring bug patterns.
+- Connect `.spec.md` files, Mermaid diagrams and decision matrices to Project Brain.
+- Connect structured payload reports to Project Brain so preferred context formats are learned from local evidence.
+- Connect Agent Docs Hygiene findings to Project Brain so stale agent instructions are detected.
 
 ## v0.9.0 - Native Engine Real
 
 - Native stream reducer if benchmarks justify it.
 - Native JSON/TOON-style structured reducer if benchmarks justify it.
 - Native dedupe/hash engine if benchmarks justify it.
+- Native diagram/parser helpers only if benchmarks justify them.
 - Native runner remains optional.
 - TypeScript fallback remains mandatory.
 - Benchmarks must prove native speed/quality gains before the feature is promoted.
 
-## v0.10.0 - Local Reports, Trace Viewer And Dashboard
+## v0.10.0 - Local Reports, Trace Viewer, Diagrams And Dashboard
 
 - `soturail report`.
 - `soturail trace list`.
@@ -344,11 +437,15 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Policy approval report: queued/approved/rejected risky actions.
 - Filesystem evidence report: snapshots, touched files and workflow diffs.
 - Policy/MCP exposure report.
+- Harness evidence report: plan/work/review/release phases, review perspectives and release evidence.
+- Diagram report: Mermaid diagrams rendered locally for workflow, release, policy, MCP and context-router flows.
+- Structured payload report: Markdown vs tagged vs JSON vs compact format token/quality comparison.
+- Agent docs hygiene report: root agent docs length, freshness, missing facts and referenced context health.
 - Public demo assets for README and release pages.
 
 ## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 
-Future UI and gateway modes can be explored only after memory, context selection, policy and reports are stable.
+Future UI and gateway modes can be explored only after memory, context selection, policy, evidence, diagrams and reports are stable.
 
 Possible direction:
 
@@ -356,6 +453,8 @@ Possible direction:
 - safe local routing between SotuRail resources and agent hosts;
 - MCP Apps / MCP-UI compatible local resources for safe report visualization;
 - AG-UI-style event stream only if it remains local, optional and safe;
+- local cards/tables/approvals for policy queue and evidence packs;
+- optional visualization of Mermaid diagrams in local reports;
 - no cloud dependency by default;
 - no arbitrary shell execution through MCP;
 - no production proxy claims until benchmarks and real use justify them.
@@ -364,6 +463,9 @@ Possible direction:
 
 - Stable CLI and local API contracts.
 - Stable init/run/expand/stats/reducers/memory/context/MCP/agents/workflow behavior.
+- Stable harness/policy/evidence behavior for local workflows.
+- Stable structured payload formats for supported targets.
+- Stable Diagram Rail behavior if promoted before v1.0.
 - Safe MCP defaults.
 - Reliable release workflow.
 - Good docs and clean-folder onboarding.
@@ -381,15 +483,35 @@ These are not separate products yet. They are submodules that can grow inside So
 - SotuRail Context Offload: long output summaries with raw recovery pointers.
 - SotuRail Filesystem Evidence: snapshots, touched files and diffs tied to workflows.
 - SotuRail Policy Queue: human approval for risky commands and exports.
+- SotuRail Policy Rail: inspectable safety rules, approvals, auth checks and MCP exposure reports.
 - SotuRail Skill Router: task-aware skill suggestions with evidence and policy checks.
+- SotuRail Harness Rail: setup/plan/work/review/release discipline, evidence packs and failure ledger.
 - SotuRail Harness Ledger: repeated agent mistakes converted into rules, checks and workflow evidence.
 - SotuRail Agent Docs Linter: short, useful root agent docs with referenced rich context.
 - SotuRail Auth Rail: agent-readable auth docs and local redaction checks.
-- SotuRail Mini Structured Payloads: deterministic compact JSON/YAML/log formats.
+- SotuRail Structured Payload Rail: target-aware Markdown, JSON, tagged, TOON/table and Mermaid context outputs.
+- SotuRail JSON Strict Validator: duplicate-key detection, secret warnings and prompt-payload safety checks.
+- SotuRail Diagram Rail: Mermaid diagrams and `.spec.md` visual contracts for workflows, features and policies.
 - SotuRail Agent Reports: what changed, what commands ran, what raw IDs exist and what to do next.
-- SotuRail Project Brain: architecture, decisions, bugs, rules and release history.
-- SotuRail Local Dashboard: local reports and trace viewer before any gateway mode.
+- SotuRail Project Brain: architecture, decisions, bugs, rules, diagrams and release history.
+- SotuRail Local Dashboard: local reports, Mermaid rendering and trace viewer before any gateway mode.
 - SotuRail Gateway Lite: future local event router after the core rails mature.
+
+## Docs Coverage Matrix
+
+This matrix maps planned rails to docs so the repository does not hide future work only inside the roadmap.
+
+| Planned area | Primary docs |
+| --- | --- |
+| Memory Rail | `docs/memory.md`, `docs/context-packs.md`, this roadmap |
+| Context Intelligence / Router | `docs/context-packs.md`, `docs/ecosystem-influences.md`, `docs/comparisons.md` |
+| Role Packs | `docs/context-packs.md`, `docs/workflow-rail.md`, `docs/deep-agents-patterns.md` |
+| Harness Rail / Evidence Pack | `docs/harness-rail.md`, `docs/workflow-rail.md`, `docs/roadmap-harness-diagram-payload-addendum.md` |
+| Policy Rail / Approval Queue | `docs/policy-rail.md`, `docs/security-model.md`, `docs/rules.md` |
+| Diagram Rail / MDDD | `docs/diagram-rail.md`, `docs/spec-driven-workflow.md`, `docs/workflow-rail.md` |
+| Structured Payload Rail | `docs/structured-payload-rail.md`, `docs/context-packs.md`, `docs/rules.md` |
+| Agent Docs Hygiene | `docs/agent-docs-hygiene.md`, `docs/context-packs.md`, `docs/workflow-rail.md` |
+| Reports / Trace Viewer / Dashboard | `docs/workflow-rail.md`, this roadmap |
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
 
