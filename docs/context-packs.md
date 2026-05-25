@@ -1,6 +1,8 @@
 # Context Packs
 
-Context packs are target-aware Markdown payloads for AI coding agents.
+Context packs are target-aware payloads for AI coding agents.
+
+Today they are generated mainly as Markdown. The v0.5 roadmap expands them into a stronger Context Intelligence layer with query-aware selection, role packs, context offload and target-aware payload formats.
 
 ```bash
 soturail context pack --target claude
@@ -67,6 +69,71 @@ Expected output should explain:
 - omitted context summary;
 - recovery pointer when content was offloaded.
 
+## Future Target-Aware Payload Formats
+
+SotuRail should not only send less context. It should send context in the format the target agent or consumer can use best.
+
+Planned guidance:
+
+```txt
+JSON       -> machine/config/MCP/tool payloads
+Markdown   -> human docs, README, ROADMAP, AGENTS.md
+Tagged     -> long LLM prompt context with clear boundaries
+TOON/table -> repetitive structured data
+Mermaid    -> visual workflow, architecture and state context
+```
+
+This does not mean XML-like tags replace JSON. JSON remains the right format for machine contracts such as MCP and tool manifests. Tagged blocks are planned for LLM prompt context where clear boundaries help separate project rules, evidence, repo maps and task inputs.
+
+Possible future commands:
+
+```bash
+soturail context pack --target claude --format tagged
+soturail context pack --target gemini --format tagged
+soturail context pack --target codex --format markdown
+soturail context pack --target cursor --format markdown
+soturail context pack --target antigravity --format markdown
+soturail context pack --target generic --format markdown
+soturail context pack --target mcp --format json
+```
+
+Suggested defaults:
+
+| Target | Preferred context shape |
+| --- | --- |
+| Claude | tagged blocks + Markdown summary |
+| Gemini | tagged blocks or Markdown summary |
+| Codex | concise Markdown + JSON only for configs/tools |
+| Cursor | rules + Markdown context |
+| Antigravity | prompt-only Markdown/tagged fallback until stable format is known |
+| MCP | JSON |
+| Generic | Markdown |
+
+See [structured-payload-rail.md](structured-payload-rail.md).
+
+## Future JSON Safety And Strict Validation
+
+Structured payload work should include a strict JSON validator for prompt and config safety.
+
+Possible future commands:
+
+```bash
+soturail validate json config.json --strict
+soturail format file.json --to tagged
+soturail format file.json --to toon
+soturail format compare docs/usage.md --formats markdown,tagged,json,toon
+```
+
+The validator should warn about:
+
+- duplicate keys;
+- invalid JSON;
+- huge arrays without summaries;
+- very large objects;
+- probable secrets;
+- machine payloads being reused as poor prompt payloads;
+- payloads that are valid JSON but bad LLM context.
+
 ## Future Context Expert Router
 
 The context router is a local product metaphor inspired by expert routing, not a neural MoE implementation.
@@ -127,9 +194,24 @@ summary + important paths + failure lines + raw_id/offload_id recovery pointer
 
 Instead of receiving every raw terminal line.
 
+## Future Diagram Context
+
+Diagram Rail can provide visual context for workflows and architecture without long prose.
+
+Possible future diagram context:
+
+- workflow phase diagram;
+- release flow diagram;
+- MCP resource/tool diagram;
+- policy approval diagram;
+- context router diagram;
+- feature `.spec.md` Mermaid diagram.
+
+See [diagram-rail.md](diagram-rail.md).
+
 ## Quality Rules
 
-Context selection and role packs should preserve:
+Context selection, formatting and role packs should preserve:
 
 - file paths;
 - line ranges;
@@ -140,4 +222,4 @@ Context selection and role packs should preserve:
 - security warnings;
 - raw recovery hints.
 
-If pruning would remove required evidence, SotuRail should report that pruning was not effective rather than pretending the context is sufficient.
+If pruning or formatting would remove required evidence, SotuRail should report that pruning was not effective rather than pretending the context is sufficient.
