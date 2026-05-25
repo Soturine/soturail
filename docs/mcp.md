@@ -76,3 +76,95 @@ It does not assume a global application config path. Review it before adding it 
 `soturail mcp smoke` verifies `initialize`, `resources/list`, `resources/read` and `tools/list` without starting a long-running process, and confirms `soturail.run` is not exposed by default.
 
 `soturail init` scaffolds copyable MCP JSON-RPC examples under `examples/mcp/`.
+
+## Planned MCP Exposure Report
+
+Policy Rail should eventually make MCP exposure inspectable.
+
+Possible future commands:
+
+```bash
+soturail mcp exposure
+soturail mcp exposure --format json
+soturail policy doctor --mcp
+```
+
+The report should include:
+
+- resources exposed;
+- tools exposed;
+- whether arbitrary shell is exposed;
+- whether raw logs are redacted by default;
+- whether approved memory is the only memory exposed;
+- whether risky tools require approval;
+- host-specific config files generated;
+- policy rules that apply to each exposed tool/resource.
+
+Example future report:
+
+```txt
+SotuRail MCP exposure
+transport: stdio
+arbitrary_shell_tool_exposed: no
+raw_expand_default: redacted
+memory_resource: approved-only
+policy_required_for: raw_allow, config_write, publish, shell
+result: safe-default
+```
+
+## Planned MCP Resources
+
+Future resources can expose more local evidence without allowing arbitrary execution:
+
+- `soturail://context/latest`
+- `soturail://context/role/<role>`
+- `soturail://memory/approved`
+- `soturail://workflow/<id>`
+- `soturail://workflow/<id>/evidence`
+- `soturail://policy/report`
+- `soturail://diagram/<id>`
+- `soturail://trace/<id>`
+- `soturail://reports/latest`
+
+Every resource should have a clear redaction policy and recovery path.
+
+## Planned Payload Format Rules
+
+MCP remains JSON. Even if SotuRail supports Markdown, tagged context, TOON/table-like compact formats and Mermaid diagrams for prompts or docs, MCP tool/resource messages must stay machine-readable.
+
+Structured Payload Rail should therefore use:
+
+```txt
+MCP contract -> JSON
+LLM prompt context -> Markdown or tagged blocks
+visual workflow context -> Mermaid inside Markdown or dedicated resource text
+compact repeated records -> TOON/table-like output where explicitly requested
+```
+
+## Planned Safety Tests
+
+MCP smoke tests should continue confirming:
+
+- initialize passes;
+- resources/list passes;
+- resources/read passes;
+- tools/list passes;
+- `soturail.run` is not exposed by default;
+- raw expansion is redacted by default;
+- approved memory is the default memory surface;
+- exposure report says safe-default when no risky tools are enabled.
+
+## Future UI Notes
+
+MCP Apps/MCP-UI-style output can be explored later for local reports, but SotuRail should first expose static, local, safe resources.
+
+Future UI resources should prioritize:
+
+- evidence packs;
+- policy queues;
+- workflow traces;
+- Mermaid diagrams;
+- benchmark reports;
+- memory recall reports.
+
+No UI feature should require exposing arbitrary shell execution.
