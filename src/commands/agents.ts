@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { explainAgents, lintAgentDocs, splitContextPlan } from "../core/agent-docs-hygiene.js";
 import { agentDoctor, exportAgents, installAgent, uninstallAgent } from "../core/agent-exporter.js";
 import { formatAgentList } from "../core/agent-registry.js";
+import { agentStatus, listAgentCapabilities, renderAgentCapabilities, renderAgentStatus } from "../core/agent-runtime.js";
 
 interface AgentOptions {
   agent?: string;
@@ -19,8 +20,29 @@ export function registerAgentsCommand(program: Command): void {
     process.stdout.write(formatAgentList());
   });
 
-  agents.command("doctor").description("Check agent integration readiness.").action(async () => {
-    process.stdout.write(await agentDoctor());
+  agents
+    .command("capabilities")
+    .description("Show the host capability matrix for supported and experimental agent targets.")
+    .option("--json", "Print machine-readable JSON")
+    .action((options: { json?: boolean }) => {
+      if (options.json) {
+        process.stdout.write(`${JSON.stringify({ schemaVersion: "soturail.agent-capabilities.v1", agents: listAgentCapabilities() }, null, 2)}\n`);
+        return;
+      }
+      process.stdout.write(renderAgentCapabilities());
+    });
+
+  agents
+    .command("status")
+    .description("Inspect local agent files, exports, context packs, policy and run state.")
+    .option("--json", "Print machine-readable JSON")
+    .action(async (options: { json?: boolean }) => {
+      const status = await agentStatus();
+      process.stdout.write(options.json ? `${JSON.stringify(status, null, 2)}\n` : renderAgentStatus(status));
+    });
+
+  agents.command("doctor").description("Check agent integration readiness.").option("--verbose", "Include host matrix, policy and dry-run guidance").action(async (options: { verbose?: boolean }) => {
+    process.stdout.write(await agentDoctor(process.cwd(), { verbose: options.verbose === true }));
   });
 
   agents.command("lint").description("Lint root agent docs for size, freshness and safety notes.").action(async () => {
@@ -34,7 +56,7 @@ export function registerAgentsCommand(program: Command): void {
   agents
     .command("explain")
     .description("Explain what each agent export receives and what stays local.")
-    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, opencode, amp, kiro, deepagents, deepagents-js, or all")
     .action((options: { agent: string }) => {
       process.stdout.write(explainAgents(options.agent));
     });
@@ -42,7 +64,7 @@ export function registerAgentsCommand(program: Command): void {
   agents
     .command("export")
     .description("Export prompt/context integration files for review.")
-    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, opencode, amp, kiro, deepagents, deepagents-js, or all")
     .action(async (options: AgentOptions) => {
       const result = await exportAgents(options.agent ?? "all");
       process.stdout.write(`Agent exports written:\n${result.written.join("\n")}\n`);
@@ -51,7 +73,7 @@ export function registerAgentsCommand(program: Command): void {
   agents
     .command("install")
     .description("Install reviewed project-local agent integration files.")
-    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, opencode, amp, kiro, deepagents, deepagents-js, or all")
     .option("--mode <mode>", "prompt-only, mcp, safe-hooks, or rules")
     .option("--dry-run", "Print planned changes without writing")
     .option("--yes", "Acknowledge reviewed project-local install")
@@ -65,7 +87,7 @@ export function registerAgentsCommand(program: Command): void {
   agents
     .command("uninstall")
     .description("Restore backups for project-local agent integration files when available.")
-    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, opencode, amp, kiro, deepagents, deepagents-js, or all")
     .option("--dry-run", "Print planned rollback without writing")
     .action(async (options: AgentOptions) => {
       process.stdout.write(await uninstallAgent(options.agent ?? "all", options.dryRun === undefined ? {} : { dryRun: options.dryRun }));

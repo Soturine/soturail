@@ -1,4 +1,15 @@
-export type AgentId = "claude" | "codex" | "gemini" | "cursor" | "antigravity" | "generic";
+export type AgentId =
+  | "claude"
+  | "codex"
+  | "gemini"
+  | "cursor"
+  | "antigravity"
+  | "generic"
+  | "opencode"
+  | "amp"
+  | "kiro"
+  | "deepagents"
+  | "deepagents-js";
 
 export type AgentMode = "prompt-only" | "mcp" | "safe-hooks" | "rules";
 

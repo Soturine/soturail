@@ -1,14 +1,20 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { buildContextPack } from "./context-pack.js";
+import { buildContextPack, type ContextTarget } from "./context-pack.js";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "./config.js";
 import { listMcpTools } from "./mcp-tools.js";
 import { listMcpResources } from "./mcp-resources.js";
 import { getAgentProfile, listAgentProfiles, parseAgentId } from "./agent-registry.js";
 import type { AgentExportFile, AgentId, AgentInstallOptions, AgentMode } from "./agent-profile.js";
 import { SOTURAIL_VERSION } from "./version.js";
-
-const agentIds = ["claude", "codex", "gemini", "cursor", "antigravity", "generic"] as const;
+import {
+  AGENT_POLICY_NOTES,
+  agentStatus,
+  getAgentCapability,
+  listAgentCapabilities,
+  payloadRecommendationsFor,
+  renderAgentStatus
+} from "./agent-runtime.js";
 
 export interface AgentExportResult {
   written: string[];
@@ -21,7 +27,7 @@ export interface AgentInstallResult {
 export async function exportAgents(agentValue: string, root = process.cwd()): Promise<AgentExportResult> {
   await ensureWorkspace(root);
   const parsed = parseAgentId(agentValue);
-  const selected: AgentId[] = parsed === "all" ? [...agentIds] : [parsed];
+  const selected: AgentId[] = parsed === "all" ? allAgentIds() : [parsed];
   const paths = getWorkspacePaths(root);
   const written: string[] = [];
   for (const agent of selected) {
@@ -40,24 +46,37 @@ export async function exportAgents(agentValue: string, root = process.cwd()): Pr
 export async function installAgent(agentValue: string, options: AgentInstallOptions = {}, root = process.cwd()): Promise<AgentInstallResult> {
   await ensureWorkspace(root);
   const parsed = parseAgentId(agentValue);
-  const selected: AgentId[] = parsed === "all" ? [...agentIds] : [parsed];
+  const selected: AgentId[] = parsed === "all" ? allAgentIds() : [parsed];
   const dryRun = options.dryRun === true;
   const backup = options.backup !== false;
-  const lines = [`SotuRail agents install --agent ${agentValue}${options.mode ? ` --mode ${options.mode}` : ""}${dryRun ? " --dry-run" : ""}`];
+  const lines = [
+    `SotuRail agents install --agent ${agentValue}${options.mode ? ` --mode ${options.mode}` : ""}${dryRun ? " --dry-run" : ""}`,
+    `dry_run: ${dryRun}`,
+    "scope: project-local files only"
+  ];
   for (const agent of selected) {
     const profile = getAgentProfile(agent);
+    const capability = getAgentCapability(agent);
     const mode = normalizeMode(options.mode, profile.default_mode);
     if (!profile.integration_modes.includes(mode)) {
       throw new Error(`${agent} does not support mode "${mode}". Supported: ${profile.integration_modes.join(", ")}`);
     }
     const targets = installTargetsFor(agent, mode);
-    lines.push(`agent: ${agent}`, `mode: ${mode}`, `risk_level: ${profile.risk_level}`);
+    lines.push("", `agent: ${agent}`, `display_name: ${profile.display_name}`, `mode: ${mode}`, `risk_level: ${profile.risk_level}`);
     for (const target of targets) {
       const filePath = path.resolve(root, options.output ?? target.path);
       lines.push(...await writePlannedFile(filePath, target.content, root, { dryRun, backup }));
     }
+    lines.push("References:");
+    for (const reference of installReferencesFor(agent)) lines.push(`- ${reference}`);
+    lines.push(`Payload recommendation: ${capability.recommendedPayloads.join(" + ")}`);
+    lines.push("Policy warnings:");
+    for (const note of AGENT_POLICY_NOTES) lines.push(`- ${note}`);
     if (mode === "mcp") {
       lines.push("MCP config is project-local. Review before adding it to a host application.");
+    }
+    if (dryRun) {
+      lines.push(`Apply after review: soturail agents install --agent ${agent}${mode !== profile.default_mode ? ` --mode ${mode}` : ""} --backup --yes`);
     }
     lines.push("Rollback: restore any .soturail.bak file or delete generated project-local files.");
   }
@@ -66,7 +85,7 @@ export async function installAgent(agentValue: string, options: AgentInstallOpti
 
 export async function uninstallAgent(agentValue: string, options: { dryRun?: boolean } = {}, root = process.cwd()): Promise<string> {
   const parsed = parseAgentId(agentValue);
-  const selected: AgentId[] = parsed === "all" ? [...agentIds] : [parsed];
+  const selected: AgentId[] = parsed === "all" ? allAgentIds() : [parsed];
   const lines = [`SotuRail agents uninstall --agent ${agentValue}${options.dryRun ? " --dry-run" : ""}`];
   for (const agent of selected) {
     for (const target of installTargetsFor(agent, getAgentProfile(agent).default_mode)) {
@@ -84,7 +103,7 @@ export async function uninstallAgent(agentValue: string, options: { dryRun?: boo
   return `${lines.join("\n")}\n`;
 }
 
-export async function agentDoctor(root = process.cwd()): Promise<string> {
+export async function agentDoctor(root = process.cwd(), options: { verbose?: boolean } = {}): Promise<string> {
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
   const exports = await fs.readdir(paths.agentExportsDir).catch(() => []);
@@ -97,7 +116,7 @@ export async function agentDoctor(root = process.cwd()): Promise<string> {
     "- soturail mcp smoke",
     "- soturail workflow new \"Implement feature\""
   ];
-  return [
+  const lines = [
     "SotuRail Agent Integration Doctor",
     `version: ${SOTURAIL_VERSION}`,
     `workspace: ${await exists(paths.workspace) ? "ready" : "missing"}`,
@@ -112,11 +131,38 @@ export async function agentDoctor(root = process.cwd()): Promise<string> {
     "",
     "Next steps:",
     ...nextSteps
-  ].join("\n") + "\n";
+  ];
+  if (options.verbose) {
+    const status = await agentStatus(root);
+    lines.push(
+      "",
+      "Verbose runtime integration status:",
+      renderAgentStatus(status).trimEnd(),
+      "",
+      "Host capability summary:",
+      ...listAgentCapabilities().map((capability) =>
+        `- ${capability.id}: install=${capability.installSupport}, mcp=${capability.mcp}, hooks=${capability.hooks}, payloads=${capability.recommendedPayloads.join(" + ")}`
+      ),
+      "",
+      "Agent docs hygiene hints:",
+      "- Keep root agent docs short; reference SotuRail context packs instead of pasting large generated context.",
+      "- Use soturail agents lint before committing agent docs.",
+      "- Use soturail agents split-context --dry-run to plan context offload.",
+      "",
+      "Dry-run install suggestions:",
+      "- soturail agents install --agent claude --dry-run",
+      "- soturail agents install --agent cursor --dry-run",
+      "- soturail agents install --agent gemini --dry-run",
+      "",
+      "Policy notes:",
+      ...AGENT_POLICY_NOTES.map((note) => `- ${note}`)
+    );
+  }
+  return lines.join("\n") + "\n";
 }
 
 export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()): Promise<AgentExportFile[]> {
-  const contextTarget = agent === "antigravity" ? "antigravity" : agent;
+  const contextTarget = contextTargetFor(agent);
   const context = await buildContextPack(contextTarget, root);
   const prompt = promptOnly(agent);
   switch (agent) {
@@ -155,6 +201,17 @@ export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()
         { relativePath: "context-pack.md", content: context.payload },
         { relativePath: "prompt-only.md", content: prompt }
       ];
+    case "opencode":
+    case "amp":
+    case "kiro":
+      return [
+        { relativePath: "context-pack.md", content: context.payload },
+        { relativePath: "prompt-only.md", content: prompt }
+      ];
+    case "deepagents":
+      return deepAgentFiles("deepagents", context.payload, prompt);
+    case "deepagents-js":
+      return deepAgentFiles("deepagents-js", context.payload, prompt);
   }
 }
 
@@ -189,6 +246,7 @@ function listMcpResourcesPreview(): string[] {
 
 function promptOnly(agent: AgentId): string {
   const profile = getAgentProfile(agent);
+  const capability = getAgentCapability(agent);
   return [
     `# SotuRail ${profile.display_name} Integration`,
     "",
@@ -197,6 +255,7 @@ function promptOnly(agent: AgentId): string {
     `Agent: ${profile.id}`,
     `Risk level: ${profile.risk_level}`,
     `Supported modes: ${profile.integration_modes.join(", ")}`,
+    `Payloads: ${capability.recommendedPayloads.join(" + ")}`,
     "",
     "## Rules",
     "",
@@ -207,6 +266,10 @@ function promptOnly(agent: AgentId): string {
     "- Use `soturail expand <raw_id>` only when a compressed summary lacks needed evidence; redaction is on by default.",
     "- Never route `git push` through `soturail run`.",
     "- Do not enable generated hooks or scripts without human review.",
+    "",
+    "## Host-Aware Policy Notes",
+    "",
+    ...AGENT_POLICY_NOTES.map((note) => `- ${note}`),
     "",
     "## MCP",
     "",
@@ -255,9 +318,76 @@ function installTargetsFor(agent: AgentId, mode: AgentMode): Array<{ path: strin
     gemini: "GEMINI.md",
     cursor: ".cursor/rules/soturail.mdc",
     antigravity: ".soturail/exports/agents/antigravity/prompt-only.md",
-    generic: ".soturail/exports/agents/generic/prompt-only.md"
+    generic: ".soturail/exports/agents/generic/prompt-only.md",
+    opencode: ".soturail/exports/agents/opencode/prompt-only.md",
+    amp: ".soturail/exports/agents/amp/prompt-only.md",
+    kiro: ".soturail/exports/agents/kiro/prompt-only.md",
+    deepagents: ".soturail/exports/agents/deepagents/deepagents.md",
+    "deepagents-js": ".soturail/exports/agents/deepagents-js/deepagents-js.md"
   };
   return [{ path: map[agent], content: promptOnly(agent) }];
+}
+
+function allAgentIds(): AgentId[] {
+  return listAgentProfiles().map((profile) => profile.id);
+}
+
+function contextTargetFor(agent: AgentId): ContextTarget {
+  if (agent === "claude" || agent === "codex" || agent === "gemini" || agent === "cursor" || agent === "antigravity") return agent;
+  return "generic";
+}
+
+function installReferencesFor(agent: AgentId): string[] {
+  const capability = getAgentCapability(agent);
+  return [
+    ...capability.configPaths,
+    ".soturail/context/",
+    ".soturail/context/role-packs/",
+    ".soturail/policy/",
+    ".soturail/runs/"
+  ];
+}
+
+function deepAgentFiles(agent: "deepagents" | "deepagents-js", contextPayload: string, prompt: string): AgentExportFile[] {
+  const title = agent === "deepagents" ? "Deep Agents-style" : "Deep Agents JS-style";
+  const config = {
+    schemaVersion: "soturail.agent-runtime.v1",
+    agent,
+    runtimeIntegration: false,
+    installsDependencies: false,
+    boundary: "SotuRail exports prompt/config/context artifacts only.",
+    policyNotes: AGENT_POLICY_NOTES,
+    payloadRecommendations: payloadRecommendationsFor(agent)
+  };
+  return [
+    {
+      relativePath: `${agent}.md`,
+      content: [
+        `# SotuRail ${title} Export`,
+        "",
+        "SotuRail prepares local context artifacts for review. It does not run a Deep Agents runtime, install deepagents packages, or create an autonomous editing loop.",
+        "",
+        prompt.trim(),
+        "",
+        "## Runtime Boundary",
+        "",
+        "- Context/config artifacts only.",
+        "- Role packs and workflow evidence are references for a human-reviewed host.",
+        "- MCP exposure remains SotuRail-controlled and does not include arbitrary shell execution.",
+        "- Memory exports should be approved-memory-only and redacted before handoff.",
+        "",
+        "## Recovery Pointers",
+        "",
+        "- Context packs: .soturail/context/",
+        "- Role packs: .soturail/context/role-packs/",
+        "- Workflow evidence: .soturail/workflows/ or .soturail/runs/",
+        "- Policy decisions: .soturail/policy/decisions.jsonl",
+        ""
+      ].join("\n")
+    },
+    { relativePath: "runtime-config.json", content: `${JSON.stringify(config, null, 2)}\n` },
+    { relativePath: "context-pack.md", content: contextPayload }
+  ];
 }
 
 async function writePlannedFile(
@@ -271,6 +401,8 @@ async function writePlannedFile(
   const lines = [`${options.dryRun ? "Would write" : "Write"} ${relative}`];
   if (existsAlready && options.backup) {
     lines.push(`${options.dryRun ? "Would create" : "Create"} backup ${relative}.soturail.bak`);
+  } else if (options.backup) {
+    lines.push(`Backup: none needed for ${relative}`);
   }
   if (!options.dryRun) {
     await fs.mkdir(path.dirname(filePath), { recursive: true });

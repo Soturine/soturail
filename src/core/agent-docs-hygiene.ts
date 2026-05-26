@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { listAgentProfiles } from "./agent-registry.js";
+import { AGENT_POLICY_NOTES, getAgentCapability } from "./agent-runtime.js";
 
 const agentDocs = ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".cursor/rules/soturail.md", ".cursor/rules"];
 
@@ -59,7 +60,9 @@ export function explainAgents(agent: string): string {
       `  Receives: prompt/context exports, context packs, and reviewed docs supported by ${profile.display_name}.`,
       `  MCP: ${profile.supports_mcp ? "supported as a boundary" : "prompt-only fallback"}`,
       `  Hooks: ${profile.supports_hooks ? "review-required safe hooks" : "not enabled by default"}`,
+      `  Payloads: ${getAgentCapability(profile.id).recommendedPayloads.join(" + ")}`,
       `  Kept local: raw logs, policy decisions, filesystem snapshots, and unapproved memory.`,
+      `  Policy: ${AGENT_POLICY_NOTES[0]}`,
       ""
     ])
   ].join("\n").trimEnd() + "\n";
