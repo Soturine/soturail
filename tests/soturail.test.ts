@@ -573,18 +573,21 @@ describe("agent integrations", () => {
     const exported = await exportAgents("all", root);
     const doctor = await agentDoctor(root);
 
-    expect(list).toContain("agents_count: 6");
+    expect(list).toContain("agents_count: 11");
     expect(list).toContain("- antigravity [low]");
+    expect(list).toContain("- deepagents-js [medium]");
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/claude/CLAUDE.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/codex/AGENTS.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/gemini/GEMINI.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/cursor/cursor-rules.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/antigravity/prompt-only.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/deepagents/deepagents.md"));
+    expect(exported.written).toContain(path.normalize(".soturail/exports/agents/deepagents-js/deepagents-js.md"));
     expect(cleanDoctor).toContain("SotuRail Agent Integration Doctor");
     expect(cleanDoctor).toContain(`version: ${SOTURAIL_VERSION}`);
     expect(cleanDoctor).toContain("workspace: ready");
     expect(cleanDoctor).toContain("context_packs:");
-    for (const agent of ["claude", "codex", "gemini", "cursor", "antigravity", "generic"]) {
+    for (const agent of ["claude", "codex", "gemini", "cursor", "antigravity", "generic", "opencode", "amp", "kiro", "deepagents", "deepagents-js"]) {
       expect(cleanDoctor).toContain(agent);
     }
     expect(cleanDoctor).toContain("Next steps:");
@@ -601,6 +604,8 @@ describe("agent integrations", () => {
     const dryRun = await installAgent("codex", { dryRun: true, mode: "prompt-only" }, root);
     expect(dryRun.lines.join("\n")).toContain("Would write AGENTS.md");
     expect(dryRun.lines.join("\n")).toContain("Would create backup AGENTS.md.soturail.bak");
+    expect(dryRun.lines.join("\n")).toContain("Policy warnings:");
+    expect(dryRun.lines.join("\n")).toContain("Apply after review:");
     expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe("existing codex guidance\n");
 
     const installed = await installAgent("codex", { mode: "prompt-only" }, root);
