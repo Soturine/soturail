@@ -93,7 +93,7 @@ export async function recallMemory(query: string, limit = 5, root = process.cwd(
     .slice(0, limit);
 }
 
-export async function consolidateMemory(root = process.cwd()): Promise<{ before: number; after: number; path: string }> {
+export async function consolidateMemory(root = process.cwd()): Promise<{ before: number; after: number; duplicatesRemoved: number; path: string }> {
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
   const records = await allMemoryRecords(root);
@@ -110,39 +110,48 @@ export async function consolidateMemory(root = process.cwd()): Promise<{ before:
     consolidated.map((item) => JSON.stringify(item)).join("\n") + (consolidated.length > 0 ? "\n" : ""),
     "utf8"
   );
-  return { before: records.length, after: consolidated.length, path: paths.memoryConsolidatedFile };
+  return { before: records.length, after: consolidated.length, duplicatesRemoved: records.length - consolidated.length, path: paths.memoryConsolidatedFile };
 }
 
 export async function memoryRailDoctor(root = process.cwd()): Promise<string> {
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
   const records = await allMemoryRecords(root);
+  const consolidated = await readJsonl<MemoryRailRecord>(paths.memoryConsolidatedFile);
   const sensitive = records.filter((record) => record.privacy === "sensitive").length;
+  const storageExists = await exists(paths.memoryDir);
+  const likelySecrets = records.filter((record) => /\[REDACTED|secret|token|api[_-]?key/i.test(record.text)).length;
   return [
     "SotuRail Memory Rail doctor",
     `storage: ${path.normalize(path.relative(root, paths.memoryDir))}`,
-    `records_count: ${records.length}`,
+    `storage_exists: ${storageExists}`,
+    `total_records: ${records.length}`,
+    `consolidated_records: ${consolidated.length}`,
     `sensitive_records: ${sensitive}`,
+    `likely_secret_records: ${likelySecrets}`,
     "redaction: enabled",
-    `safe_for_agent_export: ${sensitive === 0 ? "yes" : "review required"}`,
+    `approved_memory_export_status: ${sensitive === 0 ? "safe-default" : "review required before export"}`,
     "embeddings: not used",
-    "cloud_storage: not used"
+    "cloud_storage: not used",
+    "next_steps:",
+    "- soturail memory recall \"project decision\" --limit 5",
+    "- soturail memory consolidate",
+    "- Keep sensitive or unapproved memory local."
   ].join("\n") + "\n";
 }
 
 export function renderRecall(matches: MemoryRecallMatch[]): string {
-  if (matches.length === 0) return "No memory records matched.\n";
-  const lines = ["SotuRail memory recall", `matches_count: ${matches.length}`, ""];
+  if (matches.length === 0) return "No memory records matched.\nTry a shorter query or add memory with: soturail memory remember \"decision\" --tag <tag>\n";
+  const lines = ["SotuRail memory recall", `matches_count: ${matches.length}`, "", "Matches:"];
   for (const match of matches) {
     lines.push(
-      `- ${match.record.id}`,
-      `  Score: ${match.score.toFixed(2)}`,
+      `- ${match.record.id} [score ${match.score.toFixed(2)}]`,
+      `  Text: ${match.record.text}`,
       `  Reason: ${match.reason}`,
       `  Source: ${match.record.source}`,
       `  Tags: ${match.record.tags.length > 0 ? match.record.tags.join(", ") : "none"}`,
-      `  Confidence: ${match.record.confidence}`,
-      `  Privacy: ${match.record.privacy}`,
-      `  Text: ${match.record.text}`,
+      `  Confidence/privacy: ${match.record.confidence} / ${match.record.privacy}`,
+      `  Created: ${match.record.createdAt}`,
       ""
     );
   }
@@ -171,4 +180,13 @@ async function allMemoryRecords(root: string): Promise<MemoryRailRecord[]> {
 
 function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean))];
+}
+
+async function exists(filePath: string): Promise<boolean> {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
 }

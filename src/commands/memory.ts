@@ -235,7 +235,7 @@ export function registerMemoryCommand(program: Command): void {
 
   memory.command("consolidate").description("Deduplicate local memory records into consolidated.jsonl.").action(async () => {
     const result = await consolidateMemory();
-    process.stdout.write(`Memory consolidated\nbefore: ${result.before}\nafter: ${result.after}\npath: ${path.normalize(path.relative(process.cwd(), result.path))}\n`);
+    process.stdout.write(`Memory consolidated\nbefore: ${result.before}\nafter: ${result.after}\nduplicates_removed: ${result.duplicatesRemoved}\npath: ${path.normalize(path.relative(process.cwd(), result.path))}\n`);
   });
 
   memory.command("doctor").description("Check local Memory Rail storage and export safety.").action(async () => {
