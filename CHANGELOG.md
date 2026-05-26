@@ -8,6 +8,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.7.0] - 2026-05-26
+
+### Added
+
+- Added Workflow Rail 2.0 phase commands: `workflow setup`, title-based `workflow plan`, `workflow work`, `workflow review --all`, `workflow verify` and `workflow diagram`.
+- Added deterministic workflow review perspectives for security, docs, tests, release, context and agent readiness.
+- Added Diagram Rail commands: `diagram init`, `diagram new`, `diagram audit`, `diagram validate` and `diagram from-workflow`.
+- Added generated `.spec.md` visual contracts for diagrams.
+- Added focused v0.7.0 tests for release-note paths, workflow phases, harness doctor integration, diagram commands and evidence contents.
+
+### Changed
+
+- Moved release notes into `docs/releases/` and updated release scripts, tests and docs to read `docs/releases/RELEASE_NOTES_vX.Y.Z.md`.
+- Improved workflow evidence with review/verify artifacts, offload IDs, harness contract status, diagram validation, evaluation reports and release evidence.
+- Improved `harness doctor` with active workflow, contract presence, failure count, latest verification status and suggested prevention action.
+- Updated Workflow Rail, Harness Rail, Diagram Rail, spec workflow and release docs for v0.7.0.
+
+### Security
+
+- Workflow verification and diagram validation remain local and do not publish packages, create GitHub releases or run destructive commands.
+- Harness contracts still validate by default without executing configured commands.
+
 ## [0.6.1] - 2026-05-26
 
 ### Added

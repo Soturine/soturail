@@ -24,4 +24,4 @@ docs/releases/RELEASE_NOTES_vX.Y.Z.md
 - [v0.5.2](RELEASE_NOTES_v0.5.2.md)
 - [v0.6.0](RELEASE_NOTES_v0.6.0.md)
 - [v0.6.1](RELEASE_NOTES_v0.6.1.md)
-- v0.7.0: add `RELEASE_NOTES_v0.7.0.md` during release prep.
+- [v0.7.0](RELEASE_NOTES_v0.7.0.md)
