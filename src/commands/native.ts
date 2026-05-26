@@ -11,6 +11,10 @@ export function registerNativeCommand(program: Command): void {
       `available: ${info.available}`,
       `path: ${info.path ?? "not found"}`,
       `version: ${info.version ?? "unknown"}`,
+      `typescript_fallback: ${info.available ? "available if --engine ts is selected" : "active"}`,
+      "native_required_for_npm_install: false",
+      "rust_or_cargo_required_for_cli: false",
+      "note: native acceleration is optional; the TypeScript reducer path remains the default fallback.",
       "checked_paths:",
       ...info.checked_paths.map((item) => `  - ${item}`)
     ];
