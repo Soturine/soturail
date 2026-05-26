@@ -1,11 +1,15 @@
+import { execFile } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { promisify } from "node:util";
 import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot } from "./config.js";
 import type { HarnessFailureRecord } from "./harness-rail.js";
 import type { PolicyDecision } from "./policy-rail.js";
 import type { RawRunRecord } from "./raw-store.js";
 import { makeRailId } from "./rail-utils.js";
 import { readWorkflow } from "./workflow-store.js";
+
+const execFileAsync = promisify(execFile);
 
 export async function buildWorkflowEvidence(id: string, root = process.cwd()): Promise<{ path: string; content: string }> {
   await ensureWorkspace(root);
@@ -15,6 +19,9 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   const rawRecords = await readJsonl<RawRunRecord>(paths.rawIndex);
   const policy = await readJsonl<PolicyDecision>(paths.policyDecisionsFile);
   const failures = await readJsonl<HarnessFailureRecord>(paths.harnessFailuresFile);
+  const changedFiles = await gitChangedFiles(root);
+  const harnessContractPath = path.join(paths.harnessContractsDir, "default.json");
+  const harnessContractPresent = await exists(harnessContractPath);
   const reportId = makeRailId("evidence", id);
   const reportPath = path.join(paths.reportsDir, `${reportId}.md`);
   const content = [
@@ -50,8 +57,17 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     "",
     "## Filesystem Evidence",
     "",
+    "### Changed Files",
+    "",
+    ...(changedFiles.length > 0 ? changedFiles.map((file) => `- ${file}`) : ["- none detected"]),
+    "",
     `- snapshots: ${relativeToRoot(root, paths.fsSnapshotsDir)}`,
     "- Run `soturail fs diff` for current git diff evidence.",
+    "",
+    "## Harness Contract",
+    "",
+    `- contract: ${harnessContractPresent ? relativeToRoot(root, harnessContractPath) : "none found"}`,
+    "- result: run `soturail harness contract check` for current validation status.",
     "",
     "## Recovery",
     "",
@@ -62,4 +78,17 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   ].join("\n");
   await fs.writeFile(reportPath, content, "utf8");
   return { path: reportPath, content };
+}
+
+async function gitChangedFiles(root: string): Promise<string[]> {
+  try {
+    const { stdout } = await execFileAsync("git", ["diff", "--name-only", "--", "."], { cwd: root, timeout: 3000, windowsHide: true });
+    return stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+async function exists(filePath: string): Promise<boolean> {
+  return fs.access(filePath).then(() => true).catch(() => false);
 }

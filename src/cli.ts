@@ -7,6 +7,7 @@ import { registerBenchCommand } from "./commands/bench.js";
 import { registerAgentsCommand } from "./commands/agents.js";
 import { registerDedupeCommand } from "./commands/dedupe.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
+import { registerEvalCommand } from "./commands/eval.js";
 import { registerExpandCommand } from "./commands/expand.js";
 import { registerFsCommand } from "./commands/fs.js";
 import { registerFormatCommand } from "./commands/format.js";
@@ -49,6 +50,7 @@ export function buildProgram(): Command {
   registerBenchCommand(program);
   registerContextCommand(program);
   registerDedupeCommand(program);
+  registerEvalCommand(program);
   registerExpandCommand(program);
   registerFsCommand(program);
   registerFormatCommand(program);

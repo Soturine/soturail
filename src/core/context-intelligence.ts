@@ -246,11 +246,11 @@ export function routeContext(query: string): { expert: ContextExpert; reason: st
   const candidates: Array<[ContextExpert, RolePack, RegExp, string]> = [
     ["security", "reviewer", /(secret|token|auth|vulnerab|audit|policy|permission|risk)/, "security and policy keyword"],
     ["release", "release-manager", /(release|publish|npm|version|changelog|tag|github release|pack)/, "release keyword"],
-    ["docs", "researcher", /(doc|readme|guide|example|copy|wording)/, "documentation keyword"],
+    ["code", "executor", /(bug|fix|test|build|typescript|code|source|file|function|class|error)/, "code keyword"],
+    ["research", "researcher", /(research|compare|ecosystem|citation)/, "research keyword"],
+    ["docs", "researcher", /(doc|readme|guide|example|copy|wording|tutorial)/, "documentation keyword"],
     ["workflow", "planner", /(workflow|task|plan|worktree|verify|handoff|run workspace)/, "workflow keyword"],
-    ["memory", "planner", /(memory|remember|recall|decision|fact)/, "memory keyword"],
-    ["research", "researcher", /(research|compare|ecosystem|citation|source)/, "research keyword"],
-    ["code", "executor", /(bug|fix|test|build|typescript|code|function|class|error)/, "code keyword"]
+    ["memory", "planner", /(memory|remember|recall|decision|fact)/, "memory keyword"]
   ];
   const match = candidates.find(([, , pattern]) => pattern.test(lower));
   return match ? { expert: match[0], role: match[1], reason: match[3] } : { expert: "code", role: "executor", reason: "default local code routing" };
