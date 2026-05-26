@@ -1,14 +1,10 @@
 # Diagram Rail
 
-Diagram Rail is a planned SotuRail area for using Mermaid diagrams and `.spec.md` files as compact, versioned visual context for agents.
+Diagram Rail uses Mermaid diagrams and `.spec.md` files as compact, versioned visual context for agents.
 
-It is inspired by Mermaid Diagram Driven Development patterns: diagram first, human approval, implementation second, tests and evidence after that. SotuRail should absorb the pattern without becoming a Mermaid-only tool.
+It is inspired by Mermaid Diagram Driven Development patterns: diagram first, human approval, implementation second, tests and evidence after that. SotuRail absorbs the pattern without becoming a Mermaid-only tool.
 
 ## Product Boundary
-
-Diagram Rail should help SotuRail express workflows, architecture, policies and context routes visually.
-
-It should not replace normal Markdown docs, tests, code review or human approval.
 
 ```txt
 Text explains.
@@ -17,29 +13,11 @@ Diagrams constrain and clarify.
 SotuRail connects all three as local evidence.
 ```
 
-## Core Idea
+Diagram Rail should not replace normal Markdown docs, tests, code review or human approval.
 
-```txt
-diagram first -> visual approval -> implementation -> tests -> evidence
-```
+## Commands
 
-A diagram should be treated as a visual contract for an agent workflow, not as decoration.
-
-Useful diagram targets:
-
-- workflow state machine;
-- release pipeline;
-- MCP resource/tool flow;
-- agent context handoff;
-- policy approval flow;
-- memory/context selection flow;
-- feature `.spec.md` business rules;
-- architecture module map;
-- failure recovery path.
-
-## Planned Commands
-
-Possible future commands:
+v0.7.0 implements:
 
 ```bash
 soturail diagram init
@@ -50,143 +28,88 @@ soturail diagram from-workflow <id>
 soturail workflow diagram <id>
 ```
 
-These commands should generate or validate local files only. They should not auto-edit production code.
+These commands generate or validate local files only. They do not auto-edit production code.
 
-## Planned Files
-
-Possible future structure:
+## Storage
 
 ```txt
 .soturail/diagrams/
+  index.json
+  validation.json
 docs/diagrams/
-docs/diagrams/release-flow.mmd
-docs/diagrams/agent-context-flow.mmd
-docs/diagrams/workflow-rail.mmd
-docs/diagrams/policy-flow.mmd
+  <feature>.md
+  <feature>.spec.md
 ```
 
-Feature-level specs can use co-located files:
+`diagram init` creates both the local rail folder and the docs folder.
 
-```txt
-src/feature-name/feature-name.spec.md
-src/feature-name/feature-name.mmd
+`diagram new <feature>` creates a Mermaid diagram plus matching visual contract.
+
+`diagram from-workflow <id>` creates a workflow state diagram from local Workflow Rail metadata.
+
+`diagram validate` validates all `docs/diagrams/*.md` diagrams except `.spec.md` contracts and writes `.soturail/diagrams/validation.json`.
+
+## `.spec.md` Visual Contracts
+
+Generated `.spec.md` files include:
+
+```md
+# Visual Contract: Feature X
+
+## Required nodes
+
+## Required transitions
+
+## Evidence links
+
+## Validation checklist
+
+## Known gaps
 ```
 
-## `.spec.md` As Visual Contract
+The contract is intentionally human-readable. Agents should implement against the approved spec, not against vague chat memory.
 
-A `.spec.md` file can combine:
+## Audit Rules
 
-- purpose;
-- requirements;
-- constraints;
-- Mermaid diagram;
-- decision matrix;
-- acceptance criteria;
-- test plan;
-- version/change notes.
+`diagram audit <file>` checks:
 
-The agent should implement against the approved spec, not against a vague chat memory.
+- file exists;
+- Mermaid block exists;
+- code fences are balanced;
+- matching `.spec.md` exists;
+- known workflow states are referenced when applicable;
+- the lightweight Mermaid validator accepts the diagram or reports findings.
+
+The validator is deterministic and intentionally light. It catches practical issues like missing Mermaid content, unsupported diagram declarations, state diagrams without initial transitions and workflow diagrams missing verification transitions.
 
 ## Workflow Rail Integration
 
-Diagram Rail should connect with Workflow Rail 2.0:
+Diagram Rail connects to Workflow Rail 2.0:
 
 ```txt
-Idea -> PRD -> Diagram -> Tasks -> TDD -> Work -> Review -> Release -> Evidence
+setup -> plan -> work -> review -> verify -> evidence
 ```
 
-Future workflow evidence can include:
+Workflow evidence can include:
 
 - diagram path;
-- diagram version;
+- matching `.spec.md` path;
 - validation result;
-- related spec path;
-- tasks generated from diagram;
-- tests linked to diagram edges or states.
+- generated workflow state diagram;
+- release or policy diagram when present.
 
-## Validation Ideas
-
-The v0.6.1 evaluation suite includes a lightweight Diagram Rail validator seed for local quality checks. It catches practical issues:
-
-- invalid Mermaid syntax;
-- missing start/end states;
-- unreachable states;
-- unlabeled risky transitions;
-- workflow phase missing verification;
-- release path without tests/audit/pack evidence;
-- context route without recovery pointer;
-- policy path without approve/reject state.
-
-Basic validation plan:
-
-1. Check that Mermaid fenced blocks exist where expected.
-2. Check that state diagrams include start or initial states when the diagram models a workflow.
-3. Check that release diagrams include build/test/package verification before publish.
-4. Check that policy diagrams include approve and reject paths.
-5. Check that context-router diagrams include recovery/offload pointers for omitted context.
-6. Report warnings only; never rewrite diagrams without explicit user action.
-
-Run it through the evaluation suite:
-
-```bash
-soturail eval run
-soturail eval report
-```
-
-The v0.6.1 validator is deliberately small. Full `soturail diagram ...` commands remain future v0.7 work.
-
-## Example Diagram Targets
-
-Workflow:
+## Example Diagram
 
 ```mermaid
 stateDiagram-v2
-    Draft --> Planned
-    Planned --> Active
-    Active --> Verifying
-    Verifying --> ReadyForReview
-    ReadyForReview --> Closed
-    Verifying --> Blocked
+    [*] --> draft
+    draft --> planned
+    planned --> active
+    active --> verifying
+    verifying --> ready_for_review
+    ready_for_review --> closed
+    verifying --> blocked
 ```
-
-Policy:
-
-```mermaid
-flowchart TD
-    RiskyAction --> Queue
-    Queue --> Approve
-    Queue --> Reject
-    Approve --> Evidence
-    Reject --> SaferAlternative
-```
-
-Release:
-
-```mermaid
-flowchart LR
-    Build --> Test
-    Test --> PackVerify
-    PackVerify --> NpmPublish
-    NpmPublish --> GitHubRelease
-```
-
-## Agent Prompt Usage
-
-Diagram Rail should give agents compact visual context:
-
-```markdown
-```mermaid
-stateDiagram-v2
-    Draft --> Planned
-    Planned --> Active
-    Active --> Verifying
-    Verifying --> ReadyForReview
-    ReadyForReview --> Closed
-    Verifying --> Blocked
-```
-```
-
-The point is not that diagrams are magic. The point is that diagrams make state, sequence and constraints explicit in fewer tokens than long prose.
 
 ## Acceptance Criteria
 
@@ -198,3 +121,5 @@ Diagram Rail is successful only if:
 - diagrams do not replace tests;
 - implementation remains tied to evidence;
 - no agent host is required to support Mermaid natively for the files to be useful.
+
+Future versions can add `diagram sync`, `diagram from-repo` and richer local rendering after the workflow and evidence model is stable.

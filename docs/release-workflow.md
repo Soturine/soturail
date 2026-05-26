@@ -21,6 +21,33 @@ The check also verifies:
 - README install instructions and `LICENSE` exist.
 - required GitHub CI and community files exist under `.github/`.
 
+Release notes now live under `docs/releases/`. Root-level `RELEASE_NOTES_vX.Y.Z.md` files should not be created for new releases.
+
+## Release Evidence
+
+v0.7.0 workflow evidence includes release evidence when package metadata is present:
+
+- package version;
+- CLI version;
+- `CHANGELOG.md` entry;
+- release notes path under `docs/releases/`;
+- npm tarball check guidance;
+- GitHub tag recommendation;
+- npm publish checklist;
+- CI status note;
+- evaluation report path;
+- workflow verification result.
+
+Generate or inspect local release evidence with:
+
+```bash
+soturail workflow verify
+soturail workflow evidence <id>
+soturail release check
+```
+
+These commands do not publish to npm or create GitHub releases.
+
 You can run only the package verification gate with:
 
 ```bash
@@ -90,3 +117,9 @@ Safety rules:
 - Never publish if the requested package version already exists on npm.
 - Never create a GitHub release before npm publish succeeds.
 - Never hide errors.
+
+## Historical npm Backfill Policy
+
+If a GitHub tag/release exists for an older version that was not published to npm, backfill only when the historical checkout builds, tests and publishes safely with a non-latest tag such as `backfill`.
+
+Do not force-publish historical packages if their historical tests fail or npm requires unavailable 2FA. Record the blocker and continue the current release.

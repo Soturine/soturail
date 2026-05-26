@@ -15,6 +15,8 @@ Before publishing:
 - [ ] `npm pack --dry-run`
 - [ ] `npm run release:check`
 - [ ] `node dist/cli.js release verify-package`
+- [ ] Release notes exist at `docs/releases/RELEASE_NOTES_vX.Y.Z.md`.
+- [ ] Workflow evidence includes release notes, eval report and verification status when this release uses Workflow Rail.
 - [ ] `node dist/cli.js --version` matches `package.json`.
 - [ ] Confirm docs mention limitations honestly.
 - [ ] Confirm no telemetry exists.
@@ -77,6 +79,18 @@ npx --yes soturail@X.Y.Z --version
 ```
 
 Create or update the GitHub release only after those npm checks pass.
+
+## Release Notes Location
+
+Repository release notes live in `docs/releases/`. GitHub Releases copy that content at publish time.
+
+Do not leave new root-level `RELEASE_NOTES_vX.Y.Z.md` files in the repository.
+
+For v0.7.0 and later, release preflight looks for:
+
+```txt
+docs/releases/RELEASE_NOTES_vX.Y.Z.md
+```
 
 ## Windows Paste Safety
 

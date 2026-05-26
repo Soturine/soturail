@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.6.1 is the Agent UX Polish and Full Local Evaluation Suite milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence seeds, the host-aware Agent Runtime Adapter and the local evaluation suite are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.7.0 is the Workflow Rail 2.0, Harness Rail and Diagram Rail milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail and the local evaluation suite are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next product direction is staged: v0.7.0 deepens Workflow Rail, Harness Rail and Diagram Rail without turning SotuRail into an autonomous agent runtime. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next product direction is staged: v0.8.0 adds Knowledge Rail and Project Brain without turning SotuRail into an autonomous agent runtime. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -78,6 +78,28 @@ soturail eval report
 The evaluation suite is deterministic and local. It checks memory recall, context selection, reducers, routing, role packs, agent-doc hygiene, offload/restore, payload formats, strict JSON validation, evidence packs, harness scenarios and Diagram Rail validation seeds. Reports are written to `.soturail/eval/latest.json` and `.soturail/eval/latest.md`.
 
 Token savings alone are not treated as success. The suite checks whether important files, commands, errors, policy decisions and recovery pointers survive compression and selection. See [docs/evaluation-suite.md](docs/evaluation-suite.md).
+
+## v0.7.0 Workflow, Harness And Diagram Rails
+
+```bash
+soturail workflow setup
+soturail workflow plan "Implement feature"
+soturail workflow work --note "Implemented the first slice"
+soturail workflow review --all
+soturail workflow verify
+soturail workflow evidence <id>
+soturail workflow diagram <id>
+
+soturail diagram init
+soturail diagram new "Feature flow"
+soturail diagram audit docs/diagrams/feature-flow.md
+soturail diagram validate
+soturail diagram from-workflow <id>
+```
+
+Workflow Rail 2.0 writes local plan/work/review/verify artifacts under `.soturail/workflows/`. Harness Rail connects repeated failures and acceptance contracts to verification and evidence. Diagram Rail writes text-based Mermaid diagrams and `.spec.md` visual contracts under `docs/diagrams/` and `.soturail/diagrams/`.
+
+Release notes now live under `docs/releases/`, and release evidence points to `docs/releases/RELEASE_NOTES_vX.Y.Z.md`.
 
 ## Why SotuRail Exists
 
@@ -142,10 +164,10 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 - Prompt-only and hook-style agent integrations.
 - Agent exports for Claude, Codex, Gemini, Cursor, Antigravity and generic hosts.
 - MCP-compatible local stdio server and config helpers.
-- Workflow Rail for local task records and optional worktree planning.
+- Workflow Rail for local task records, phase evidence and optional worktree planning.
 - Memory Rail with explicit local records, recall, capture and consolidation.
 - Context Intelligence with selection, pruning, budget reports, offload/restore and role packs.
-- Harness, Policy, Filesystem Evidence and Run Workspace seeds.
+- Harness, Policy, Filesystem Evidence, Diagram and Run Workspace rails.
 - MCP exposure reports and skill routing seeds.
 - Agent docs hygiene checks for short root instruction files.
 - SDD specs, approved memory and cache block normalization.
@@ -153,14 +175,13 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage strengthens Workflow Rail, Harness Rail and Diagram Rail:
+The next roadmap stage moves toward Knowledge Rail and Project Brain:
 
-- Workflow templates for idea, PRD, tasks, TDD, review and release.
-- Deeper Harness Rail guidance for repeated agent failures.
-- Diagram Rail commands for `.spec.md` visual contracts and workflow diagrams.
-- Release/workflow evidence reports that connect tests, build, audit, pack, raw IDs and policy decisions.
-- Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall, diagrams, policy decisions and workflow state.
-- Future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
+- architecture decisions and recurring bug patterns from local docs and workflow evidence;
+- stale evidence detection across richer project graphs;
+- safer knowledge-to-rules extraction;
+- project profiles for agents;
+- future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
 
 ## Future Rails Documentation
 
@@ -372,20 +393,26 @@ Role packs, structured payload validation and offload flows are tracked in [docs
 
 ## Workflow Rail
 
-Workflow Rail stores local task state under `.soturail/workflows/` and can optionally plan Git worktree isolation.
+Workflow Rail stores local task state under `.soturail/workflows/` and can optionally plan Git worktree isolation. v0.7.0 adds phase artifacts for setup, plan, work, review, verify and evidence.
 
 ```bash
+soturail workflow setup
+soturail workflow plan "Implement feature"
+soturail workflow work --note "Progress note"
+soturail workflow review --all
+soturail workflow verify
+soturail workflow evidence <id>
+soturail workflow diagram <id>
 soturail workflow new "Implement feature"
 soturail workflow list
 soturail workflow show <id>
 soturail workflow close <id>
 soturail workflow start <id> --worktree --dry-run
-soturail workflow verify <id>
 ```
 
 SotuRail does not push, merge or delete worktrees automatically.
 
-Future role-phase workflows, harness-style phases and diagram-driven workflows are tracked in [docs/workflow-rail.md](docs/workflow-rail.md), [docs/harness-rail.md](docs/harness-rail.md) and [docs/diagram-rail.md](docs/diagram-rail.md).
+Harness-style phases and diagram-driven workflows are documented in [docs/workflow-rail.md](docs/workflow-rail.md), [docs/harness-rail.md](docs/harness-rail.md) and [docs/diagram-rail.md](docs/diagram-rail.md).
 
 ## Skill Rail
 

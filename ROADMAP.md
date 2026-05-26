@@ -362,17 +362,16 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 
 ## v0.7.0 - Workflow Rail 2.0, Harness Rail And Diagram Rail
 
-- Workflow templates for `Idea -> PRD -> Issues -> TASKS.md -> TDD -> Deploy`.
-- `soturail workflow plan`.
-- `soturail workflow tasks`.
+- Workflow templates for `setup -> plan -> work -> review -> verify -> evidence`.
+- `soturail workflow setup`.
+- `soturail workflow plan "Task title"`.
+- `soturail workflow work`.
+- `soturail workflow review --all`.
 - `soturail workflow verify`.
-- `soturail workflow issue`.
-- `soturail workflow tdd`.
-- `soturail workflow release`.
-- `soturail workflow trace`.
-- `soturail workflow report`.
-- `soturail workflow scaffold --type feature|bugfix|release`.
-- Optional GitHub Issues integration.
+- `soturail workflow evidence <id>`.
+- `soturail workflow diagram <id>`.
+- Future `workflow tasks`, `workflow issue`, `workflow tdd`, `workflow release`, `workflow trace`, `workflow report` and `workflow scaffold` commands can build on the v0.7 storage model.
+- Optional GitHub Issues integration remains future work.
 - Worktree-per-task workflows with verification checklists.
 - Release workflow reports that connect tests, build, audit, pack and npm/GitHub release state.
 - Role-based context packs for planner, executor, reviewer, release-manager and researcher.
@@ -385,12 +384,14 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 - `soturail workflow work`.
 - `soturail workflow review`.
 - `soturail workflow evidence <id>`.
-- `soturail release evidence`.
+- Release evidence through `soturail workflow evidence <id>` and release preflight.
 - Review perspectives:
   - `soturail workflow review --perspective security`;
-  - `soturail workflow review --perspective quality`;
-  - `soturail workflow review --perspective performance`;
-  - `soturail workflow review --perspective accessibility`;
+  - `soturail workflow review --perspective docs`;
+  - `soturail workflow review --perspective tests`;
+  - `soturail workflow review --perspective release`;
+  - `soturail workflow review --perspective context`;
+  - `soturail workflow review --perspective agent-readiness`;
   - `soturail workflow review --all`.
 - Evidence packs with build, tests, audit, npm pack, changed files, raw IDs, offload IDs, release notes and policy approvals.
 - Harness Failure Ledger integration with workflow verification.
@@ -401,13 +402,12 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 - `soturail diagram new <feature>`.
 - `soturail diagram audit <file>`.
 - `soturail diagram validate`.
-- `soturail diagram sync`.
 - `soturail diagram from-workflow <id>`.
-- `soturail diagram from-repo`.
 - `soturail workflow diagram <id>`.
 - Mermaid workflow diagrams for states, release flows, policy flows, MCP flows and context-router flows.
 - `.spec.md` visual contracts with Mermaid, decision matrix, requirements, acceptance criteria and test plan.
 - Diagram validation for invalid Mermaid syntax, unreachable states, missing verification, unlabeled risky transitions and release paths without evidence.
+- Future `diagram sync` and `diagram from-repo` commands can be added after v0.7.0.
 
 ## v0.8.0 - Knowledge Rail And Project Brain
 

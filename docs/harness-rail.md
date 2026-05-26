@@ -1,71 +1,17 @@
 # Harness Rail
 
-Harness Rail is the SotuRail area for making agent-assisted development more disciplined, auditable and repeatable.
-
-It is inspired by Claude Code harness patterns such as `setup -> plan -> work -> review -> release`, runtime guardrails, review perspectives and evidence packs. SotuRail should absorb those patterns without becoming a Claude-only plugin or a full autonomous agent runtime.
+Harness Rail makes agent-assisted development more disciplined, auditable and repeatable. It absorbs setup/plan/work/review/release patterns without becoming a Claude-only plugin or autonomous runtime.
 
 ## Product Boundary
-
-Harness Rail should keep SotuRail as the local Context OS layer:
 
 ```txt
 SotuRail prepares context, policy, evidence and reports.
 The agent still plans, edits, reasons and executes through its own host.
 ```
 
-This means Harness Rail should focus on:
+Harness Rail focuses on workflow discipline, policy decisions, review evidence, release evidence, failure learning and local handoffs.
 
-- workflow discipline;
-- policy decisions;
-- review evidence;
-- release evidence;
-- failure learning;
-- local reports;
-- safe handoffs between agents or roles.
-
-## Planned Workflow Shape
-
-The long-term workflow should support a clearer delivery loop:
-
-```txt
-setup -> plan -> work -> review -> release
-```
-
-Possible future commands:
-
-```bash
-soturail workflow setup
-soturail workflow plan
-soturail workflow work
-soturail workflow review
-soturail workflow release
-```
-
-These commands may be implemented as direct commands, workflow templates, or aliases over existing `workflow` subcommands. They should not hide what is happening. Each phase should write evidence into `.soturail/workflows/<id>/`.
-
-## Review Perspectives
-
-Harness Rail should support review perspectives as structured sections rather than vague feedback.
-
-Possible future commands:
-
-```bash
-soturail workflow review --perspective security
-soturail workflow review --perspective quality
-soturail workflow review --perspective performance
-soturail workflow review --perspective accessibility
-soturail workflow review --all
-```
-
-Suggested default perspectives:
-
-- **security**: secrets, injection, unsafe permissions, dangerous commands;
-- **quality**: naming, duplication, maintainability, architecture drift;
-- **performance**: slow paths, memory, repeated work, large payloads;
-- **accessibility**: UI semantics, keyboard flow, contrast, screen-reader concerns where applicable;
-- **release**: build, tests, audit, package verification, release notes.
-
-## v0.5.0 Seed Commands
+## Commands
 
 ```bash
 soturail harness note "agent said done before tests passed"
@@ -77,66 +23,74 @@ soturail harness contract check
 soturail workflow evidence <id>
 ```
 
-`harness contract check` validates the local contract in v0.5.0. It does not run build, typecheck or test commands by default.
+`harness contract check` validates the local contract. It does not run build, typecheck or test commands by default.
 
-## Evidence Pack
+## v0.7.0 Workflow Connection
 
-Every serious workflow or release should be able to produce an evidence pack.
+Harness Rail now connects to Workflow Rail 2.0:
 
-The v0.5.0 seed supports:
-
-```bash
-soturail workflow evidence <id>
-```
-
-Evidence should include:
-
-- workflow id and state;
-- plan path;
-- tasks path;
-- verification path;
-- build result;
-- test result;
-- audit result;
-- npm pack/package verification result;
-- changed files;
-- raw command ids;
-- offload ids;
-- selected context pack;
-- selected role pack;
-- policy approvals/rejections;
-- release notes path;
-- benchmark report path when relevant.
+- `harness doctor` reports the active workflow when one exists.
+- It reports whether the default harness contract is present.
+- It reports the failure count and latest workflow verification status.
+- It suggests a prevention action from the latest failure.
+- `workflow verify` reads harness contract status.
+- `workflow evidence <id>` includes harness failures and contract references.
 
 ## Harness Failure Ledger
 
-Repeated agent mistakes should become useful local knowledge instead of chat history that disappears.
+Repeated agent mistakes should become useful local knowledge instead of disappearing into chat history.
 
-Possible future commands:
+A failure record tracks:
 
-```bash
-soturail harness note "agent missed Windows npm cache issue"
-soturail harness list
-soturail harness explain <id>
-soturail harness report
-soturail harness doctor
+- workflow id when available;
+- what failed;
+- suspected root cause when supplied;
+- evidence path or raw id when supplied;
+- prevention candidate.
+
+Prevention candidates include:
+
+```txt
+rule
+doc
+memory
+workflow check
+diagram/spec update
 ```
 
-A failure record should track:
+Use `diagram/spec update` when a repeated failure points to a missing visual contract, unclear state transition or stale `.spec.md` file.
 
-- task or workflow id;
-- command or agent action;
-- what failed;
-- root cause if known;
-- fix applied;
-- files changed;
-- whether it repeated;
-- evidence path;
-- prevention candidate: rule, doc, hook, memory or workflow check.
+## Review Perspectives
+
+Workflow review reports are deterministic sections rather than vague feedback. v0.7.0 uses:
+
+- **security**: secrets, unsafe permissions, dangerous commands, raw-log risk;
+- **docs**: README, focused docs and release notes;
+- **tests**: build/typecheck/test evidence and missing checks;
+- **release**: version, changelog, release notes and publish gates;
+- **context**: selected context, offload recovery and role packs;
+- **agent-readiness**: short root docs, policy notes, MCP exposure and handoff readiness.
+
+## Release Evidence
+
+Release evidence should include:
+
+- package version;
+- CLI version;
+- changelog entry;
+- release notes path under `docs/releases/`;
+- npm tarball check guidance;
+- GitHub tag recommendation;
+- npm publish checklist;
+- CI status note;
+- evaluation report path;
+- workflow verification result.
+
+Harness Rail does not publish automatically. Publishing stays an explicit release action.
 
 ## Guardrail Relationship
 
-Harness Rail should connect to Policy Rail. Risky actions should be explainable and reviewable before they happen.
+Harness Rail connects to Policy Rail. Risky actions should be explainable and reviewable before they happen.
 
 Examples:
 
@@ -153,14 +107,11 @@ R08 require evidence before release
 
 ## Acceptance Criteria
 
-Harness Rail is successful only if it makes SotuRail more predictable without making it heavy.
+Harness Rail is successful only if it makes SotuRail more predictable without making it heavy:
 
-Minimum acceptance criteria before promotion:
-
-- docs explain the workflow clearly;
 - commands remain local-first;
-- dry-run or preview exists for risky actions;
+- risky actions remain dry-run or approval-first;
 - evidence is stored locally and recoverable;
-- tests cover at least one clean workflow fixture;
-- benchmarks/reporting distinguish token savings from quality preservation;
+- tests cover clean workflow fixtures;
+- reports distinguish token savings from quality preservation;
 - no arbitrary shell execution is exposed through MCP by default.
