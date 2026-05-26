@@ -60,7 +60,7 @@ const roleDefinitions: Record<RolePack, { purpose: string; include: string[]; om
   },
   "release-manager": {
     purpose: "Prepare release evidence from version, changelog, release notes, package verification and registry state.",
-    include: ["package.json", "CHANGELOG.md", "RELEASE_NOTES_*.md", "docs/release-workflow.md"],
+    include: ["package.json", "CHANGELOG.md", "docs/releases/RELEASE_NOTES_*.md", "docs/release-workflow.md"],
     omit: ["npm tokens", "browser auth secrets", "raw package caches"]
   },
   researcher: {

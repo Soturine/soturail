@@ -294,7 +294,8 @@ SotuRail does not claim provider cache hits unless real provider metadata is imp
 async function createReleaseNotes(version, validation) {
   const fullAudit = await parseAudit([]);
   const runtimeAudit = await parseAudit(["--omit=dev"]);
-  const filePath = path.resolve(root, `RELEASE_NOTES_v${version}.md`);
+  const filePath = releaseNotesPath(version);
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, releaseNotes(version, validation, fullAudit, runtimeAudit), "utf8");
   return filePath;
 }
@@ -330,7 +331,7 @@ async function prepareMode(version) {
   await updateChangelog(version);
   const validation = await runValidation();
   await createReleaseNotes(version, validation);
-  await run("git", ["add", "package.json", "package-lock.json", "src/core/version.ts", "CHANGELOG.md", `RELEASE_NOTES_v${version}.md`]);
+  await run("git", ["add", "package.json", "package-lock.json", "src/core/version.ts", "CHANGELOG.md", path.relative(root, releaseNotesPath(version))]);
   const status = await gitStatusShort();
   if (status.length === 0) {
     console.log(`No release preparation changes to commit for v${version}.`);
@@ -378,7 +379,7 @@ async function publishMode(version, options = {}) {
 
 async function createOrUpdateGitHubRelease(version) {
   const tag = `v${version}`;
-  const notes = `RELEASE_NOTES_v${version}.md`;
+  const notes = releaseNotesRelativePath(version);
   const title = await releaseTitleFromNotes(version, `SotuRail v${version}`);
   const ghStatus = await run("gh", ["auth", "status"], { quiet: true, allowFailure: true });
   if (ghStatus.code !== 0) {
@@ -397,10 +398,18 @@ async function createOrUpdateGitHubRelease(version) {
 }
 
 async function releaseTitleFromNotes(version, fallback) {
-  const notesPath = path.resolve(root, `RELEASE_NOTES_v${version}.md`);
+  const notesPath = releaseNotesPath(version);
   if (!existsSync(notesPath)) return fallback;
   const firstLine = (await fs.readFile(notesPath, "utf8")).split(/\r?\n/)[0]?.trim();
   return firstLine?.startsWith("# ") ? firstLine.slice(2).trim() : fallback;
+}
+
+function releaseNotesPath(version) {
+  return path.resolve(root, "docs", "releases", `RELEASE_NOTES_v${version}.md`);
+}
+
+function releaseNotesRelativePath(version) {
+  return path.join("docs", "releases", `RELEASE_NOTES_v${version}.md`);
 }
 
 async function fullMode(version) {

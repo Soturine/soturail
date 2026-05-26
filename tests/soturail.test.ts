@@ -900,7 +900,7 @@ describe("release reliability", () => {
     }, null, 2));
     await writeFile(path.join(root, "README.md"), "npx soturail --help\nnpm install -g soturail\nsoturail --version\n");
     await writeFile(path.join(root, "CHANGELOG.md"), "## [1.2.3]\n");
-    await writeFile(path.join(root, "RELEASE_NOTES_v1.2.3.md"), "# Notes\n");
+    await writeFile(path.join(root, "docs", "releases", "RELEASE_NOTES_v1.2.3.md"), "# Notes\n");
     await writeFile(path.join(root, "LICENSE"), "MIT\n");
     await writeFile(
       path.join(root, "dist", "cli.js"),
@@ -921,7 +921,7 @@ describe("release reliability", () => {
       packages: { "": { version: string } };
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
-    const releaseNotes = `RELEASE_NOTES_v${packageJson.version}.md`;
+    const releaseNotes = path.join("docs", "releases", `RELEASE_NOTES_v${packageJson.version}.md`);
 
     expect(packageJson.version).toBe(SOTURAIL_VERSION);
     expect(packageLock.version).toBe(packageJson.version);

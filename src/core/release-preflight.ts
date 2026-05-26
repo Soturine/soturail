@@ -148,7 +148,7 @@ export async function runReleasePreflight(
     version ? `expected ## [${version}]` : "missing version"
   );
 
-  const releaseNotesPath = version ? path.join(resolvedRoot, `RELEASE_NOTES_v${version}.md`) : "";
+  const releaseNotesPath = version ? path.join(resolvedRoot, "docs", "releases", `RELEASE_NOTES_v${version}.md`) : "";
   addGate(
     gates,
     "release_notes",

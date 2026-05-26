@@ -109,7 +109,7 @@ export async function writeReleaseNotesSkeleton(version: string, root = process.
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(version)) {
     throw new Error(`Invalid version: ${version}`);
   }
-  const filePath = path.join(path.resolve(root), `RELEASE_NOTES_v${version}.md`);
+  const filePath = releaseNotesPath(root, version);
   const contents = `# SotuRail v${version} - Release Notes
 
 ## Install
@@ -135,6 +135,7 @@ export async function writeReleaseNotesSkeleton(version: string, root = process.
 - npm: https://www.npmjs.com/package/soturail
 - GitHub: https://github.com/Soturine/soturail
 `;
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
   await fs.writeFile(filePath, contents, "utf8");
   return filePath;
 }
@@ -190,13 +191,21 @@ async function createOrUpdateGithubRelease(version: string): Promise<void> {
     : version === "0.4.0"
       ? "SotuRail v0.4.0 - Real Agent Integrations & Workflow Rail"
       : `SotuRail v${version}`;
-  const notes = `RELEASE_NOTES_v${version}.md`;
+  const notes = releaseNotesRelativePath(version);
   const view = await runCapture("gh", ["release", "view", tag], true);
   if (view.code === 0) {
     await runChecked("gh", ["release", "edit", tag, "--title", title, "--notes-file", notes, "--latest"]);
   } else {
     await runChecked("gh", ["release", "create", tag, "--title", title, "--notes-file", notes, "--latest"]);
   }
+}
+
+function releaseNotesPath(root: string, version: string): string {
+  return path.join(path.resolve(root), "docs", "releases", `RELEASE_NOTES_v${version}.md`);
+}
+
+function releaseNotesRelativePath(version: string): string {
+  return path.join("docs", "releases", `RELEASE_NOTES_v${version}.md`);
 }
 
 async function runChecked(command: string, args: string[]): Promise<void> {

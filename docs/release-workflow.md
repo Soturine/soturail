@@ -17,7 +17,7 @@ The check also verifies:
 - npm pack dry-run emits the matching tarball name;
 - the packed tarball installs into a clean temp project and its installed CLI prints the package version;
 - expected package files are present and forbidden generated files are absent;
-- `CHANGELOG.md` and `RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
+- `CHANGELOG.md` and `docs/releases/RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
 - README install instructions and `LICENSE` exist.
 - required GitHub CI and community files exist under `.github/`.
 
