@@ -74,6 +74,8 @@ export interface WorkspacePaths {
   indexesDir: string;
   memoryDir: string;
   memoryFile: string;
+  memoryRecordsFile: string;
+  memoryConsolidatedFile: string;
   specsDir: string;
   metricsDir: string;
   metricsFile: string;
@@ -97,6 +99,19 @@ export interface WorkspacePaths {
   agentExportsDir: string;
   mcpExportsDir: string;
   contextDir: string;
+  contextSelectionsDir: string;
+  contextOffloadDir: string;
+  contextRolePacksDir: string;
+  harnessDir: string;
+  harnessFailuresFile: string;
+  harnessContractsDir: string;
+  policyDir: string;
+  policyQueueFile: string;
+  policyDecisionsFile: string;
+  fsDir: string;
+  fsSnapshotsDir: string;
+  runsDir: string;
+  reportsDir: string;
   workflowsDir: string;
   worktreesDir: string;
 }
@@ -119,6 +134,8 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     indexesDir: path.resolve(workspace, "indexes"),
     memoryDir: path.resolve(workspace, "memory"),
     memoryFile: path.resolve(workspace, "memory", "memory.jsonl"),
+    memoryRecordsFile: path.resolve(workspace, "memory", "records.jsonl"),
+    memoryConsolidatedFile: path.resolve(workspace, "memory", "consolidated.jsonl"),
     specsDir: path.resolve(workspace, "specs"),
     metricsDir: path.resolve(workspace, "metrics"),
     metricsFile: path.resolve(workspace, "metrics", "events.jsonl"),
@@ -142,6 +159,19 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     agentExportsDir: path.resolve(workspace, "exports", "agents"),
     mcpExportsDir: path.resolve(workspace, "exports", "mcp"),
     contextDir: path.resolve(workspace, "context"),
+    contextSelectionsDir: path.resolve(workspace, "context", "selections"),
+    contextOffloadDir: path.resolve(workspace, "context", "offload"),
+    contextRolePacksDir: path.resolve(workspace, "context", "role-packs"),
+    harnessDir: path.resolve(workspace, "harness"),
+    harnessFailuresFile: path.resolve(workspace, "harness", "failures.jsonl"),
+    harnessContractsDir: path.resolve(workspace, "harness", "contracts"),
+    policyDir: path.resolve(workspace, "policy"),
+    policyQueueFile: path.resolve(workspace, "policy", "queue.jsonl"),
+    policyDecisionsFile: path.resolve(workspace, "policy", "decisions.jsonl"),
+    fsDir: path.resolve(workspace, "fs"),
+    fsSnapshotsDir: path.resolve(workspace, "fs", "snapshots"),
+    runsDir: path.resolve(workspace, "runs"),
+    reportsDir: path.resolve(workspace, "reports"),
     workflowsDir: path.resolve(workspace, "workflows"),
     worktreesDir: path.resolve(workspace, "worktrees")
   };
@@ -213,6 +243,16 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.agentExportsDir,
     paths.mcpExportsDir,
     paths.contextDir,
+    paths.contextSelectionsDir,
+    paths.contextOffloadDir,
+    paths.contextRolePacksDir,
+    paths.harnessDir,
+    paths.harnessContractsDir,
+    paths.policyDir,
+    paths.fsDir,
+    paths.fsSnapshotsDir,
+    paths.runsDir,
+    paths.reportsDir,
     paths.workflowsDir,
     paths.worktreesDir
   ];
@@ -224,8 +264,13 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
   await writeFileIfMissing(paths.configFile, `${JSON.stringify(defaultConfig, null, 2)}\n`, result, paths.root);
   await writeFileIfMissing(paths.rawIndex, "", result, paths.root);
   await writeFileIfMissing(paths.memoryFile, "", result, paths.root);
+  await writeFileIfMissing(paths.memoryRecordsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.memoryConsolidatedFile, "", result, paths.root);
   await writeFileIfMissing(paths.memoryPendingFile, "", result, paths.root);
   await writeFileIfMissing(paths.memoryApprovedFile, "", result, paths.root);
+  await writeFileIfMissing(paths.harnessFailuresFile, "", result, paths.root);
+  await writeFileIfMissing(paths.policyQueueFile, "", result, paths.root);
+  await writeFileIfMissing(paths.policyDecisionsFile, "", result, paths.root);
   await writeFileIfMissing(paths.metricsFile, "", result, paths.root);
   await writeFileIfMissing(paths.cacheBlocks, "", result, paths.root);
   await writeFileIfMissing(paths.dedupeIndex, "", result, paths.root);
