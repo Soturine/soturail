@@ -46,9 +46,7 @@ soturail diagram init
 soturail diagram new <feature>
 soturail diagram audit <file>
 soturail diagram validate
-soturail diagram sync
 soturail diagram from-workflow <id>
-soturail diagram from-repo
 soturail workflow diagram <id>
 ```
 
@@ -108,7 +106,7 @@ Future workflow evidence can include:
 
 ## Validation Ideas
 
-A diagram validator should catch practical issues:
+The v0.5.1 scope is docs and a validation plan. A future diagram validator should catch practical issues:
 
 - invalid Mermaid syntax;
 - missing start/end states;
@@ -118,6 +116,50 @@ A diagram validator should catch practical issues:
 - release path without tests/audit/pack evidence;
 - context route without recovery pointer;
 - policy path without approve/reject state.
+
+Basic validation plan:
+
+1. Check that Mermaid fenced blocks exist where expected.
+2. Check that state diagrams include start or initial states when the diagram models a workflow.
+3. Check that release diagrams include build/test/package verification before publish.
+4. Check that policy diagrams include approve and reject paths.
+5. Check that context-router diagrams include recovery/offload pointers for omitted context.
+6. Report warnings only; never rewrite diagrams without explicit user action.
+
+## Example Diagram Targets
+
+Workflow:
+
+```mermaid
+stateDiagram-v2
+    Draft --> Planned
+    Planned --> Active
+    Active --> Verifying
+    Verifying --> ReadyForReview
+    ReadyForReview --> Closed
+    Verifying --> Blocked
+```
+
+Policy:
+
+```mermaid
+flowchart TD
+    RiskyAction --> Queue
+    Queue --> Approve
+    Queue --> Reject
+    Approve --> Evidence
+    Reject --> SaferAlternative
+```
+
+Release:
+
+```mermaid
+flowchart LR
+    Build --> Test
+    Test --> PackVerify
+    PackVerify --> NpmPublish
+    NpmPublish --> GitHubRelease
+```
 
 ## Agent Prompt Usage
 

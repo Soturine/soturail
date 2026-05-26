@@ -1,6 +1,6 @@
 # Structured Payload Rail
 
-Structured Payload Rail is a planned SotuRail area for choosing the right representation for each kind of context.
+Structured Payload Rail is the SotuRail area for choosing the right representation for each kind of context.
 
 The core idea is simple:
 
@@ -13,7 +13,7 @@ This does not mean replacing JSON with XML everywhere. It means using the right 
 
 ## Format Rules
 
-Planned default guidance:
+Default guidance:
 
 ```txt
 JSON       -> machine/config/MCP/tool payloads
@@ -37,24 +37,67 @@ Different consumers need different shapes.
 
 JSON remains important, but unsafe or ambiguous JSON should be detected.
 
-Future validator ideas:
+v0.5.1 adds a light local validator and a format comparison seed:
 
 ```bash
 soturail validate json config.json --strict
-soturail format file.json --to tagged
-soturail format file.json --to toon
-soturail format compare docs/usage.md --formats markdown,tagged,json,toon
+soturail format compare docs/usage.md
 ```
 
-The strict JSON validator should warn about:
+The strict JSON validator warns about:
 
 - duplicate keys;
 - invalid JSON;
 - huge arrays without summaries;
-- very large objects;
 - probable secrets;
-- machine payloads being reused as poor prompt payloads;
-- payloads that are valid JSON but bad LLM context.
+- machine payloads that need review before agent handoff.
+
+It is intentionally small. It is not a schema registry or a full linter.
+
+Example output shape:
+
+```txt
+SotuRail JSON strict validate
+file: config.json
+strict: true
+valid_json: true
+result: warn
+duplicate_keys: 1
+probable_secrets: 0
+huge_arrays: 0
+```
+
+## Markdown For Human Docs
+
+Use Markdown for README files, migration guides, policy docs and agent-facing procedures. Markdown is easy to review in a PR and can contain links to generated `.soturail/` artifacts.
+
+Good fit:
+
+- project identity;
+- build/test/release commands;
+- safety rules;
+- explanation with links.
+
+Poor fit:
+
+- large repeated records;
+- machine contracts that need strict parsing;
+- secret-bearing data.
+
+## JSON For Machine Contracts
+
+Use JSON for MCP manifests, package metadata, config files and strict tool contracts. Validate it before using it as an agent handoff payload:
+
+```bash
+soturail validate json .soturail/config/config.json --strict
+```
+
+Safety notes:
+
+- duplicate keys can hide intent;
+- huge arrays should be summarized or offloaded;
+- probable secrets should be redacted;
+- ambiguous payloads should include a schema or explanation.
 
 ## Tagged Context Blocks
 
@@ -86,6 +129,43 @@ Example:
 
 Call this `tagged context` or `XML-like tagged context`, not mandatory XML.
 
+Tagged blocks are useful when an LLM needs long prompt context with clear boundaries:
+
+```xml
+<release_evidence source="docs/release-workflow.md">
+  npm publish must finish before the GitHub release is created.
+</release_evidence>
+```
+
+They should not replace JSON for machine contracts.
+
+## Compact Tables And TOON-Like Summaries
+
+Repeated rows can be shorter and clearer as a compact table:
+
+```txt
+id | state | owner | evidence
+wf_1 | verifying | release-manager | .soturail/workflows/wf_1/verification.md
+wf_2 | active | executor | .soturail/workflows/wf_2/tasks.md
+```
+
+Use this for summaries, not for precise machine parsing.
+
+## Mermaid For Visual Context
+
+Mermaid belongs in diagrams, specs and workflow context:
+
+```mermaid
+stateDiagram-v2
+  Draft --> Planned
+  Planned --> Active
+  Active --> Verifying
+  Verifying --> ReadyForReview
+  ReadyForReview --> Closed
+```
+
+Use Mermaid when state transitions, release flows or policy decisions would be longer as prose.
+
 ## Target-Aware Context Packs
 
 Possible future command shapes:
@@ -112,18 +192,22 @@ Suggested defaults:
 
 ## Format Comparison Report
 
-SotuRail should eventually measure context formats instead of guessing.
+`soturail format compare <file>` gives a local, approximate first pass:
 
-A format comparison report should include:
+```bash
+soturail format compare docs/usage.md
+```
+
+The report includes:
 
 - raw token estimate;
-- formatted token estimate;
-- metadata overhead;
-- critical facts preserved;
-- paths preserved;
-- errors preserved;
-- schema validity;
-- recommended target format.
+- Markdown-ish estimate;
+- JSON minified estimate when the file is valid JSON;
+- tagged-block estimate;
+- compact/table suggestion for repetitive content;
+- warning that estimates are local and approximate.
+
+v0.5.2 should add quality fixtures that check whether important facts, paths, errors and security warnings survive formatting.
 
 ## Relationship With Reducers
 

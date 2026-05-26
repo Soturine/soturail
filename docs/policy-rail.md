@@ -98,6 +98,40 @@ Auth docs should explain:
 - how to rotate or revoke secrets;
 - what raw logs may contain.
 
+Create `AUTH.md` or `docs/auth.md` only when the project needs agent-readable auth guidance. Keep it procedural and secret-free.
+
+Safe pattern:
+
+```md
+# Auth Notes
+
+This project uses environment variables loaded outside source control.
+
+Agents may read:
+
+- `.env.example`
+- docs/auth.md
+- test auth fixtures with fake values
+
+Agents must not read or commit:
+
+- `.env`
+- real tokens
+- private keys
+- authorization headers from raw logs
+
+Use `npm test` with fake credentials from `.env.example`.
+```
+
+Good `.env.example` values are placeholders, not real-looking secrets:
+
+```dotenv
+API_BASE_URL=http://localhost:3000
+API_TOKEN=replace-with-local-test-token
+```
+
+Do not paste real credentials into memory records, agent docs, policy queue notes or context packs.
+
 ## MCP Exposure Report
 
 Policy Rail should document and verify MCP safety.
