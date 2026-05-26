@@ -58,6 +58,7 @@ export interface AgentRuntimeStatus {
   };
   runs: string[];
   nextSteps: string[];
+  setupExamples: string[];
 }
 
 export const AGENT_POLICY_NOTES = [
@@ -236,6 +237,14 @@ export function renderAgentCapabilities(): string {
     "",
     "Legend: supported, experimental, prompt-only, planned, unknown, not-supported, docs-only, dry-run-first.",
     "",
+    "Copy/paste setup examples:",
+    "- Claude Code: soturail agents install --agent claude --dry-run",
+    "- Codex: soturail agents install --agent codex --dry-run",
+    "- Gemini CLI: soturail agents install --agent gemini --dry-run",
+    "- Cursor: soturail agents install --agent cursor --dry-run",
+    "- Antigravity: soturail agents export --agent antigravity",
+    "- Deep Agents-style: soturail agents export --agent deepagents",
+    "",
     ...rows.flatMap((row) => [
       `- ${row.displayName} (${row.id})`,
       `  maturity: ${row.maturity}`,
@@ -250,6 +259,7 @@ export function renderAgentCapabilities(): string {
       `  dry_run: ${row.dryRunSupport}`,
       `  backup: ${row.backupSupport}`,
       `  recommended_payloads: ${row.recommendedPayloads.join(" + ")}`,
+      `  setup_command: ${setupCommandFor(row.id)}`,
       ""
     ]),
     "Policy notes:",
@@ -292,6 +302,14 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
     "soturail agents install --agent claude --dry-run",
     "soturail policy doctor"
   ];
+  const setupExamples = [
+    "soturail init",
+    "soturail agents status",
+    "soturail context budget --explain",
+    "soturail context pack --role planner",
+    "soturail agents install --agent claude --dry-run",
+    "soturail agents export --agent claude"
+  ];
   return {
     schemaVersion: "soturail.agent-status.v1",
     version: SOTURAIL_VERSION,
@@ -311,7 +329,8 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
       decisions: decisions.length
     },
     runs,
-    nextSteps
+    nextSteps,
+    setupExamples
   };
 }
 
@@ -333,8 +352,21 @@ export function renderAgentStatus(status: AgentRuntimeStatus): string {
     `runs: ${status.runs.length}`,
     "",
     "Recommended next steps:",
-    ...status.nextSteps.map((step) => `- ${step}`)
+    ...status.nextSteps.map((step) => `- ${step}`),
+    "",
+    "Copy/paste setup path:",
+    ...status.setupExamples.map((step) => `- ${step}`),
+    "",
+    "Short root docs guidance:",
+    "- Keep root agent files brief: identity, safety, commands and links.",
+    "- Put bulky task context in .soturail/context/ and role packs."
   ].join("\n") + "\n";
+}
+
+function setupCommandFor(id: AgentId): string {
+  if (id === "antigravity" || id === "opencode" || id === "amp" || id === "kiro") return `soturail agents export --agent ${id}`;
+  if (id === "deepagents" || id === "deepagents-js") return `soturail agents export --agent ${id}`;
+  return `soturail agents install --agent ${id} --dry-run`;
 }
 
 async function detect(root: string, relativePath: string, kind: string): Promise<{ path: string; present: boolean; kind: string }> {

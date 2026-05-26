@@ -113,12 +113,15 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
   const nextSteps = [
     ...(contextPacks.length === 0 ? ["- soturail context pack --target all"] : []),
     ...(exports.length === 0 ? ["- soturail agents export --agent all"] : []),
+    "- soturail agents status",
+    "- soturail agents capabilities",
     "- soturail mcp smoke",
     "- soturail workflow new \"Implement feature\""
   ];
   const lines = [
     "SotuRail Agent Integration Doctor",
     `version: ${SOTURAIL_VERSION}`,
+    "summary: local agent setup is safe-by-default, dry-run-first and project-local",
     `workspace: ${await exists(paths.workspace) ? "ready" : "missing"}`,
     "mcp: ready",
     `context_packs: ${contextPacks.length > 0 ? "ready" : "none yet"}`,
@@ -128,9 +131,15 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
     `exports: ${exports.length > 0 ? exports.join(", ") : "none yet"}`,
     "hooks: dry-run-first",
     "safe_default: true",
+    "root_docs: keep short; reference agent_docs/ and .soturail/context/ for detail",
     "",
     "Next steps:",
-    ...nextSteps
+    ...nextSteps,
+    "",
+    "Fast setup path:",
+    "- soturail context budget --explain",
+    "- soturail context pack --role planner",
+    "- soturail agents install --agent claude --dry-run"
   ];
   if (options.verbose) {
     const status = await agentStatus(root);
@@ -149,6 +158,16 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
       "- Use soturail agents lint before committing agent docs.",
       "- Use soturail agents split-context --dry-run to plan context offload.",
       "",
+      "Copy/paste host setup examples:",
+      ...hostSetupExamples(),
+      "",
+      "Context and role-pack guidance:",
+      "- Planner: soturail context pack --role planner",
+      "- Executor: soturail context pack --role executor",
+      "- Reviewer: soturail context pack --role reviewer",
+      "- Release manager: soturail context pack --role release-manager",
+      "- Researcher: soturail context pack --role researcher",
+      "",
       "Dry-run install suggestions:",
       "- soturail agents install --agent claude --dry-run",
       "- soturail agents install --agent cursor --dry-run",
@@ -159,6 +178,18 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
     );
   }
   return lines.join("\n") + "\n";
+}
+
+function hostSetupExamples(): string[] {
+  return [
+    "- Claude Code: soturail agents install --agent claude --dry-run && soturail agents export --agent claude",
+    "- Codex: soturail agents install --agent codex --dry-run && soturail agents export --agent codex",
+    "- Gemini CLI: soturail agents install --agent gemini --dry-run && soturail agents export --agent gemini",
+    "- Cursor: soturail agents install --agent cursor --dry-run && soturail agents export --agent cursor",
+    "- Antigravity: soturail agents export --agent antigravity",
+    "- Deep Agents-style: soturail agents export --agent deepagents",
+    "- Generic host: soturail agents export --agent generic"
+  ];
 }
 
 export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()): Promise<AgentExportFile[]> {

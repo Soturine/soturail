@@ -61,9 +61,18 @@ export function explainAgents(agent: string): string {
       `  MCP: ${profile.supports_mcp ? "supported as a boundary" : "prompt-only fallback"}`,
       `  Hooks: ${profile.supports_hooks ? "review-required safe hooks" : "not enabled by default"}`,
       `  Payloads: ${getAgentCapability(profile.id).recommendedPayloads.join(" + ")}`,
+      `  Setup: ${setupCommandFor(profile.id)}`,
+      "  Root docs: keep identity, safety rules and recovery commands short; reference agent_docs/ and .soturail/context/ for detail.",
+      "  Role packs: generate only the role needed for the current host/task.",
       `  Kept local: raw logs, policy decisions, filesystem snapshots, and unapproved memory.`,
       `  Policy: ${AGENT_POLICY_NOTES[0]}`,
       ""
     ])
   ].join("\n").trimEnd() + "\n";
+}
+
+function setupCommandFor(agent: string): string {
+  if (agent === "antigravity" || agent === "opencode" || agent === "amp" || agent === "kiro") return `soturail agents export --agent ${agent}`;
+  if (agent === "deepagents" || agent === "deepagents-js") return `soturail agents export --agent ${agent}`;
+  return `soturail agents install --agent ${agent} --dry-run`;
 }
