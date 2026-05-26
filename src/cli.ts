@@ -28,6 +28,7 @@ import { registerSkillsCommand } from "./commands/skills.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
 import { registerReleaseCommand } from "./commands/release.js";
+import { registerValidateCommand } from "./commands/validate.js";
 import { registerWorkflowCommand } from "./commands/workflow.js";
 import { SOTURAIL_VERSION } from "./core/version.js";
 
@@ -65,6 +66,7 @@ export function buildProgram(): Command {
   registerSkillsCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);
+  registerValidateCommand(program);
   registerWorkflowCommand(program);
 
   return program;
