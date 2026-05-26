@@ -3,6 +3,7 @@ import { createSkill, readSkills, renderSkillList } from "../core/skill-store.js
 import { exportSkills, packSkills } from "../core/skill-exporter.js";
 import { formatSkillValidation, validateSkills } from "../core/skill-validator.js";
 import { SkillTargetSchema } from "../core/skill-schema.js";
+import { routeSkill, suggestSkills } from "../core/skill-routing.js";
 
 export function registerSkillsCommand(program: Command): void {
   const skills = program.command("skills").description("Create, validate, export and pack safe local agent skills.");
@@ -25,6 +26,22 @@ export function registerSkillsCommand(program: Command): void {
     process.stdout.write(formatSkillValidation(result));
     if (!result.ok) process.exitCode = 1;
   });
+
+  skills
+    .command("suggest")
+    .description("Suggest relevant local skills for a task query.")
+    .requiredOption("--query <query>", "Task query")
+    .action(async (options: { query: string }) => {
+      process.stdout.write(await suggestSkills(options.query));
+    });
+
+  skills
+    .command("route")
+    .description("Pair a task with a skill, context expert, role pack and policy checks.")
+    .requiredOption("--task <task>", "Task description")
+    .action(async (options: { task: string }) => {
+      process.stdout.write(await routeSkill(options.task));
+    });
 
   skills
     .command("export")

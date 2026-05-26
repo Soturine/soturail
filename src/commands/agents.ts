@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { explainAgents, lintAgentDocs, splitContextPlan } from "../core/agent-docs-hygiene.js";
 import { agentDoctor, exportAgents, installAgent, uninstallAgent } from "../core/agent-exporter.js";
 import { formatAgentList } from "../core/agent-registry.js";
 
@@ -21,6 +22,22 @@ export function registerAgentsCommand(program: Command): void {
   agents.command("doctor").description("Check agent integration readiness.").action(async () => {
     process.stdout.write(await agentDoctor());
   });
+
+  agents.command("lint").description("Lint root agent docs for size, freshness and safety notes.").action(async () => {
+    process.stdout.write(await lintAgentDocs());
+  });
+
+  agents.command("split-context").description("Suggest moving large agent context into referenced files.").option("--dry-run", "Preview only", true).action(async (options: { dryRun?: boolean }) => {
+    process.stdout.write(await splitContextPlan(options.dryRun !== false));
+  });
+
+  agents
+    .command("explain")
+    .description("Explain what each agent export receives and what stays local.")
+    .requiredOption("--agent <agent>", "claude, codex, gemini, cursor, antigravity, generic, or all")
+    .action((options: { agent: string }) => {
+      process.stdout.write(explainAgents(options.agent));
+    });
 
   agents
     .command("export")

@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "../core/config.js";
 import { mcpConfig } from "../core/agent-exporter.js";
+import { mcpExposureReport, renderMcpExposure } from "../core/mcp-exposure.js";
 import { mcpDoctor, mcpManifest, mcpSmoke, serveMcpStdio } from "../core/mcp-server.js";
 import { SOTURAIL_VERSION } from "../core/version.js";
 
@@ -15,6 +16,11 @@ export function registerMcpCommand(program: Command): void {
 
   mcp.command("manifest").description("Print MCP resources and tools manifest.").action(async () => {
     process.stdout.write(`${JSON.stringify(await mcpManifest(SOTURAIL_VERSION), null, 2)}\n`);
+  });
+
+  mcp.command("exposure").description("Report MCP tools/resources/prompts and risk notes.").option("--json", "Print machine-readable JSON").action(async (options: { json?: boolean }) => {
+    const report = await mcpExposureReport();
+    process.stdout.write(options.json ? `${JSON.stringify(report, null, 2)}\n` : renderMcpExposure(report));
   });
 
   mcp
