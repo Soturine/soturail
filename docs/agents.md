@@ -44,6 +44,28 @@ Exports are written under `.soturail/exports/agents/<agent>/`. They are meant to
 
 `soturail agents doctor --verbose` combines readiness checks with host capability, payload, policy and dry-run install guidance.
 
+## v0.6.1 UX Flow
+
+Start with status, budget and one role pack, then preview the host install or export.
+
+```bash
+soturail init
+soturail agents status
+soturail agents capabilities
+soturail context budget --explain
+soturail context pack --role planner
+soturail agents install --agent claude --dry-run
+soturail agents export --agent claude
+```
+
+For conservative hosts, prefer prompt-only export:
+
+```bash
+soturail agents export --agent antigravity
+soturail agents export --agent deepagents
+soturail agents export --agent generic
+```
+
 ## Dry-Run Install Workflow
 
 Dry-run first:
@@ -125,6 +147,18 @@ Generic -> Markdown
 ```
 
 See [structured-payload-rail.md](structured-payload-rail.md).
+
+## Tutorials
+
+- [SotuRail with Claude Code](tutorial-claude-code.md)
+- [SotuRail with Codex](tutorial-codex.md)
+- [SotuRail with Gemini CLI](tutorial-gemini-cli.md)
+- [SotuRail with Cursor](tutorial-cursor.md)
+- [SotuRail with Antigravity prompt-only workflow](tutorial-antigravity.md)
+- [Deep Agents-style role packs](tutorial-deep-agents-role-packs.md)
+- [Harness-style setup/plan/work/review/release](tutorial-harness-workflow.md)
+- [Diagram Rail and `.spec.md` visual contracts](tutorial-diagram-spec.md)
+- [Choosing context formats by host](tutorial-context-formats.md)
 
 ## Agent Docs Hygiene
 
