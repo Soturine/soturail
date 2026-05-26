@@ -1,40 +1,42 @@
 # Evaluation Suite
 
-Evaluation Suite is the planned SotuRail area for proving that context reduction and routing preserve useful information.
-
-The goal is not only to show token savings. The goal is to show that an agent still receives the right evidence to solve the task.
-
-## Staging
-
-v0.5.2 is intentionally limited to CI stabilization and lightweight quality fixtures. It fixes stale version and agent-doctor tests, then adds small local checks for JSON validation, format comparison, context routing, budget output, run workspace output, workflow evidence and agent-doc hygiene.
-
-The full, heavier Evaluation Suite is staged for v0.6.1 so it can include agent UX polish, broader fixtures and optional benchmark reports without blocking the v0.5.x stabilization line.
-
-## Product Boundary
-
-SotuRail benchmarks should stay local, deterministic and reproducible by default.
-
-They should not require paid API calls, private provider telemetry or external services.
-
-Optional external comparisons may exist only when the user supplies the tools and accepts the caveats.
-
-## Planned Commands
+SotuRail v0.6.1 adds a local evaluation suite for context quality. It is deterministic, offline and host-independent: no paid APIs, no real agent hosts, no GitHub access and no network calls are required.
 
 ```bash
-soturail bench prepare
-soturail bench run --engine ts
-soturail bench run --suite evaluation
-soturail bench report
-soturail bench compare-engines
+soturail eval list
 soturail eval run
 soturail eval report
 ```
 
-The final CLI shape can remain under `bench` or introduce `eval`; the docs should make clear that quality and evidence preservation matter.
+Reports are written to:
+
+```txt
+.soturail/eval/latest.json
+.soturail/eval/latest.md
+```
+
+## What It Checks
+
+The suite uses small fixtures that verify whether critical evidence survives selection, compression and handoff:
+
+| Group | What is checked |
+| --- | --- |
+| Memory recall | Architecture, recurring bug, release and policy memories rank above unrelated notes. |
+| Context selection | Expected file, command, error string and rule are preserved. |
+| Reducers | npm, Vitest, tsc, Java, Maven, Docker, git, ESLint and Vite/Next outputs keep important diagnostics. |
+| Context router | Security, release, docs, code, workflow, memory and research queries route deterministically. |
+| Role packs | Planner, executor, reviewer, release-manager and researcher packs include purpose and omissions. |
+| Agent docs hygiene | Short root docs pass and oversized root docs warn. |
+| Offload/restore | Recovery pointer, source path and critical failure line survive. |
+| Format quality | Markdown, JSON, tagged blocks and compact/table suggestions keep evidence visible. |
+| Strict JSON | Invalid JSON, duplicate keys, probable secrets and huge arrays are detected. |
+| Evidence packs | Workflow/run evidence includes raw IDs, policy decisions, changed files and harness contract notes. |
+| Harness scenarios | Repeated failures become candidate rules, docs, memory or workflow checks. |
+| Diagram validation | Invalid Mermaid and missing verification transitions are reported clearly. |
 
 ## Evaluation Dimensions
 
-The suite should measure:
+The suite separates compression from quality. Useful report fields include:
 
 - raw token estimate;
 - reduced token estimate;
@@ -45,105 +47,79 @@ The suite should measure:
 - path preservation;
 - command preservation;
 - error/warning preservation;
-- source line/range preservation;
-- raw/offload recovery pointer preservation;
+- source path or recovery pointer preservation;
 - policy decision preservation.
 
-## Planned Fixture Groups
+## Fixture Details
 
-### 1. Terminal Reducer Quality
+### Terminal Reducer Quality
 
-Fixtures:
+Fixtures cover npm, Vitest, TypeScript, Java, Maven, Docker, git diff/status, ESLint and Vite/Next-style output.
 
-- npm install noise;
-- npm test success/failure;
-- Vitest failure;
-- TypeScript diagnostics;
-- Java stack trace;
-- Maven/Gradle failure;
-- Docker logs;
-- ESLint failure;
-- Vite/Next build;
-- git diff/status noise;
-- JSON/tool payload output;
-- tiny-output overhead.
-
-Quality checks:
+Checks:
 
 - root error preserved;
 - file path preserved;
-- line/column preserved;
+- line/column preserved when present;
 - command preserved;
-- raw recovery hint preserved.
+- raw recovery hint remains available.
 
-### 2. Context Selection Quality
+### Context Selection Quality
 
-Fixtures should ask task-like queries and expect the right source set.
+Fixtures ask task-like queries and expect the right source set.
 
 Examples:
 
 ```txt
-query: fix npm publish on Windows
-expected: release docs, Windows notes, package verification notes
+query: validateRefund ERR_REFUND_WINDOW npm test Rule R08
+expected: src/refund-policy.ts
 
-query: add MCP read-only resource
-expected: MCP docs, security model, policy rail notes
+query: review release policy
+expected: release and policy context
 ```
 
-Quality checks:
+Checks:
 
-- expected docs included;
+- expected docs or files included;
 - unrelated docs mostly omitted;
 - reasons are present;
-- line ranges or source paths are present.
+- source paths are present.
 
-### 3. Memory Recall Quality
+### Memory Recall Quality
 
-Fixtures:
+Fixtures include architecture decisions, repeated bugs, release policies, policy notes and unrelated memories.
 
-- approved decision;
-- stale decision;
-- conflicting decisions;
-- sensitive memory;
-- repeated bug memory;
-- release policy memory.
+Checks:
 
-Quality checks:
+- expected record ranks first;
+- match reason is present;
+- source/tag metadata stays visible;
+- unrelated notes do not win over exact project facts.
 
-- approved records can be recalled;
-- stale/conflict status is visible;
-- rejected records are not exported by default;
-- probable secrets are redacted.
+### Role-Pack Quality
 
-### 4. Role-Pack Quality
+Fixtures cover planner, executor, reviewer, release-manager and researcher packs.
 
-Fixtures:
+Checks:
 
-- planner pack;
-- executor pack;
-- reviewer pack;
-- release-manager pack;
-- researcher pack.
-
-Quality checks:
-
-- planner receives roadmap/specs, not raw terminal noise by default;
+- planner receives roadmap/specs/constraints;
 - executor receives task/files/tests;
-- reviewer receives diff/tests/rules/security notes;
+- reviewer receives diffs/tests/rules/security notes;
 - release-manager receives version/changelog/audit/pack/npm/GitHub state;
-- researcher receives ecosystem notes and comparison caveats.
+- researcher receives ecosystem notes and comparison caveats;
+- unrelated risky context is omitted by default.
 
-### 5. Structured Payload Quality
+### Structured Payload Quality
 
-Compare formats:
+Formats compared:
 
 - Markdown;
 - JSON;
 - XML-like tagged context;
-- TOON/table-like compact output;
+- compact/table-like output;
 - Mermaid where visual context applies.
 
-Quality checks:
+Checks:
 
 - critical facts preserved;
 - schema or syntax valid where applicable;
@@ -151,87 +127,70 @@ Quality checks:
 - token estimate reported;
 - recommended target format explained.
 
-### 6. Diagram Validation Quality
+### Diagram Validation Quality
 
-Fixtures:
+Fixtures cover invalid Mermaid and workflow diagrams missing verification transitions. The current validator is intentionally light; full Diagram Rail commands are future work.
 
-- valid workflow Mermaid;
-- invalid Mermaid syntax;
-- unreachable state;
-- missing start/end;
-- release path without test/audit/pack evidence;
-- policy flow without approve/reject state.
-
-Quality checks:
+Checks:
 
 - invalid diagrams fail clearly;
-- validation message points to the missing state/edge;
-- diagrams are not treated as tests.
+- warnings name missing verification/start states where possible;
+- diagrams are not treated as replacements for tests.
 
-### 7. Evidence Pack Completeness
+### Evidence Pack Completeness
 
-Fixtures:
+Fixtures cover workflow evidence, command raw IDs, policy approval evidence, filesystem evidence and harness contract notes.
 
-- workflow evidence;
-- release evidence;
-- failed command evidence;
-- policy approval evidence;
-- offloaded raw output evidence.
+Checks:
 
-Quality checks:
-
-- build/test/audit/pack status present where expected;
 - raw IDs present;
 - changed files present;
 - policy decisions present;
-- release notes path present for release workflows;
+- harness contract path/status visible;
 - missing evidence is reported honestly.
 
-### 8. Harness Scenario Quality
+### Harness Scenario Quality
 
-Fixtures:
+Fixtures cover repeated agent mistakes, stale instruction files, unsafe command requests and skipped verification.
 
-- repeated agent mistake;
-- stale instruction file;
-- unsafe command request;
-- missing release verification;
-- broken Windows/npm cache assumption.
-
-Quality checks:
+Checks:
 
 - failure becomes candidate memory/rule/doc/workflow check;
-- repeated failures are grouped;
-- prevention suggestion is concrete.
+- prevention suggestion is concrete;
+- evidence is linked where available.
 
-## Reporting
+## How To Read The Report
 
-Reports should include:
+The JSON report uses `schemaVersion: "soturail.eval.v1"` and includes each case, result, evidence pointers and summary counts. The Markdown report is meant for humans and release notes.
+
+Warnings are separate from failures. A passing suite means the local fixture set preserved its required evidence. It is not a claim that SotuRail is better than another project.
+
+## Quality Rule
 
 ```txt
-suite
-fixture_count
-passed
-failed
-raw_tokens
-reduced_tokens
-metadata_overhead
-net_tokens_saved
-quality_passed
-critical_facts_preserved
-recovery_paths_preserved
-platform
-node_version
-engine
-native_fallback_status
+Token savings without quality preservation is not a success.
 ```
+
+SotuRail should only make performance or quality claims when the repository includes reproducible local evidence for the exact claim. The suite is designed to make regressions visible, not to produce marketing numbers.
+
+## What Is Not Tested
+
+- Real agent model behavior.
+- Provider APIs.
+- Network retrieval.
+- GitHub Actions availability.
+- Real production repositories.
+- Native/Rust speedups.
+
+Those can be tested separately, but the default evaluation suite must stay cheap enough for regular local development.
 
 ## Acceptance Criteria
 
-Evaluation Suite should not be promoted until:
+Evaluation Suite changes should not be promoted until:
 
 - fixtures are deterministic;
 - no external API is required;
 - failures are readable;
 - token savings and quality are separated;
-- benchmark reports are committed only when intentionally refreshed;
+- benchmark reports are refreshed only when intentionally requested;
 - public claims match reproducible local results.

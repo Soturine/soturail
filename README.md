@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.6.0 is the Real Agent Runtime Integration milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence seeds and the host-aware Agent Runtime Adapter are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.6.1 is the Agent UX Polish and Full Local Evaluation Suite milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence seeds, the host-aware Agent Runtime Adapter and the local evaluation suite are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next quality direction is staged: v0.6.1 adds agent UX polish and the heavier local evaluation suite. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next product direction is staged: v0.7.0 deepens Workflow Rail, Harness Rail and Diagram Rail without turning SotuRail into an autonomous agent runtime. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -66,6 +66,18 @@ soturail agents export --agent deepagents-js
 ```
 
 The adapter is host-aware but conservative. It reports real, experimental, prompt-only and planned surfaces for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, Generic, OpenCode/Amp/Kiro-style hosts and Deep Agents-style targets. Dry-run installs show planned file writes, backups, context references, payload recommendations and policy warnings before anything changes.
+
+## v0.6.1 Evaluation Suite
+
+```bash
+soturail eval list
+soturail eval run
+soturail eval report
+```
+
+The evaluation suite is deterministic and local. It checks memory recall, context selection, reducers, routing, role packs, agent-doc hygiene, offload/restore, payload formats, strict JSON validation, evidence packs, harness scenarios and Diagram Rail validation seeds. Reports are written to `.soturail/eval/latest.json` and `.soturail/eval/latest.md`.
+
+Token savings alone are not treated as success. The suite checks whether important files, commands, errors, policy decisions and recovery pointers survive compression and selection. See [docs/evaluation-suite.md](docs/evaluation-suite.md).
 
 ## Why SotuRail Exists
 
@@ -141,16 +153,13 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage strengthens the rails with evaluation and deeper workflow coverage:
+The next roadmap stage strengthens Workflow Rail, Harness Rail and Diagram Rail:
 
-- Memory recall quality fixtures and approved-memory export checks.
-- Context selection, budget, offload and role-pack quality fixtures.
-- Structured Payload Rail validation for Markdown, JSON, tagged blocks, compact tables and Mermaid context.
-- Diagram Rail command seeds and validation fixtures.
-- Harness/evidence quality checks that ensure important paths, commands, errors and security notes survive pruning.
-- Agent Capability Matrix: safer guidance for Claude, Codex, Gemini, Cursor, Antigravity, Deep Agents-style hosts, generic hosts and future hosts.
+- Workflow templates for idea, PRD, tasks, TDD, review and release.
+- Deeper Harness Rail guidance for repeated agent failures.
+- Diagram Rail commands for `.spec.md` visual contracts and workflow diagrams.
+- Release/workflow evidence reports that connect tests, build, audit, pack, raw IDs and policy decisions.
 - Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall, diagrams, policy decisions and workflow state.
-- Evaluation Suite: token savings plus quality checks, not token savings alone.
 - Future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
 
 ## Future Rails Documentation
@@ -163,6 +172,7 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Diagram Rail](docs/diagram-rail.md)
 - [Structured Payload Rail](docs/structured-payload-rail.md)
 - [Agent Docs Hygiene](docs/agent-docs-hygiene.md)
+- [Evaluation Suite](docs/evaluation-suite.md)
 - [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
 
 ## Installation
@@ -182,10 +192,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.6.0 is published, install that exact version with:
+When v0.6.1 is published, install that exact version with:
 
 ```bash
-npm install -g soturail@0.6.0
+npm install -g soturail@0.6.1
 ```
 
 For local development from source:
@@ -245,6 +255,18 @@ soturail workflow list
 ```
 
 `soturail init` scaffolds agent, MCP, context pack, hook, skill and workflow examples without overwriting user-edited files.
+
+## Agent Setup Tutorials
+
+- [Claude Code](docs/tutorial-claude-code.md)
+- [Codex](docs/tutorial-codex.md)
+- [Gemini CLI](docs/tutorial-gemini-cli.md)
+- [Cursor](docs/tutorial-cursor.md)
+- [Antigravity prompt-only](docs/tutorial-antigravity.md)
+- [Deep Agents-style role packs](docs/tutorial-deep-agents-role-packs.md)
+- [Harness workflow](docs/tutorial-harness-workflow.md)
+- [Diagram specs](docs/tutorial-diagram-spec.md)
+- [Context formats](docs/tutorial-context-formats.md)
 
 ## Commands
 

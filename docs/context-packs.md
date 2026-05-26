@@ -151,6 +151,13 @@ soturail agents explain --agent all
 soturail agents doctor --verbose
 ```
 
+v0.6.1 evaluation fixtures check that context selection, role packs, offload/restore and payload formats preserve critical evidence:
+
+```bash
+soturail eval run
+soturail eval report
+```
+
 Examples:
 
 - Claude Code: Markdown + tagged blocks + MCP stdio snippets + short `CLAUDE.md` references.

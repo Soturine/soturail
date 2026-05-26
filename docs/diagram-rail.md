@@ -106,7 +106,7 @@ Future workflow evidence can include:
 
 ## Validation Ideas
 
-The v0.5.1 scope is docs and a validation plan. A future diagram validator should catch practical issues:
+The v0.6.1 evaluation suite includes a lightweight Diagram Rail validator seed for local quality checks. It catches practical issues:
 
 - invalid Mermaid syntax;
 - missing start/end states;
@@ -125,6 +125,15 @@ Basic validation plan:
 4. Check that policy diagrams include approve and reject paths.
 5. Check that context-router diagrams include recovery/offload pointers for omitted context.
 6. Report warnings only; never rewrite diagrams without explicit user action.
+
+Run it through the evaluation suite:
+
+```bash
+soturail eval run
+soturail eval report
+```
+
+The v0.6.1 validator is deliberately small. Full `soturail diagram ...` commands remain future v0.7 work.
 
 ## Example Diagram Targets
 

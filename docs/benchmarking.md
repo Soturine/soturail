@@ -51,11 +51,22 @@ soturail bench compare-engines
 
 Optional RTK or Squeez comparisons are only run when the user already has those tools on PATH.
 
-## Planned Evaluation Suite
+## Evaluation Suite
 
-The full Evaluation Suite is now staged for v0.6.1. v0.5.2 only adds lightweight local quality fixtures and CI stabilization; it does not add benchmark-heavy jobs.
+v0.6.1 adds a local Evaluation Suite alongside the benchmark commands.
 
-The goal of the later suite is to prove that SotuRail preserves the evidence needed for an agent or human to complete a task.
+```bash
+soturail eval list
+soturail eval run
+soturail eval report
+```
+
+Outputs:
+
+- `.soturail/eval/latest.json`
+- `.soturail/eval/latest.md`
+
+The goal is to prove that SotuRail preserves the evidence needed for an agent or human to complete a task.
 
 The key rule:
 
@@ -63,18 +74,18 @@ The key rule:
 Token savings without quality preservation is not a success.
 ```
 
-Future evaluation should measure both:
+Evaluation measures both:
 
 - how much context was reduced;
 - whether the critical facts survived.
 
 See [evaluation-suite.md](evaluation-suite.md).
 
-## Planned Fixture Groups
+## Fixture Groups
 
 ### Context Selection Quality
 
-Fixtures should test queries such as:
+Fixtures test queries such as:
 
 ```txt
 fix npm publish on Windows
@@ -83,7 +94,7 @@ review release workflow safety
 summarize failed Vitest output
 ```
 
-Expected checks:
+Checks:
 
 - expected source docs are included;
 - unrelated docs are omitted;
@@ -94,7 +105,7 @@ Expected checks:
 
 ### Memory Recall Quality
 
-Fixtures should test:
+Fixtures test:
 
 - approved memories;
 - pending memories;
@@ -105,7 +116,7 @@ Fixtures should test:
 - release-policy memories;
 - recurring-bug memories.
 
-Expected checks:
+Checks:
 
 - approved records can be recalled;
 - rejected records are not exported by default;
@@ -115,7 +126,7 @@ Expected checks:
 
 ### Role-Pack Quality
 
-Fixtures should test:
+Fixtures test:
 
 - planner context pack;
 - executor context pack;
@@ -123,7 +134,7 @@ Fixtures should test:
 - release-manager context pack;
 - researcher context pack.
 
-Expected checks:
+Checks:
 
 - planner receives roadmap/specs/constraints;
 - executor receives task/files/tests;
@@ -142,7 +153,7 @@ Formats to compare:
 - TOON/table-like compact output;
 - Mermaid where visual context applies.
 
-Expected checks:
+Checks:
 
 - critical facts are preserved;
 - schemas or syntax are valid where applicable;
@@ -152,7 +163,7 @@ Expected checks:
 
 ### Diagram Validation Quality
 
-Fixtures should test:
+Fixtures test:
 
 - valid Mermaid workflow;
 - invalid Mermaid syntax;
@@ -161,7 +172,7 @@ Fixtures should test:
 - release flow without tests/audit/pack evidence;
 - policy flow without approve/reject state.
 
-Expected checks:
+Checks:
 
 - invalid diagrams fail clearly;
 - missing states/transitions are named;
@@ -169,7 +180,7 @@ Expected checks:
 
 ### Evidence Pack Completeness
 
-Fixtures should test:
+Fixtures test:
 
 - workflow evidence;
 - release evidence;
@@ -178,7 +189,7 @@ Fixtures should test:
 - offloaded raw output evidence;
 - filesystem evidence.
 
-Expected checks:
+Checks:
 
 - build/test/audit/pack status present where expected;
 - raw IDs present;
@@ -190,7 +201,7 @@ Expected checks:
 
 ### Harness Scenario Quality
 
-Fixtures should test:
+Fixtures test:
 
 - repeated agent mistake;
 - stale root agent docs;
@@ -199,16 +210,16 @@ Fixtures should test:
 - Windows/npm cache false positive;
 - context routed to the wrong expert.
 
-Expected checks:
+Checks:
 
 - failure becomes candidate memory/rule/doc/workflow check;
 - repeated failures are grouped;
 - prevention suggestion is concrete;
 - evidence is linked.
 
-## Planned Report Fields
+## Report Fields
 
-Future benchmark/evaluation reports should include:
+Benchmark and evaluation reports should include:
 
 ```txt
 suite
