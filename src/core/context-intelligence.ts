@@ -116,7 +116,16 @@ export function renderSelection(selection: ContextSelection): string {
     ""
   ];
   for (const item of selection.items) {
-    lines.push(`- ${item.kind}: ${item.path ?? item.id}`, `  Score: ${item.score}`, `  Reason: ${item.reason}`, `  Summary: ${item.summary}`, "");
+    const source = item.path ?? item.id ?? "unknown";
+    lines.push(
+      `- ${item.kind}: ${source}`,
+      `  Score: ${item.score}`,
+      `  Reason: ${item.reason}`,
+      `  Estimated tokens: ${item.estimatedTokens}`,
+      `  Summary: ${item.summary}`,
+      `  Recovery: ${item.kind === "file" ? `open ${source}` : `soturail memory recall "${selection.query}"`}`,
+      ""
+    );
   }
   return `${lines.join("\n").trimEnd()}\n`;
 }
@@ -141,15 +150,16 @@ export async function pruneContext(query: string, budget = 8000, root = process.
     `estimated_tokens_used: ${used}`,
     `selection_id: ${selection.id}`,
     "",
-    "Included:"
+    "Included context:"
   ];
   for (const item of included) {
-    lines.push(`- ${item.kind}: ${item.path ?? item.id} (${item.estimatedTokens} tokens)`, `  Reason: ${item.reason}`, `  Summary: ${item.summary}`);
+    lines.push(`- ${item.kind}: ${item.path ?? item.id} (${item.estimatedTokens} tokens)`, `  Reason: ${item.reason}`, `  Summary: ${item.summary}`, `  Recovery: ${item.kind === "file" ? `open ${item.path}` : `soturail memory recall "${query}"`}`);
   }
-  lines.push("", "Omitted:");
+  lines.push("", "Omitted context:");
   for (const item of omitted) {
     lines.push(`- ${item.kind}: ${item.path ?? item.id} (${item.estimatedTokens} tokens)`, "  Recovery: rerun with a larger --budget or use context restore/offload pointers.");
   }
+  lines.push("", "Recovery pointers:", `- Full selection: .soturail/context/selections/${selection.id}.json`, "- Long content: soturail context offload <raw-id-or-file>", "- Restore offload: soturail context restore <offload-id>");
   return `${lines.join("\n")}\n`;
 }
 
@@ -198,11 +208,14 @@ export async function contextBudget(target = "generic", explain = false, root = 
   const paths = getWorkspacePaths(root);
   const drivers = [
     await driver("root_agent_docs", root, ["CLAUDE.md", "AGENTS.md", "GEMINI.md"]),
+    await driver("role_packs", root, [relativeToRoot(root, paths.contextRolePacksDir)]),
     await driver("memory", root, [relativeToRoot(root, paths.memoryRecordsFile), relativeToRoot(root, paths.memoryConsolidatedFile)]),
     await driver("skills", root, [relativeToRoot(root, paths.skillsDir)]),
     await driver("mcp_exposure", root, [relativeToRoot(root, paths.mcpExportsDir)]),
     await driver("raw_logs", root, [relativeToRoot(root, paths.rawIndex)]),
-    await driver("context_packs", root, [relativeToRoot(root, paths.contextDir)])
+    await driver("offloaded_logs", root, [relativeToRoot(root, paths.contextOffloadDir)]),
+    await driver("context_packs", root, [relativeToRoot(root, paths.contextDir)]),
+    await driver("run_workspace_evidence", root, [relativeToRoot(root, paths.runsDir), relativeToRoot(root, paths.reportsDir)])
   ];
   const total = drivers.reduce((sum, item) => sum + item.estimatedTokens, 0);
   const lines = [
@@ -215,7 +228,15 @@ export async function contextBudget(target = "generic", explain = false, root = 
     ...drivers.map((item) => `- ${item.name}: ${item.estimatedTokens} tokens (${item.paths.join(", ") || "none"})`)
   ];
   if (explain) {
-    lines.push("", "Recommendations:", "- Keep root agent docs short and reference richer docs.", "- Use `soturail context prune` for task handoff.", "- Use `soturail context offload` for long logs and generated artifacts.");
+    lines.push(
+      "",
+      "Recommendations:",
+      "- Keep root agent docs short and reference richer docs.",
+      "- Use `soturail context pack --role <role>` for scoped planner/executor/reviewer/release-manager/researcher handoffs.",
+      "- Use `soturail context prune` for task handoff.",
+      "- Use `soturail context offload` for long logs and generated artifacts.",
+      "- Keep run workspace evidence local unless a specific artifact is selected."
+    );
   }
   return `${lines.join("\n")}\n`;
 }
