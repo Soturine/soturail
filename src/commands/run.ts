@@ -11,6 +11,7 @@ import { validateCommand } from "../core/safety-policy.js";
 import { estimateTokens } from "../core/token-estimator.js";
 import { detectNativeEngine, runWithNative, type ReducerEngine } from "../core/native-engine.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
+import { cleanRunWorkspaces, createRunWorkspace, showRunWorkspace } from "../core/run-workspace.js";
 
 export interface RunCliOptions {
   interactive?: boolean;
@@ -289,7 +290,7 @@ async function closeLogStream(stream: Writable): Promise<void> {
 }
 
 export function registerRunCommand(program: Command): void {
-  program
+  const run = program
     .command("run")
     .description("Run a command through the safe tee-stream runner.")
     .allowUnknownOption(true)
@@ -299,8 +300,21 @@ export function registerRunCommand(program: Command): void {
     .option("--engine <engine>", "Reducer engine: auto, ts, or native", "auto")
     .option("--similar-dedupe <mode>", "Experimental similar-output dedupe mode: off or conservative", "off")
     .option("--unsafe-confirm <phrase>", "Exact phrase required to bypass dangerous-command blocking")
-    .argument("[command...]", "Command and arguments to execute")
-    .action(async (commandParts: string[] = [], options: RunCliOptions) => {
+    .argument("[command...]", "Command and arguments to execute");
+
+  const workspace = run.command("workspace").description("Manage per-run local workspace evidence.");
+  workspace.command("new").description("Create a per-run local workspace.").argument("<title>", "Task title").option("--workflow <id>", "Workflow id").option("--target-agent <agent>", "Target agent", "generic").option("--role <role>", "Role pack name", "executor").action(async (title: string, options: { workflow?: string; targetAgent: string; role: string }) => {
+    const result = await createRunWorkspace(title, options);
+    process.stdout.write(`Run workspace created: ${result.record.runId}\npath: ${result.path}\n`);
+  });
+  workspace.command("show").description("Show a run workspace.").argument("<run-id>", "Run id").action(async (runId: string) => {
+    process.stdout.write(await showRunWorkspace(runId));
+  });
+  workspace.command("clean").description("Preview run workspace cleanup by TTL.").option("--ttl <duration>", "TTL such as 7d", "7d").option("--dry-run", "Preview only", true).action(async (options: { ttl: string; dryRun?: boolean }) => {
+    process.stdout.write(await cleanRunWorkspaces(options));
+  });
+
+  run.action(async (commandParts: string[] = [], options: RunCliOptions) => {
       const runOptions: RunExecutionOptions = {
         terminalStdout: process.stdout,
         terminalStderr: process.stderr

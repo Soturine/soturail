@@ -1,4 +1,6 @@
 import type { Command } from "commander";
+import path from "node:path";
+import { buildWorkflowEvidence } from "../core/evidence-pack.js";
 import {
   closeWorkflow,
   createWorkflow,
@@ -53,6 +55,11 @@ export function registerWorkflowCommand(program: Command): void {
 
   workflow.command("verify").description("Show or run explicit workflow verification.").argument("<id>", "Workflow id").action(async (id: string) => {
     process.stdout.write(await verifyWorkflow(id));
+  });
+
+  workflow.command("evidence").description("Write a local evidence pack for a workflow.").argument("<id>", "Workflow id").action(async (id: string) => {
+    const result = await buildWorkflowEvidence(id);
+    process.stdout.write(`Workflow evidence written: ${path.normalize(path.relative(process.cwd(), result.path))}\n`);
   });
 
   workflow.command("close").description("Close a workflow.").argument("<id>", "Workflow id").action(async (id: string) => {
