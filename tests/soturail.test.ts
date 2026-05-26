@@ -581,11 +581,18 @@ describe("agent integrations", () => {
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/cursor/cursor-rules.md"));
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/antigravity/prompt-only.md"));
     expect(cleanDoctor).toContain("SotuRail Agent Integration Doctor");
-    expect(cleanDoctor).toContain("context_packs: none yet");
-    expect(cleanDoctor).toContain("- soturail context pack --target all");
+    expect(cleanDoctor).toContain(`version: ${SOTURAIL_VERSION}`);
+    expect(cleanDoctor).toContain("workspace: ready");
+    expect(cleanDoctor).toContain("context_packs:");
+    for (const agent of ["claude", "codex", "gemini", "cursor", "antigravity", "generic"]) {
+      expect(cleanDoctor).toContain(agent);
+    }
+    expect(cleanDoctor).toContain("Next steps:");
     expect(cleanDoctor).toContain("- soturail agents export --agent all");
+    expect(cleanDoctor).toContain("- soturail mcp smoke");
     expect(doctor).toContain("context_packs: ready");
     expect(doctor).toContain("safe_default: true");
+    expect(doctor).toContain("exports:");
   });
 
   it("keeps install dry-runs local and creates backups before overwriting", async () => {
@@ -901,7 +908,7 @@ describe("release reliability", () => {
     expect(result.gates.find((gate) => gate.id === "cli_version")?.ok).toBe(false);
   });
 
-  it("has v0.4.1 release notes, changelog entry and lockfile version sync", async () => {
+  it("has current release metadata, changelog entry and lockfile version sync", async () => {
     const root = process.cwd();
     const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8")) as { version: string };
     const packageLock = JSON.parse(await fs.readFile(path.join(root, "package-lock.json"), "utf8")) as {
@@ -909,12 +916,13 @@ describe("release reliability", () => {
       packages: { "": { version: string } };
     };
     const changelog = await fs.readFile(path.join(root, "CHANGELOG.md"), "utf8");
+    const releaseNotes = `RELEASE_NOTES_v${packageJson.version}.md`;
 
-    expect(packageJson.version).toBe("0.4.1");
+    expect(packageJson.version).toBe(SOTURAIL_VERSION);
     expect(packageLock.version).toBe(packageJson.version);
     expect(packageLock.packages[""].version).toBe(packageJson.version);
-    await expect(fs.access(path.join(root, "RELEASE_NOTES_v0.4.1.md"))).resolves.toBeUndefined();
-    expect(changelog).toContain("## [0.4.1]");
+    await expect(fs.access(path.join(root, releaseNotes))).resolves.toBeUndefined();
+    expect(changelog).toContain(`## [${packageJson.version}]`);
   });
 
   it("requires release notes and changelog entries during preflight", async () => {
