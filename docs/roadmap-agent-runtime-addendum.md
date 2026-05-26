@@ -163,11 +163,25 @@ soturail harness note "agent said done before coverage passed"
 
 ```bash
 soturail agents capabilities
-soturail agents export --agent claude --with-skills --with-mcp --dry-run
-soturail agents export --agent codex --with-agents-md --dry-run
-soturail agents export --agent gemini --with-gemini-md --dry-run
+soturail agents capabilities --json
+soturail agents status
+soturail agents status --json
+soturail agents doctor --verbose
+soturail agents install --agent claude --dry-run
+soturail agents install --agent cursor --dry-run
+soturail agents install --agent gemini --dry-run
+soturail agents export --agent deepagents
+soturail agents export --agent deepagents-js
 soturail agents explain --agent all
 ```
+
+The v0.6.0 adapter is conservative:
+
+- host capability rows are explicit and machine-readable;
+- dry-run installs show file writes, backup behavior, context references and policy notes;
+- real project-local writes are backup-first;
+- Codex, Antigravity, OpenCode/Amp/Kiro-style hosts and Deep Agents-style targets keep prompt-only fallback semantics unless stable local config surfaces are confirmed;
+- Deep Agents-style exports are context/config artifacts only, not runtime integration.
 
 ### v0.7.x workflow/harness expansion
 

@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.5.1 is a polish milestone on top of the v0.5.0 MVP rails. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail and evidence seeds are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.6.0 is the Real Agent Runtime Integration milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence seeds and the host-aware Agent Runtime Adapter are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next quality direction is staged: v0.5.2 stabilizes CI and adds lightweight quality fixtures, while the heavier evaluation suite moves to v0.6.1 after v0.6.0 agent-runtime work. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next quality direction is staged: v0.6.1 adds agent UX polish and the heavier local evaluation suite. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -49,6 +49,23 @@ soturail format compare README.md
 ```
 
 These rails write local JSON, JSONL and Markdown under `.soturail/`. They do not create cloud resources, background agents, global config writes or arbitrary MCP shell execution.
+
+## v0.6.0 Agent Runtime Adapter
+
+```bash
+soturail agents capabilities
+soturail agents capabilities --json
+soturail agents status
+soturail agents status --json
+soturail agents doctor --verbose
+soturail agents install --agent claude --dry-run
+soturail agents install --agent cursor --dry-run
+soturail agents install --agent gemini --dry-run
+soturail agents export --agent deepagents
+soturail agents export --agent deepagents-js
+```
+
+The adapter is host-aware but conservative. It reports real, experimental, prompt-only and planned surfaces for Claude Code, Codex, Gemini CLI, Cursor, Antigravity, Generic, OpenCode/Amp/Kiro-style hosts and Deep Agents-style targets. Dry-run installs show planned file writes, backups, context references, payload recommendations and policy warnings before anything changes.
 
 ## Why SotuRail Exists
 
@@ -165,10 +182,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.5.1 is published, install that exact version with:
+When v0.6.0 is published, install that exact version with:
 
 ```bash
-npm install -g soturail@0.5.1
+npm install -g soturail@0.6.0
 ```
 
 For local development from source:

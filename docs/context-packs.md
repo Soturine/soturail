@@ -143,6 +143,23 @@ Suggested defaults:
 | MCP | JSON |
 | Generic | Markdown |
 
+v0.6.0 agent runtime adapter output also reports host-aware recommendations through:
+
+```bash
+soturail agents capabilities
+soturail agents explain --agent all
+soturail agents doctor --verbose
+```
+
+Examples:
+
+- Claude Code: Markdown + tagged blocks + MCP stdio snippets + short `CLAUDE.md` references.
+- Codex: `AGENTS.md` + Markdown context packs + prompt-only fallback.
+- Gemini CLI: `GEMINI.md` + Markdown + large-context docs.
+- Cursor: project rules + Markdown docs + file references.
+- Generic/OpenCode/Amp/Kiro-style hosts: Markdown + JSON reports + prompt-only fallback.
+- Deep Agents-style exports: role packs + workflow evidence + policy notes as context/config artifacts only.
+
 See [structured-payload-rail.md](structured-payload-rail.md).
 
 ## JSON Safety And Strict Validation

@@ -115,11 +115,11 @@ Output should explain:
 - what context pack should accompany it;
 - which policy checks apply.
 
-### 6. Deep Agents As A Future Export Target
+### 6. Deep Agents As An Experimental Export Target
 
-SotuRail should not depend on Deep Agents, but it can eventually export files that are useful for Deep Agents or deepagents-js projects.
+SotuRail does not depend on Deep Agents, but v0.6.0 can export files that may be useful for Deep Agents or deepagents-js projects.
 
-Future direction:
+Current command shape:
 
 ```bash
 soturail agents export --agent deepagents
@@ -130,13 +130,23 @@ Possible outputs:
 
 ```txt
 .soturail/exports/agents/deepagents/context-pack.md
-.soturail/exports/agents/deepagents/skills.md
-.soturail/exports/agents/deepagents/mcp-config.json
-.soturail/exports/agents/deepagents/policy.md
-.soturail/exports/agents/deepagents/role-packs/
+.soturail/exports/agents/deepagents/deepagents.md
+.soturail/exports/agents/deepagents/runtime-config.json
+.soturail/exports/agents/deepagents-js/context-pack.md
+.soturail/exports/agents/deepagents-js/deepagents-js.md
+.soturail/exports/agents/deepagents-js/runtime-config.json
 ```
 
-This should remain prompt/config/context export only unless a stable, safe integration surface is reviewed.
+This remains prompt/config/context export only unless a stable, safe integration surface is reviewed. SotuRail does not install `deepagents` packages, start an autonomous runtime or expose arbitrary shell execution through MCP.
+
+Recommended handoff contents:
+
+- product boundary: SotuRail prepares local context, it is not the runtime;
+- role pack references under `.soturail/context/role-packs/`;
+- context pack reference under `.soturail/context/`;
+- approved-memory-only guidance;
+- policy notes for raw logs, secrets, MCP exposure and publish/release actions;
+- workflow evidence pointers under `.soturail/workflows/` or `.soturail/runs/`.
 
 ## What SotuRail Should Not Do
 

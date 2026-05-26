@@ -168,7 +168,15 @@ Use Mermaid when state transitions, release flows or policy decisions would be l
 
 ## Target-Aware Context Packs
 
-Possible future command shapes:
+Context packs still use target-aware Markdown today. The v0.6.0 Agent Runtime Adapter also reports host-aware payload recommendations:
+
+```bash
+soturail agents capabilities
+soturail agents explain --agent all
+soturail agents doctor --verbose
+```
+
+Possible future context-format command shapes:
 
 ```bash
 soturail context pack --target claude --format tagged
@@ -189,6 +197,12 @@ Suggested defaults:
 | Antigravity | prompt-only Markdown/tagged fallback until stable format is known |
 | MCP | JSON |
 | Generic | Markdown |
+
+Additional host guidance:
+
+- OpenCode/Amp/Kiro-style hosts: Markdown + JSON reports + prompt-only fallback until stable local project surfaces are confirmed.
+- Deep Agents-style exports: role packs, workflow evidence and policy notes as context/config artifacts only.
+- Claude safe-hooks templates: Markdown docs plus reviewed JSON settings, never arbitrary shell exposure.
 
 ## Format Comparison Report
 

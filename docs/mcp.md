@@ -75,6 +75,16 @@ soturail mcp serve --transport stdio
 
 It does not assume a global application config path. Review it before adding it to an agent host.
 
+For v0.6.0 agent-runtime setup, prefer host-aware dry-runs before copying MCP snippets into a host:
+
+```bash
+soturail agents capabilities
+soturail agents doctor --verbose
+soturail agents install --agent claude --mode mcp --dry-run
+```
+
+SotuRail does not write global MCP host configuration by default. Generated MCP snippets should be reviewed, kept project-local until approved and paired with Policy Rail notes.
+
 `soturail mcp smoke` verifies `initialize`, `resources/list`, `resources/read` and `tools/list` without starting a long-running process, and confirms `soturail.run` is not exposed by default.
 
 `soturail init` scaffolds copyable MCP JSON-RPC examples under `examples/mcp/`.

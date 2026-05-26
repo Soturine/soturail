@@ -145,6 +145,29 @@ A future report should show:
 - which actions require approval;
 - host-specific caveats.
 
+## Host-Aware Agent Runtime Policy
+
+v0.6.0 agent runtime integration keeps config writes and host setup reviewable:
+
+```bash
+soturail agents capabilities
+soturail agents status
+soturail agents doctor --verbose
+soturail agents install --agent claude --dry-run
+soturail agents install --agent cursor --dry-run
+soturail agents install --agent gemini --dry-run
+```
+
+Agent installs and exports should surface these policy notes:
+
+- no arbitrary shell execution through SotuRail MCP;
+- raw log expansion requires explicit review and redacts probable secrets by default;
+- global config writes are not done by default;
+- project-local config writes are dry-run/backup-first;
+- hooks are templates that require review before enabling;
+- publish, release and destructive actions require human approval;
+- generated files should be reviewed before enabling in an agent host.
+
 ## Relationship With Existing Security Model
 
 Current SotuRail behavior already blocks dangerous patterns and avoids arbitrary shell execution through MCP by default. Policy Rail turns that into explicit, inspectable project policy.

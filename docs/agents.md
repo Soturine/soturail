@@ -1,11 +1,21 @@
 # Agent Integrations
 
-SotuRail provides reviewed, project-local agent integration exports for Claude, Codex, Gemini, Cursor, Antigravity and generic agents.
+SotuRail provides reviewed, project-local agent integration exports for Claude, Codex, Gemini, Cursor, Antigravity, Generic, OpenCode/Amp/Kiro-style hosts and experimental Deep Agents-style targets.
 
 ```bash
 soturail agents list
+soturail agents capabilities
+soturail agents capabilities --json
+soturail agents status
+soturail agents status --json
 soturail agents doctor
+soturail agents doctor --verbose
 soturail agents export --agent all
+soturail agents export --agent deepagents
+soturail agents export --agent deepagents-js
+soturail agents install --agent claude --dry-run
+soturail agents install --agent cursor --dry-run
+soturail agents install --agent gemini --dry-run
 soturail agents install --agent claude --mode mcp --dry-run
 soturail agents install --agent claude --mode safe-hooks --dry-run
 soturail agents install --agent codex --mode prompt-only --dry-run
@@ -22,8 +32,43 @@ Exports are written under `.soturail/exports/agents/<agent>/`. They are meant to
 - Unknown global app config locations are not modified.
 - Antigravity support is prompt-only/context-pack unless a stable local config format is reviewed.
 - SotuRail does not enable arbitrary shell execution through MCP.
-- Future Deep Agents/deepagents-js support should start as export-only context/config artifacts, not runtime coupling.
+- Deep Agents/deepagents-js support starts as export-only context/config artifacts, not runtime coupling.
 - Claude Code Harness-style compatibility should be optional and workflow/evidence-oriented, not a hard dependency.
+- Generated files should be reviewed before enabling in an agent host.
+
+## Runtime Adapter Commands
+
+`soturail agents capabilities` prints the host capability matrix. Use `--json` for a stable machine-readable shape.
+
+`soturail agents status` inspects local files such as `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursor/rules/`, `.claude/settings.json`, `.soturail/exports/agents/`, role packs, skills, MCP exports, policy queues and run workspaces.
+
+`soturail agents doctor --verbose` combines readiness checks with host capability, payload, policy and dry-run install guidance.
+
+## Dry-Run Install Workflow
+
+Dry-run first:
+
+```bash
+soturail agents install --agent claude --dry-run
+soturail agents install --agent cursor --dry-run
+soturail agents install --agent gemini --dry-run
+```
+
+Review:
+
+- which files would be written;
+- whether backups would be created;
+- which context packs, role packs and policy folders are referenced;
+- host-specific payload recommendations;
+- policy warnings for raw logs, secrets, hooks, MCP and release/publish actions.
+
+Then apply only after review:
+
+```bash
+soturail agents install --agent claude --backup --yes
+```
+
+Real installs remain project-local and backup-first.
 
 ## Doctor Guidance
 
@@ -46,10 +91,12 @@ If context packs or exports already exist, the doctor omits those setup steps an
 - Cursor: `cursor-rules.md`, `context-pack.md`, `prompt-only.md`.
 - Antigravity: `context-pack.md`, `prompt-only.md`.
 - Generic: `context-pack.md`, `prompt-only.md`.
+- OpenCode/Amp/Kiro-style hosts: `context-pack.md`, `prompt-only.md`.
+- Deep Agents/deepagents-js: `<agent>.md`, `runtime-config.json`, `context-pack.md`.
 
-## Future Host Capability Matrix
+## Host Capability Matrix
 
-SotuRail should eventually encode host capabilities instead of assuming every agent supports the same controls.
+SotuRail encodes host capabilities instead of assuming every agent supports the same controls.
 
 | Host family | Context format | Install mode | MCP posture | Hook/config posture | Policy caveats |
 | --- | --- | --- | --- | --- | --- |
@@ -63,9 +110,9 @@ SotuRail should eventually encode host capabilities instead of assuming every ag
 | OpenCode/Amp/Kiro-style hosts | Markdown/context packs/specs | prompt/context export first | optional read-only if supported | deeper integrations only after official surfaces are clear | host docs must remain conservative |
 | Generic agents | Markdown/context packs | file export | MCP read-only resources | none | safest fallback for unknown hosts |
 
-## Future Host-Aware Payload Formats
+## Host-Aware Payload Formats
 
-Agent exports should eventually declare the recommended format for each host:
+Agent exports declare the recommended format for each host:
 
 ```txt
 Claude -> tagged context + Markdown summary
@@ -79,19 +126,17 @@ Generic -> Markdown
 
 See [structured-payload-rail.md](structured-payload-rail.md).
 
-## Future Agent Docs Hygiene
+## Agent Docs Hygiene
 
 Root agent files should stay short and useful. Long details should live in referenced docs, context packs or workflow artifacts.
 
-Planned commands:
+Useful commands:
 
 ```bash
 soturail agents lint
-soturail agents split-context
-soturail agents explain
+soturail agents split-context --dry-run
+soturail agents explain --agent all
 soturail agents capabilities
-soturail agents docs doctor
-soturail agents docs suggest
 ```
 
 Expected checks:
