@@ -6,6 +6,7 @@ import { Command } from "commander";
 import { registerBenchCommand } from "./commands/bench.js";
 import { registerAgentsCommand } from "./commands/agents.js";
 import { registerDedupeCommand } from "./commands/dedupe.js";
+import { registerDiagramCommand } from "./commands/diagram.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerEvalCommand } from "./commands/eval.js";
 import { registerExpandCommand } from "./commands/expand.js";
@@ -50,6 +51,7 @@ export function buildProgram(): Command {
   registerBenchCommand(program);
   registerContextCommand(program);
   registerDedupeCommand(program);
+  registerDiagramCommand(program);
   registerEvalCommand(program);
   registerExpandCommand(program);
   registerFsCommand(program);

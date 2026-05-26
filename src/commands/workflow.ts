@@ -2,18 +2,24 @@ import type { Command } from "commander";
 import path from "node:path";
 import { buildWorkflowEvidence } from "../core/evidence-pack.js";
 import {
+  createWorkflowPlan,
   closeWorkflow,
   createWorkflow,
   cleanupClosedWorkflows,
+  currentWorkflowId,
   listWorkflows,
   planWorkflow,
   readWorkflow,
   renderWorkflow,
   renderWorkflowList,
+  reviewWorkflow,
+  setupWorkflowRail,
   startWorkflow,
   statusWorkflow,
-  verifyWorkflow
+  verifyWorkflow,
+  workflowWork
 } from "../core/workflow-store.js";
+import { diagramFromWorkflow } from "../core/diagram-rail.js";
 
 export function registerWorkflowCommand(program: Command): void {
   const workflow = program.command("workflow").description("Manage safe local Workflow Rail tasks.");
@@ -35,8 +41,27 @@ export function registerWorkflowCommand(program: Command): void {
     process.stdout.write(renderWorkflow(await readWorkflow(id)));
   });
 
-  workflow.command("plan").description("Mark a workflow planned and add planning sections.").argument("<id>", "Workflow id").action(async (id: string) => {
-    process.stdout.write(renderWorkflow(await planWorkflow(id)));
+  workflow.command("setup").description("Create or validate Workflow Rail 2.0 scaffold.").action(async () => {
+    process.stdout.write(await setupWorkflowRail());
+  });
+
+  workflow.command("plan").description("Create a Workflow Rail 2.0 plan, or mark an existing workflow id planned.").argument("<title-or-id>", "Task title or workflow id").action(async (value: string) => {
+    const existing = await readWorkflow(value).catch(() => null);
+    if (existing) {
+      process.stdout.write(renderWorkflow(await planWorkflow(value)));
+      return;
+    }
+    const result = await createWorkflowPlan(value);
+    process.stdout.write(result.output);
+  });
+
+  workflow.command("work").description("Append Workflow Rail work progress and link local evidence.").argument("[id]", "Workflow id; defaults to current workflow").option("--note <text>", "Progress note").action(async (id: string | undefined, options: { note?: string }) => {
+    process.stdout.write(await workflowWork(id, options.note));
+  });
+
+  workflow.command("review").description("Run deterministic workflow review perspectives.").argument("[id]", "Workflow id; defaults to current workflow").option("--all", "Run all review perspectives").option("--perspective <name>", "security, docs, tests, release, context, or agent-readiness").action(async (id: string | undefined, options: { all?: boolean; perspective?: string }) => {
+    const result = await reviewWorkflow(id, options);
+    process.stdout.write(result.output);
   });
 
   workflow
@@ -53,13 +78,20 @@ export function registerWorkflowCommand(program: Command): void {
     process.stdout.write(await statusWorkflow(id));
   });
 
-  workflow.command("verify").description("Show or run explicit workflow verification.").argument("<id>", "Workflow id").action(async (id: string) => {
-    process.stdout.write(await verifyWorkflow(id));
+  workflow.command("verify").description("Aggregate safe workflow verification evidence.").argument("[id]", "Workflow id; defaults to current workflow").action(async (id: string | undefined) => {
+    const workflowId = id ?? await currentWorkflowId();
+    if (!workflowId) throw new Error("No current workflow found. Run: soturail workflow plan \"Task title\"");
+    process.stdout.write(await verifyWorkflow(workflowId));
   });
 
   workflow.command("evidence").description("Write a local evidence pack for a workflow.").argument("<id>", "Workflow id").action(async (id: string) => {
     const result = await buildWorkflowEvidence(id);
     process.stdout.write(`Workflow evidence written: ${path.normalize(path.relative(process.cwd(), result.path))}\n`);
+  });
+
+  workflow.command("diagram").description("Generate a workflow state diagram and visual contract.").argument("<id>", "Workflow id").action(async (id: string) => {
+    const result = await diagramFromWorkflow(id);
+    process.stdout.write(result.output);
   });
 
   workflow.command("close").description("Close a workflow.").argument("<id>", "Workflow id").action(async (id: string) => {

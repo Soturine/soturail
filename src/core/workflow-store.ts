@@ -1,7 +1,10 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "./config.js";
+import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import { planWorktree } from "./worktree-manager.js";
+import type { HarnessFailureRecord } from "./harness-rail.js";
+import type { PolicyDecision, PolicyQueueItem } from "./policy-rail.js";
+import type { RawRunRecord } from "./raw-store.js";
 
 export type WorkflowState = "draft" | "planned" | "active" | "verifying" | "ready_for_review" | "closed" | "blocked";
 
@@ -24,7 +27,81 @@ export interface WorkflowCleanupResult {
   lines: string[];
 }
 
+export interface WorkflowPlanRecord {
+  schemaVersion: "soturail.workflow.plan.v2";
+  id: string;
+  title: string;
+  status: WorkflowState;
+  phase: "plan";
+  createdAt: string;
+  tasks: string[];
+  acceptanceGates: string[];
+  rolePacks: string[];
+  contextRoutes: string[];
+  linkedRunWorkspace: string | null;
+  evidencePath: string;
+}
+
+export interface WorkflowReviewReport {
+  schemaVersion: "soturail.workflow.review.v1";
+  id: string;
+  workflowId: string;
+  createdAt: string;
+  perspectives: Array<{ name: WorkflowReviewPerspective; result: "pass" | "warn"; notes: string[] }>;
+}
+
+export type WorkflowReviewPerspective = "security" | "docs" | "tests" | "release" | "context" | "agent-readiness";
+
+export interface WorkflowVerifyReport {
+  schemaVersion: "soturail.workflow.verify.v1";
+  id: string;
+  workflowId: string;
+  createdAt: string;
+  summary: {
+    harnessContract: string;
+    policy: string;
+    evidence: string;
+    diagram: string;
+    evalReport: string;
+    releasePreflight: string;
+  };
+  paths: {
+    json: string;
+    markdown: string;
+    review: string;
+    harnessContract: string;
+    policyQueue: string;
+    policyDecisions: string;
+    diagramValidation: string;
+    evalReport: string;
+    releaseNotes: string;
+  };
+}
+
 const states: WorkflowState[] = ["draft", "planned", "active", "verifying", "ready_for_review", "closed", "blocked"];
+const reviewPerspectives: WorkflowReviewPerspective[] = ["security", "docs", "tests", "release", "context", "agent-readiness"];
+
+export async function setupWorkflowRail(root = process.cwd()): Promise<string> {
+  await ensureWorkspace(root);
+  const paths = getWorkspacePaths(root);
+  await fs.mkdir(paths.workflowTemplatesDir, { recursive: true });
+  await writeFileIfMissing(path.join(paths.workflowTemplatesDir, "feature.md"), workflowTemplate("feature"));
+  await writeFileIfMissing(path.join(paths.workflowTemplatesDir, "release.md"), workflowTemplate("release"));
+  if (!(await exists(paths.workflowIndexFile))) await writeJson(paths.workflowIndexFile, { schemaVersion: "soturail.workflow.index.v2", workflows: [] });
+  if (!(await exists(paths.workflowCurrentFile))) await writeJson(paths.workflowCurrentFile, { schemaVersion: "soturail.workflow.current.v1", id: null });
+  return [
+    "SotuRail workflow setup",
+    `workflows_dir: ${relativeToRoot(root, paths.workflowsDir)}`,
+    `templates_dir: ${relativeToRoot(root, paths.workflowTemplatesDir)}`,
+    `index: ${relativeToRoot(root, paths.workflowIndexFile)}`,
+    `current: ${relativeToRoot(root, paths.workflowCurrentFile)}`,
+    "next_commands:",
+    "- soturail workflow plan \"Task title\"",
+    "- soturail workflow work",
+    "- soturail workflow review --all",
+    "- soturail workflow verify"
+  ].join("\n") + "\n";
+}
 
 export async function createWorkflow(title: string, root = process.cwd(), now = new Date().toISOString()): Promise<WorkflowRecord> {
   await ensureWorkspace(root);
@@ -37,15 +114,18 @@ export async function createWorkflow(title: string, root = process.cwd(), now = 
   await fs.writeFile(path.join(dir, "plan.md"), `# Plan: ${title}\n\nAdd reviewed plan steps here.\n`, "utf8");
   await fs.writeFile(path.join(dir, "tasks.md"), `# Tasks: ${title}\n\n- [ ] Define the change.\n- [ ] Run explicit verification.\n`, "utf8");
   await fs.writeFile(path.join(dir, "verification.md"), `# Verification: ${title}\n\nConfigured checks: none yet.\n\nChecklist:\n- [ ] npm run build\n- [ ] npm test\n- [ ] npm audit --omit=dev\n`, "utf8");
+  await setCurrentWorkflow(id, root);
+  await refreshWorkflowIndex(root);
   return record;
 }
 
 export async function listWorkflows(root = process.cwd()): Promise<WorkflowRecord[]> {
   const paths = getWorkspacePaths(root);
-  const entries = await fs.readdir(paths.workflowsDir).catch(() => []);
+  const entries = await fs.readdir(paths.workflowsDir, { withFileTypes: true }).catch(() => []);
   const records: WorkflowRecord[] = [];
   for (const entry of entries) {
-    const record = await readWorkflow(entry, root).catch(() => null);
+    if (!entry.isDirectory() || entry.name === "templates") continue;
+    const record = await readWorkflow(entry.name, root).catch(() => null);
     if (record) records.push(record);
   }
   return records.sort((left, right) => right.created_at.localeCompare(left.created_at));
@@ -66,7 +146,126 @@ export async function planWorkflow(id: string, root = process.cwd()): Promise<Wo
   const record = await updateWorkflow(id, root, { state: "planned" });
   const planPath = path.join(getWorkspacePaths(root).workflowsDir, id, "plan.md");
   await appendIfMissing(planPath, "\n## Reviewed Scope\n\n- Problem statement\n- Safety notes\n- Verification plan\n");
+  await writeWorkflowPlanRecord(record, root);
+  await setCurrentWorkflow(id, root);
   return record;
+}
+
+export async function createWorkflowPlan(title: string, root = process.cwd()): Promise<{ record: WorkflowRecord; plan: WorkflowPlanRecord; output: string }> {
+  await setupWorkflowRail(root);
+  const created = await createWorkflow(title, root);
+  const record = await planWorkflow(created.id, root);
+  const plan = await writeWorkflowPlanRecord(record, root);
+  return {
+    record,
+    plan,
+    output: [
+      "SotuRail workflow plan",
+      `id: ${record.id}`,
+      `title: ${record.title}`,
+      `status: ${record.state}`,
+      `phase: ${plan.phase}`,
+      `plan: ${relativeToRoot(root, path.join(getWorkspacePaths(root).workflowsDir, record.id, "plan.json"))}`,
+      `evidence_path: ${plan.evidencePath}`,
+      "next_commands:",
+      `- soturail workflow work ${record.id}`,
+      `- soturail workflow review ${record.id} --all`,
+      `- soturail workflow verify ${record.id}`
+    ].join("\n") + "\n"
+  };
+}
+
+export async function currentWorkflowId(root = process.cwd()): Promise<string | null> {
+  const paths = getWorkspacePaths(root);
+  const raw = await fs.readFile(paths.workflowCurrentFile, "utf8").catch(() => "");
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as { id?: string | null };
+      if (parsed.id) return parsed.id;
+    } catch {
+      // Fall back to newest workflow below.
+    }
+  }
+  return (await listWorkflows(root))[0]?.id ?? null;
+}
+
+export async function workflowWork(id: string | undefined, note = "Progress recorded.", root = process.cwd()): Promise<string> {
+  const workflowId = id ?? await requiredCurrentWorkflow(root);
+  const record = await updateWorkflow(workflowId, root, { state: "active" });
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workflowsDir, workflowId);
+  const workPath = path.join(dir, "work.md");
+  const changedFiles = await gitChangedFiles(root);
+  const rawRecords = await readJsonl<RawRunRecord>(paths.rawIndex);
+  const failures = await readJsonl<HarnessFailureRecord>(paths.harnessFailuresFile);
+  await appendIfMissing(workPath, `# Work: ${record.title}\n`);
+  await fs.appendFile(workPath, [
+    "",
+    `## ${new Date().toISOString()}`,
+    "",
+    note,
+    "",
+    `- changed_files: ${changedFiles.length}`,
+    `- raw_ids: ${rawRecords.length}`,
+    `- harness_failures: ${failures.filter((failure) => failure.workflowId === workflowId || !failure.workflowId).length}`,
+    ""
+  ].join("\n"), "utf8");
+  await setCurrentWorkflow(workflowId, root);
+  return [
+    "SotuRail workflow work",
+    `id: ${workflowId}`,
+    `phase: work`,
+    `state: ${record.state}`,
+    `work_path: ${relativeToRoot(root, workPath)}`,
+    `progress_appended: ${note}`,
+    `changed_files: ${changedFiles.length}`,
+    `raw_ids: ${rawRecords.length}`,
+    `harness_failures: ${failures.length}`
+  ].join("\n") + "\n";
+}
+
+export async function reviewWorkflow(
+  id: string | undefined,
+  options: { all?: boolean; perspective?: string } = {},
+  root = process.cwd()
+): Promise<{ report: WorkflowReviewReport; markdownPath: string; jsonPath: string; output: string }> {
+  const workflowId = id ?? await requiredCurrentWorkflow(root);
+  const record = await updateWorkflow(workflowId, root, { state: "ready_for_review" });
+  const selected = options.all || !options.perspective
+    ? reviewPerspectives
+    : parsePerspective(options.perspective);
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workflowsDir, workflowId);
+  const changedFiles = await gitChangedFiles(root);
+  const failures = await readJsonl<HarnessFailureRecord>(paths.harnessFailuresFile);
+  const report: WorkflowReviewReport = {
+    schemaVersion: "soturail.workflow.review.v1",
+    id: `${workflowId}-review`,
+    workflowId,
+    createdAt: new Date().toISOString(),
+    perspectives: selected.map((name) => ({
+      name,
+      result: reviewResultFor(name, changedFiles, failures),
+      notes: reviewNotesFor(name, record, changedFiles, failures)
+    }))
+  };
+  const jsonPath = path.join(dir, "review.json");
+  const markdownPath = path.join(dir, "review.md");
+  await writeJson(jsonPath, report);
+  await fs.writeFile(markdownPath, renderReviewMarkdown(report, record), "utf8");
+  await setCurrentWorkflow(workflowId, root);
+  return {
+    report,
+    markdownPath,
+    jsonPath,
+    output: [
+      "SotuRail workflow review",
+      `id: ${workflowId}`,
+      `perspectives: ${selected.join(", ")}`,
+      `review_json: ${relativeToRoot(root, jsonPath)}`,
+      `review_md: ${relativeToRoot(root, markdownPath)}`
+    ].join("\n") + "\n"
+  };
 }
 
 export async function startWorkflow(id: string, options: WorkflowStartOptions = {}, root = process.cwd()): Promise<string> {
@@ -100,12 +299,25 @@ export async function statusWorkflow(id: string, root = process.cwd()): Promise<
 
 export async function verifyWorkflow(id: string, root = process.cwd()): Promise<string> {
   await updateWorkflow(id, root, { state: "verifying" });
-  const verificationPath = path.join(getWorkspacePaths(root).workflowsDir, id, "verification.md");
+  const paths = getWorkspacePaths(root);
+  const verificationPath = path.join(paths.workflowsDir, id, "verification.md");
   const verification = await fs.readFile(verificationPath, "utf8").catch(() => "");
   const configured = verification.match(/^Configured checks:\s*(.+)$/m)?.[1]?.trim();
+  const report = await writeVerificationReport(id, root);
+  const baseLines = [
+    `SotuRail workflow verify ${id}`,
+    `verify_json: ${relativeToRoot(root, report.paths.json)}`,
+    `verify_md: ${relativeToRoot(root, report.paths.markdown)}`,
+    `harness_contract: ${report.summary.harnessContract}`,
+    `policy_status: ${report.summary.policy}`,
+    `evidence_completeness: ${report.summary.evidence}`,
+    `diagram_validation: ${report.summary.diagram}`,
+    `eval_report: ${report.summary.evalReport}`,
+    `release_preflight: ${report.summary.releasePreflight}`
+  ];
   if (!configured || configured === "none yet.") {
     return [
-      `SotuRail workflow verify ${id}`,
+      ...baseLines,
       "configured_checks: none",
       "No commands were run.",
       "Checklist:",
@@ -115,7 +327,7 @@ export async function verifyWorkflow(id: string, root = process.cwd()): Promise<
     ].join("\n") + "\n";
   }
   return [
-    `SotuRail workflow verify ${id}`,
+    ...baseLines,
     `configured_checks: ${configured}`,
     "SotuRail only runs explicitly configured safe checks through reviewed workflow docs."
   ].join("\n") + "\n";
@@ -189,6 +401,7 @@ async function updateWorkflow(id: string, root: string, patch: Partial<WorkflowR
   const record = await readWorkflow(id, root);
   const next: WorkflowRecord = { ...record, ...patch, updated_at: new Date().toISOString() };
   await writeWorkflowRecord(dir, next);
+  await refreshWorkflowIndex(root);
   return next;
 }
 
@@ -236,6 +449,212 @@ async function appendIfMissing(filePath: string, content: string): Promise<void>
   if (!raw.includes(content.trim().split(/\r?\n/)[0] ?? "Reviewed Scope")) {
     await fs.appendFile(filePath, content, "utf8");
   }
+}
+
+async function writeWorkflowPlanRecord(record: WorkflowRecord, root: string): Promise<WorkflowPlanRecord> {
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workflowsDir, record.id);
+  const plan: WorkflowPlanRecord = {
+    schemaVersion: "soturail.workflow.plan.v2",
+    id: record.id,
+    title: record.title,
+    status: record.state,
+    phase: "plan",
+    createdAt: record.created_at,
+    tasks: ["Define the change", "Run explicit verification", "Record evidence"],
+    acceptanceGates: ["build", "typecheck", "test", "policy", "evidence"],
+    rolePacks: ["planner", "executor", "reviewer"],
+    contextRoutes: ["workflow", "code", "security"],
+    linkedRunWorkspace: await latestRunWorkspaceId(root),
+    evidencePath: relativeToRoot(root, path.join(paths.reportsDir, `evidence_${record.id}.md`))
+  };
+  await writeJson(path.join(dir, "plan.json"), plan);
+  return plan;
+}
+
+async function writeVerificationReport(id: string, root: string): Promise<WorkflowVerifyReport> {
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workflowsDir, id);
+  const queue = await readJsonl<PolicyQueueItem>(paths.policyQueueFile);
+  const decisions = await readJsonl<PolicyDecision>(paths.policyDecisionsFile);
+  const failures = await readJsonl<HarnessFailureRecord>(paths.harnessFailuresFile);
+  const rawRecords = await readJsonl<RawRunRecord>(paths.rawIndex);
+  const reviewPath = path.join(dir, "review.json");
+  const diagramValidationPath = path.join(paths.diagramsDir, "validation.json");
+  const evalPath = path.join(paths.workspace, "eval", "latest.json");
+  const harnessContractPath = path.join(paths.harnessContractsDir, "default.json");
+  const releaseNotesPath = await currentReleaseNotesPath(root);
+  const jsonPath = path.join(dir, "verify.json");
+  const markdownPath = path.join(dir, "verify.md");
+  const report: WorkflowVerifyReport = {
+    schemaVersion: "soturail.workflow.verify.v1",
+    id: `${id}-verify`,
+    workflowId: id,
+    createdAt: new Date().toISOString(),
+    summary: {
+      harnessContract: await exists(harnessContractPath) ? "present" : "missing",
+      policy: queue.length === 0 ? `clear (${decisions.length} decisions)` : `${queue.length} pending`,
+      evidence: rawRecords.length > 0 || failures.length > 0 || await exists(reviewPath) ? "partial" : "needs evidence",
+      diagram: await exists(diagramValidationPath) ? "validated" : "not validated",
+      evalReport: await exists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
+      releasePreflight: releaseNotesPath ? `release notes: ${releaseNotesPath}` : "not release-focused"
+    },
+    paths: {
+      json: jsonPath,
+      markdown: markdownPath,
+      review: relativeToRoot(root, reviewPath),
+      harnessContract: relativeToRoot(root, harnessContractPath),
+      policyQueue: relativeToRoot(root, paths.policyQueueFile),
+      policyDecisions: relativeToRoot(root, paths.policyDecisionsFile),
+      diagramValidation: relativeToRoot(root, diagramValidationPath),
+      evalReport: await exists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
+      releaseNotes: releaseNotesPath ?? "missing"
+    }
+  };
+  await writeJson(jsonPath, report);
+  await fs.writeFile(markdownPath, renderVerifyMarkdown(report), "utf8");
+  return report;
+}
+
+function renderReviewMarkdown(report: WorkflowReviewReport, record: WorkflowRecord): string {
+  return [
+    `# Workflow Review: ${record.title}`,
+    "",
+    `workflow_id: ${report.workflowId}`,
+    `createdAt: ${report.createdAt}`,
+    "",
+    ...report.perspectives.flatMap((perspective) => [
+      `## ${perspective.name}`,
+      "",
+      `result: ${perspective.result}`,
+      ...perspective.notes.map((note) => `- ${note}`),
+      ""
+    ])
+  ].join("\n");
+}
+
+function renderVerifyMarkdown(report: WorkflowVerifyReport): string {
+  return [
+    `# Workflow Verification: ${report.workflowId}`,
+    "",
+    `createdAt: ${report.createdAt}`,
+    "",
+    "## Summary",
+    "",
+    ...Object.entries(report.summary).map(([key, value]) => `- ${key}: ${value}`),
+    "",
+    "## Paths",
+    "",
+    ...Object.entries(report.paths).map(([key, value]) => `- ${key}: ${value}`),
+    ""
+  ].join("\n");
+}
+
+function parsePerspective(value: string): WorkflowReviewPerspective[] {
+  const normalized = value as WorkflowReviewPerspective;
+  if (!reviewPerspectives.includes(normalized)) throw new Error(`Unknown review perspective "${value}". Supported: ${reviewPerspectives.join(", ")}`);
+  return [normalized];
+}
+
+function reviewResultFor(name: WorkflowReviewPerspective, changedFiles: string[], failures: HarnessFailureRecord[]): "pass" | "warn" {
+  if (name === "tests" && changedFiles.length === 0) return "warn";
+  if (name === "agent-readiness" && failures.length > 0) return "warn";
+  return "pass";
+}
+
+function reviewNotesFor(name: WorkflowReviewPerspective, record: WorkflowRecord, changedFiles: string[], failures: HarnessFailureRecord[]): string[] {
+  const common = `Workflow ${record.id} is in state ${record.state}.`;
+  const map: Record<WorkflowReviewPerspective, string[]> = {
+    security: [common, "Check secrets, raw log exposure, policy queue and MCP exposure before handoff."],
+    docs: [common, "Confirm README/docs/release notes reflect changed behavior."],
+    tests: [common, changedFiles.length > 0 ? "Changed files detected; verify tests cover the change." : "No changed files detected; add evidence before claiming implementation."],
+    release: [common, "Release actions remain manual; npm publish and GitHub release require explicit human action."],
+    context: [common, "Use context route/select and role packs instead of dumping the whole repo."],
+    "agent-readiness": [common, failures.length > 0 ? "Harness failures exist; convert them into rules/docs/memory/workflow checks." : "No harness failures recorded for this workflow."]
+  };
+  return map[name];
+}
+
+async function setCurrentWorkflow(id: string, root: string): Promise<void> {
+  const paths = getWorkspacePaths(root);
+  await writeJson(paths.workflowCurrentFile, { schemaVersion: "soturail.workflow.current.v1", id });
+}
+
+async function refreshWorkflowIndex(root: string): Promise<void> {
+  const paths = getWorkspacePaths(root);
+  const workflows = await listWorkflows(root).catch(() => []);
+  await writeJson(paths.workflowIndexFile, { schemaVersion: "soturail.workflow.index.v2", workflows });
+}
+
+async function requiredCurrentWorkflow(root: string): Promise<string> {
+  const id = await currentWorkflowId(root);
+  if (!id) throw new Error("No current workflow found. Run: soturail workflow plan \"Task title\"");
+  return id;
+}
+
+async function latestRunWorkspaceId(root: string): Promise<string | null> {
+  const dir = getWorkspacePaths(root).runsDir;
+  const entries = await fs.readdir(dir).catch(() => []);
+  return entries.sort().at(-1) ?? null;
+}
+
+async function currentReleaseNotesPath(root: string): Promise<string | null> {
+  const packagePath = path.join(root, "package.json");
+  const raw = await fs.readFile(packagePath, "utf8").catch(() => "");
+  if (!raw) return null;
+  try {
+    const version = (JSON.parse(raw) as { version?: string }).version;
+    if (!version) return null;
+    const notes = path.join(root, "docs", "releases", `RELEASE_NOTES_v${version}.md`);
+    return await exists(notes) ? relativeToRoot(root, notes) : null;
+  } catch {
+    return null;
+  }
+}
+
+async function gitChangedFiles(root: string): Promise<string[]> {
+  const git = await import("node:child_process");
+  const util = await import("node:util");
+  const execFileAsync = util.promisify(git.execFile);
+  try {
+    const { stdout } = await execFileAsync("git", ["diff", "--name-only", "--", "."], { cwd: root, timeout: 3000, windowsHide: true });
+    return stdout.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+async function writeFileIfMissing(filePath: string, content: string): Promise<void> {
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  if (!(await exists(filePath))) await fs.writeFile(filePath, content, "utf8");
+}
+
+function workflowTemplate(kind: "feature" | "release"): string {
+  return [
+    `# ${kind === "feature" ? "Feature" : "Release"} Workflow Template`,
+    "",
+    "## Phases",
+    "",
+    "- setup",
+    "- plan",
+    "- work",
+    "- review",
+    "- verify",
+    "- evidence",
+    "",
+    "## Acceptance Gates",
+    "",
+    "- build",
+    "- typecheck",
+    "- test",
+    "- policy",
+    "- evidence",
+    ""
+  ].join("\n");
+}
+
+async function exists(filePath: string): Promise<boolean> {
+  return fs.access(filePath).then(() => true).catch(() => false);
 }
 
 function slug(value: string): string {

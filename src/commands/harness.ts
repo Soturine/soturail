@@ -19,7 +19,7 @@ export function registerHarnessCommand(program: Command): void {
     .argument("<text>", "Failure note")
     .option("--workflow <id>", "Workflow id")
     .option("--cause <text>", "Suspected root cause")
-    .option("--prevention <candidate>", "rule, doc, hook, memory, or workflow check")
+    .option("--prevention <candidate>", "rule, doc, hook, memory, workflow check, or diagram/spec update")
     .option("--evidence <path-or-raw-id>", "Evidence path or raw id")
     .action(async (text: string, options: { workflow?: string; cause?: string; prevention?: string; evidence?: string }) => {
       const record = await noteHarnessFailure(text, options);

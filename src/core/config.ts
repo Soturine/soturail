@@ -113,7 +113,12 @@ export interface WorkspacePaths {
   runsDir: string;
   reportsDir: string;
   workflowsDir: string;
+  workflowTemplatesDir: string;
+  workflowCurrentFile: string;
+  workflowIndexFile: string;
   worktreesDir: string;
+  diagramsDir: string;
+  diagramsIndexFile: string;
 }
 
 export interface EnsureResult {
@@ -173,7 +178,12 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     runsDir: path.resolve(workspace, "runs"),
     reportsDir: path.resolve(workspace, "reports"),
     workflowsDir: path.resolve(workspace, "workflows"),
-    worktreesDir: path.resolve(workspace, "worktrees")
+    workflowTemplatesDir: path.resolve(workspace, "workflows", "templates"),
+    workflowCurrentFile: path.resolve(workspace, "workflows", "current.json"),
+    workflowIndexFile: path.resolve(workspace, "workflows", "index.json"),
+    worktreesDir: path.resolve(workspace, "worktrees"),
+    diagramsDir: path.resolve(workspace, "diagrams"),
+    diagramsIndexFile: path.resolve(workspace, "diagrams", "index.json")
   };
 }
 
@@ -254,7 +264,9 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.runsDir,
     paths.reportsDir,
     paths.workflowsDir,
-    paths.worktreesDir
+    paths.workflowTemplatesDir,
+    paths.worktreesDir,
+    paths.diagramsDir
   ];
 
   for (const dir of dirs) {

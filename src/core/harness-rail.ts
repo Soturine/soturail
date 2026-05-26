@@ -61,6 +61,11 @@ export async function explainHarnessFailure(id: string, root = process.cwd()): P
 
 export async function harnessDoctor(root = process.cwd()): Promise<string> {
   await ensureWorkspace(root);
+  const paths = getWorkspacePaths(root);
+  const failures = await listHarnessFailures(root);
+  const currentWorkflow = await readCurrentWorkflow(paths.workflowCurrentFile);
+  const contractPath = path.join(paths.harnessContractsDir, "default.json");
+  const verifyPath = currentWorkflow ? path.join(paths.workflowsDir, currentWorkflow, "verify.json") : "";
   const checks = [
     ["README", "README.md"],
     ["ROADMAP", "ROADMAP.md"],
@@ -74,8 +79,14 @@ export async function harnessDoctor(root = process.cwd()): Promise<string> {
   for (const [name, file] of checks) {
     lines.push(`${name}: ${(await exists(path.resolve(root, file))) ? "present" : "missing"}`);
   }
+  lines.push(`active_workflow: ${currentWorkflow ?? "none"}`);
+  lines.push(`contract_present: ${await exists(contractPath)}`);
+  lines.push(`failure_count: ${failures.length}`);
+  lines.push(`latest_verify_status: ${verifyPath && await exists(verifyPath) ? "present" : "missing"}`);
+  lines.push(`suggested_prevention_action: ${suggestPrevention(failures)}`);
   lines.push("acceptance_contract: soturail harness contract init");
   lines.push("safe_default: contract check validates by default; it does not run commands unless future explicit flags add that behavior.");
+  lines.push("workflow_connection: workflow verify/evidence reads harness contracts and failures.");
   return `${lines.join("\n")}\n`;
 }
 
@@ -130,9 +141,29 @@ function defaultContract(): HarnessContract {
       "Do not mark work as done if build fails.",
       "Do not mark work as done if tests fail.",
       "Do not mark work as done if policy checks fail.",
-      "Record evidence before release."
+      "Record evidence before release.",
+      "Convert repeated failures into a rule, doc, memory, workflow check or diagram/spec update."
     ]
   };
+}
+
+async function readCurrentWorkflow(filePath: string): Promise<string | null> {
+  const raw = await fs.readFile(filePath, "utf8").catch(() => "");
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as { id?: string | null };
+    return parsed.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function suggestPrevention(failures: HarnessFailureRecord[]): string {
+  if (failures.length === 0) return "record failures with soturail harness note";
+  const latest = failures.at(-1);
+  if (!latest) return "record failures with soturail harness note";
+  if (/diagram|visual|spec/i.test(latest.whatFailed)) return "diagram/spec update";
+  return latest.preventionCandidate;
 }
 
 async function exists(filePath: string): Promise<boolean> {
