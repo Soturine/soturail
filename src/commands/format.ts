@@ -5,6 +5,7 @@ import { ensureWorkspace, loadConfig } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { isResponseMode, type ResponseMode } from "../core/response-policy.js";
 import { reduceAgentResponse } from "../compressors/agent-response-reducer.js";
+import { compareFormats, renderFormatCompare } from "../core/format-compare.js";
 
 export interface FormatOptions {
   mode?: string;
@@ -43,12 +44,22 @@ export async function formatFile(file: string, options: FormatOptions = {}, root
 }
 
 export function registerFormatCommand(program: Command): void {
-  program
+  const format = program
     .command("format")
     .description("Compress verbose AI or documentation output into task-oriented modes.")
-    .argument("<input-file>", "Input text file")
-    .option("--mode <mode>", "normal, concise, ultra, review, commit, debug, or docs", "normal")
-    .action(async (file: string, options: FormatOptions) => {
-      process.stdout.write(await formatFile(file, options));
+    .argument("[input-file]", "Input text file")
+    .option("--mode <mode>", "normal, concise, ultra, review, commit, debug, or docs", "normal");
+
+  format
+    .command("compare")
+    .description("Compare local format size/safety hints for a file.")
+    .argument("<input-file>", "Input file")
+    .action(async (file: string) => {
+      process.stdout.write(renderFormatCompare(await compareFormats(file)));
     });
+
+  format.action(async (file: string | undefined, options: FormatOptions) => {
+    if (!file) throw new Error("Missing input file. Example: soturail format README.md --mode concise");
+    process.stdout.write(await formatFile(file, options));
+  });
 }
