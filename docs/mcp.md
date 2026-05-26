@@ -7,6 +7,8 @@ soturail mcp doctor
 soturail mcp manifest
 soturail mcp config --agent generic
 soturail mcp smoke
+soturail mcp exposure
+soturail mcp exposure --json
 soturail mcp serve --transport stdio
 ```
 
@@ -77,19 +79,11 @@ It does not assume a global application config path. Review it before adding it 
 
 `soturail init` scaffolds copyable MCP JSON-RPC examples under `examples/mcp/`.
 
-## Planned MCP Exposure Report
+## MCP Exposure Report
 
-Policy Rail should eventually make MCP exposure inspectable.
+Policy Rail now makes MCP exposure inspectable through a local report.
 
-Possible future commands:
-
-```bash
-soturail mcp exposure
-soturail mcp exposure --format json
-soturail policy doctor --mcp
-```
-
-The report should include:
+The report includes:
 
 - resources exposed;
 - tools exposed;
@@ -100,7 +94,7 @@ The report should include:
 - host-specific config files generated;
 - policy rules that apply to each exposed tool/resource.
 
-Example future report:
+Example report:
 
 ```txt
 SotuRail MCP exposure

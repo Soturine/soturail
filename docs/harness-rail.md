@@ -1,6 +1,6 @@
 # Harness Rail
 
-Harness Rail is a planned SotuRail area for making agent-assisted development more disciplined, auditable and repeatable.
+Harness Rail is the SotuRail area for making agent-assisted development more disciplined, auditable and repeatable.
 
 It is inspired by Claude Code harness patterns such as `setup -> plan -> work -> review -> release`, runtime guardrails, review perspectives and evidence packs. SotuRail should absorb those patterns without becoming a Claude-only plugin or a full autonomous agent runtime.
 
@@ -65,15 +65,28 @@ Suggested default perspectives:
 - **accessibility**: UI semantics, keyboard flow, contrast, screen-reader concerns where applicable;
 - **release**: build, tests, audit, package verification, release notes.
 
+## v0.5.0 Seed Commands
+
+```bash
+soturail harness note "agent said done before tests passed"
+soturail harness list
+soturail harness explain <id>
+soturail harness doctor
+soturail harness contract init
+soturail harness contract check
+soturail workflow evidence <id>
+```
+
+`harness contract check` validates the local contract in v0.5.0. It does not run build, typecheck or test commands by default.
+
 ## Evidence Pack
 
 Every serious workflow or release should be able to produce an evidence pack.
 
-Possible future commands:
+The v0.5.0 seed supports:
 
 ```bash
 soturail workflow evidence <id>
-soturail release evidence
 ```
 
 Evidence should include:

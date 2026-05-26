@@ -1,6 +1,6 @@
 # Memory Rail
 
-Memory Rail is the planned SotuRail area for storing, approving, recalling and consolidating local project memory for AI coding agents.
+Memory Rail is the SotuRail area for storing, recalling, capturing and consolidating local project memory for AI coding agents.
 
 It is inspired by agent-memory systems, but SotuRail should remain local-first, auditable and conservative.
 
@@ -23,42 +23,37 @@ Default principles:
 - stale/conflict detection;
 - human review for sensitive or long-term records.
 
-## Planned Commands
+## v0.5.0 Seed Commands
 
 ```bash
-soturail memory remember "Decision: keep MCP read-only by default"
-soturail memory recall --query "npm release policy"
-soturail memory capture --from raw_...
+soturail memory remember "Decision: keep MCP read-only by default" --tag architecture --source manual
+soturail memory recall "npm release policy" --limit 5
+soturail memory capture --from-file docs/release-workflow.md
 soturail memory consolidate
 soturail memory doctor
 soturail memory approve <id>
 soturail memory reject <id>
-soturail memory export --approved-only
 ```
 
 Existing `memory propose/list/approve` behavior can evolve into this richer flow without breaking current data files.
 
+The v0.5.0 seed writes explicit records to `.soturail/memory/records.jsonl` and consolidated records to `.soturail/memory/consolidated.jsonl`.
+
 ## Memory Record Shape
 
-A memory record should eventually include:
+A v0.5.0 memory record includes:
 
 ```txt
 id
-kind: decision | bug | release | architecture | preference | warning | workflow | research
-status: pending | approved | rejected | stale | conflict
-summary
-source_path
-source_line_range
-raw_id
-offload_id
-workflow_id
-created_at
-updated_at
+schemaVersion
+createdAt
+text
+source
 confidence
-importance
 tags
-privacy_flags
-content_hash
+privacy
+gitCommit
+optional file path/hash
 ```
 
 ## Recall Output

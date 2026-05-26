@@ -10,6 +10,7 @@ soturail workflow plan <id>
 soturail workflow start <id> --worktree --dry-run
 soturail workflow status <id>
 soturail workflow verify <id>
+soturail workflow evidence <id>
 soturail workflow close <id>
 soturail workflow cleanup --closed --dry-run
 ```
@@ -63,6 +64,12 @@ Future verification should also connect workflow evidence to:
 - filesystem snapshots and touched files;
 - memory recall records;
 - policy approvals or rejections.
+
+## Evidence
+
+`soturail workflow evidence <id>` writes a local Markdown evidence pack under `.soturail/reports/`.
+
+The v0.5.0 seed includes workflow paths, recent raw IDs, policy decisions, harness failures and filesystem evidence pointers where available. It does not claim that build, test or audit passed unless those results exist as local evidence.
 
 ## Cleanup
 

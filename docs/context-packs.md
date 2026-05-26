@@ -12,6 +12,17 @@ soturail context pack --target cursor
 soturail context pack --target antigravity
 soturail context pack --target generic
 soturail context pack --target all
+soturail context pack --role planner
+soturail context pack --role executor
+soturail context pack --role reviewer
+soturail context pack --role release-manager
+soturail context pack --role researcher
+soturail context select --query "fix Windows CI timeout"
+soturail context prune --query "prepare npm release" --budget 8000
+soturail context route --query "prepare release"
+soturail context budget --target claude --explain
+soturail context offload README.md
+soturail context restore <offload-id>
 soturail context explain
 soturail context doctor
 ```
@@ -47,16 +58,17 @@ Review a generated pack before pasting it into an agent. Dynamic footer data can
 
 `soturail init` scaffolds context-pack examples under `examples/context-packs/`, and v0.4 agent examples can be paired with `soturail context pack --target all` for a clean first setup.
 
-## Future Query-Aware Context Selection
+## Query-Aware Context Selection
 
-The v0.5 roadmap turns context packs into a stronger context intelligence layer.
+The v0.5.0 seed turns context packs into a stronger context intelligence layer.
 
-Planned commands:
+Implemented seed commands:
 
 ```bash
-soturail context select --query "fix Windows CI timeout" --budget 1600
-soturail context prune docs/release-workflow.md --query "npm publish"
+soturail context select --query "fix Windows CI timeout" --limit 10
+soturail context prune --query "npm publish" --budget 8000
 soturail context route --query "prepare release"
+soturail context budget --target claude --explain
 ```
 
 Expected output should explain:

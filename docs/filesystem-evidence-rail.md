@@ -1,6 +1,6 @@
 # Filesystem Evidence Rail
 
-Filesystem Evidence Rail is the planned SotuRail area for recording what changed locally during a workflow without becoming an editing agent.
+Filesystem Evidence Rail is the SotuRail area for recording what changed locally during a workflow without becoming an editing agent.
 
 The goal is to make file changes auditable for humans and agents.
 
@@ -20,16 +20,16 @@ Filesystem Evidence Rail should provide:
 
 It should not replace Git, code review or backups.
 
-## Planned Commands
+## v0.5.0 Seed Commands
 
 ```bash
 soturail fs snapshot
 soturail fs touched
 soturail fs diff
-soturail fs plan-edit
-soturail fs attach --workflow <id>
-soturail fs evidence <snapshot_id>
+soturail fs plan-edit "describe intended edit"
 ```
+
+Snapshots are written under `.soturail/fs/snapshots/`. `plan-edit` writes an intent note and does not modify project files.
 
 Possible workflow integration:
 

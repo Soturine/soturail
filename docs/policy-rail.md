@@ -1,6 +1,6 @@
 # Policy Rail
 
-Policy Rail is a planned SotuRail area for making risky agent-assisted actions explainable, reviewable and auditable.
+Policy Rail is the SotuRail area for making risky agent-assisted actions explainable, reviewable and auditable.
 
 It extends the current safety model without pretending SotuRail is a full sandbox. SotuRail remains a local policy and evidence layer.
 
@@ -18,20 +18,18 @@ Who approved the risky step?
 
 It should not replace OS permissions, containers, code review, CI or human judgment.
 
-## Planned Commands
-
-Possible future commands:
+## v0.5.0 Seed Commands
 
 ```bash
-soturail policy rules
 soturail policy doctor
 soturail policy validate
 soturail policy explain <id>
 soturail policy queue
 soturail policy approve <id>
 soturail policy reject <id>
-soturail policy auth-check
 ```
+
+The v0.5.0 seed stores queue records in `.soturail/policy/queue.jsonl` and decisions in `.soturail/policy/decisions.jsonl`.
 
 ## Example Rule Set
 

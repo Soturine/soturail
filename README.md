@@ -26,9 +26,27 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.4.1 is early but functional. TypeScript mode is stable for local usage. Native Rust mode is optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports and Workflow Rail are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.5.0 is an MVP rail release. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail and evidence seeds are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next major direction is v0.5.0+: Memory Rail, Context Intelligence, context routing, role packs, context offload, policy checks, harness failure capture, evidence packs, structured payload formats, Diagram Rail planning and native reliability where benchmarks justify it. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next polish direction is v0.5.1+: memory/context examples, agent-doc hygiene examples, structured payload docs, Diagram Rail planning and quality fixtures in v0.5.2. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+
+## v0.5.0 MVP Rails
+
+```bash
+soturail memory remember "Decision: keep MCP read-oriented by default" --tag architecture
+soturail memory recall "MCP safety" --limit 5
+soturail context select --query "prepare npm release"
+soturail context budget --target claude --explain
+soturail context pack --role reviewer
+soturail harness contract init
+soturail policy doctor
+soturail fs snapshot
+soturail mcp exposure
+soturail run workspace new "Try v0.5.0 rails"
+soturail native doctor
+```
+
+These rails write local JSON, JSONL and Markdown under `.soturail/`. They do not create cloud resources, background agents, global config writes or arbitrary MCP shell execution.
 
 ## Why SotuRail Exists
 
@@ -94,6 +112,11 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 - Agent exports for Claude, Codex, Gemini, Cursor, Antigravity and generic hosts.
 - MCP-compatible local stdio server and config helpers.
 - Workflow Rail for local task records and optional worktree planning.
+- Memory Rail with explicit local records, recall, capture and consolidation.
+- Context Intelligence with selection, pruning, budget reports, offload/restore and role packs.
+- Harness, Policy, Filesystem Evidence and Run Workspace seeds.
+- MCP exposure reports and skill routing seeds.
+- Agent docs hygiene checks for short root instruction files.
 - SDD specs, approved memory and cache block normalization.
 - Honest local metrics.
 

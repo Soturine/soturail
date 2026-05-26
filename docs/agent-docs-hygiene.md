@@ -1,6 +1,6 @@
 # Agent Docs Hygiene
 
-Agent Docs Hygiene is the planned SotuRail area for keeping root agent instruction files short, current and useful.
+Agent Docs Hygiene is the SotuRail area for keeping root agent instruction files short, current and useful.
 
 The main idea:
 
@@ -20,17 +20,15 @@ SotuRail should eventually inspect files such as:
 - `agent_docs/*`
 - `.soturail/context/*`
 
-## Planned Commands
-
-Possible future commands:
+## v0.5.0 Seed Commands
 
 ```bash
 soturail agents lint
-soturail agents docs doctor
-soturail agents docs split
-soturail agents docs suggest
-soturail agents explain-context
+soturail agents split-context --dry-run
+soturail agents explain --agent all
 ```
+
+The v0.5.0 seed only reports and suggests. It does not rewrite agent docs.
 
 ## What To Check
 
