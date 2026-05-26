@@ -8,6 +8,34 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.5.0] - 2026-05-26
+
+### Added
+
+- Added Memory Rail commands for remember, recall, capture, consolidate and doctor.
+- Added Context Intelligence commands for select, prune, route, budget, offload and restore.
+- Added role-based context packs for planner, executor, reviewer, release-manager and researcher.
+- Added Harness Failure Ledger and acceptance contract seed commands.
+- Added Policy Approval Queue and policy doctor/validate commands.
+- Added Filesystem Evidence Rail snapshot, touched, diff and plan-edit commands.
+- Added agent docs hygiene lint, split-context and explain commands.
+- Added Skill Boundary Rail suggest and route commands.
+- Added MCP exposure report with JSON output.
+- Added Run Workspace Rail seed commands under `soturail run workspace`.
+- Added Workflow Evidence Pack seed and native doctor fallback diagnostics.
+
+### Changed
+
+- Updated docs to reflect the v0.5.0 MVP rail seeds and the refreshed roadmap.
+- Context packs now support role-oriented packs in addition to agent-target packs.
+
+### Security
+
+- MCP still does not expose arbitrary shell execution by default.
+- Raw/offloaded context is redacted for probable secrets before reports.
+- Risky local actions are represented through policy queue records and explicit decisions.
+- Native acceleration remains optional; TypeScript fallback stays available.
+
 ## [0.4.1] - 2026-05-22
 
 ### Added
