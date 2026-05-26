@@ -8,6 +8,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.6.0] - 2026-05-26
+
+### Added
+
+- Added `soturail agents capabilities` and `soturail agents capabilities --json` for a host capability matrix.
+- Added `soturail agents status` and `soturail agents status --json` for local agent file, export, context, policy and run workspace inspection.
+- Added verbose agent doctor output with host capabilities, payload guidance, policy notes and dry-run install suggestions.
+- Added experimental `deepagents` and `deepagents-js` agent export targets as context/config artifacts only.
+- Added v0.6.0 runtime integration tests for capabilities, status, verbose doctor, dry-run installs, backups and Deep Agents-style exports.
+
+### Changed
+
+- Expanded agent profiles to include OpenCode-style, Amp-style, Kiro-style, Deep Agents-style and Deep Agents JS-style targets.
+- Improved agent install dry-runs so they show planned files, backup behavior, context references, payload recommendations, policy warnings and next apply commands.
+- Improved generated agent exports with host-aware payload recommendations and policy notes.
+- Updated agent runtime, MCP, context pack, policy and structured payload docs for v0.6.0 host-aware setup.
+
+### Security
+
+- Agent installs remain project-local, dry-run/backup-first and review-first.
+- SotuRail still does not expose arbitrary shell execution through MCP.
+- Deep Agents-style exports do not install dependencies, start autonomous runtimes or claim direct runtime integration.
+
 ## [0.5.2] - 2026-05-26
 
 ### Added
