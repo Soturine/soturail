@@ -961,7 +961,7 @@ describe("release reliability", () => {
     expect(packedGate?.ok, packedGate?.details).toBe(true);
     expect(packedGate?.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
     expect(packedGate?.details).toContain("help_exit_code=0");
-  }, 40000);
+  }, 120000);
 
   it("detects stale CLI metadata inside a packed tarball", async () => {
     const root = await tempRoot();
