@@ -3,6 +3,14 @@ import path from "node:path";
 import type { Command } from "commander";
 import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl } from "../core/config.js";
 import { getCurrentGitCommit, hashFile } from "../core/git.js";
+import {
+  captureMemoryFromFile,
+  consolidateMemory,
+  memoryRailDoctor,
+  recallMemory,
+  rememberMemory,
+  renderRecall
+} from "../core/memory-rail.js";
 
 export interface MemoryRecord {
   timestamp: string;
@@ -193,6 +201,47 @@ export async function searchMemory(term: string, root = process.cwd()): Promise<
 
 export function registerMemoryCommand(program: Command): void {
   const memory = program.command("memory").description("Manage local Git-linked memory records.");
+
+  memory
+    .command("remember")
+    .description("Remember an approved local fact or decision.")
+    .argument("<text>", "Decision or fact")
+    .option("--tag <tag>", "Repeatable memory tag", collectValues, [])
+    .option("--source <source>", "manual, agent, import, or local note", "manual")
+    .action(async (text: string, options: { tag: string[]; source: string }) => {
+      const record = await rememberMemory(text, { tags: options.tag, source: options.source });
+      process.stdout.write(`Memory remembered: ${record.id}\nsource: ${record.source}\ntags: ${record.tags.join(", ") || "none"}\nprivacy: ${record.privacy}\n`);
+    });
+
+  memory
+    .command("recall")
+    .description("Recall local memory using deterministic keyword scoring.")
+    .argument("<query>", "Recall query")
+    .option("--limit <count>", "Maximum matches", "5")
+    .action(async (query: string, options: { limit: string }) => {
+      process.stdout.write(renderRecall(await recallMemory(query, Number.parseInt(options.limit, 10) || 5)));
+    });
+
+  memory
+    .command("capture")
+    .description("Capture a small local text/markdown file into memory without inventing facts.")
+    .requiredOption("--from-file <file>", "Local file to summarize into memory")
+    .option("--tag <tag>", "Repeatable memory tag", collectValues, [])
+    .option("--source <source>", "memory source label", "import")
+    .action(async (options: { fromFile: string; tag: string[]; source: string }) => {
+      const record = await captureMemoryFromFile(options.fromFile, { tags: options.tag, source: options.source });
+      process.stdout.write(`Memory captured: ${record.id}\nfile: ${record.filePath ?? options.fromFile}\nprivacy: ${record.privacy}\n`);
+    });
+
+  memory.command("consolidate").description("Deduplicate local memory records into consolidated.jsonl.").action(async () => {
+    const result = await consolidateMemory();
+    process.stdout.write(`Memory consolidated\nbefore: ${result.before}\nafter: ${result.after}\npath: ${path.normalize(path.relative(process.cwd(), result.path))}\n`);
+  });
+
+  memory.command("doctor").description("Check local Memory Rail storage and export safety.").action(async () => {
+    process.stdout.write(await memoryRailDoctor());
+  });
+
   memory
     .command("add")
     .description("Append a local memory JSONL record.")
@@ -233,4 +282,9 @@ export function registerMemoryCommand(program: Command): void {
   memory.command("prune").description("Mark approved memory stale when linked file hashes changed.").option("--stale", "Prune stale entries").action(async () => {
     process.stdout.write(await pruneStaleMemory());
   });
+}
+
+function collectValues(value: string, previous: string[]): string[] {
+  previous.push(value);
+  return previous;
 }
