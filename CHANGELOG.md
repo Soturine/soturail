@@ -8,6 +8,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.5.2] - 2026-05-26
+
+### Added
+
+- Added lightweight v0.5.2 quality fixtures for JSON validation, format comparison, context routing, context budget, workflow evidence, run workspace output and agent docs hygiene.
+- Added release notes for the v0.5.2 stabilization milestone.
+
+### Changed
+
+- Updated release reliability tests so package, lockfile, CLI, changelog and release notes sync with the current package version instead of stale hardcoded versions.
+- Updated agent integration tests so `agents doctor` expectations validate stable behavior rather than old exact wording.
+- Realigned the roadmap so v0.5.2 is CI stabilization and lightweight quality fixtures, while the full evaluation suite moves to v0.6.1.
+
+### Security
+
+- v0.5.2 does not add publish, release, network, native-binary or heavy benchmark requirements.
+
 ## [0.5.1] - 2026-05-26
 
 ### Added
