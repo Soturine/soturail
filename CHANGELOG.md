@@ -8,6 +8,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.5.1] - 2026-05-26
+
+### Added
+
+- Added a light `soturail validate json <file> --strict` seed for JSON parse, duplicate-key, probable-secret and huge-array checks.
+- Added a light `soturail format compare <file>` seed for Markdown, JSON, tagged-block and compact-format handoff hints.
+- Added v0.5 migration notes for moving from v0.4.x to v0.5.x rails.
+- Added structured payload and Diagram Rail examples for v0.5.1 planning.
+
+### Changed
+
+- Improved Memory Rail recall output with score, reason, source, tags, confidence and privacy details.
+- Improved Memory Rail doctor output with storage, consolidated count, secret hints and approved-memory export guidance.
+- Improved Context Intelligence output with recovery pointers, clearer prune sections and richer budget drivers.
+- Improved Run Workspace show/clean output with summary, handoff, evidence and linked artifact status.
+- Expanded docs for role packs, agent docs hygiene, approved-memory export and clean-folder onboarding.
+
+### Security
+
+- JSON validation warns about probable secrets before agent handoff.
+- Format comparison and structured payload docs recommend redaction, offload and review for large or sensitive payloads.
+- No publish, release or arbitrary MCP shell execution behavior changed.
+
 ## [0.5.0] - 2026-05-26
 
 ### Added
