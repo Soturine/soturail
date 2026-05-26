@@ -8,6 +8,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.6.1] - 2026-05-26
+
+### Added
+
+- Added `soturail eval list`, `soturail eval run` and `soturail eval report` for deterministic local evaluation fixtures.
+- Added evaluation coverage for memory recall, context selection, reducers, context routing, role packs, agent-doc hygiene, offload/restore, payload format quality, strict JSON validation, evidence packs, harness scenarios and Diagram Rail validation.
+- Added host setup tutorials for Claude Code, Codex, Gemini CLI, Cursor, Antigravity prompt-only workflows, Deep Agents-style role packs, harness workflows, Diagram Rail specs and context formats.
+- Added backfilled release notes for v0.5.0 and v0.5.1 so historical GitHub releases can use matching notes files.
+
+### Changed
+
+- Improved `agents doctor`, `agents doctor --verbose`, `agents status`, `agents capabilities` and `agents explain` with clearer next steps, host setup examples, role/context pack guidance and policy reminders.
+- Expanded evaluation and benchmarking docs to distinguish token savings from quality preservation.
+- Improved workflow evidence packs with changed-file and harness-contract sections.
+- Tightened deterministic context routing for code, docs and research queries.
+
+### Security
+
+- Evaluation fixtures remain local-only and do not require network calls, paid APIs, GitHub access, real agent hosts or npm publishing.
+- Agent UX guidance continues to default to dry-run, backup-first, project-local installs and no arbitrary MCP shell execution.
+
 ## [0.6.0] - 2026-05-26
 
 ### Added

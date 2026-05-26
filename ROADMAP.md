@@ -329,6 +329,8 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 
 ## v0.6.1 - Agent UX Polish And Full Evaluation Suite
 
+Status: implemented in the v0.6.1 local release prep. The suite is local, deterministic and does not require network access, paid APIs or real agent hosts.
+
 - Better `agents doctor` messages.
 - Better copy/paste setup examples per host.
 - Tutorial: SotuRail with Claude Code.
