@@ -28,7 +28,7 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 v0.5.1 is a polish milestone on top of the v0.5.0 MVP rails. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail and evidence seeds are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next quality direction is v0.5.2: memory recall quality, context selection quality, role-pack quality, structured payload quality, evidence-pack completeness and diagram validation fixtures. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next quality direction is staged: v0.5.2 stabilizes CI and adds lightweight quality fixtures, while the heavier evaluation suite moves to v0.6.1 after v0.6.0 agent-runtime work. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -458,8 +458,9 @@ Near-term direction:
 ```txt
 v0.5.0  Memory Rail + Context Intelligence + Role Packs + Harness/Policy seeds + reliability
 v0.5.1  Memory/context polish + Structured Payload Rail + Agent Docs Hygiene + Diagram docs
-v0.5.2  Evaluation suite + context/role-pack/format/evidence/diagram quality benchmarks
+v0.5.2  CI stabilization + lightweight quality fixtures + roadmap realignment
 v0.6.0  Real agent runtime integration + host capability matrix + host-aware payload/policy docs
+v0.6.1  Agent UX polish + full evaluation suite
 v0.7.0  Workflow Rail 2.0 + Harness Rail + Diagram Rail + .spec.md visual contracts
 v0.8.0  Knowledge Rail and Project Brain with specs, diagrams and recurring failures
 v0.9.0  Native Engine Real

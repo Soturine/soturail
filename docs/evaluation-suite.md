@@ -4,6 +4,12 @@ Evaluation Suite is the planned SotuRail area for proving that context reduction
 
 The goal is not only to show token savings. The goal is to show that an agent still receives the right evidence to solve the task.
 
+## Staging
+
+v0.5.2 is intentionally limited to CI stabilization and lightweight quality fixtures. It fixes stale version and agent-doctor tests, then adds small local checks for JSON validation, format comparison, context routing, budget output, run workspace output, workflow evidence and agent-doc hygiene.
+
+The full, heavier Evaluation Suite is staged for v0.6.1 so it can include agent UX polish, broader fixtures and optional benchmark reports without blocking the v0.5.x stabilization line.
+
 ## Product Boundary
 
 SotuRail benchmarks should stay local, deterministic and reproducible by default.

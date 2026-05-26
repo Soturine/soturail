@@ -299,23 +299,16 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Add early Diagram Rail docs and basic Mermaid validation plan.
 - Add Agent Docs Hygiene docs for short root files and referenced rich context.
 
-## v0.5.2 - Evaluation Suite
+## v0.5.2 - CI Stabilization And Lightweight Quality Fixtures
 
-- Add benchmark cases for memory recall quality.
-- Add benchmark cases for context selection quality.
-- Measure not only token savings, but whether selected context preserves the correct file, error, command and rule.
-- Add reducer quality checks for npm, Vitest, tsc, Java, Maven/Gradle, Docker, git diff, git status, ESLint and Vite/Next output.
-- Add before/after reports for raw context vs selected/pruned context.
-- Add small local evaluation fixtures inspired by long-code and SWE-style bug workflows without requiring paid APIs.
-- Add context-router quality fixtures: the selected expert must match the task type and preserve expected evidence.
-- Add role-pack quality fixtures: planner/executor/reviewer/release-manager packs must not receive unrelated context by default.
-- Add agent-doc hygiene fixtures: short root docs plus referenced larger docs should pass.
-- Add offload/restore fixtures: summaries must preserve recovery pointers and critical failure lines.
-- Add format quality fixtures: Markdown vs tagged vs JSON vs TOON/table-like output must preserve critical evidence.
-- Add strict JSON fixtures: duplicate keys, probable secrets, huge arrays and invalid machine payloads must be detected.
-- Add evidence-pack fixtures: workflow/release evidence must include expected commands, raw IDs, changed files and policy decisions.
-- Add harness scenario fixtures: repeated agent failures should become candidate rules, docs, memory or workflow checks.
-- Add diagram validation fixtures: invalid Mermaid, unreachable states and missing verification transitions should fail clearly.
+- Fix stale tests from v0.4.x/v0.5.x version drift.
+- Make release metadata tests version-aware instead of hardcoding old versions.
+- Make agent doctor tests validate stable behavior without depending on old exact wording.
+- Add lightweight quality fixtures for JSON strict validation, format comparison, context routing, context budget, run workspace output, workflow evidence and agent docs hygiene.
+- Keep tests small, deterministic, local and cheap enough for normal CI.
+- Do not add the full evaluation harness yet.
+- Do not add benchmark-heavy jobs or network/provider-dependent checks.
+- Prepare the full evaluation suite for v0.6.1 after v0.6.0 agent-runtime integration lands.
 
 ## v0.6.0 - Real Agent Runtime Integration
 
@@ -334,7 +327,7 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Add host-aware payload-format recommendations: Markdown, JSON, tagged blocks and prompt-only fallbacks.
 - Add host-aware policy notes for config writes, hooks, MCP exposure and raw-log access.
 
-## v0.6.1 - Agent UX Polish
+## v0.6.1 - Agent UX Polish And Full Evaluation Suite
 
 - Better `agents doctor` messages.
 - Better copy/paste setup examples per host.
@@ -348,6 +341,22 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Tutorial: SotuRail with harness-style setup/plan/work/review/release workflow.
 - Tutorial: SotuRail with Diagram Rail and `.spec.md` visual contracts.
 - Tutorial: choosing context formats for Claude, Gemini, Codex, Cursor and MCP.
+- Add benchmark cases for memory recall quality.
+- Add benchmark cases for context selection quality.
+- Measure not only token savings, but whether selected context preserves the correct file, error, command and rule.
+- Add reducer quality checks for npm, Vitest, tsc, Java, Maven/Gradle, Docker, git diff, git status, ESLint and Vite/Next output.
+- Add before/after reports for raw context vs selected/pruned context.
+- Add local evaluation fixtures inspired by long-code and SWE-style bug workflows without requiring paid APIs.
+- Add context-router quality fixtures: the selected expert must match the task type and preserve expected evidence.
+- Add role-pack quality fixtures: planner/executor/reviewer/release-manager packs must not receive unrelated context by default.
+- Add agent-doc hygiene fixtures: short root docs plus referenced larger docs should pass.
+- Add offload/restore fixtures: summaries must preserve recovery pointers and critical failure lines.
+- Add format quality fixtures: Markdown vs tagged vs JSON vs TOON/table-like output must preserve critical evidence.
+- Add strict JSON fixtures: duplicate keys, probable secrets, huge arrays and invalid machine payloads must be detected.
+- Add evidence-pack fixtures: workflow/release evidence must include expected commands, raw IDs, changed files and policy decisions.
+- Add harness scenario fixtures: repeated agent failures should become candidate rules, docs, memory or workflow checks.
+- Add diagram validation fixtures: invalid Mermaid, unreachable states and missing verification transitions should fail clearly.
+- Optional benchmark reports should stay local and reproducible by default.
 
 ## v0.7.0 - Workflow Rail 2.0, Harness Rail And Diagram Rail
 

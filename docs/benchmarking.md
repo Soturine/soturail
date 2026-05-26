@@ -53,7 +53,9 @@ Optional RTK or Squeez comparisons are only run when the user already has those 
 
 ## Planned Evaluation Suite
 
-The v0.5.2 roadmap expands benchmarking into an Evaluation Suite. The goal is to prove that SotuRail preserves the evidence needed for an agent or human to complete a task.
+The full Evaluation Suite is now staged for v0.6.1. v0.5.2 only adds lightweight local quality fixtures and CI stabilization; it does not add benchmark-heavy jobs.
+
+The goal of the later suite is to prove that SotuRail preserves the evidence needed for an agent or human to complete a task.
 
 The key rule:
 

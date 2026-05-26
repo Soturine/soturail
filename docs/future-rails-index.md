@@ -53,7 +53,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Agent Docs Hygiene | Keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short and referenced | v0.5.0+ | `docs/agent-docs-hygiene.md`, `docs/agents.md` |
 | Filesystem Evidence Rail | Snapshot, touched-file and diff evidence tied to workflows and raw IDs | v0.5.0 seeds, v0.7.0 expansion | `docs/filesystem-evidence-rail.md`, `docs/workflow-rail.md` |
 | Evidence Pack | Connect build/test/audit/pack/raw IDs/policy decisions/release notes | v0.5.0 seeds, v0.7.0 expansion | `docs/harness-rail.md`, `docs/workflow-rail.md` |
-| Evaluation Suite | Quality benchmarks for context, payload formats, diagrams, evidence and role packs | v0.5.2 | `docs/evaluation-suite.md`, `docs/benchmarking.md`, `ROADMAP.md` |
+| Evaluation Suite | Quality benchmarks for context, payload formats, diagrams, evidence and role packs | v0.6.1 | `docs/evaluation-suite.md`, `docs/benchmarking.md`, `ROADMAP.md` |
 | Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary, v0.5.x design | `docs/roadmap-agent-runtime-addendum.md`, `docs/knowledge-to-rules.md` |
 | Project Brain | Docs, diagrams, decisions, recurring bugs and release history | v0.8.0 | `ROADMAP.md` |
 | Local Dashboard | Local reports, trace viewer, Mermaid rendering and policy/evidence views | v0.10.0 | `ROADMAP.md` |
@@ -99,20 +99,11 @@ Focus:
 
 Focus:
 
-- evaluation suite;
-- memory recall quality;
-- context selection quality;
-- context budget quality;
-- role-pack quality;
-- skill-routing quality;
-- MCP exposure report quality;
-- format quality: Markdown vs tagged vs JSON vs compact formats;
-- strict JSON fixtures;
-- evidence-pack completeness;
-- filesystem evidence quality;
-- harness scenario fixtures;
-- acceptance-contract fixtures;
-- diagram validation fixtures.
+- CI stabilization after v0.5.1;
+- stale version-test cleanup;
+- less brittle agent doctor expectations;
+- lightweight quality fixtures for JSON validation, format compare, context routing, budget, run workspace, workflow evidence and agent-doc hygiene;
+- roadmap realignment so the full evaluation suite moves to v0.6.1.
 
 ### v0.6.0
 
@@ -124,6 +115,25 @@ Focus:
 - prompt-only fallbacks;
 - agent-specific docs for context, rules, hooks, skills, settings and policy;
 - optional compatibility notes for Claude Code Harness-style workflows.
+
+### v0.6.1
+
+Focus:
+
+- agent UX polish;
+- host-specific copy/paste setup examples;
+- memory recall quality fixtures;
+- context selection and budget quality benchmarks;
+- reducer quality checks;
+- role-pack, skill-routing and agent-doc hygiene quality;
+- offload/restore quality;
+- format quality: Markdown vs tagged vs JSON vs compact formats;
+- strict JSON quality fixtures;
+- evidence-pack completeness;
+- harness scenario fixtures;
+- acceptance-contract fixtures;
+- diagram validation fixtures;
+- optional local benchmark reports.
 
 ### v0.7.0
 

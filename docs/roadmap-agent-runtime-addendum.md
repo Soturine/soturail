@@ -262,8 +262,9 @@ Recommended placement in the main roadmap:
 ```txt
 v0.5.0  Add Run Workspace Rail seed, Context Budget Rail seed, MCP Exposure Rail seed and Harness Contract seed.
 v0.5.1  Polish docs and generated reports for budget/exposure/workspace flows.
-v0.5.2  Add quality fixtures for budget, skill routing, exposure and harness-contract outputs.
+v0.5.2  Stabilize CI and add lightweight quality fixtures for budget, routing, evidence and payload outputs.
 v0.6.0  Add Agent Runtime Adapter and host-aware capability matrix updates.
+v0.6.1  Add agent UX polish and the full local evaluation suite.
 v0.7.0  Expand Workflow/Harness Rail so setup/plan/work/review/release all write evidence packs.
 v0.8.0  Promote Reverse Specification Rail into Knowledge Rail / Project Brain.
 v1.0.0  Stabilize the Context OS contract across context, skills, MCP, policy, workspace, harness and reports.
