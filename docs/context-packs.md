@@ -2,7 +2,7 @@
 
 Context packs are target-aware payloads for AI coding agents.
 
-Today they are generated mainly as Markdown. The v0.5 roadmap expands them into a stronger Context Intelligence layer with query-aware selection, role packs, context offload and target-aware payload formats.
+Today they are generated mainly as Markdown. The v0.5 line adds Context Intelligence, query-aware selection, role packs, context offload and early target-aware payload guidance.
 
 ```bash
 soturail context pack --target claude
@@ -81,7 +81,29 @@ Expected output should explain:
 - omitted context summary;
 - recovery pointer when content was offloaded.
 
-## Future Target-Aware Payload Formats
+## Role-Pack Examples
+
+Role packs are practical v0.5.x outputs, not full sub-agent runtimes.
+
+| Role | Purpose | Should include | Should omit | Safety note |
+| --- | --- | --- | --- | --- |
+| planner | decide scope and constraints | roadmap, specs, previous decisions, open gaps | terminal logs, full source dumps | keep plans human-reviewable |
+| executor | implement a task | target files, repo map, safe commands, failing tests | broad research notes | do not include secrets or unrelated files |
+| reviewer | assess changes | diffs, tests, rules, acceptance criteria, security notes | stale planning notes | preserve exact paths and failures |
+| release-manager | prepare a release | version, changelog, release notes, pack checks, npm/GitHub state | feature ideation | never create GitHub release before npm publish |
+| researcher | compare and cite context | docs, ecosystem notes, citations, constraints | raw private logs | citations should point to source docs |
+
+Generate them with:
+
+```bash
+soturail context pack --role planner
+soturail context pack --role executor
+soturail context pack --role reviewer
+soturail context pack --role release-manager
+soturail context pack --role researcher
+```
+
+## Target-Aware Payload Formats
 
 SotuRail should not only send less context. It should send context in the format the target agent or consumer can use best.
 
@@ -123,17 +145,15 @@ Suggested defaults:
 
 See [structured-payload-rail.md](structured-payload-rail.md).
 
-## Future JSON Safety And Strict Validation
+## JSON Safety And Strict Validation
 
 Structured payload work should include a strict JSON validator for prompt and config safety.
 
-Possible future commands:
+v0.5.1 includes a light local seed:
 
 ```bash
 soturail validate json config.json --strict
-soturail format file.json --to tagged
-soturail format file.json --to toon
-soturail format compare docs/usage.md --formats markdown,tagged,json,toon
+soturail format compare docs/usage.md
 ```
 
 The validator should warn about:
@@ -146,11 +166,11 @@ The validator should warn about:
 - machine payloads being reused as poor prompt payloads;
 - payloads that are valid JSON but bad LLM context.
 
-## Future Context Expert Router
+## Context Expert Router
 
 The context router is a local product metaphor inspired by expert routing, not a neural MoE implementation.
 
-Planned expert profiles:
+Current seed profiles:
 
 - **code expert**: source files, symbols, failing tests;
 - **docs expert**: README, roadmap, usage guides;
@@ -162,11 +182,11 @@ Planned expert profiles:
 
 The router should select only the smallest useful context bundle for a task and report why other bundles were skipped.
 
-## Future Role-Based Context Packs
+## Role-Based Context Packs
 
 Deep Agents-style systems validate role separation, but SotuRail should not become the agent runtime. Instead, it can generate role-specific context packs.
 
-Planned role packs:
+Current role packs:
 
 ```bash
 soturail context pack --role planner
@@ -186,17 +206,18 @@ Suggested role contents:
 
 Each role pack should declare purpose, included sources, omitted sources, token estimate and raw/workflow recovery pointers.
 
-## Future Context Offload
+## Context Offload
 
 Long terminal/tool outputs should stay local when possible.
 
-Planned commands:
+Current commands:
 
 ```bash
-soturail context offload <raw_id>
-soturail context restore <offload_id>
-soturail trace attach-raw <raw_id>
+soturail context offload <raw-id-or-file>
+soturail context restore <offload-id>
 ```
+
+Future trace commands may attach raw IDs to richer evidence packs.
 
 The agent should receive a compact payload:
 

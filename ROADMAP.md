@@ -294,8 +294,8 @@ This is inspired by agent harnesses with filesystem access, but SotuRail should 
 - Add role-pack examples for planner, executor, reviewer, release-manager and researcher.
 - Add `AUTH.md` scaffold docs if the policy/auth-check work lands in v0.5.0.
 - Add Structured Payload Rail docs and examples for Markdown, JSON, tagged context and compact table/TOON-like output.
-- Add `soturail validate json --strict` plan/tests for duplicate keys and invalid prompt payloads.
-- Add `soturail format compare` plan for Markdown vs tagged vs JSON vs compact output.
+- Add light `soturail validate json <file> --strict` seed/tests for duplicate keys and invalid prompt payloads.
+- Add light `soturail format compare <file>` seed for Markdown vs tagged vs JSON vs compact output.
 - Add early Diagram Rail docs and basic Mermaid validation plan.
 - Add Agent Docs Hygiene docs for short root files and referenced rich context.
 

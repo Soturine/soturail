@@ -26,11 +26,11 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.5.0 is an MVP rail release. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail and evidence seeds are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.5.1 is a polish milestone on top of the v0.5.0 MVP rails. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail and evidence seeds are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next polish direction is v0.5.1+: memory/context examples, agent-doc hygiene examples, structured payload docs, Diagram Rail planning and quality fixtures in v0.5.2. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next quality direction is v0.5.2: memory recall quality, context selection quality, role-pack quality, structured payload quality, evidence-pack completeness and diagram validation fixtures. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
-## v0.5.0 MVP Rails
+## v0.5.x MVP Rails
 
 ```bash
 soturail memory remember "Decision: keep MCP read-oriented by default" --tag architecture
@@ -42,8 +42,10 @@ soturail harness contract init
 soturail policy doctor
 soturail fs snapshot
 soturail mcp exposure
-soturail run workspace new "Try v0.5.0 rails"
+soturail run workspace new "Try v0.5.x rails"
 soturail native doctor
+soturail validate json package.json --strict
+soturail format compare README.md
 ```
 
 These rails write local JSON, JSONL and Markdown under `.soturail/`. They do not create cloud resources, background agents, global config writes or arbitrary MCP shell execution.
@@ -122,21 +124,14 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage adds the missing pieces for a stronger Context OS:
+The next roadmap stage strengthens the rails with evaluation and deeper workflow coverage:
 
-- Memory Rail: `memory remember`, `memory recall`, `memory capture`, `memory consolidate` and memory redaction/approval.
-- Context Intelligence: `context select --query`, `context prune`, line ranges, scores and reasons.
-- Context Expert Router: task-specific bundles for code, docs, release, security, workflow, research and approved memory.
-- Role-Based Context Packs: planner, executor, reviewer, release-manager and researcher context bundles.
-- Context Offload: keep long tool/terminal outputs local with compact summaries and recovery IDs.
-- Harness Rail: setup/plan/work/review/release discipline, review perspectives, evidence packs and failure ledger.
-- Filesystem Evidence Rail: snapshots, touched files and diffs tied to workflows and raw IDs.
-- Policy/Governance Rail: local checks for secrets, raw expansion, MCP exposure, risky commands, auth docs and release safety.
-- Structured Payload Rail: target-aware Markdown, JSON, XML-like tagged context, TOON/table-like compact data and Mermaid context.
-- Diagram Rail: Mermaid diagrams, `.spec.md` visual contracts, workflow diagrams, release diagrams and policy/context-router diagrams.
+- Memory recall quality fixtures and approved-memory export checks.
+- Context selection, budget, offload and role-pack quality fixtures.
+- Structured Payload Rail validation for Markdown, JSON, tagged blocks, compact tables and Mermaid context.
+- Diagram Rail command seeds and validation fixtures.
+- Harness/evidence quality checks that ensure important paths, commands, errors and security notes survive pruning.
 - Agent Capability Matrix: safer guidance for Claude, Codex, Gemini, Cursor, Antigravity, Deep Agents-style hosts, generic hosts and future hosts.
-- Agent Docs Hygiene: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short, useful and reference-based.
-- Skill Routing: suggest skills by task, role, context expert and policy checks.
 - Trace and Report Rails: local records of commands, raw IDs, context packs, memory recall, diagrams, policy decisions and workflow state.
 - Evaluation Suite: token savings plus quality checks, not token savings alone.
 - Future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
@@ -159,15 +154,21 @@ Use directly with npx:
 
 ```bash
 npx soturail --help
-npx soturail@0.4.1 --help
+npx soturail@latest --help
 ```
 
 Install globally:
 
 ```bash
-npm install -g soturail@0.4.1
+npm install -g soturail
 soturail --help
 soturail --version
+```
+
+When v0.5.1 is published, install that exact version with:
+
+```bash
+npm install -g soturail@0.5.1
 ```
 
 For local development from source:
@@ -212,6 +213,12 @@ For an installed clean-folder walkthrough, see [docs/first-real-workflow.md](doc
 
 ```bash
 soturail init
+soturail memory doctor
+soturail context budget --explain
+soturail context pack --role planner
+soturail harness doctor
+soturail policy doctor
+soturail run workspace new "Try SotuRail"
 soturail context pack --target all
 soturail agents doctor
 soturail agents export --agent all
@@ -243,10 +250,16 @@ soturail agents export --agent all
 soturail mcp smoke
 soturail mcp config --agent generic
 soturail context pack --target all
+soturail context pack --role planner
+soturail context select --query "release checklist"
+soturail context budget --explain
 soturail workflow list
 soturail workflow show <id>
 soturail workflow close <id>
+soturail run workspace show <run-id>
 soturail format README.md --mode concise
+soturail format compare README.md
+soturail validate json package.json --strict
 soturail ingest README.md --type docs
 soturail rules check
 soturail skills init demo-skill
@@ -316,7 +329,7 @@ MCP does not expose arbitrary shell execution. Raw log expansion redacts probabl
 
 Context packs are written to `.soturail/context/<target>-context.md`. JSON-RPC examples live under [examples/mcp](examples/mcp).
 
-Future role packs, structured payload formats and offload flows are tracked in [docs/context-packs.md](docs/context-packs.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
+Role packs, structured payload validation and offload flows are tracked in [docs/context-packs.md](docs/context-packs.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md).
 
 ## Workflow Rail
 
@@ -422,7 +435,11 @@ SotuRail does not claim native speedups unless local benchmark results show them
 
 Raw logs may contain secrets because they preserve real terminal output. Treat `.soturail/raw/` as local evidence, not public artifact material. `soturail expand <raw_id>` redacts probable secrets by default; use `--allow-raw --yes` only when you intentionally need exact raw output.
 
-Future policy queue, auth checks and MCP exposure reports are tracked in [docs/policy-rail.md](docs/policy-rail.md) and [docs/security-model.md](docs/security-model.md).
+Policy queue, auth guidance and MCP exposure reports are tracked in [docs/policy-rail.md](docs/policy-rail.md) and [docs/security-model.md](docs/security-model.md).
+
+## Migration
+
+Moving from v0.4.x to v0.5.x keeps the agent export, MCP and Workflow Rail commands, then adds local `.soturail/` folders for Memory, Context Intelligence, Harness, Policy, Filesystem Evidence and Run Workspace seeds. See [docs/migration-v0.5.md](docs/migration-v0.5.md).
 
 ## Windows Notes
 

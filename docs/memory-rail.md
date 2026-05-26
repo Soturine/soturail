@@ -23,7 +23,7 @@ Default principles:
 - stale/conflict detection;
 - human review for sensitive or long-term records.
 
-## v0.5.0 Seed Commands
+## v0.5.x Commands
 
 ```bash
 soturail memory remember "Decision: keep MCP read-only by default" --tag architecture --source manual
@@ -37,7 +37,7 @@ soturail memory reject <id>
 
 Existing `memory propose/list/approve` behavior can evolve into this richer flow without breaking current data files.
 
-The v0.5.0 seed writes explicit records to `.soturail/memory/records.jsonl` and consolidated records to `.soturail/memory/consolidated.jsonl`.
+The v0.5.x seed writes explicit records to `.soturail/memory/records.jsonl` and consolidated records to `.soturail/memory/consolidated.jsonl`.
 
 ## Memory Record Shape
 
@@ -58,20 +58,77 @@ optional file path/hash
 
 ## Recall Output
 
-`memory recall` should return a compact, evidence-based answer:
+`memory recall` returns a compact, evidence-based answer with the match reason, score, source, tags, confidence and privacy flag:
 
 ```txt
-query: npm release policy
-records_found: 3
-included:
-- mem_001 [approved] Never create GitHub release before npm publish succeeds.
-  source: docs/release-workflow.md
-  reason: exact release policy match
-omitted:
-- mem_004 [stale] old v0.3 publish workaround
+SotuRail memory recall
+matches_count: 2
+
+Matches:
+- mem_001 [score 8.00]
+  Text: Never create GitHub release before npm publish succeeds.
+  Reason: exact text match, keyword overlap
+  Source: docs/release-workflow.md
+  Tags: release
+  Confidence/privacy: medium / normal
 ```
 
 Recall output should explain why records were included or skipped.
+
+## Practical Examples
+
+Project decisions:
+
+```bash
+soturail memory remember "Decision: release gates verify the packed .tgz before npm publish." --tag release --tag packaging --source manual
+```
+
+Bug history:
+
+```bash
+soturail memory remember "Bug history: npm exec once returned stale CLI version after publish; prefer clean tarball install checks." --tag release --tag bug-history --source manual
+```
+
+Recurring test failures:
+
+```bash
+soturail memory remember "Recurring failure: Windows CI can be slower on packed-package checks; isolate heavy release tests." --tag ci --tag testing --source manual
+```
+
+Architecture preferences:
+
+```bash
+soturail memory remember "Architecture preference: keep SotuRail local-first and TypeScript-first; native remains optional." --tag architecture --source manual
+```
+
+## Approved-Memory Export Guidance
+
+Only approved, non-sensitive memory should be exported to agents or included in context packs.
+
+Safe for export:
+
+- stable architecture decisions;
+- release process rules that do not contain credentials;
+- recurring bug summaries with source paths or issue IDs;
+- testing preferences and workflow constraints.
+
+Keep local:
+
+- secrets, API keys, tokens and auth headers;
+- private customer data;
+- raw terminal logs;
+- speculative notes that have not been reviewed;
+- sensitive incident detail that should stay in local evidence.
+
+Before sharing memory with an agent, run:
+
+```bash
+soturail memory doctor
+soturail memory consolidate
+soturail memory recall "task topic" --limit 5
+```
+
+`memory doctor` reports total records, consolidated records, likely secret hints and whether approved-memory export needs review.
 
 ## Relationship With Context Intelligence
 
@@ -121,7 +178,7 @@ Rules:
 
 ## Acceptance Criteria
 
-Memory Rail should not be promoted until:
+Memory Rail should keep improving until:
 
 - records have stable IDs and status;
 - recall has deterministic tests;

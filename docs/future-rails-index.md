@@ -89,7 +89,8 @@ Focus:
 - agent docs linting examples;
 - context budget and workspace report examples;
 - structured payload docs and examples;
-- JSON strict validator planning;
+- light JSON strict validator seed;
+- light format comparison seed;
 - target-aware context formats;
 - Diagram Rail docs and basic validation plan;
 - `AUTH.md` scaffold docs if policy/auth-check lands.
