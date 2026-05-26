@@ -18,6 +18,162 @@ It is not the model, not the agent brain and not a heavy production gateway.
 - Do not claim superiority over adjacent projects without reproducible benchmarks.
 - Prefer small releases with tests, clean-folder smoke coverage and release evidence.
 
+## 2026 Agent Runtime Update
+
+Newer agent hosts are converging around the same architecture: a coding agent surface, local or cloud workspaces, MCP or tool adapters, reusable skills/instructions, hooks/approvals, context budgeting and evidence that proves the task is actually complete.
+
+SotuRail should absorb this as a product map:
+
+```txt
+agent host = model + planning loop + editing/runtime surface
+SotuRail = local context + rules + budget + skills + workspace + harness evidence + safety reports
+```
+
+See [`roadmap-agent-runtime-addendum.md`](roadmap-agent-runtime-addendum.md) for the updated rail plan.
+
+### Host-Aware Agent Runtime Patterns
+
+Claude Code, Codex, Gemini CLI, Cursor, Antigravity and future coding-agent hosts should be treated as different runtime surfaces, not as one generic prompt box.
+
+What to add to SotuRail:
+
+- **Agent Runtime Adapter**: host-aware exports for instructions, context packs, skills, hooks, MCP and prompt-only fallback.
+- `soturail agents capabilities` to explain what each host can safely consume.
+- `soturail agents explain --agent all` to show what is being sent, referenced or kept local.
+- Avoid claiming direct host support until the export path and docs are verified.
+
+Where it maps:
+
+- `agents export`
+- `agents doctor`
+- `context pack`
+- `skills export`
+- `mcp config`
+- `policy doctor`
+
+### MCP vs Agent Skills Boundary
+
+MCP and Agent Skills should not be mixed together.
+
+```txt
+MCP = external capability boundary: tools, resources, prompts, roots and integrations.
+Skill = reusable local operating procedure: instructions, scripts, references and assets.
+Context pack = selected evidence for one task or role.
+Policy = what is safe to expose or execute.
+Harness = what must pass before work is accepted.
+```
+
+What to add to SotuRail:
+
+- **MCP Exposure Rail**: report every exposed tool/resource/prompt/root and its local risk.
+- **Skill Boundary Rail**: keep skills small, routed and task-specific instead of always-loaded context.
+- `soturail mcp exposure` and `soturail skills route --task "..."`.
+- Host-aware warnings when a target supports prompt files but not real skills, hooks or MCP.
+
+Where it maps:
+
+- `mcp smoke`
+- `mcp manifest`
+- `skills validate`
+- `skills route`
+- `agents export`
+- `policy validate`
+
+### Context Budgeting As A First-Class Rail
+
+Practical agent usage now depends heavily on context size, repeated tool calls, large instruction files, MCP overhead, skills and long session history.
+
+What to add to SotuRail:
+
+- **Context Budget Rail**: estimate context cost drivers before agent handoff.
+- Warn about huge `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, copied logs, giant JSON, broad MCP exposure and always-loaded skills.
+- Suggest `context prune`, `context offload`, `format --mode concise`, role packs and smaller root agent docs.
+- Report stable blocks vs dynamic blocks so prompt-cache-friendly output stays predictable.
+
+Where it maps:
+
+- `context pack`
+- `context select`
+- `context prune`
+- `context offload`
+- `agents lint`
+- `format`
+- `bench`
+
+### Per-Run Staging Without Kubernetes
+
+Leoflow-style per-run staging volumes reinforce a useful workflow idea: one execution should have one isolated place for inputs, outputs, intermediate files and evidence.
+
+SotuRail should not become a Kubernetes PVC orchestrator. The local equivalent is enough:
+
+```txt
+.soturail/runs/<run-id>/
+  input/
+  output/
+  raw/
+  offload/
+  artifacts/
+  evidence/
+  workspace.json
+  summary.md
+  handoff.md
+```
+
+What to add to SotuRail:
+
+- **Run Workspace Rail**: local per-run workspaces with TTL cleanup and safe previews.
+- Link run workspaces to workflow ids, raw ids, offload ids, policy decisions and evidence packs.
+- Keep generated artifacts off the prompt unless selected or summarized.
+
+Where it maps:
+
+- `workflow`
+- `run`
+- `expand`
+- `context offload`
+- `fs snapshot`
+- `report`
+
+### Reverse Specification Extraction
+
+Reversa-style reverse documentation points to a strong SotuRail direction: turn existing code, docs, config and logs into claims, rules, specs, gaps and validation tasks.
+
+What to add to SotuRail:
+
+- **Reverse Specification Rail**: `reverse scan`, `reverse claims`, `reverse specs`, `reverse gaps` and `reverse export`.
+- Claim records with source path, confidence, evidence and validation status.
+- Rules and specs should not be invented without source evidence.
+- Gaps should be explicit so humans know what the agent could not prove.
+
+Where it maps:
+
+- `ingest`
+- `rules`
+- `memory`
+- `spec`
+- `Project Brain`
+- `harness doctor`
+
+### Acceptance Harness Contracts
+
+Agent work should not be accepted because the model says it is done. A local harness contract should decide whether work is accepted.
+
+What to add to SotuRail:
+
+- **Acceptance Harness Contracts**: build, typecheck, lint, tests, coverage, docs, policy and release-pack gates.
+- `soturail harness contract init` and `soturail harness contract check`.
+- Failure records should become candidate rules, docs, memory or workflow checks.
+- Evidence packs should include which gate failed or passed.
+
+Where it maps:
+
+- `workflow verify`
+- `harness note`
+- `policy doctor`
+- `fs diff`
+- `report`
+- `release evidence`
+
 ## Agent Harness Engineering
 
 Agent harness work reinforces that the useful agent is not only the model. It is the model plus prompts, tools, context policy, hooks, sandboxes, memory, traces, feedback loops and recovery paths.
@@ -260,14 +416,20 @@ Where it maps:
 
 These ideas are intentionally staged after the core rails are stable:
 
-1. **Harness Rail**: record agent failures and turn them into rules, checks or docs.
-2. **Context Expert Router**: route tasks to specialized context bundles.
-3. **Role Pack Rail**: planner/executor/reviewer/release-manager/researcher context packs.
-4. **Context Offload Rail**: keep long tool outputs on disk with summaries and recovery IDs.
-5. **Filesystem Evidence Rail**: snapshots, touched files and workflow diffs.
-6. **Policy Approval Queue**: human review for risky commands and config changes.
-7. **Skill Router**: suggest skills based on task, role and policy.
-8. **Agent Docs Linter**: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short and useful.
-9. **Auth Rail**: optional agent-readable auth docs and redaction checks.
-10. **UI/Report Rail**: local HTML dashboard and optional MCP Apps/AG-UI-style event outputs.
-11. **Gateway Lite**: local event routing only after memory, context selection, policy and reports are mature.
+1. **Run Workspace Rail**: isolated per-run folders for inputs, outputs, raw logs, artifacts and evidence.
+2. **Context Budget Rail**: estimate and explain context drivers before handoff.
+3. **MCP Exposure Rail**: show exposed MCP capabilities and risks.
+4. **Skill Boundary Rail**: route skills based on task, role and host capability.
+5. **Acceptance Harness Contracts**: require concrete checks before accepting agent work.
+6. **Harness Rail**: record agent failures and turn them into rules, checks or docs.
+7. **Context Expert Router**: route tasks to specialized context bundles.
+8. **Role Pack Rail**: planner/executor/reviewer/release-manager/researcher context packs.
+9. **Context Offload Rail**: keep long tool outputs on disk with summaries and recovery IDs.
+10. **Filesystem Evidence Rail**: snapshots, touched files and workflow diffs.
+11. **Policy Approval Queue**: human review for risky commands and config changes.
+12. **Skill Router**: suggest skills based on task, role and policy.
+13. **Agent Docs Linter**: keep `CLAUDE.md`, `AGENTS.md`, `GEMINI.md` and Cursor rules short and useful.
+14. **Reverse Specification Rail**: convert code/docs into claims, rules, specs, gaps and validation tasks.
+15. **Auth Rail**: optional agent-readable auth docs and redaction checks.
+16. **UI/Report Rail**: local HTML dashboard and optional MCP Apps/AG-UI-style event outputs.
+17. **Gateway Lite**: local event routing only after memory, context selection, policy and reports are mature.
