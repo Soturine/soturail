@@ -13,7 +13,7 @@ import { initHarnessContract, checkHarnessContract, noteHarnessFailure } from ".
 import { validateJsonFile } from "./json-validator.js";
 import { rememberMemory, recallMemory } from "./memory-rail.js";
 import { decidePolicyItem, queuePolicyItem } from "./policy-rail.js";
-import { brainDoctor, exportBrain, initBrain, recallBrain, rulesFromBrain, scanBrain, staleBrain } from "./project-brain.js";
+import { brainDoctor, consolidateBrain, exportBrain, initBrain, recallBrain, rulesFromBrain, scanBrain, staleBrain } from "./project-brain.js";
 import { makeRailId, summarizeText } from "./rail-utils.js";
 import { reverseClaims, reverseExport, reverseGaps, reverseScan, reverseSpecs } from "./reverse-specification.js";
 import { estimateTokens } from "./token-estimator.js";
@@ -75,7 +75,14 @@ const brainCaseList = [
   ["brain-agent-brief-quality", "agents", "Brain export includes rules, gaps, safe commands and source references."],
   ["reverse-spec-coverage", "reverse", "Reverse specs include source claims and acceptance criteria."],
   ["gap-detection-quality", "reverse", "Reverse gaps are explicit and source-linked."],
-  ["decision-trace-quality", "brain", "Brain recall explains match reason, status, confidence and source."]
+  ["decision-trace-quality", "brain", "Brain recall explains match reason, status, confidence and source."],
+  ["brain-claim-deduplication", "brain", "Claim consolidation groups duplicates without deleting history."],
+  ["brain-stale-repair-guidance", "brain", "Stale checks can write safe repair guidance."],
+  ["brain-agent-brief-safety", "agents", "Agent briefs keep stale claims out of verified sections."],
+  ["brain-source-range-relocation", "brain", "Moved source ranges are reported as relocation candidates."],
+  ["brain-rules-link-integrity", "rules", "Brain-derived rules keep source links and avoid stale active rules."],
+  ["brain-doctor-actionability", "brain", "Brain doctor reports actionable next commands."],
+  ["brain-export-section-limits", "agents", "Brain exports stay bounded by section limits."]
 ] as const;
 
 export function listEvaluationCases(options: EvaluationOptions = {}): string {
@@ -177,6 +184,20 @@ async function runBrainCase(id: string, group: string, title: string, root: stri
         return await reverseGapCase(id, group, title, root);
       case "decision-trace-quality":
         return await brainRecallCase(id, group, title, root);
+      case "brain-claim-deduplication":
+        return await brainDedupCase(id, group, title, root);
+      case "brain-stale-repair-guidance":
+        return await brainRepairCase(id, group, title, root);
+      case "brain-agent-brief-safety":
+        return await brainBriefSafetyCase(id, group, title, root);
+      case "brain-source-range-relocation":
+        return await brainRelocationCase(id, group, title, root);
+      case "brain-rules-link-integrity":
+        return await brainRuleIntegrityCase(id, group, title, root);
+      case "brain-doctor-actionability":
+        return await brainDoctorActionabilityCase(id, group, title, root);
+      case "brain-export-section-limits":
+        return await brainExportLimitCase(id, group, title, root);
       default:
         return makeCase(id, group, title, "warn", { reason: "brain case not implemented" }, []);
     }
@@ -435,6 +456,107 @@ async function brainRecallCase(id: string, group: string, title: string, root: s
   const recall = await recallBrain("release notes docs releases", root);
   const ok = recall.includes("Release notes") && recall.includes("Status/confidence") && recall.includes("Reason:") && recall.includes("Source:");
   return makeCase(id, group, title, ok ? "pass" : "fail", { recall: summarizeText(recall, 500) }, [getWorkspacePaths(root).brainClaimsFile]);
+}
+
+async function brainDedupCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const paths = getWorkspacePaths(root);
+  const claims = await readJsonl<Record<string, unknown>>(paths.brainClaimsFile);
+  const releaseClaim = claims.find((claim) => String(claim["claim"]).includes("Release notes live under docs/releases"));
+  if (releaseClaim) {
+    await appendJsonl(paths.brainClaimsFile, { ...releaseClaim, id: "claim_eval_duplicate_release_notes" });
+  }
+  const result = await consolidateBrain(root, { dryRun: true });
+  return makeCase(id, group, title, result.report.duplicateGroups > 0 && result.report.mergedClaims > 0 ? "pass" : "fail", {
+    duplicateGroups: result.report.duplicateGroups,
+    mergedClaims: result.report.mergedClaims
+  }, [getWorkspacePaths(root).brainConsolidationReportMd]);
+}
+
+async function brainRepairCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  await fs.writeFile(path.join(root, "src", "core", "release-preflight.ts"), "export const releaseNotesPath = \"docs/notes/RELEASE.md\";\n", "utf8");
+  const result = await staleBrain(root, { repairPlan: true });
+  const repair = await fs.readFile(getWorkspacePaths(root).brainRepairPlanMd, "utf8");
+  return makeCase(id, group, title, repair.includes("recommended_command") && repair.includes("human_action") ? "pass" : "fail", {
+    suggestions: result.repairPlan?.suggestions.length ?? 0
+  }, [getWorkspacePaths(root).brainRepairPlanMd]);
+}
+
+async function brainBriefSafetyCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const paths = getWorkspacePaths(root);
+  const claims = await readJsonl<Record<string, unknown>>(paths.brainClaimsFile);
+  const releaseClaim = claims.find((claim) => String(claim["claim"]).includes("Release notes live under docs/releases"));
+  if (releaseClaim) {
+    await appendJsonl(paths.brainClaimsFile, { ...releaseClaim, id: "claim_eval_stale_release_notes", status: "stale" });
+  }
+  const result = await exportBrain("codex", root, { limit: 5 });
+  const verifiedSection = result.content.split("## Verified Claims")[1]?.split("## Active Rules")[0] ?? "";
+  const staleSection = result.content.split("## Stale Claims")[1]?.split("## Safe Commands")[0] ?? "";
+  const ok = !verifiedSection.includes("claim_eval_stale_release_notes") && staleSection.includes("claim_eval_stale_release_notes");
+  return makeCase(id, group, title, ok ? "pass" : "fail", { path: result.path }, [result.path]);
+}
+
+async function brainRelocationCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  await fs.writeFile(path.join(root, "src", "core", "release-preflight.ts"), [
+    "// unrelated header",
+    "export const other = true;",
+    "",
+    "// Release notes live under docs/releases/.",
+    "export const releaseNotesPath = \"docs/releases/RELEASE_NOTES_v1.2.3.md\";",
+    ""
+  ].join("\n"), "utf8");
+  const result = await staleBrain(root, { repairPlan: true });
+  const relocated = result.freshness.events.some((event) => event.status === "relocated" && event.candidateRange);
+  return makeCase(id, group, title, relocated ? "pass" : "warn", {
+    events: result.freshness.events.map((event) => ({ id: event.recordId, status: event.status, reason: event.reason, similarity: event.similarity }))
+  }, [getWorkspacePaths(root).brainFreshnessFile]);
+}
+
+async function brainRuleIntegrityCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const paths = getWorkspacePaths(root);
+  const claims = await readJsonl<Record<string, unknown>>(paths.brainClaimsFile);
+  const releaseClaim = claims.find((claim) => String(claim["claim"]).includes("Release notes live under docs/releases"));
+  if (releaseClaim) {
+    await appendJsonl(paths.brainStaleEventsFile, {
+      schemaVersion: "soturail.brain.stale-event.v1",
+      id: "stale_eval_release_notes",
+      recordId: releaseClaim["id"],
+      reason: "eval stale source",
+      previousHash: "sha256-old",
+      currentHash: "sha256-new",
+      status: "stale",
+      createdAt: new Date().toISOString()
+    });
+  }
+  const result = await rulesFromBrain(root);
+  const linked = result.rules.every((rule) => rule.sourceClaimIds.length > 0 || (rule.sourceDecisionIds?.length ?? 0) > 0);
+  const staleExcluded = !result.rules.some((rule) => rule.status === "active" && rule.sourceClaimIds.includes(String(releaseClaim?.["id"] ?? "")));
+  return makeCase(id, group, title, linked && staleExcluded ? "pass" : "fail", {
+    linked,
+    staleExcluded,
+    rules: result.rules.length
+  }, [result.markdownPath, result.jsonPath]);
+}
+
+async function brainDoctorActionabilityCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const result = await brainDoctor(root, { repairPlan: true });
+  const ok = result.output.includes("soturail brain consolidate --dry-run")
+    && result.output.includes("soturail brain stale --repair-plan")
+    && result.output.includes("soturail eval run --suite brain");
+  return makeCase(id, group, title, ok ? "pass" : "fail", { output: summarizeText(result.output, 500) }, [getWorkspacePaths(root).brainDoctorFile]);
+}
+
+async function brainExportLimitCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const result = await exportBrain("codex", root, { limit: 3 });
+  const verifiedSection = result.content.split("## Verified Claims")[1]?.split("## Active Rules")[0] ?? "";
+  const bullets = verifiedSection.split(/\r?\n/).filter((line) => line.startsWith("- ")).length;
+  return makeCase(id, group, title, bullets <= 3 ? "pass" : "fail", { bullets }, [result.path]);
 }
 
 function makeCase(
