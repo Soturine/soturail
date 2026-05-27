@@ -100,6 +100,8 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     `- brain_claims: ${brainCounts?.claims ?? 0}`,
     `- brain_gaps: ${brainCounts?.gaps ?? 0}`,
     `- brain_stale_events: ${brainCounts?.staleEvents ?? 0}`,
+    `- brain_suspect_or_stale: ${brainCounts?.suspectOrStale ?? 0}`,
+    `- brain_doctor: ${await exists(paths.brainDoctorFile) ? relativeToRoot(root, paths.brainDoctorFile) : "missing"}`,
     "",
     "## Release Evidence",
     "",

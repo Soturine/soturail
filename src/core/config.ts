@@ -135,6 +135,11 @@ export interface WorkspacePaths {
   brainReverseScanJson: string;
   brainReverseScanMd: string;
   brainSpecsDir: string;
+  brainConsolidatedClaimsFile: string;
+  brainConsolidationReportJson: string;
+  brainConsolidationReportMd: string;
+  brainRepairPlanJson: string;
+  brainRepairPlanMd: string;
 }
 
 export interface EnsureResult {
@@ -215,7 +220,12 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     brainDoctorFile: path.resolve(workspace, "brain", "doctor.json"),
     brainReverseScanJson: path.resolve(workspace, "brain", "reverse-scan.json"),
     brainReverseScanMd: path.resolve(workspace, "brain", "reverse-scan.md"),
-    brainSpecsDir: path.resolve(workspace, "brain", "specs")
+    brainSpecsDir: path.resolve(workspace, "brain", "specs"),
+    brainConsolidatedClaimsFile: path.resolve(workspace, "brain", "consolidated-claims.jsonl"),
+    brainConsolidationReportJson: path.resolve(workspace, "brain", "consolidation-report.json"),
+    brainConsolidationReportMd: path.resolve(workspace, "brain", "consolidation-report.md"),
+    brainRepairPlanJson: path.resolve(workspace, "brain", "stale-repair-plan.json"),
+    brainRepairPlanMd: path.resolve(workspace, "brain", "stale-repair-plan.md")
   };
 }
 

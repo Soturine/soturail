@@ -94,7 +94,10 @@ export interface BrainStaleEventRecord {
   reason: string;
   previousHash: string;
   currentHash: string;
-  status: "suspect" | "stale" | "resolved";
+  status: "suspect" | "stale" | "resolved" | "relocated";
+  previousRange?: SourceRange;
+  candidateRange?: SourceRange;
+  similarity?: number;
   createdAt: string;
 }
 
@@ -164,11 +167,66 @@ export interface BrainDoctorReport {
   createdAt: string;
   files: Array<{ path: string; present: boolean; validJsonl?: boolean }>;
   counts: BrainCounts;
+  duplicateClaimGroups?: number;
+  integrationStatus?: Record<string, string>;
+  repairPlanPath?: string;
   findings: string[];
   nextCommands: string[];
 }
 
 export type BrainAgentTarget = Extract<AgentId, "claude" | "codex" | "gemini" | "cursor" | "generic">;
+
+export interface BrainStaleOptions {
+  repairPlan?: boolean;
+}
+
+export interface BrainRepairSuggestion {
+  recordId: string;
+  type: "claim" | "decision" | "rule";
+  text: string;
+  reason: string;
+  sourcePath: string;
+  affectedRange?: SourceRange;
+  candidateRange?: SourceRange;
+  similarity?: number;
+  recommendedCommand: string;
+  recommendedHumanAction: string;
+  relatedValidation: string[];
+}
+
+export interface BrainRepairPlan {
+  schemaVersion: "soturail.brain.repair-plan.v1";
+  createdAt: string;
+  suggestions: BrainRepairSuggestion[];
+}
+
+export interface BrainConsolidationGroup {
+  canonicalId: string;
+  duplicateIds: string[];
+  reason: string;
+  score: number;
+  claims: Array<{ id: string; status: BrainClaimStatus; confidence: BrainConfidence; sourcePath: string; claim: string }>;
+}
+
+export interface BrainConsolidationReport {
+  schemaVersion: "soturail.brain.consolidation.v1";
+  createdAt: string;
+  dryRun: boolean;
+  claimsRead: number;
+  duplicateGroups: number;
+  mergedClaims: number;
+  canonicalClaims: number;
+  groups: BrainConsolidationGroup[];
+}
+
+export interface BrainExportOptions {
+  limit?: number;
+  includeSuspect?: boolean;
+}
+
+export interface BrainDoctorOptions {
+  repairPlan?: boolean;
+}
 
 export async function initBrain(root = process.cwd()): Promise<{ paths: string[]; output: string }> {
   await ensureWorkspace(root);
@@ -204,7 +262,12 @@ export async function initBrain(root = process.cwd()): Promise<{ paths: string[]
     paths.brainProjectProfileFile,
     paths.brainArchitectureFile,
     paths.brainIndexFile,
-    paths.brainFreshnessFile
+    paths.brainFreshnessFile,
+    paths.brainConsolidatedClaimsFile,
+    paths.brainConsolidationReportJson,
+    paths.brainConsolidationReportMd,
+    paths.brainRepairPlanJson,
+    paths.brainRepairPlanMd
   ].map((filePath) => relativeToRoot(root, filePath));
   return {
     paths: createdPaths,
@@ -288,6 +351,8 @@ export async function scanBrain(root = process.cwd()): Promise<{ profile: BrainP
       `tests_detected: ${tests.length}`,
       "next_commands:",
       "- soturail brain recall \"release notes\"",
+      "- soturail brain consolidate --dry-run",
+      "- soturail brain stale --repair-plan",
       "- soturail rules from-brain",
       "- soturail reverse gaps"
     ].join("\n") + "\n"
@@ -315,7 +380,8 @@ export async function brainProfile(root = process.cwd()): Promise<string> {
     `gaps: ${counts.gaps}`,
     `suspect_or_stale: ${counts.suspectOrStale}`,
     "next_commands:",
-    "- soturail brain stale",
+    "- soturail brain consolidate --dry-run",
+    "- soturail brain stale --repair-plan",
     "- soturail brain export --agent generic",
     "- soturail reverse specs ./src"
   ].join("\n") + "\n";
@@ -356,7 +422,7 @@ export async function recallBrain(query: string, root = process.cwd(), limit = 8
   ].join("\n").trimEnd() + "\n";
 }
 
-export async function staleBrain(root = process.cwd()): Promise<{ freshness: BrainFreshnessView; output: string }> {
+export async function staleBrain(root = process.cwd(), options: BrainStaleOptions = {}): Promise<{ freshness: BrainFreshnessView; repairPlan?: BrainRepairPlan; output: string }> {
   await initBrain(root);
   const paths = getWorkspacePaths(root);
   const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile);
@@ -366,18 +432,35 @@ export async function staleBrain(root = process.cwd()): Promise<{ freshness: Bra
   for (const claim of claims) {
     const absolute = path.resolve(root, claim.sourcePath);
     if (!(await exists(absolute))) {
-      events.push(staleEvent(claim.id, "source file missing", claim.rangeHash, "missing", "stale"));
+      events.push(staleEvent(claim.id, "source file missing", claim.rangeHash, "missing", "stale", { previousRange: claim.sourceRange }));
       continue;
     }
     const evidence = await sourceEvidence(root, claim.sourcePath, undefined, claim.sourceRange);
     if (claim.rangeHash !== evidence.rangeHash) {
-      events.push(staleEvent(claim.id, "rangeHash changed", claim.rangeHash, evidence.rangeHash, "suspect"));
+      const relocation = await relocateSourceRange(root, claim);
+      if (relocation.status === "relocated") {
+        events.push(staleEvent(claim.id, "source range relocated", claim.rangeHash, relocation.rangeHash, "relocated", {
+          previousRange: claim.sourceRange,
+          ...(relocation.range ? { candidateRange: relocation.range } : {}),
+          similarity: relocation.similarity
+        }));
+      } else if (relocation.status === "candidate") {
+        events.push(staleEvent(claim.id, "rangeHash changed; relocation candidate", claim.rangeHash, evidence.rangeHash, "suspect", {
+          previousRange: claim.sourceRange,
+          ...(relocation.range ? { candidateRange: relocation.range } : {}),
+          similarity: relocation.similarity
+        }));
+      } else {
+        events.push(staleEvent(claim.id, "rangeHash changed", claim.rangeHash, evidence.rangeHash, "suspect", {
+          previousRange: claim.sourceRange
+        }));
+      }
     } else if (claim.fileHash !== evidence.fileHash) {
       warnings.push(`${claim.id}: fileHash changed but rangeHash is unchanged`);
     }
     for (const validationPath of claim.validatedBy) {
       if (!(await exists(path.resolve(root, validationPath)))) {
-        events.push(staleEvent(claim.id, `validatedBy missing: ${validationPath}`, claim.rangeHash, "missing-validation", "suspect"));
+        events.push(staleEvent(claim.id, `validatedBy missing: ${validationPath}`, claim.rangeHash, "missing-validation", "suspect", { previousRange: claim.sourceRange }));
       }
     }
   }
@@ -393,23 +476,73 @@ export async function staleBrain(root = process.cwd()): Promise<{ freshness: Bra
     events
   };
   await writeJson(paths.brainFreshnessFile, freshness);
+  const repairPlan = options.repairPlan ? await writeRepairPlan(root, claims, events) : undefined;
   return {
     freshness,
+    ...(repairPlan ? { repairPlan } : {}),
     output: [
       "SotuRail brain stale",
       `checked_records: ${freshness.checkedRecords}`,
       `new_events: ${newEvents.length}`,
       `suspect: ${freshness.suspect}`,
       `stale: ${freshness.stale}`,
+      `relocated: ${freshness.events.filter((event) => event.status === "relocated").length}`,
       `warnings: ${freshness.warnings.length}`,
       `freshness: ${relativeToRoot(root, paths.brainFreshnessFile)}`,
+      ...(repairPlan ? [
+        `repair_plan_json: ${relativeToRoot(root, paths.brainRepairPlanJson)}`,
+        `repair_plan_md: ${relativeToRoot(root, paths.brainRepairPlanMd)}`
+      ] : []),
       "",
       ...(newEvents.length > 0 ? newEvents.map((event) => `- ${event.recordId}: ${event.reason} [${event.status}]`) : ["No stale evidence drift detected."])
     ].join("\n") + "\n"
   };
 }
 
-export async function brainDoctor(root = process.cwd()): Promise<{ report: BrainDoctorReport; output: string }> {
+export async function consolidateBrain(root = process.cwd(), options: { dryRun?: boolean } = {}): Promise<{ report: BrainConsolidationReport; output: string }> {
+  await initBrain(root);
+  const paths = getWorkspacePaths(root);
+  const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile);
+  const dryRun = options.dryRun !== false;
+  const groups = findDuplicateClaimGroups(claims);
+  const duplicateIds = new Set(groups.flatMap((group) => group.duplicateIds));
+  const canonicalIds = new Set(groups.map((group) => group.canonicalId));
+  const canonicalClaims = claims.filter((claim) => !duplicateIds.has(claim.id));
+  const consolidated = canonicalClaims.map((claim) => ({
+    ...claim,
+    mergedClaimIds: groups.find((group) => group.canonicalId === claim.id)?.duplicateIds ?? []
+  }));
+  const report: BrainConsolidationReport = {
+    schemaVersion: "soturail.brain.consolidation.v1",
+    createdAt: new Date().toISOString(),
+    dryRun,
+    claimsRead: claims.length,
+    duplicateGroups: groups.length,
+    mergedClaims: duplicateIds.size,
+    canonicalClaims: canonicalIds.size + claims.filter((claim) => !duplicateIds.has(claim.id) && !canonicalIds.has(claim.id)).length,
+    groups
+  };
+  await writeJson(paths.brainConsolidationReportJson, report);
+  await fs.writeFile(paths.brainConsolidationReportMd, renderConsolidationReport(root, report), "utf8");
+  await fs.writeFile(paths.brainConsolidatedClaimsFile, consolidated.map((claim) => JSON.stringify(claim)).join("\n") + (consolidated.length > 0 ? "\n" : ""), "utf8");
+  return {
+    report,
+    output: [
+      "SotuRail brain consolidate",
+      `dry_run: ${dryRun}`,
+      `claims_read: ${report.claimsRead}`,
+      `duplicate_groups: ${report.duplicateGroups}`,
+      `merged_claims: ${report.mergedClaims}`,
+      `canonical_claims: ${report.canonicalClaims}`,
+      `consolidated: ${relativeToRoot(root, paths.brainConsolidatedClaimsFile)}`,
+      `report_json: ${relativeToRoot(root, paths.brainConsolidationReportJson)}`,
+      `report: ${relativeToRoot(root, paths.brainConsolidationReportMd)}`,
+      "history_preserved: true"
+    ].join("\n") + "\n"
+  };
+}
+
+export async function brainDoctor(root = process.cwd(), options: BrainDoctorOptions = {}): Promise<{ report: BrainDoctorReport; repairPlan?: BrainRepairPlan; output: string }> {
   await initBrain(root);
   const paths = getWorkspacePaths(root);
   const counts = await brainCounts(root);
@@ -429,21 +562,47 @@ export async function brainDoctor(root = process.cwd()): Promise<{ report: Brain
     files.push({ path: relativeToRoot(root, filePath), present: await exists(filePath) });
   }
   const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile);
+  const rules = await readJsonl<BrainRuleRecord>(paths.brainRulesFile);
+  const duplicateGroups = findDuplicateClaimGroups(claims).length;
+  const activeSourceIds = new Set([...claims.map((claim) => claim.id), ...(await readJsonl<BrainDecisionRecord>(paths.brainDecisionsFile)).map((decision) => decision.id)]);
+  const rulesWithoutSources = rules.filter((rule) => [...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].every((id) => !activeSourceIds.has(id))).length;
+  const integrationStatus = {
+    projectProfile: await exists(paths.brainProjectProfileFile) ? "present" : "missing",
+    workflow: await exists(paths.workflowsDir) ? "present" : "missing",
+    harness: await exists(paths.harnessDir) ? "present" : "missing",
+    diagram: await exists(paths.diagramsDir) ? "present" : "missing",
+    eval: await exists(path.join(paths.workspace, "eval", "latest.json")) ? "latest report present" : "no latest report",
+    agentExports: await exists(path.join(paths.brainExportsDir, "agent-brief.md")) ? "present" : "missing",
+    releaseProcess: await exists(path.join(root, "docs", "releases")) ? "docs/releases present" : "unknown"
+  };
   const findings = [
     ...(claims.some((claim) => !claim.sourcePath) ? ["Some claims are missing source paths."] : []),
     ...(claims.some((claim) => claim.status === "verified" && claim.validatedBy.length === 0) ? ["Some verified claims have no validation references."] : []),
+    ...(duplicateGroups > 0 ? [`Duplicate claim groups found: ${duplicateGroups}`] : []),
     ...(counts.gaps > 0 ? [`Open gaps recorded: ${counts.gaps}`] : []),
     ...(counts.suspectOrStale > 0 ? [`Suspect or stale records/events: ${counts.suspectOrStale}`] : []),
+    ...(rulesWithoutSources > 0 ? [`Rules without live brain sources: ${rulesWithoutSources}`] : []),
     ...(await exists(path.join(paths.brainExportsDir, "agent-brief.md")) ? [] : ["Agent brief export is missing."])
   ];
+  const repairPlan = options.repairPlan ? (await staleBrain(root, { repairPlan: true })).repairPlan : undefined;
   const report: BrainDoctorReport = {
     schemaVersion: "soturail.brain.doctor.v1",
     ok: files.every((file) => file.present && file.validJsonl !== false),
     createdAt: new Date().toISOString(),
     files,
     counts,
+    duplicateClaimGroups: duplicateGroups,
+    integrationStatus,
+    ...(repairPlan ? { repairPlanPath: relativeToRoot(root, paths.brainRepairPlanMd) } : {}),
     findings,
-    nextCommands: ["soturail brain scan", "soturail brain stale", "soturail brain export --agent generic", "soturail rules from-brain"]
+    nextCommands: [
+      "soturail brain scan",
+      "soturail brain consolidate --dry-run",
+      "soturail brain stale --repair-plan",
+      "soturail brain export --agent generic",
+      "soturail rules from-brain",
+      "soturail eval run --suite brain"
+    ]
   };
   await writeJson(paths.brainDoctorFile, report);
   return {
@@ -457,10 +616,16 @@ export async function brainDoctor(root = process.cwd()): Promise<{ report: Brain
       `gaps: ${counts.gaps}`,
       `rules: ${counts.rules}`,
       `stale_events: ${counts.staleEvents}`,
+      `duplicate_claim_groups: ${duplicateGroups}`,
+      `rules_without_sources: ${rulesWithoutSources}`,
       `doctor_json: ${relativeToRoot(root, paths.brainDoctorFile)}`,
+      ...(repairPlan ? [`repair_plan: ${relativeToRoot(root, paths.brainRepairPlanMd)}`] : []),
       "",
       "Files:",
       ...files.map((file) => `- ${file.path}: ${file.present ? "present" : "missing"}${file.validJsonl === undefined ? "" : `, jsonl_valid=${file.validJsonl}`}`),
+      "",
+      "Integration status:",
+      ...Object.entries(integrationStatus).map(([key, value]) => `- ${key}: ${value}`),
       "",
       "Findings:",
       ...(findings.length > 0 ? findings.map((finding) => `- ${finding}`) : ["- none"]),
@@ -471,7 +636,7 @@ export async function brainDoctor(root = process.cwd()): Promise<{ report: Brain
   };
 }
 
-export async function exportBrain(agent: BrainAgentTarget, root = process.cwd()): Promise<{ path: string; content: string; output: string }> {
+export async function exportBrain(agent: BrainAgentTarget, root = process.cwd(), options: BrainExportOptions = {}): Promise<{ path: string; content: string; output: string }> {
   await ensureProfile(root);
   const paths = getWorkspacePaths(root);
   const profile = JSON.parse(await fs.readFile(paths.brainProjectProfileFile, "utf8")) as BrainProjectProfile;
@@ -482,7 +647,7 @@ export async function exportBrain(agent: BrainAgentTarget, root = process.cwd())
   const rules = await readJsonl<BrainRuleRecord>(paths.brainRulesFile);
   const freshness = await readJson<BrainFreshnessView>(paths.brainFreshnessFile).catch(() => null);
   const approvedMemory = await readJsonl<MemoryRailRecord>(paths.memoryApprovedFile).catch(() => []);
-  const base = renderBrainBrief(agent, profile, claims, decisions, gaps, bugs, rules, freshness, approvedMemory);
+  const base = renderBrainBrief(agent, profile, claims, decisions, gaps, bugs, rules, freshness, approvedMemory, options);
   const content = agent === "claude" ? `<project_brain>\n${base}\n</project_brain>\n` : base;
   const outputPath = path.join(paths.brainExportsDir, `${agent}.md`);
   await fs.writeFile(outputPath, content, "utf8");
@@ -494,29 +659,35 @@ export async function exportBrain(agent: BrainAgentTarget, root = process.cwd())
       "SotuRail brain export",
       `agent: ${agent}`,
       `path: ${relativeToRoot(root, outputPath)}`,
+      `limit: ${normalizeLimit(options.limit)}`,
+      `include_suspect: ${options.includeSuspect === true}`,
       ...(agent === "generic" ? [`generic_alias: ${relativeToRoot(root, path.join(paths.brainExportsDir, "agent-brief.md"))}`] : []),
       "review_required: true"
     ].join("\n") + "\n"
   };
 }
 
-export async function rulesFromBrain(root = process.cwd()): Promise<{ rules: BrainRuleRecord[]; markdownPath: string; output: string }> {
+export async function rulesFromBrain(root = process.cwd()): Promise<{ rules: BrainRuleRecord[]; markdownPath: string; jsonPath: string; output: string }> {
   await ensureProfile(root);
   const paths = getWorkspacePaths(root);
   const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile);
   const decisions = await readJsonl<BrainDecisionRecord>(paths.brainDecisionsFile);
+  const staleEvents = await readJsonl<BrainStaleEventRecord>(paths.brainStaleEventsFile);
+  const unsafeClaimIds = new Set(staleEvents.filter((event) => event.status === "suspect" || event.status === "stale").map((event) => event.recordId));
   const now = new Date().toISOString();
   const rules: BrainRuleRecord[] = [];
-  for (const claim of claims.filter((item) => item.status === "verified").slice(0, 25)) {
+  for (const claim of claims.filter((item) => item.status !== "rejected" && item.status !== "stale" && item.status !== "suspect").slice(0, 25)) {
+    if (unsafeClaimIds.has(claim.id)) continue;
     const ruleText = ruleFromClaim(claim.claim);
     if (!ruleText) continue;
+    const verified = claim.status === "verified";
     rules.push({
       schemaVersion: "soturail.brain.rule.v1",
       id: makeRailId("rule", `${claim.id}:${ruleText}`),
       rule: ruleText,
       sourceClaimIds: [claim.id],
-      enforcement: claim.kind === "release" || claim.kind === "security" || claim.kind === "policy" ? "manual-review" : "advisory",
-      status: "active",
+      enforcement: ruleEnforcementForClaim(claim),
+      status: verified ? "active" : "draft",
       createdAt: now
     });
   }
@@ -535,22 +706,26 @@ export async function rulesFromBrain(root = process.cwd()): Promise<{ rules: Bra
   await appendRecordsIfNew(paths.brainRulesFile, rules);
   await fs.mkdir(paths.rulesDir, { recursive: true });
   const markdownPath = path.join(paths.rulesDir, "from-brain.md");
+  const jsonPath = path.join(paths.rulesDir, "from-brain.json");
   await fs.writeFile(markdownPath, [
     "# Brain-Derived Rules",
     "",
-    "These rules are derived from verified Project Brain claims and active decisions. Review before using as policy gates.",
+    "These rules are derived from verified Project Brain claims and active decisions. Suspect or stale claims are excluded from active rules by default.",
     "",
-    ...rules.map((rule) => `- ${rule.rule} (sources: ${[...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].join(", ") || "none"})`),
+    ...rules.map((rule) => `- [${rule.status}/${rule.enforcement}] ${rule.rule} (sources: ${[...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].join(", ") || "none"})`),
     ""
   ].join("\n"), "utf8");
+  await writeJson(jsonPath, { schemaVersion: "soturail.rules.from-brain.v1", createdAt: now, rules });
   return {
     rules,
     markdownPath,
+    jsonPath,
     output: [
       "SotuRail rules from-brain",
       `rules_written: ${rules.length}`,
       `jsonl: ${relativeToRoot(root, paths.brainRulesFile)}`,
       `markdown: ${relativeToRoot(root, markdownPath)}`,
+      `json: ${relativeToRoot(root, jsonPath)}`,
       "review_required: true"
     ].join("\n") + "\n"
   };
@@ -643,7 +818,7 @@ async function brainCounts(root: string): Promise<BrainCounts> {
     gaps: gaps.filter((gap) => gap.status === "open").length,
     rules: (await readJsonl<BrainRuleRecord>(paths.brainRulesFile)).length,
     staleEvents: staleEvents.length,
-    suspectOrStale: claims.filter((claim) => claim.status === "suspect" || claim.status === "stale").length + staleEvents.filter((event) => event.status !== "resolved").length
+    suspectOrStale: claims.filter((claim) => claim.status === "suspect" || claim.status === "stale").length + staleEvents.filter((event) => event.status === "suspect" || event.status === "stale").length
   };
 }
 
@@ -685,7 +860,9 @@ function defaultArchitecture(root: string, now: string): BrainArchitectureView {
         ".soturail/brain/architecture.json",
         ".soturail/brain/brain-index.json",
         ".soturail/brain/freshness.json",
-        ".soturail/brain/doctor.json"
+        ".soturail/brain/doctor.json",
+        ".soturail/brain/consolidation-report.json",
+        ".soturail/brain/stale-repair-plan.json"
       ],
       exports: [relativeToRoot(root, path.join(getWorkspacePaths(root).brainExportsDir, "agent-brief.md"))]
     },
@@ -724,17 +901,262 @@ async function sourceEvidence(root: string, relativePath: string, needle?: strin
   };
 }
 
-function staleEvent(recordId: string, reason: string, previousHash: string, currentHash: string, status: "suspect" | "stale"): BrainStaleEventRecord {
+function staleEvent(
+  recordId: string,
+  reason: string,
+  previousHash: string,
+  currentHash: string,
+  status: BrainStaleEventRecord["status"],
+  metadata: Partial<Pick<BrainStaleEventRecord, "previousRange" | "candidateRange" | "similarity">> = {}
+): BrainStaleEventRecord {
   return {
     schemaVersion: "soturail.brain.stale-event.v1",
-    id: makeRailId("stale", `${recordId}:${reason}:${previousHash}:${currentHash}`),
+    id: makeRailId("stale", `${recordId}:${reason}:${previousHash}:${currentHash}:${metadata.candidateRange?.startLine ?? ""}`),
     recordId,
     reason,
     previousHash,
     currentHash,
     status,
+    ...metadata,
     createdAt: new Date().toISOString()
   };
+}
+
+async function relocateSourceRange(
+  root: string,
+  claim: BrainClaimRecord
+): Promise<{ status: "relocated" | "candidate" | "missing"; range?: SourceRange; similarity: number; rangeHash: string }> {
+  const absolute = path.resolve(root, claim.sourcePath);
+  const raw = await fs.readFile(absolute, "utf8").catch(() => "");
+  if (!raw) return { status: "missing", similarity: 0, rangeHash: "sha256-missing" };
+  const lines = raw.split(/\r?\n/);
+  const windowSize = Math.max(1, Math.min(12, claim.sourceRange.endLine - claim.sourceRange.startLine + 1));
+  const queryTokens = tokenSet(`${claim.claim} ${claim.kind} ${claim.tags.join(" ")}`);
+  const preferredStart = Math.max(0, claim.sourceRange.startLine - 1);
+  let best: { range: SourceRange; similarity: number; text: string } | null = null;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const window = lines.slice(index, Math.min(lines.length, index + windowSize)).join("\n");
+    const similarity = sourceSimilarity(queryTokens, window, claim.claim, index, preferredStart);
+    if (!best || similarity > best.similarity) {
+      best = { range: { startLine: index + 1, endLine: Math.min(lines.length, index + windowSize) }, similarity, text: window };
+    }
+  }
+
+  if (!best) return { status: "missing", similarity: 0, rangeHash: "sha256-missing" };
+  const rounded = Number(best.similarity.toFixed(3));
+  if (rounded >= 0.62) {
+    return { status: "relocated", range: best.range, similarity: rounded, rangeHash: `sha256-${sha256Text(best.text)}` };
+  }
+  if (rounded >= 0.35) {
+    return { status: "candidate", range: best.range, similarity: rounded, rangeHash: `sha256-${sha256Text(best.text)}` };
+  }
+  return { status: "missing", similarity: rounded, rangeHash: `sha256-${sha256Text(best.text)}` };
+}
+
+function sourceSimilarity(queryTokens: Set<string>, window: string, claim: string, index: number, preferredStart: number): number {
+  const windowTokens = tokenSet(window);
+  if (windowTokens.size === 0) return 0;
+  const overlap = [...queryTokens].filter((token) => windowTokens.has(token)).length;
+  const union = new Set([...queryTokens, ...windowTokens]).size || 1;
+  const jaccard = overlap / union;
+  const claimWords = [...tokenSet(claim)].slice(0, 8);
+  const phraseBoost = claimWords.length > 0 && claimWords.every((word) => windowTokens.has(word)) ? 0.28 : 0;
+  const nearbyBoost = Math.abs(index - preferredStart) <= 8 ? 0.08 : 0;
+  return Math.min(1, jaccard + phraseBoost + nearbyBoost);
+}
+
+function tokenSet(value: string): Set<string> {
+  return new Set(value.toLowerCase().replace(/[^a-z0-9_./-]+/g, " ").split(/\s+/).filter((token) => token.length > 2));
+}
+
+async function writeRepairPlan(root: string, claims: BrainClaimRecord[], events: BrainStaleEventRecord[]): Promise<BrainRepairPlan> {
+  const paths = getWorkspacePaths(root);
+  const claimById = new Map(claims.map((claim) => [claim.id, claim]));
+  const suggestions: BrainRepairSuggestion[] = events
+    .filter((event) => event.status === "suspect" || event.status === "stale" || event.status === "relocated")
+    .map((event) => {
+      const claim = claimById.get(event.recordId);
+      const sourcePath = claim?.sourcePath ?? "unknown";
+      const text = claim?.claim ?? event.recordId;
+      const relatedValidation = claim?.validatedBy ?? [];
+      const affectedRange = event.previousRange ?? claim?.sourceRange;
+      const action = event.status === "relocated"
+        ? "Confirm the relocated range still proves the claim, then rescan/reverse-claim the source if the new range should become canonical."
+        : event.status === "stale"
+          ? "Restore or replace the missing source evidence, then rerun brain scan and stale checks."
+          : "Inspect the source range and validation references before trusting or exporting this claim.";
+      const suggestion: BrainRepairSuggestion = {
+        recordId: event.recordId,
+        type: "claim",
+        text,
+        reason: event.reason,
+        sourcePath,
+        recommendedCommand: sourcePath === "unknown" ? "soturail brain scan" : `soturail reverse claims ${sourcePath}`,
+        recommendedHumanAction: action,
+        relatedValidation
+      };
+      if (affectedRange) suggestion.affectedRange = affectedRange;
+      if (event.candidateRange) suggestion.candidateRange = event.candidateRange;
+      if (event.similarity !== undefined) suggestion.similarity = event.similarity;
+      return suggestion;
+    });
+  const plan: BrainRepairPlan = {
+    schemaVersion: "soturail.brain.repair-plan.v1",
+    createdAt: new Date().toISOString(),
+    suggestions
+  };
+  await writeJson(paths.brainRepairPlanJson, plan);
+  await fs.writeFile(paths.brainRepairPlanMd, renderRepairPlan(root, plan), "utf8");
+  return plan;
+}
+
+function renderRepairPlan(root: string, plan: BrainRepairPlan): string {
+  return [
+    "# SotuRail Brain Stale Repair Plan",
+    "",
+    "This plan is guidance only. SotuRail does not auto-edit code, docs or claims.",
+    "",
+    `createdAt: ${plan.createdAt}`,
+    `suggestions: ${plan.suggestions.length}`,
+    "",
+    ...(plan.suggestions.length > 0 ? plan.suggestions.flatMap((item) => [
+      `## ${item.recordId}`,
+      "",
+      `- type: ${item.type}`,
+      `- reason: ${item.reason}`,
+      `- source: ${item.sourcePath}`,
+      `- affected_range: ${formatRange(item.affectedRange)}`,
+      `- candidate_range: ${formatRange(item.candidateRange)}`,
+      `- similarity: ${item.similarity ?? "n/a"}`,
+      `- recommended_command: \`${item.recommendedCommand}\``,
+      `- human_action: ${item.recommendedHumanAction}`,
+      `- related_validation: ${item.relatedValidation.length > 0 ? item.relatedValidation.join(", ") : "none"}`,
+      "",
+      summarizeText(item.text, 240),
+      ""
+    ]) : [
+      "No stale, suspect or relocated records need repair guidance.",
+      ""
+    ]),
+    "## Safe Follow-up",
+    "",
+    "- Run `soturail brain stale --repair-plan` after source changes.",
+    "- Run `soturail reverse claims ./src` after confirming source changes.",
+    "- Run `soturail brain consolidate --dry-run` before deriving new rules.",
+    "- Run `soturail eval run --suite brain` before release.",
+    "",
+    `json: ${relativeToRoot(root, getWorkspacePaths(root).brainRepairPlanJson)}`,
+    ""
+  ].join("\n");
+}
+
+function formatRange(range: SourceRange | undefined): string {
+  return range ? `${range.startLine}-${range.endLine}` : "n/a";
+}
+
+function findDuplicateClaimGroups(claims: BrainClaimRecord[]): BrainConsolidationGroup[] {
+  const groups: BrainConsolidationGroup[] = [];
+  const consumed = new Set<string>();
+  const candidates = claims.filter((claim) => claim.status !== "rejected");
+  for (const claim of candidates) {
+    if (consumed.has(claim.id)) continue;
+    const matches = candidates.filter((candidate) => candidate.id !== claim.id && !consumed.has(candidate.id) && compatibleClaims(claim, candidate));
+    if (matches.length === 0) continue;
+    const members = [claim, ...matches].sort(compareCanonicalClaim);
+    const canonical = members[0] ?? claim;
+    for (const member of members) consumed.add(member.id);
+    const duplicateMembers = members.filter((member) => member.id !== canonical.id);
+    groups.push({
+      canonicalId: canonical.id,
+      duplicateIds: duplicateMembers.map((member) => member.id),
+      reason: duplicateMembers.every((member) => normalizeClaimText(member.claim) === normalizeClaimText(canonical.claim))
+        ? "normalized claim text match"
+        : "near-duplicate claim text with compatible kind/source",
+      score: Math.max(...duplicateMembers.map((member) => claimSimilarity(canonical, member))),
+      claims: members.map((member) => ({
+        id: member.id,
+        status: member.status,
+        confidence: member.confidence,
+        sourcePath: member.sourcePath,
+        claim: member.claim
+      }))
+    });
+  }
+  return groups.sort((left, right) => left.canonicalId.localeCompare(right.canonicalId));
+}
+
+function compatibleClaims(left: BrainClaimRecord, right: BrainClaimRecord): boolean {
+  if (left.kind !== right.kind) return false;
+  if (left.status === "rejected" || right.status === "rejected") return false;
+  if (left.status === "stale" && right.status === "verified") return false;
+  if (right.status === "stale" && left.status === "verified") return false;
+  const normalizedLeft = normalizeClaimText(left.claim);
+  const normalizedRight = normalizeClaimText(right.claim);
+  if (normalizedLeft === normalizedRight) return true;
+  if (left.sourcePath !== right.sourcePath && tagOverlap(left.tags, right.tags) === 0) return false;
+  return claimSimilarity(left, right) >= 0.82;
+}
+
+function normalizeClaimText(value: string): string {
+  return value.toLowerCase().replace(/[`"'.,:;!?()[\]{}]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function claimSimilarity(left: BrainClaimRecord, right: BrainClaimRecord): number {
+  const leftTokens = tokenSet(left.claim);
+  const rightTokens = tokenSet(right.claim);
+  const overlap = [...leftTokens].filter((token) => rightTokens.has(token)).length;
+  const union = new Set([...leftTokens, ...rightTokens]).size || 1;
+  const tagBonus = tagOverlap(left.tags, right.tags) > 0 ? 0.08 : 0;
+  const sourceBonus = left.sourcePath === right.sourcePath ? 0.08 : 0;
+  return Math.min(1, overlap / union + tagBonus + sourceBonus);
+}
+
+function tagOverlap(left: string[], right: string[]): number {
+  const rightSet = new Set(right);
+  return left.filter((tag) => rightSet.has(tag)).length;
+}
+
+function compareCanonicalClaim(left: BrainClaimRecord, right: BrainClaimRecord): number {
+  return canonicalClaimScore(right) - canonicalClaimScore(left) || left.id.localeCompare(right.id);
+}
+
+function canonicalClaimScore(claim: BrainClaimRecord): number {
+  const status = claim.status === "verified" ? 8 : claim.status === "unverified" ? 4 : claim.status === "suspect" ? 2 : 0;
+  const confidence = claim.confidence === "high" ? 3 : claim.confidence === "medium" ? 1 : 0;
+  const validation = claim.validatedBy.length > 0 ? 3 : 0;
+  return status + confidence + validation;
+}
+
+function renderConsolidationReport(root: string, report: BrainConsolidationReport): string {
+  return [
+    "# SotuRail Brain Claim Consolidation Report",
+    "",
+    "This report preserves append-only history. It writes a consolidated view; it does not delete original claim records.",
+    "",
+    `createdAt: ${report.createdAt}`,
+    `dry_run: ${report.dryRun}`,
+    `claims_read: ${report.claimsRead}`,
+    `duplicate_groups: ${report.duplicateGroups}`,
+    `merged_claims: ${report.mergedClaims}`,
+    `canonical_claims: ${report.canonicalClaims}`,
+    "",
+    ...(report.groups.length > 0 ? report.groups.flatMap((group) => [
+      `## ${group.canonicalId}`,
+      "",
+      `- reason: ${group.reason}`,
+      `- score: ${group.score.toFixed(3)}`,
+      `- duplicates: ${group.duplicateIds.join(", ")}`,
+      "",
+      ...group.claims.map((claim) => `- ${claim.id} [${claim.status}/${claim.confidence}] ${claim.claim} (${claim.sourcePath})`),
+      ""
+    ]) : [
+      "No duplicate claim groups found.",
+      ""
+    ]),
+    `json: ${relativeToRoot(root, getWorkspacePaths(root).brainConsolidationReportJson)}`,
+    ""
+  ].join("\n");
 }
 
 type RecallRecord = {
@@ -791,14 +1213,31 @@ function renderBrainBrief(
   bugs: BrainBugRecord[],
   rules: BrainRuleRecord[],
   freshness: BrainFreshnessView | null,
-  approvedMemory: MemoryRailRecord[]
+  approvedMemory: MemoryRailRecord[],
+  options: BrainExportOptions = {}
 ): string {
   const capability = getAgentCapability(agent);
-  const verifiedClaims = claims.filter((claim) => claim.status === "verified").slice(0, 12);
-  return [
+  const limit = normalizeLimit(options.limit);
+  const eventByRecord = new Map((freshness?.events ?? []).map((event) => [event.recordId, event]));
+  const verifiedClaims = claims.filter((claim) => claim.status === "verified" && !hasUnsafeEvent(eventByRecord.get(claim.id))).slice(0, limit);
+  const suspectClaims = claims.filter((claim) => claim.status === "suspect" || eventByRecord.get(claim.id)?.status === "suspect").slice(0, limit);
+  const staleClaims = claims.filter((claim) => claim.status === "stale" || eventByRecord.get(claim.id)?.status === "stale").slice(0, limit);
+  const verifiedRules = rules.filter((rule) => rule.status === "active" && rule.sourceClaimIds.every((id) => !hasUnsafeEvent(eventByRecord.get(id)))).slice(0, limit);
+  const activeDecisions = decisions.filter((decision) => decision.status === "active").slice(0, limit);
+  const openGaps = gaps.filter((gap) => gap.status === "open").slice(0, limit);
+  const recurringBugs = bugs.slice(0, limit);
+  const warnings = [
+    ...(freshness?.events ?? []).filter((event) => event.status === "suspect" || event.status === "stale").slice(0, limit).map((event) => `- ${event.recordId}: ${event.reason} [${event.status}]`),
+    ...(options.includeSuspect === true ? suspectClaims.map((claim) => `- ${claim.id}: ${claim.claim} [${claim.status}]`) : [])
+  ];
+  const incomplete = claims.length === 0 || profile.releaseNotesPath === "unknown";
+  const hostNote = hostBrainBriefNote(agent);
+  const lines = [
     `# SotuRail Project Brain Brief (${agent})`,
     "",
     "This brief is evidence-backed local context. Do not overclaim beyond the sources listed here.",
+    hostNote,
+    ...(incomplete ? ["", "Data completeness: incomplete brain data. Run `soturail brain scan` and `soturail brain stale --repair-plan`."] : []),
     "",
     "## Project Identity",
     "",
@@ -808,32 +1247,58 @@ function renderBrainBrief(
     `- identity: ${profile.identity}`,
     `- recommended_payloads: ${capability.recommendedPayloads.join(" + ")}`,
     "",
+    "## Verified Rules",
+    "",
+    ...nonEmpty(verifiedRules.map((rule) => `- ${rule.rule} (${rule.id}, enforcement: ${rule.enforcement}, sources: ${[...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].join(", ") || "none"})`), "- none yet"),
+    "",
     "## Verified Claims",
     "",
     ...(verifiedClaims.length > 0 ? verifiedClaims.map((claim) => `- ${claim.claim} (${claim.id}, source: ${claim.sourcePath}:${claim.sourceRange.startLine})`) : ["- none yet"]),
     "",
     "## Active Rules",
     "",
-    ...nonEmpty(rules.filter((rule) => rule.status === "active").slice(0, 12).map((rule) => `- ${rule.rule} (sources: ${rule.sourceClaimIds.join(", ") || (rule.sourceDecisionIds ?? []).join(", ") || "none"})`), "- none yet"),
+    ...nonEmpty(verifiedRules.map((rule) => `- ${rule.rule} (sources: ${rule.sourceClaimIds.join(", ") || (rule.sourceDecisionIds ?? []).join(", ") || "none"})`), "- none yet"),
+    "",
+    "## Current Release Process",
+    "",
+    ...nonEmpty(profile.knownReleaseProcess.slice(0, limit).map((step) => `- ${step}`), "- no release process recorded yet"),
     "",
     "## Active Decisions",
     "",
-    ...nonEmpty(decisions.filter((decision) => decision.status === "active").slice(0, 8).map((decision) => `- ${decision.title}: ${decision.decision} (source: ${decision.sourcePath})`), "- none yet"),
+    ...nonEmpty(activeDecisions.map((decision) => `- ${decision.title}: ${decision.decision} (source: ${decision.sourcePath})`), "- none yet"),
     "",
     "## Known Gaps",
     "",
-    ...nonEmpty(gaps.filter((gap) => gap.status === "open").slice(0, 8).map((gap) => `- [${gap.severity}] ${gap.gap} (source: ${gap.sourcePath})`), "- none recorded"),
+    ...nonEmpty(openGaps.map((gap) => `- [${gap.severity}] ${gap.gap} (source: ${gap.sourcePath})`), "- none recorded"),
     "",
-    "## Recurring Bugs And Harness Notes",
+    "## Recurring Bugs / Harness Patterns",
     "",
-    ...nonEmpty(bugs.slice(0, 8).map((bug) => `- ${bug.bug} (source: ${bug.sourcePath})`), "- none recorded"),
+    ...nonEmpty(recurringBugs.map((bug) => `- ${bug.bug} (source: ${bug.sourcePath})`), "- none recorded"),
+    "",
+    "## Suspect Claims",
+    "",
+    ...nonEmpty(suspectClaims.map((claim) => `- ${claim.claim} (${claim.id}, source: ${claim.sourcePath}:${claim.sourceRange.startLine})`), "- none from latest data"),
+    "",
+    "## Stale Claims",
+    "",
+    ...nonEmpty(staleClaims.map((claim) => `- ${claim.claim} (${claim.id}, source: ${claim.sourcePath}:${claim.sourceRange.startLine})`), "- none from latest data"),
     "",
     "## Safe Commands",
     "",
+    "- soturail brain scan",
+    "- soturail brain consolidate --dry-run",
+    "- soturail brain stale --repair-plan",
     "- soturail brain doctor",
     "- soturail context budget --explain",
     "- soturail workflow verify",
     "- soturail eval run --suite brain",
+    "- npm run release:check",
+    "",
+    "## Critical Commands",
+    "",
+    "- npm run typecheck",
+    "- npm run build",
+    "- npm test",
     "- npm run release:check",
     "",
     "## Release And Workflow Notes",
@@ -844,13 +1309,32 @@ function renderBrainBrief(
     `- diagram: ${profile.workflowHarnessDiagramEval.diagram ?? "unknown"}`,
     `- eval: ${profile.workflowHarnessDiagramEval.eval ?? "unknown"}`,
     "",
+    "## Recovery Pointers",
+    "",
+    "- Brain profile: `.soturail/brain/project-profile.json`",
+    "- Brain freshness: `.soturail/brain/freshness.json`",
+    "- Brain repair plan: `.soturail/brain/stale-repair-plan.md` when generated",
+    "- Workflow evidence: `soturail workflow evidence <id>`",
+    "- Raw logs: `soturail expand <raw_id>` with redaction by default",
+    "",
     "## Approved Memory Summary",
     "",
-    ...(approvedMemory.length > 0 ? approvedMemory.slice(0, 5).map((memory) => `- ${memory.text} (${memory.source})`) : ["- no approved memory exported"]),
+    ...(approvedMemory.length > 0 ? approvedMemory.slice(0, Math.min(limit, 5)).map((memory) => `- ${memory.text} (${memory.source})`) : ["- no approved memory exported"]),
     "",
     "## Stale Or Suspect Warnings",
     "",
-    ...(freshness && (freshness.suspect > 0 || freshness.stale > 0) ? freshness.events.slice(0, 8).map((event) => `- ${event.recordId}: ${event.reason} [${event.status}]`) : ["- none from latest freshness check"]),
+    ...(warnings.length > 0 ? warnings : ["- none from latest freshness check"]),
+    "",
+    "## Do Not Do",
+    "",
+    "- Do not treat stale or suspect claims as verified.",
+    "- Do not expose private memory, secrets or raw logs in agent prompts.",
+    "- Do not publish or create releases without release gates.",
+    "- Do not assume Project Brain is a full static analyzer or LLM reviewer.",
+    "",
+    "## Source References",
+    "",
+    ...nonEmpty(verifiedClaims.map((claim) => `- ${claim.id}: ${claim.sourcePath}:${claim.sourceRange.startLine}`), "- none yet"),
     "",
     "## Safety Notes",
     "",
@@ -859,7 +1343,25 @@ function renderBrainBrief(
     "- Brain claims are only as fresh as their source hashes.",
     "- Generated exports should be reviewed before agent handoff.",
     ""
-  ].join("\n");
+  ];
+  return lines.join("\n");
+}
+
+function normalizeLimit(limit: number | undefined): number {
+  if (typeof limit !== "number" || !Number.isFinite(limit)) return 10;
+  return Math.max(1, Math.min(50, Math.trunc(limit ?? 10)));
+}
+
+function hasUnsafeEvent(event: BrainStaleEventRecord | undefined): boolean {
+  return event?.status === "suspect" || event?.status === "stale";
+}
+
+function hostBrainBriefNote(agent: BrainAgentTarget): string {
+  if (agent === "claude") return "Host formatting: Markdown wrapped in XML-like tags for Claude Code prompt boundaries.";
+  if (agent === "codex") return "Host formatting: AGENTS.md-friendly Markdown with source references and safe commands.";
+  if (agent === "gemini") return "Host formatting: Markdown sections suitable for larger-context review.";
+  if (agent === "cursor") return "Host formatting: short rules-friendly sections for project rules/context handoff.";
+  return "Host formatting: clean Markdown for generic agents.";
 }
 
 function ruleFromClaim(claim: string): string | null {
@@ -869,6 +1371,13 @@ function ruleFromClaim(claim: string): string | null {
   if (/native/i.test(claim)) return "Keep native acceleration optional.";
   if (/diagram|Mermaid/i.test(claim)) return "Do not treat diagram validation as a full Mermaid parser.";
   return `Preserve evidence for: ${claim.replace(/\.$/, "")}.`;
+}
+
+function ruleEnforcementForClaim(claim: BrainClaimRecord): BrainRuleRecord["enforcement"] {
+  if (claim.status !== "verified") return "advisory";
+  if (claim.validatedBy.length > 0) return "test-backed";
+  if (claim.kind === "release" || claim.kind === "security" || claim.kind === "policy") return "policy-gate";
+  return "manual-review";
 }
 
 function nonEmpty(values: string[], fallback: string): string[] {

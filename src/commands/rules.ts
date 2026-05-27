@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import type { Command } from "commander";
-import { ensureWorkspace, getWorkspacePaths } from "../core/config.js";
-import { readBrainCounts, rulesFromBrain } from "../core/project-brain.js";
+import { ensureWorkspace, getWorkspacePaths, readJsonl } from "../core/config.js";
+import { readBrainCounts, rulesFromBrain, type BrainClaimRecord, type BrainDecisionRecord, type BrainRuleRecord, type BrainStaleEventRecord } from "../core/project-brain.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { parseRulesYaml, rulesToYaml, type ExtractedRule } from "../core/rule-extractor.js";
 import { validateRules } from "../core/rule-validator.js";
@@ -55,17 +55,36 @@ export async function exportRules(format: string, root = process.cwd()): Promise
 
 export async function rulesDoctor(root = process.cwd()): Promise<string> {
   await ensureWorkspace(root);
+  const paths = getWorkspacePaths(root);
   const rules = await readRules(root);
   const counts = await readBrainCounts(root);
+  const brainRules = await readJsonl<BrainRuleRecord>(paths.brainRulesFile).catch(() => []);
+  const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile).catch(() => []);
+  const decisions = await readJsonl<BrainDecisionRecord>(paths.brainDecisionsFile).catch(() => []);
+  const staleEvents = await readJsonl<BrainStaleEventRecord>(paths.brainStaleEventsFile).catch(() => []);
+  const sourceIds = new Set([...claims.map((claim) => claim.id), ...decisions.map((decision) => decision.id)]);
+  const staleSourceIds = new Set(staleEvents.filter((event) => event.status === "suspect" || event.status === "stale").map((event) => event.recordId));
+  const missingSources = brainRules.filter((rule) => [...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].every((id) => !sourceIds.has(id))).length;
+  const staleSourceWarnings = brainRules.filter((rule) => rule.sourceClaimIds.some((id) => staleSourceIds.has(id))).length;
+  const activeRules = brainRules.filter((rule) => rule.status === "active").length;
+  const advisoryRules = brainRules.filter((rule) => rule.enforcement === "advisory").length;
   return [
     "SotuRail rules doctor",
     `extracted_rules: ${rules.length}`,
     `brain_rules: ${counts.rules}`,
+    `brain_derived_rules: ${brainRules.length}`,
+    `active_brain_rules: ${activeRules}`,
+    `advisory_brain_rules: ${advisoryRules}`,
+    `rules_missing_sources: ${missingSources}`,
+    `stale_source_warnings: ${staleSourceWarnings}`,
     `brain_claims: ${counts.claims}`,
     `brain_gaps: ${counts.gaps}`,
     `from_brain: ${counts.rules > 0 ? ".soturail/rules/from-brain.md" : "missing"}`,
+    `from_brain_json: ${counts.rules > 0 ? ".soturail/rules/from-brain.json" : "missing"}`,
     "next_commands:",
     "- soturail brain scan",
+    "- soturail brain consolidate --dry-run",
+    "- soturail brain stale --repair-plan",
     "- soturail rules from-brain",
     "- soturail rules check"
   ].join("\n") + "\n";

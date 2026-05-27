@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { brainDoctor, brainProfile, exportBrain, initBrain, recallBrain, scanBrain, staleBrain, type BrainAgentTarget } from "../core/project-brain.js";
+import { brainDoctor, brainProfile, consolidateBrain, exportBrain, initBrain, recallBrain, scanBrain, staleBrain, type BrainAgentTarget } from "../core/project-brain.js";
 
 const brainAgents = ["claude", "codex", "gemini", "cursor", "generic"] as const;
 
@@ -22,16 +22,24 @@ export function registerBrainCommand(program: Command): void {
     process.stdout.write(await recallBrain(query, process.cwd(), Number.parseInt(options.limit, 10) || 8));
   });
 
-  brain.command("stale").description("Check evidence hashes and write stale/suspect events.").action(async () => {
-    process.stdout.write((await staleBrain()).output);
+  brain.command("stale").description("Check evidence hashes and write stale/suspect events.").option("--repair-plan", "Write a safe stale evidence repair plan").action(async (options: { repairPlan?: boolean }) => {
+    process.stdout.write((await staleBrain(process.cwd(), { repairPlan: options.repairPlan === true })).output);
   });
 
-  brain.command("doctor").description("Check Project Brain storage, JSONL health, freshness and exports.").action(async () => {
-    process.stdout.write((await brainDoctor()).output);
+  brain.command("consolidate").description("Group duplicate and near-duplicate Project Brain claims without deleting history.").option("--dry-run", "Report only; preserve append-only history", true).action(async (options: { dryRun?: boolean }) => {
+    process.stdout.write((await consolidateBrain(process.cwd(), { dryRun: options.dryRun !== false })).output);
   });
 
-  brain.command("export").description("Export an agent-safe Project Brain brief.").requiredOption("--agent <agent>", "claude, codex, gemini, cursor, or generic").action(async (options: { agent: string }) => {
-    process.stdout.write((await exportBrain(parseBrainAgent(options.agent))).output);
+  brain.command("doctor").description("Check Project Brain storage, JSONL health, freshness and exports.").option("--json", "Print machine-readable doctor report").option("--repair-plan", "Also write stale repair guidance").action(async (options: { json?: boolean; repairPlan?: boolean }) => {
+    const result = await brainDoctor(process.cwd(), { repairPlan: options.repairPlan === true });
+    process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
+  });
+
+  brain.command("export").description("Export an agent-safe Project Brain brief.").requiredOption("--agent <agent>", "claude, codex, gemini, cursor, or generic").option("--limit <count>", "Maximum items per section", "10").option("--include-suspect", "Include suspect claims in warning sections").action(async (options: { agent: string; limit?: string; includeSuspect?: boolean }) => {
+    process.stdout.write((await exportBrain(parseBrainAgent(options.agent), process.cwd(), {
+      limit: Number.parseInt(options.limit ?? "10", 10) || 10,
+      includeSuspect: options.includeSuspect === true
+    })).output);
   });
 }
 
