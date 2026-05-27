@@ -25,3 +25,4 @@ docs/releases/RELEASE_NOTES_vX.Y.Z.md
 - [v0.6.0](RELEASE_NOTES_v0.6.0.md)
 - [v0.6.1](RELEASE_NOTES_v0.6.1.md)
 - [v0.7.0](RELEASE_NOTES_v0.7.0.md)
+- [v0.8.0](RELEASE_NOTES_v0.8.0.md)

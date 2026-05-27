@@ -8,6 +8,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.8.0] - 2026-05-27
+
+### Added
+
+- Added Verified Project Brain storage under `.soturail/brain/` with JSONL claims, decisions, bugs, gaps, rules and stale events.
+- Added JSON materialized views for project profile, architecture, brain index, freshness and doctor reports.
+- Added `brain init`, `brain scan`, `brain profile`, `brain recall`, `brain stale`, `brain doctor` and `brain export --agent <host>`.
+- Added Reverse Specification Rail commands: `reverse scan`, `reverse claims`, `reverse specs`, `reverse gaps` and `reverse export --target agent`.
+- Added `rules from-brain` and `rules doctor` for reviewed brain-derived operational rules.
+- Added `eval run --suite brain` and v0.8 brain/reverse smoke coverage.
+- Added Project Brain, Reverse Specification Rail and Knowledge To Rules docs.
+
+### Changed
+
+- Agent exports and status guidance now point to Project Brain briefs when useful.
+- Workflow evidence now includes Project Brain profile and claim/gap/stale counts when available.
+- Evaluation docs now cover the brain suite.
+
+### Security
+
+- Project Brain is local and deterministic: no LLM calls, embeddings, cloud service, network-required tests or mandatory database.
+- Brain exports include source references and stale/suspect warnings, and remain review-required before agent handoff.
+
 ## [0.7.0] - 2026-05-26
 
 ### Added
