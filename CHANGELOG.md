@@ -8,6 +8,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.8.1] - 2026-05-27
+
+### Added
+
+- Added `brain consolidate --dry-run` with consolidated claim views and Markdown/JSON reports.
+- Added stale repair plans through `brain stale --repair-plan` and `brain doctor --repair-plan`.
+- Added source-range relocation events when moved evidence can still be matched deterministically.
+- Added v0.8.1 Project Brain evaluation cases for deduplication, repair guidance, brief safety, source relocation, rule links, doctor actionability and section limits.
+
+### Changed
+
+- Improved Project Brain agent briefs with bounded sections, verified/suspect/stale separation, current release process, critical commands, recovery pointers and source references.
+- Improved `rules from-brain` so stale/suspect claims are excluded from active rules and generated rules link to source claims or decisions.
+- Improved `rules doctor`, `brain doctor`, Harness Rail guidance and workflow evidence with stronger Project Brain health signals.
+- Updated Project Brain, Knowledge-to-Rules, agent, workflow, harness and evaluation docs with troubleshooting guidance.
+
+### Security
+
+- v0.8.1 does not auto-repair code, docs or claims. Repair plans are guidance for human review.
+- Project Brain remains local, deterministic and evidence-first: no LLM calls, embeddings, cloud service or network-required tests.
+
 ## [0.8.0] - 2026-05-27
 
 ### Added
