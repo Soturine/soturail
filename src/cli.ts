@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { registerBenchCommand } from "./commands/bench.js";
+import { registerBrainCommand } from "./commands/brain.js";
 import { registerAgentsCommand } from "./commands/agents.js";
 import { registerDedupeCommand } from "./commands/dedupe.js";
 import { registerDiagramCommand } from "./commands/diagram.js";
@@ -24,6 +25,7 @@ import { registerContextCommand } from "./commands/context.js";
 import { registerReadCommand } from "./commands/read.js";
 import { registerPolicyCommand } from "./commands/policy.js";
 import { registerRunCommand } from "./commands/run.js";
+import { registerReverseCommand } from "./commands/reverse.js";
 import { registerRulesCommand } from "./commands/rules.js";
 import { registerSelfCommand } from "./commands/self.js";
 import { registerSkillsCommand } from "./commands/skills.js";
@@ -45,6 +47,7 @@ export function buildProgram(): Command {
 
   registerInitCommand(program);
   registerAgentsCommand(program);
+  registerBrainCommand(program);
   registerIndexCommand(program);
   registerReadCommand(program);
   registerRunCommand(program);
@@ -65,6 +68,7 @@ export function buildProgram(): Command {
   registerNativeCommand(program);
   registerPolicyCommand(program);
   registerRulesCommand(program);
+  registerReverseCommand(program);
   registerReleaseCommand(program);
   registerSelfCommand(program);
   registerSkillsCommand(program);
