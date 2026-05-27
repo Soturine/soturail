@@ -119,6 +119,22 @@ export interface WorkspacePaths {
   worktreesDir: string;
   diagramsDir: string;
   diagramsIndexFile: string;
+  brainDir: string;
+  brainClaimsFile: string;
+  brainDecisionsFile: string;
+  brainBugsFile: string;
+  brainGapsFile: string;
+  brainRulesFile: string;
+  brainStaleEventsFile: string;
+  brainExportsDir: string;
+  brainProjectProfileFile: string;
+  brainArchitectureFile: string;
+  brainIndexFile: string;
+  brainFreshnessFile: string;
+  brainDoctorFile: string;
+  brainReverseScanJson: string;
+  brainReverseScanMd: string;
+  brainSpecsDir: string;
 }
 
 export interface EnsureResult {
@@ -183,7 +199,23 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     workflowIndexFile: path.resolve(workspace, "workflows", "index.json"),
     worktreesDir: path.resolve(workspace, "worktrees"),
     diagramsDir: path.resolve(workspace, "diagrams"),
-    diagramsIndexFile: path.resolve(workspace, "diagrams", "index.json")
+    diagramsIndexFile: path.resolve(workspace, "diagrams", "index.json"),
+    brainDir: path.resolve(workspace, "brain"),
+    brainClaimsFile: path.resolve(workspace, "brain", "claims.jsonl"),
+    brainDecisionsFile: path.resolve(workspace, "brain", "decisions.jsonl"),
+    brainBugsFile: path.resolve(workspace, "brain", "bugs.jsonl"),
+    brainGapsFile: path.resolve(workspace, "brain", "gaps.jsonl"),
+    brainRulesFile: path.resolve(workspace, "brain", "rules.jsonl"),
+    brainStaleEventsFile: path.resolve(workspace, "brain", "stale-events.jsonl"),
+    brainExportsDir: path.resolve(workspace, "brain", "exports"),
+    brainProjectProfileFile: path.resolve(workspace, "brain", "project-profile.json"),
+    brainArchitectureFile: path.resolve(workspace, "brain", "architecture.json"),
+    brainIndexFile: path.resolve(workspace, "brain", "brain-index.json"),
+    brainFreshnessFile: path.resolve(workspace, "brain", "freshness.json"),
+    brainDoctorFile: path.resolve(workspace, "brain", "doctor.json"),
+    brainReverseScanJson: path.resolve(workspace, "brain", "reverse-scan.json"),
+    brainReverseScanMd: path.resolve(workspace, "brain", "reverse-scan.md"),
+    brainSpecsDir: path.resolve(workspace, "brain", "specs")
   };
 }
 
@@ -266,7 +298,10 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.workflowsDir,
     paths.workflowTemplatesDir,
     paths.worktreesDir,
-    paths.diagramsDir
+    paths.diagramsDir,
+    paths.brainDir,
+    paths.brainExportsDir,
+    paths.brainSpecsDir
   ];
 
   for (const dir of dirs) {
@@ -283,6 +318,12 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
   await writeFileIfMissing(paths.harnessFailuresFile, "", result, paths.root);
   await writeFileIfMissing(paths.policyQueueFile, "", result, paths.root);
   await writeFileIfMissing(paths.policyDecisionsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainClaimsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainDecisionsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainBugsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainGapsFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainRulesFile, "", result, paths.root);
+  await writeFileIfMissing(paths.brainStaleEventsFile, "", result, paths.root);
   await writeFileIfMissing(paths.metricsFile, "", result, paths.root);
   await writeFileIfMissing(paths.cacheBlocks, "", result, paths.root);
   await writeFileIfMissing(paths.dedupeIndex, "", result, paths.root);
