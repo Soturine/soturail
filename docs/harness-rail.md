@@ -60,6 +60,20 @@ diagram/spec update
 
 Use `diagram/spec update` when a repeated failure points to a missing visual contract, unclear state transition or stale `.spec.md` file.
 
+## Project Brain Integration
+
+v0.8.0 allows harness notes to become Project Brain bug records or rule candidates during `brain scan`.
+
+Use this flow for repeated agent mistakes:
+
+```bash
+soturail harness note "agent skipped release verification" --prevention "workflow check"
+soturail brain scan
+soturail rules from-brain
+```
+
+Harness notes remain local evidence. Brain-derived rules still need review before being treated as policy gates.
+
 ## Review Perspectives
 
 Workflow review reports are deterministic sections rather than vague feedback. v0.7.0 uses:

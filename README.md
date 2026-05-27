@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.7.0 is the Workflow Rail 2.0, Harness Rail and Diagram Rail milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail and the local evaluation suite are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.8.0 is the Verified Project Brain and Reverse Specification Rail milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite and Project Brain are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next product direction is staged: v0.8.0 adds Knowledge Rail and Project Brain without turning SotuRail into an autonomous agent runtime. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next product direction is staged: v0.8.x hardens Project Brain quality and v0.9.0 focuses on native engine work only where local benchmarks justify it. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -100,6 +100,31 @@ soturail diagram from-workflow <id>
 Workflow Rail 2.0 writes local plan/work/review/verify artifacts under `.soturail/workflows/`. Harness Rail connects repeated failures and acceptance contracts to verification and evidence. Diagram Rail writes text-based Mermaid diagrams and `.spec.md` visual contracts under `docs/diagrams/` and `.soturail/diagrams/`.
 
 Release notes now live under `docs/releases/`, and release evidence points to `docs/releases/RELEASE_NOTES_vX.Y.Z.md`.
+
+## v0.8.0 Verified Project Brain
+
+```bash
+soturail brain init
+soturail brain scan
+soturail brain profile
+soturail brain recall "release notes"
+soturail brain stale
+soturail brain doctor
+soturail brain export --agent codex
+
+soturail reverse scan ./src
+soturail reverse claims ./src
+soturail reverse specs ./src
+soturail reverse gaps
+soturail reverse export --target agent
+
+soturail rules from-brain
+soturail eval run --suite brain
+```
+
+Project Brain stores source-backed knowledge under `.soturail/brain/` using JSONL records for claims, decisions, bugs, gaps, rules and stale events, JSON views for current state and Markdown briefs for agent handoff.
+
+Reverse Specification Rail extracts deterministic claims and draft specs from local source/docs/tests. It does not call an LLM, use embeddings, require a database or send project data to a network service.
 
 ## Why SotuRail Exists
 
@@ -194,6 +219,9 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Structured Payload Rail](docs/structured-payload-rail.md)
 - [Agent Docs Hygiene](docs/agent-docs-hygiene.md)
 - [Evaluation Suite](docs/evaluation-suite.md)
+- [Project Brain](docs/project-brain.md)
+- [Reverse Specification Rail](docs/reverse-specification-rail.md)
+- [Knowledge To Rules](docs/knowledge-to-rules.md)
 - [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
 
 ## Installation
@@ -316,6 +344,12 @@ soturail context budget --explain
 soturail workflow list
 soturail workflow show <id>
 soturail workflow close <id>
+soturail brain scan
+soturail brain recall "release notes"
+soturail brain export --agent codex
+soturail reverse specs ./src
+soturail rules from-brain
+soturail eval run --suite brain
 soturail run workspace show <run-id>
 soturail format README.md --mode concise
 soturail format compare README.md
@@ -528,7 +562,8 @@ v0.5.2  CI stabilization + lightweight quality fixtures + roadmap realignment
 v0.6.0  Real agent runtime integration + host capability matrix + host-aware payload/policy docs
 v0.6.1  Agent UX polish + full evaluation suite
 v0.7.0  Workflow Rail 2.0 + Harness Rail + Diagram Rail + .spec.md visual contracts
-v0.8.0  Knowledge Rail and Project Brain with specs, diagrams and recurring failures
+v0.8.0  Verified Project Brain + Reverse Specification Rail
+v0.8.1  Project Brain polish, stale-evidence quality and agent-brief improvements
 v0.9.0  Native Engine Real
 v0.10.0 Local reports, traces, Mermaid rendering and dashboard
 v1.0.0  Stable Context OS

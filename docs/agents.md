@@ -11,6 +11,7 @@ soturail agents status --json
 soturail agents doctor
 soturail agents doctor --verbose
 soturail agents export --agent all
+soturail brain export --agent codex
 soturail agents export --agent deepagents
 soturail agents export --agent deepagents-js
 soturail agents install --agent claude --dry-run
@@ -24,6 +25,8 @@ soturail agents uninstall --agent claude --dry-run
 ```
 
 Exports are written under `.soturail/exports/agents/<agent>/`. They are meant to be reviewed before use.
+
+Project Brain exports are written under `.soturail/brain/exports/`. They provide verified claims, rules, gaps, stale warnings and source references for agent handoff.
 
 ## Safe Defaults
 
@@ -147,6 +150,21 @@ Generic -> Markdown
 ```
 
 See [structured-payload-rail.md](structured-payload-rail.md).
+
+## Project Brain Briefs
+
+v0.8.0 adds:
+
+```bash
+soturail brain scan
+soturail brain export --agent claude
+soturail brain export --agent codex
+soturail brain export --agent gemini
+soturail brain export --agent cursor
+soturail brain export --agent generic
+```
+
+Use these briefs when an agent needs repo-wide facts without a giant context dump. They include source references and stale/suspect warnings, and they remind agents not to overclaim beyond evidence.
 
 ## Tutorials
 

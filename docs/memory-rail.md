@@ -165,6 +165,17 @@ summary: Always verify packed CLI by installing the .tgz in a clean temp project
 status: approved
 ```
 
+## Relationship With Project Brain
+
+Project Brain can read approved memory summaries during `brain scan` and include only safe memory in agent briefs.
+
+Rules:
+
+- private or pending memory stays local;
+- approved memory can become a source hint, not an unchecked fact;
+- recurring memory should link to a claim, decision, bug or gap when possible;
+- brain exports should prefer source references and concise summaries over long copied notes.
+
 ## Privacy And Redaction
 
 Memory Rail must not make secrets easier to leak.

@@ -409,20 +409,34 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 - Diagram validation for invalid Mermaid syntax, unreachable states, missing verification, unlabeled risky transitions and release paths without evidence.
 - Future `diagram sync` and `diagram from-repo` commands can be added after v0.7.0.
 
-## v0.8.0 - Knowledge Rail And Project Brain
+## v0.8.0 - Verified Project Brain And Reverse Specification Rail
 
-- Ingest project docs, changelogs, release notes, issues and workflow decisions.
-- Extract architecture decisions and recurring bug patterns.
-- Build project profiles for agents.
-- Rules search with cited source paths and line ranges where possible.
-- Stale evidence detection across richer project graphs.
-- Safer knowledge-to-rules pipeline.
-- Project Brain summaries for architecture, decisions, bugs, releases and recurring commands.
-- Connect harness failure notes with knowledge/rules suggestions.
-- Connect filesystem evidence with Project Brain decisions and recurring bug patterns.
-- Connect `.spec.md` files, Mermaid diagrams and decision matrices to Project Brain.
-- Connect structured payload reports to Project Brain so preferred context formats are learned from local evidence.
-- Connect Agent Docs Hygiene findings to Project Brain so stale agent instructions are detected.
+- Add local Project Brain storage under `.soturail/brain/`.
+- Use JSONL records for claims, decisions, bugs, gaps, rules and stale events.
+- Use JSON materialized views for project profile, architecture, brain index, freshness and doctor reports.
+- Add `soturail brain init`.
+- Add `soturail brain scan`.
+- Add `soturail brain profile`.
+- Add `soturail brain recall "query"`.
+- Add `soturail brain stale`.
+- Add `soturail brain doctor`.
+- Add `soturail brain export --agent claude|codex|gemini|cursor|generic`.
+- Add Reverse Specification Rail commands: `reverse scan`, `reverse claims`, `reverse specs`, `reverse gaps` and `reverse export --target agent`.
+- Add `soturail rules from-brain` and `soturail rules doctor`.
+- Add `soturail eval run --suite brain`.
+- Keep extraction deterministic: no LLM calls, embeddings, cloud services or external databases.
+- Connect workflow evidence with Project Brain claim/gap/stale counts.
+- Connect harness failures to brain bug/rule candidates.
+- Connect agent exports with Project Brain brief guidance.
+
+## v0.8.1 - Project Brain Polish And Knowledge Quality
+
+- Improve source-range matching and duplicate claim consolidation.
+- Add richer decision capture from workflow/release evidence.
+- Add better stale-evidence repair guidance.
+- Add stronger agent-brief quality fixtures.
+- Improve brain-to-memory and memory-to-brain review workflows.
+- Expand reverse specification coverage for docs/tests parity.
 
 ## v0.9.0 - Native Engine Real
 

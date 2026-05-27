@@ -22,6 +22,24 @@ Each rule includes:
 
 `soturail rules check` runs deterministic validators for package metadata, required files, forbidden files, README sections, CI workflow presence and documentation presence when the rule text supports it.
 
+## Brain-Derived Rules
+
+v0.8.0 adds:
+
+```bash
+soturail rules from-brain
+soturail rules doctor
+```
+
+`rules from-brain` converts verified Project Brain claims and active decisions into reviewed local rule candidates. It writes:
+
+```txt
+.soturail/brain/rules.jsonl
+.soturail/rules/from-brain.md
+```
+
+Each rule links back to claim IDs or decision IDs. Treat the output as advisory until a human promotes it to a policy gate or deterministic validator.
+
 ## Planned Policy Rule IDs
 
 Policy Rail should eventually expose stable, readable rule IDs for risky agent-assisted actions.

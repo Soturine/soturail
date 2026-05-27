@@ -1,23 +1,46 @@
-# Knowledge-to-Rules Engine
+# Knowledge To Rules
 
-SotuRail can ingest heavy documents into reusable structured rules:
+SotuRail v0.8.0 connects verified Project Brain knowledge to operational rules.
 
-```bash
-soturail ingest docs/requirements.md --type requirements
-soturail rules list
-soturail rules check
-soturail rules export --format yaml
+The flow is:
+
+```txt
+source evidence -> brain claim or decision -> reviewed rule -> agent/workflow guidance
 ```
 
-Supported v0.2.0 inputs:
+## Commands
 
-- Markdown
-- TXT
-- JSON
-- YAML
+```bash
+soturail brain scan
+soturail rules from-brain
+soturail rules doctor
+```
 
-PDF extraction is documented as experimental and disabled unless a safe text extraction path is added later.
+`rules from-brain` converts verified claims and active decisions into advisory rules and writes:
 
-Rules are deterministic and cite source file, source section and content hash. SotuRail should not invent rules that do not appear in the source.
+```txt
+.soturail/brain/rules.jsonl
+.soturail/rules/from-brain.md
+```
 
-Benchmarks report this feature as knowledge structuring, not pure compression. A structured rule set may be larger than a short source document because it adds ids, citations, severities and validator metadata that can be reused across agent sessions.
+Each brain-derived rule links back to claim IDs or decision IDs.
+
+## Example Rules
+
+- Release notes must live under `docs/releases/`.
+- Run `npm run release:check` before npm publish.
+- Do not expose arbitrary shell execution through MCP.
+- Do not treat Diagram Rail validation as a full Mermaid parser.
+- Keep native acceleration optional.
+
+## Review Model
+
+Brain-derived rules start as local guidance. Promote them to policy gates only after review and supporting tests/evidence.
+
+Useful review questions:
+
+- Does the rule cite a verified claim or active decision?
+- Is the source still fresh?
+- Does a test or release gate validate the rule?
+- Could the rule expose secrets or raw logs?
+- Should it remain advisory instead of a hard gate?

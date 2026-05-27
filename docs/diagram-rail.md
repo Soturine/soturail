@@ -98,6 +98,14 @@ Workflow evidence can include:
 - generated workflow state diagram;
 - release or policy diagram when present.
 
+## Project Brain Integration
+
+v0.8.0 Project Brain recognizes `docs/diagrams/` and `.spec.md` contracts as evidence sources.
+
+Brain stale checks can flag source drift where a claim points at a diagram or spec range. Reverse specs can also generate gaps when diagram docs exist without matching command or validation evidence.
+
+Diagram validation remains intentionally lightweight. SotuRail should not claim it is a full Mermaid parser.
+
 ## Example Diagram
 
 ```mermaid

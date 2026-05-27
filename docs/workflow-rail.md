@@ -102,6 +102,7 @@ Verification connects:
 Evidence packs include:
 
 - workflow metadata and state;
+- Project Brain profile and claim/gap/stale counts when available;
 - plan, task, review and verify paths;
 - run workspace pointers where available;
 - command raw IDs and offload IDs;
@@ -141,3 +142,17 @@ Generated workflow diagrams live under `docs/diagrams/` and have matching `.spec
 ## Future Directions
 
 Future Workflow Rail work can add richer trace/report commands, deeper task generation, issue integration and release-specific templates. The boundary stays the same: SotuRail prepares local context, evidence and safety rails, while the agent host owns the editing runtime.
+
+## Project Brain Integration
+
+v0.8.0 lets Workflow Rail evidence reference Project Brain status. A workflow evidence pack can show the local brain profile path, claim count, gap count and stale-event count.
+
+Useful flow:
+
+```bash
+soturail brain scan
+soturail workflow verify
+soturail workflow evidence <id>
+```
+
+This keeps workflow claims tied to source-backed knowledge rather than chat memory.

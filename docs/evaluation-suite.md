@@ -5,6 +5,7 @@ SotuRail v0.6.1 adds a local evaluation suite for context quality. It is determi
 ```bash
 soturail eval list
 soturail eval run
+soturail eval run --suite brain
 soturail eval report
 ```
 
@@ -33,6 +34,7 @@ The suite uses small fixtures that verify whether critical evidence survives sel
 | Evidence packs | Workflow/run evidence includes raw IDs, policy decisions, changed files and harness contract notes. |
 | Harness scenarios | Repeated failures become candidate rules, docs, memory or workflow checks. |
 | Diagram validation | Invalid Mermaid and missing verification transitions are reported clearly. |
+| Project Brain | Verified claims, stale detection, brain-derived rules, brain briefs, reverse specs and gap detection. |
 
 ## Evaluation Dimensions
 
@@ -183,6 +185,24 @@ SotuRail should only make performance or quality claims when the repository incl
 - Native/Rust speedups.
 
 Those can be tested separately, but the default evaluation suite must stay cheap enough for regular local development.
+
+## Brain Suite
+
+v0.8.0 adds a focused Project Brain suite:
+
+```bash
+soturail eval run --suite brain
+```
+
+It validates that:
+
+- verified claims include source paths and hashes;
+- stale evidence detection reports source drift;
+- rules derived from brain records link back to claims or decisions;
+- agent briefs include verified rules, gaps, safe commands and source references;
+- reverse specs include source claims;
+- gaps are generated for missing proof;
+- brain recall explains match reason, status, confidence and source.
 
 ## Acceptance Criteria
 

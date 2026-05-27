@@ -54,8 +54,8 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Filesystem Evidence Rail | Snapshot, touched-file and diff evidence tied to workflows and raw IDs | v0.5.0 seeds, v0.7.0 expansion | `docs/filesystem-evidence-rail.md`, `docs/workflow-rail.md` |
 | Evidence Pack | Connect build/test/audit/pack/raw IDs/policy decisions/release notes | v0.5.0 seeds, v0.7.0 expansion | `docs/harness-rail.md`, `docs/workflow-rail.md` |
 | Evaluation Suite | Quality benchmarks for context, payload formats, diagrams, evidence and role packs | v0.6.1 | `docs/evaluation-suite.md`, `docs/benchmarking.md`, `ROADMAP.md` |
-| Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary, v0.5.x design | `docs/roadmap-agent-runtime-addendum.md`, `docs/knowledge-to-rules.md` |
-| Project Brain | Docs, diagrams, decisions, recurring bugs and release history | v0.8.0 | `ROADMAP.md` |
+| Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary | `docs/reverse-specification-rail.md`, `docs/knowledge-to-rules.md` |
+| Project Brain | Verified claims, decisions, bugs, gaps, rules, stale events and agent-safe briefs | v0.8.0 | `docs/project-brain.md`, `ROADMAP.md` |
 | Local Dashboard | Local reports, trace viewer, Mermaid rendering and policy/evidence views | v0.10.0 | `ROADMAP.md` |
 
 ## Version Summary
@@ -152,10 +152,10 @@ Focus:
 
 Focus:
 
-- Knowledge Rail;
+- Verified Project Brain;
 - Reverse Specification Rail;
-- Project Brain;
-- diagrams and specs as part of project memory;
+- JSONL claims, decisions, bugs, gaps, rules and stale events;
+- diagrams and specs as source-backed project knowledge;
 - recurring bugs and harness failures as rules/checks;
 - agent docs freshness.
 
