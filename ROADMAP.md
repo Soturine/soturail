@@ -431,12 +431,15 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 
 ## v0.8.1 - Project Brain Polish And Knowledge Quality
 
-- Improve source-range matching and duplicate claim consolidation.
-- Add richer decision capture from workflow/release evidence.
-- Add better stale-evidence repair guidance.
-- Add stronger agent-brief quality fixtures.
-- Improve brain-to-memory and memory-to-brain review workflows.
-- Expand reverse specification coverage for docs/tests parity.
+- Improve source-range matching with local relocation candidates when evidence moves inside the same file.
+- Add duplicate and near-duplicate claim consolidation reports without deleting append-only history.
+- Add stale-evidence repair guidance through `brain stale --repair-plan` and `brain doctor --repair-plan`.
+- Improve agent briefs so verified, suspect and stale records are separated and bounded by default.
+- Make `rules from-brain` safer: stale/suspect claims do not create active rules by default, and all rules link to claim or decision IDs.
+- Improve `brain doctor` with duplicate groups, integration status, repair-plan paths and actionable next commands.
+- Add stronger brain quality fixtures for dedupe, repair plans, source relocation, rule links, brief safety and section limits.
+- Improve troubleshooting docs for noisy suspect records, long briefs and weak rule derivation.
+- Add v0.9.0 planning notes for benchmark categories while preserving TypeScript fallback and optional native-only work.
 
 ## v0.9.0 - Native Engine Real
 

@@ -38,6 +38,14 @@ The report summarizes scanned files, detected commands/modules, likely rails, li
 
 Claims are appended to `.soturail/brain/claims.jsonl` only when their stable ID is not already present.
 
+After a large reverse-claims run, use:
+
+```bash
+soturail brain consolidate --dry-run
+```
+
+This groups duplicate and near-duplicate claims into a report while preserving the append-only claim history.
+
 ## Draft Specs
 
 `reverse specs` writes draft specs under `.soturail/brain/specs/`:

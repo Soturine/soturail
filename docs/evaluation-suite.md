@@ -204,6 +204,18 @@ It validates that:
 - gaps are generated for missing proof;
 - brain recall explains match reason, status, confidence and source.
 
+v0.8.1 expands the brain suite with quality fixtures for:
+
+- claim deduplication and consolidation reports;
+- stale repair guidance;
+- agent brief safety;
+- source-range relocation;
+- brain-derived rule link integrity;
+- doctor actionability;
+- export section limits.
+
+These cases check fields and behavior, not exact timing or fragile prose.
+
 ## Acceptance Criteria
 
 Evaluation Suite changes should not be promoted until:

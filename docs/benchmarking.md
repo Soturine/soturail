@@ -51,6 +51,25 @@ soturail bench compare-engines
 
 Optional RTK or Squeez comparisons are only run when the user already has those tools on PATH.
 
+## v0.9.0 Native Candidate Planning
+
+v0.8.1 keeps native work as planning and measurement only. Future optimization must be benchmark-gated and keep TypeScript fallback mandatory.
+
+Planned categories:
+
+```txt
+brain-scan
+brain-stale
+brain-consolidate
+reverse-claims
+format-compare
+json-validate
+reducer-large-log
+workflow-evidence
+```
+
+Candidate native hot paths may include large JSONL scans, rangeHash computation, source-range relocation and duplicate claim clustering. Agent brief rendering and release preflight are not native candidates until local evidence proves a bottleneck.
+
 ## Evaluation Suite
 
 v0.6.1 adds a local Evaluation Suite alongside the benchmark commands.

@@ -21,9 +21,32 @@ soturail rules doctor
 ```txt
 .soturail/brain/rules.jsonl
 .soturail/rules/from-brain.md
+.soturail/rules/from-brain.json
 ```
 
 Each brain-derived rule links back to claim IDs or decision IDs.
+
+## v0.8.1 Safety Model
+
+Rule derivation is conservative:
+
+- verified claims with validation references can become `test-backed` rules;
+- verified release, policy or security claims can become `policy-gate` candidates;
+- verified claims without tests usually become `manual-review`;
+- unverified claims stay advisory/draft;
+- suspect or stale claims do not create active rules by default;
+- superseded or rejected decisions do not create active rules.
+
+Use this repair-first flow when rules look weak or stale:
+
+```bash
+soturail brain stale --repair-plan
+soturail brain consolidate --dry-run
+soturail rules from-brain
+soturail rules doctor
+```
+
+`rules doctor` reports brain-derived rule counts, active/advisory rules, missing source links and stale-source warnings.
 
 ## Example Rules
 

@@ -106,6 +106,8 @@ Brain stale checks can flag source drift where a claim points at a diagram or sp
 
 Diagram validation remains intentionally lightweight. SotuRail should not claim it is a full Mermaid parser.
 
+v0.8.1 stale repair plans may include relocated diagram/spec ranges when source text moves. They are guidance only; review the `.spec.md` contract and rerun diagram validation before trusting the updated claim.
+
 ## Example Diagram
 
 ```mermaid

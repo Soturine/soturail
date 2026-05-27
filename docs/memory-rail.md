@@ -176,6 +176,8 @@ Rules:
 - recurring memory should link to a claim, decision, bug or gap when possible;
 - brain exports should prefer source references and concise summaries over long copied notes.
 
+v0.8.1 keeps memory-to-brain conservative: use `soturail brain consolidate --dry-run` before deriving rules from repeated memories, and use `soturail brain stale --repair-plan` when a memory points at evidence that moved or changed.
+
 ## Privacy And Redaction
 
 Memory Rail must not make secrets easier to leak.

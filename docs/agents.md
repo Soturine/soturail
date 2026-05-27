@@ -158,13 +158,21 @@ v0.8.0 adds:
 ```bash
 soturail brain scan
 soturail brain export --agent claude
-soturail brain export --agent codex
+soturail brain export --agent codex --limit 10
 soturail brain export --agent gemini
 soturail brain export --agent cursor
 soturail brain export --agent generic
 ```
 
 Use these briefs when an agent needs repo-wide facts without a giant context dump. They include source references and stale/suspect warnings, and they remind agents not to overclaim beyond evidence.
+
+v0.8.1 briefs are cleaner and safer:
+
+- verified, suspect and stale records are separated;
+- stale claims are not shown as verified;
+- sections are bounded with `--limit`;
+- `--include-suspect` adds warning context when needed;
+- recovery pointers name the local brain profile, freshness and repair-plan files.
 
 ## Tutorials
 

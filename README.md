@@ -26,7 +26,7 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.8.0 is the Verified Project Brain and Reverse Specification Rail milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite and Project Brain are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.8.1 is the Project Brain polish milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite and Project Brain are local-first and benchmarkable. External comparisons are optional and user-provided.
 
 The next product direction is staged: v0.8.x hardens Project Brain quality and v0.9.0 focuses on native engine work only where local benchmarks justify it. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
@@ -101,16 +101,17 @@ Workflow Rail 2.0 writes local plan/work/review/verify artifacts under `.soturai
 
 Release notes now live under `docs/releases/`, and release evidence points to `docs/releases/RELEASE_NOTES_vX.Y.Z.md`.
 
-## v0.8.0 Verified Project Brain
+## v0.8.x Verified Project Brain
 
 ```bash
 soturail brain init
 soturail brain scan
+soturail brain consolidate --dry-run
 soturail brain profile
 soturail brain recall "release notes"
-soturail brain stale
-soturail brain doctor
-soturail brain export --agent codex
+soturail brain stale --repair-plan
+soturail brain doctor --repair-plan
+soturail brain export --agent codex --limit 10
 
 soturail reverse scan ./src
 soturail reverse claims ./src
@@ -125,6 +126,8 @@ soturail eval run --suite brain
 Project Brain stores source-backed knowledge under `.soturail/brain/` using JSONL records for claims, decisions, bugs, gaps, rules and stale events, JSON views for current state and Markdown briefs for agent handoff.
 
 Reverse Specification Rail extracts deterministic claims and draft specs from local source/docs/tests. It does not call an LLM, use embeddings, require a database or send project data to a network service.
+
+v0.8.1 improves trust in that brain: stale detection can report relocated ranges, `brain consolidate --dry-run` groups duplicate claims without deleting history, repair plans explain safe human follow-up and agent briefs separate verified, suspect and stale records.
 
 ## Why SotuRail Exists
 
@@ -200,12 +203,12 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage moves toward Knowledge Rail and Project Brain:
+The next roadmap stage hardens Project Brain quality and prepares benchmark-gated native work:
 
-- architecture decisions and recurring bug patterns from local docs and workflow evidence;
-- stale evidence detection across richer project graphs;
-- safer knowledge-to-rules extraction;
-- project profiles for agents;
+- better source-range relocation and stale repair workflows;
+- safer consolidation of duplicate or near-duplicate claims;
+- stronger knowledge-to-rules review gates;
+- Project Brain performance baselines for large local repositories;
 - future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
 
 ## Future Rails Documentation
@@ -241,10 +244,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.6.1 is published, install that exact version with:
+When v0.8.1 is published, install that exact version with:
 
 ```bash
-npm install -g soturail@0.6.1
+npm install -g soturail@0.8.1
 ```
 
 For local development from source:
@@ -345,8 +348,10 @@ soturail workflow list
 soturail workflow show <id>
 soturail workflow close <id>
 soturail brain scan
+soturail brain consolidate --dry-run
 soturail brain recall "release notes"
-soturail brain export --agent codex
+soturail brain stale --repair-plan
+soturail brain export --agent codex --limit 10
 soturail reverse specs ./src
 soturail rules from-brain
 soturail eval run --suite brain

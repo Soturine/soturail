@@ -147,10 +147,18 @@ Future Workflow Rail work can add richer trace/report commands, deeper task gene
 
 v0.8.0 lets Workflow Rail evidence reference Project Brain status. A workflow evidence pack can show the local brain profile path, claim count, gap count and stale-event count.
 
+v0.8.1 adds stronger workflow evidence hints:
+
+- brain suspect/stale count;
+- latest brain doctor path when available;
+- repair-plan flow for stale claims that affect release or workflow evidence.
+
 Useful flow:
 
 ```bash
 soturail brain scan
+soturail brain stale --repair-plan
+soturail brain doctor --repair-plan
 soturail workflow verify
 soturail workflow evidence <id>
 ```

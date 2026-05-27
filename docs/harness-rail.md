@@ -74,6 +74,16 @@ soturail rules from-brain
 
 Harness notes remain local evidence. Brain-derived rules still need review before being treated as policy gates.
 
+v0.8.1 adds repair and consolidation guidance to this loop:
+
+```bash
+soturail brain consolidate --dry-run
+soturail brain stale --repair-plan
+soturail rules doctor
+```
+
+If the same harness failure appears multiple times, consolidate duplicate claims first, then derive rules only from verified and fresh sources.
+
 ## Review Perspectives
 
 Workflow review reports are deterministic sections rather than vague feedback. v0.7.0 uses:

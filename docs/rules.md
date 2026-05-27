@@ -36,9 +36,12 @@ soturail rules doctor
 ```txt
 .soturail/brain/rules.jsonl
 .soturail/rules/from-brain.md
+.soturail/rules/from-brain.json
 ```
 
 Each rule links back to claim IDs or decision IDs. Treat the output as advisory until a human promotes it to a policy gate or deterministic validator.
+
+v0.8.1 avoids active rules from stale or suspect claims by default. Run `soturail brain stale --repair-plan` and `soturail brain consolidate --dry-run` before deriving rules when the brain has drifted.
 
 ## Planned Policy Rule IDs
 
