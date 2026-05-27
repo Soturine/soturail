@@ -285,7 +285,8 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
     detect(root, relativeToRoot(root, paths.contextRolePacksDir), "role_packs"),
     detect(root, relativeToRoot(root, paths.skillsDir), "skills"),
     detect(root, relativeToRoot(root, paths.policyDir), "policy"),
-    detect(root, relativeToRoot(root, paths.runsDir), "runs")
+    detect(root, relativeToRoot(root, paths.runsDir), "runs"),
+    detect(root, relativeToRoot(root, paths.brainExportsDir), "project_brain_exports")
   ]);
   const contextEntries = await listFiles(paths.contextDir);
   const contextPacks = contextEntries.filter((entry) => entry.endsWith(".md"));
@@ -298,6 +299,7 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
   const nextSteps = [
     ...(contextPacks.length === 0 ? ["soturail context pack --target all"] : []),
     ...(rolePacks.length === 0 ? ["soturail context pack --role planner"] : []),
+    "soturail brain export --agent generic",
     "soturail agents capabilities",
     "soturail agents install --agent claude --dry-run",
     "soturail policy doctor"
@@ -359,7 +361,8 @@ export function renderAgentStatus(status: AgentRuntimeStatus): string {
     "",
     "Short root docs guidance:",
     "- Keep root agent files brief: identity, safety, commands and links.",
-    "- Put bulky task context in .soturail/context/ and role packs."
+    "- Put bulky task context in .soturail/context/ and role packs.",
+    "- Add verified project knowledge with `soturail brain scan` and `soturail brain export --agent <host>`."
   ].join("\n") + "\n";
 }
 

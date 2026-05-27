@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import type { Command } from "commander";
 import { ensureWorkspace, getWorkspacePaths } from "../core/config.js";
+import { readBrainCounts, rulesFromBrain } from "../core/project-brain.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { parseRulesYaml, rulesToYaml, type ExtractedRule } from "../core/rule-extractor.js";
 import { validateRules } from "../core/rule-validator.js";
@@ -52,6 +53,24 @@ export async function exportRules(format: string, root = process.cwd()): Promise
   throw new Error(`Unknown export format "${format}".`);
 }
 
+export async function rulesDoctor(root = process.cwd()): Promise<string> {
+  await ensureWorkspace(root);
+  const rules = await readRules(root);
+  const counts = await readBrainCounts(root);
+  return [
+    "SotuRail rules doctor",
+    `extracted_rules: ${rules.length}`,
+    `brain_rules: ${counts.rules}`,
+    `brain_claims: ${counts.claims}`,
+    `brain_gaps: ${counts.gaps}`,
+    `from_brain: ${counts.rules > 0 ? ".soturail/rules/from-brain.md" : "missing"}`,
+    "next_commands:",
+    "- soturail brain scan",
+    "- soturail rules from-brain",
+    "- soturail rules check"
+  ].join("\n") + "\n";
+}
+
 export function registerRulesCommand(program: Command): void {
   const rules = program.command("rules").description("List, validate and export extracted SotuRail rules.");
   rules.command("list").description("List extracted rules.").action(async () => {
@@ -62,5 +81,11 @@ export function registerRulesCommand(program: Command): void {
   });
   rules.command("export").description("Export rules as yaml or json.").option("--format <format>", "yaml or json", "yaml").action(async (options: { format: string }) => {
     process.stdout.write(await exportRules(options.format));
+  });
+  rules.command("from-brain").description("Derive operational rules from verified Project Brain claims and active decisions.").action(async () => {
+    process.stdout.write((await rulesFromBrain()).output);
+  });
+  rules.command("doctor").description("Check extracted and brain-derived rule readiness.").action(async () => {
+    process.stdout.write(await rulesDoctor());
   });
 }

@@ -6,6 +6,7 @@ import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot } from ".
 import type { HarnessFailureRecord } from "./harness-rail.js";
 import type { PolicyDecision } from "./policy-rail.js";
 import type { RawRunRecord } from "./raw-store.js";
+import { readBrainCounts } from "./project-brain.js";
 import { makeRailId } from "./rail-utils.js";
 import { readWorkflow } from "./workflow-store.js";
 import { SOTURAIL_VERSION } from "./version.js";
@@ -31,6 +32,7 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   const diagramValidationPath = path.join(paths.diagramsDir, "validation.json");
   const offloadIds = await listOffloadIds(paths.contextOffloadDir);
   const packageVersion = await readPackageVersion(root);
+  const brainCounts = await readBrainCounts(root).catch(() => null);
   const releaseNotesPath = packageVersion ? path.join(root, "docs", "releases", `RELEASE_NOTES_v${packageVersion}.md`) : "";
   const reportId = makeRailId("evidence", id);
   const reportPath = path.join(paths.reportsDir, `${reportId}.md`);
@@ -91,6 +93,13 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     "",
     `- diagram_validation: ${await exists(diagramValidationPath) ? relativeToRoot(root, diagramValidationPath) : "missing"}`,
     `- eval_report: ${await exists(evalReportPath) ? relativeToRoot(root, evalReportPath) : "missing"}`,
+    "",
+    "## Project Brain Evidence",
+    "",
+    `- brain_profile: ${await exists(paths.brainProjectProfileFile) ? relativeToRoot(root, paths.brainProjectProfileFile) : "missing"}`,
+    `- brain_claims: ${brainCounts?.claims ?? 0}`,
+    `- brain_gaps: ${brainCounts?.gaps ?? 0}`,
+    `- brain_stale_events: ${brainCounts?.staleEvents ?? 0}`,
     "",
     "## Release Evidence",
     "",

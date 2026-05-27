@@ -291,6 +291,7 @@ function promptOnly(agent: AgentId): string {
     "## Rules",
     "",
     "- Use `soturail index` before large repository changes.",
+    "- Use `soturail brain export --agent " + agent + "` for verified Project Brain briefs when available.",
     "- Use `soturail context pack --target generic` or the target-specific pack for stable project context.",
     "- Use `soturail read <file> --query \"goal\"` for large files.",
     "- Use `soturail run <command>` for tests/builds/logs so raw evidence is recoverable.",
