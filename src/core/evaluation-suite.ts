@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { compressOutputWithEngine } from "../compressors/index.js";
 import { lintAgentDocs } from "./agent-docs-hygiene.js";
-import { appendJsonl, ensureWorkspace, getWorkspacePaths, writeJson } from "./config.js";
+import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl, writeJson } from "./config.js";
 import { buildRolePack, offloadContext, restoreOffload, routeContext, selectContext } from "./context-intelligence.js";
 import { validateMermaidDiagram } from "./diagram-validator.js";
 import { buildWorkflowEvidence } from "./evidence-pack.js";
@@ -13,7 +13,9 @@ import { initHarnessContract, checkHarnessContract, noteHarnessFailure } from ".
 import { validateJsonFile } from "./json-validator.js";
 import { rememberMemory, recallMemory } from "./memory-rail.js";
 import { decidePolicyItem, queuePolicyItem } from "./policy-rail.js";
-import { makeRailId } from "./rail-utils.js";
+import { brainDoctor, exportBrain, initBrain, recallBrain, rulesFromBrain, scanBrain, staleBrain } from "./project-brain.js";
+import { makeRailId, summarizeText } from "./rail-utils.js";
+import { reverseClaims, reverseExport, reverseGaps, reverseScan, reverseSpecs } from "./reverse-specification.js";
 import { estimateTokens } from "./token-estimator.js";
 import { createWorkflow } from "./workflow-store.js";
 
@@ -32,7 +34,7 @@ export interface EvaluationRun {
   schemaVersion: "soturail.eval.v1";
   id: string;
   createdAt: string;
-  suite: "v0.6.1";
+  suite: EvaluationSuiteName;
   cases: EvaluationCase[];
   summary: {
     passed: number;
@@ -43,6 +45,12 @@ export interface EvaluationRun {
     json: string;
     markdown: string;
   };
+}
+
+export type EvaluationSuiteName = "v0.6.1" | "brain";
+
+export interface EvaluationOptions {
+  suite?: EvaluationSuiteName;
 }
 
 const caseList = [
@@ -60,28 +68,42 @@ const caseList = [
   ["diagram-validation-quality", "diagram", "Diagram validation catches invalid syntax and workflow warnings."]
 ] as const;
 
-export function listEvaluationCases(): string {
+const brainCaseList = [
+  ["brain-claim-quality", "brain", "Verified claims include source paths, hashes and validation status."],
+  ["brain-stale-doc-detection", "brain", "Stale detection records source drift for changed evidence."],
+  ["brain-rule-extraction", "rules", "Brain-derived rules link back to claims or decisions."],
+  ["brain-agent-brief-quality", "agents", "Brain export includes rules, gaps, safe commands and source references."],
+  ["reverse-spec-coverage", "reverse", "Reverse specs include source claims and acceptance criteria."],
+  ["gap-detection-quality", "reverse", "Reverse gaps are explicit and source-linked."],
+  ["decision-trace-quality", "brain", "Brain recall explains match reason, status, confidence and source."]
+] as const;
+
+export function listEvaluationCases(options: EvaluationOptions = {}): string {
+  const suite = options.suite ?? "v0.6.1";
+  const cases = suite === "brain" ? brainCaseList : caseList;
   return [
     "SotuRail evaluation cases",
-    `suite: v0.6.1`,
-    `cases_count: ${caseList.length}`,
+    `suite: ${suite}`,
+    `cases_count: ${cases.length}`,
     "",
-    ...caseList.map(([id, group, title]) => `- ${id} [${group}] ${title}`)
+    ...cases.map(([id, group, title]) => `- ${id} [${group}] ${title}`)
   ].join("\n") + "\n";
 }
 
-export async function runEvaluationSuite(root = process.cwd()): Promise<EvaluationRun> {
+export async function runEvaluationSuite(root = process.cwd(), options: EvaluationOptions = {}): Promise<EvaluationRun> {
   await ensureWorkspace(root);
+  const suite = options.suite ?? "v0.6.1";
   const evalRoot = await createEvalProject();
   const cases: EvaluationCase[] = [];
-  for (const [id, group, title] of caseList) {
-    cases.push(await runCase(id, group, title, evalRoot));
+  const casesToRun = suite === "brain" ? brainCaseList : caseList;
+  for (const [id, group, title] of casesToRun) {
+    cases.push(await runCase(id, group, title, evalRoot, suite));
   }
   const run: EvaluationRun = {
     schemaVersion: "soturail.eval.v1",
-    id: makeRailId("eval", "v0.6.1"),
+    id: makeRailId("eval", suite),
     createdAt: new Date().toISOString(),
-    suite: "v0.6.1",
+    suite,
     cases,
     summary: {
       passed: cases.filter((item) => item.result === "pass").length,
@@ -102,8 +124,9 @@ export async function readEvaluationReport(root = process.cwd()): Promise<string
   return fs.readFile(reportPath, "utf8").catch(() => "No evaluation report found. Run: soturail eval run\n");
 }
 
-async function runCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+async function runCase(id: string, group: string, title: string, root: string, suite: EvaluationSuiteName): Promise<EvaluationCase> {
   try {
+    if (suite === "brain") return runBrainCase(id, group, title, root);
     switch (id) {
       case "memory-recall-quality":
         return await memoryRecallCase(id, group, title, root);
@@ -131,6 +154,31 @@ async function runCase(id: string, group: string, title: string, root: string): 
         return diagramCase(id, group, title);
       default:
         return makeCase(id, group, title, "warn", { reason: "case not implemented" }, []);
+    }
+  } catch (error) {
+    return makeCase(id, group, title, "fail", { error: error instanceof Error ? error.message : String(error) }, []);
+  }
+}
+
+async function runBrainCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  try {
+    switch (id) {
+      case "brain-claim-quality":
+        return await brainClaimQualityCase(id, group, title, root);
+      case "brain-stale-doc-detection":
+        return await brainStaleCase(id, group, title, root);
+      case "brain-rule-extraction":
+        return await brainRuleCase(id, group, title, root);
+      case "brain-agent-brief-quality":
+        return await brainBriefCase(id, group, title, root);
+      case "reverse-spec-coverage":
+        return await reverseSpecCase(id, group, title, root);
+      case "gap-detection-quality":
+        return await reverseGapCase(id, group, title, root);
+      case "decision-trace-quality":
+        return await brainRecallCase(id, group, title, root);
+      default:
+        return makeCase(id, group, title, "warn", { reason: "brain case not implemented" }, []);
     }
   } catch (error) {
     return makeCase(id, group, title, "fail", { error: error instanceof Error ? error.message : String(error) }, []);
@@ -313,6 +361,82 @@ function diagramCase(id: string, group: string, title: string): EvaluationCase {
   return makeCase(id, group, title, ok ? "pass" : "fail", { invalid, warning }, ["diagram-validator"]);
 }
 
+async function brainClaimQualityCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await initBrain(root);
+  const scan = await scanBrain(root);
+  const claims = await readJsonl<Record<string, unknown>>(getWorkspacePaths(root).brainClaimsFile);
+  const verifiedWithSources = claims.filter((claim) =>
+    claim["status"] === "verified"
+    && typeof claim["sourcePath"] === "string"
+    && typeof claim["fileHash"] === "string"
+    && typeof claim["rangeHash"] === "string"
+  );
+  return makeCase(id, group, title, verifiedWithSources.length > 0 ? "pass" : "fail", {
+    claimsAdded: scan.claimsAdded,
+    verifiedWithSources: verifiedWithSources.length
+  }, [getWorkspacePaths(root).brainClaimsFile]);
+}
+
+async function brainStaleCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  await fs.appendFile(path.join(root, "src", "core", "release-preflight.ts"), "\n// changed for brain stale eval\n", "utf8");
+  const stale = await staleBrain(root);
+  return makeCase(id, group, title, stale.freshness.suspect + stale.freshness.stale + stale.freshness.warnings.length > 0 ? "pass" : "fail", {
+    suspect: stale.freshness.suspect,
+    stale: stale.freshness.stale,
+    warnings: stale.freshness.warnings
+  }, [getWorkspacePaths(root).brainFreshnessFile]);
+}
+
+async function brainRuleCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const result = await rulesFromBrain(root);
+  const linked = result.rules.every((rule) => rule.sourceClaimIds.length > 0 || (rule.sourceDecisionIds?.length ?? 0) > 0);
+  return makeCase(id, group, title, result.rules.length > 0 && linked ? "pass" : "fail", {
+    rules: result.rules.length,
+    linked
+  }, [result.markdownPath, getWorkspacePaths(root).brainRulesFile]);
+}
+
+async function brainBriefCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  await reverseGaps(root);
+  await rulesFromBrain(root);
+  const result = await exportBrain("codex", root);
+  const ok = result.content.includes("Verified Claims")
+    && result.content.includes("Active Rules")
+    && result.content.includes("Known Gaps")
+    && result.content.includes("Safe Commands")
+    && result.content.includes("Do not overclaim");
+  return makeCase(id, group, title, ok ? "pass" : "fail", { path: result.path }, [result.path]);
+}
+
+async function reverseSpecCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await reverseScan("./src", root);
+  await reverseClaims("./src", root);
+  const specs = await reverseSpecs("./src", root);
+  const contents = await Promise.all(specs.paths.map((specPath) => fs.readFile(specPath, "utf8")));
+  const ok = contents.some((content) => content.includes("## Source Claims") && content.includes("## Acceptance Criteria"));
+  return makeCase(id, group, title, ok ? "pass" : "fail", { specs: specs.paths.length }, specs.paths);
+}
+
+async function reverseGapCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const gaps = await reverseGaps(root);
+  const exported = await reverseExport("agent", root);
+  return makeCase(id, group, title, gaps.gaps.length > 0 && exported.path.endsWith("reverse-agent-brief.md") ? "pass" : "warn", {
+    gaps: gaps.gaps.length,
+    export: exported.path
+  }, [gaps.markdownPath, exported.path]);
+}
+
+async function brainRecallCase(id: string, group: string, title: string, root: string): Promise<EvaluationCase> {
+  await scanBrain(root);
+  const recall = await recallBrain("release notes docs releases", root);
+  const ok = recall.includes("Release notes") && recall.includes("Status/confidence") && recall.includes("Reason:") && recall.includes("Source:");
+  return makeCase(id, group, title, ok ? "pass" : "fail", { recall: summarizeText(recall, 500) }, [getWorkspacePaths(root).brainClaimsFile]);
+}
+
 function makeCase(
   id: string,
   group: string,
@@ -327,10 +451,25 @@ function makeCase(
 async function createEvalProject(): Promise<string> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-eval-"));
   await fs.mkdir(path.join(root, "src"), { recursive: true });
+  await fs.mkdir(path.join(root, "src", "core"), { recursive: true });
+  await fs.mkdir(path.join(root, "src", "commands"), { recursive: true });
   await fs.mkdir(path.join(root, "docs"), { recursive: true });
+  await fs.mkdir(path.join(root, "docs", "releases"), { recursive: true });
   await fs.mkdir(path.join(root, "tests"), { recursive: true });
   await fs.writeFile(path.join(root, "README.md"), "# Eval Project\n\nSotuRail local-first Context OS evaluation fixture.\n", "utf8");
-  await fs.writeFile(path.join(root, "package.json"), "{\"scripts\":{\"test\":\"vitest run\",\"build\":\"tsc\"}}\n", "utf8");
+  await fs.writeFile(path.join(root, "package.json"), "{\"name\":\"soturail-eval\",\"version\":\"1.2.3\",\"scripts\":{\"test\":\"vitest run\",\"build\":\"tsc\"}}\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "cli.ts"), "registerBrainCommand(program);\nregisterReverseCommand(program);\nregisterWorkflowCommand(program);\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "version.ts"), "export const SOTURAIL_VERSION = \"1.2.3\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "release-preflight.ts"), "export const releaseNotesPath = \"docs/releases/RELEASE_NOTES_v1.2.3.md\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "agent-runtime.ts"), "export const policy = \"No arbitrary shell execution through MCP by default.\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "workflow-store.ts"), "export const workflowStorage = \".soturail/workflows/\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "diagram-validator.ts"), "export const diagramNote = \"lightweight Mermaid validation, not a full parser\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "core", "evaluation-suite.ts"), "export const evalPath = \".soturail/eval/latest.json\";\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "commands", "brain.ts"), "program.command(\"brain\");\n", "utf8");
+  await fs.writeFile(path.join(root, "src", "commands", "reverse.ts"), "program.command(\"reverse\");\n", "utf8");
+  await fs.writeFile(path.join(root, "docs", "releases", "README.md"), "# Release Notes\n\nRelease notes live under docs/releases/.\n", "utf8");
+  await fs.writeFile(path.join(root, "docs", "releases", "RELEASE_NOTES_v1.2.3.md"), "# Notes\n", "utf8");
+  await fs.writeFile(path.join(root, "docs", "diagram-rail.md"), "# Diagram Rail\n\nNo full Mermaid parser is available yet.\n", "utf8");
   await fs.writeFile(path.join(root, "src", "refund-policy.ts"), [
     "export function validateRefund() {",
     "  // Rule R08: refunds must preserve release evidence.",
