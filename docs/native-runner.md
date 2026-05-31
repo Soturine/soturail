@@ -43,10 +43,34 @@ npm run build:all      # TypeScript + Rust
 npm run build:native
 soturail bench run --engine native
 soturail bench compare-engines
+soturail bench run --suite brain
+soturail native candidates
+soturail native status
+soturail native compare
 ```
+
+## v0.9.0 Benchmark Gate
+
+Native acceleration is not promoted just because a native path exists. v0.9.0 requires:
+
+- a local benchmark case;
+- a TypeScript baseline;
+- optional native execution only;
+- tested fallback behavior;
+- a maintenance-risk decision.
+
+Candidate reports are written to:
+
+```txt
+.soturail/native/candidates.json
+.soturail/native/candidates.md
+```
+
+SotuRail does not claim native speedups unless a local benchmark report proves them. Normal npm install does not require Rust or native binaries.
 
 ## Current Limitations
 
 - Native binaries are not prebuilt for npm yet.
 - Interactive TTY behavior is best-effort.
 - TypeScript remains the source of truth for workspace manifests and safety prompts.
+- Parser/graph acceleration remains deferred until benchmark evidence justifies it.

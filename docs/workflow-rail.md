@@ -113,8 +113,23 @@ Evidence packs include:
 - evaluation report result;
 - release notes path under `docs/releases/`;
 - release gates and publish checklist notes.
+- latest benchmark report path when available;
+- native candidate report path when available;
+- baseline snapshot report path when available;
+- engine status and TypeScript fallback note.
 
 SotuRail does not claim build, test, audit, npm pack, publish or GitHub release success unless those results exist as local evidence.
+
+v0.9.0 also lets workflow evidence point to performance readiness:
+
+```bash
+soturail bench run --suite brain
+soturail native candidates
+soturail self baseline --check
+soturail workflow evidence <id>
+```
+
+Native speedups are not claimed from workflow evidence alone. The evidence pack only records where the local benchmark and candidate reports live.
 
 ## Worktrees
 

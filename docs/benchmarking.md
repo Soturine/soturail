@@ -6,6 +6,9 @@ SotuRail benchmarks use deterministic local fixtures. They are intended to make 
 npm run build
 soturail bench prepare
 soturail bench run --engine ts
+soturail bench list
+soturail bench run --suite brain
+soturail bench compare
 soturail bench report
 ```
 
@@ -13,6 +16,10 @@ Outputs:
 
 - `benchmarks/results/latest.json`
 - `benchmarks/reports/latest.md`
+- `.soturail/bench/latest.json`
+- `.soturail/bench/latest.md`
+- `benchmarks/reports/bench-v0.9.0.json`
+- `benchmarks/reports/bench-v0.9.0.md`
 
 The suite currently groups results as:
 
@@ -51,11 +58,52 @@ soturail bench compare-engines
 
 Optional RTK or Squeez comparisons are only run when the user already has those tools on PATH.
 
-## v0.9.0 Native Candidate Planning
+## Benchmark Rail 2.0
 
-v0.8.1 keeps native work as planning and measurement only. Future optimization must be benchmark-gated and keep TypeScript fallback mandatory.
+v0.9.0 adds Benchmark Rail 2.0 alongside the historical reducer benchmark report. The new rail is built around small, local, deterministic smoke fixtures:
 
-Planned categories:
+```bash
+soturail bench list
+soturail bench run
+soturail bench run --suite brain
+soturail bench run --suite reducers
+soturail bench run --suite filesystem
+soturail bench run --suite release
+soturail bench compare
+soturail bench report
+```
+
+Benchmark categories:
+
+```txt
+brain-scan
+brain-stale
+brain-consolidate
+reverse-claims
+reducer-large-log
+jsonl-read-write
+range-hash
+file-scan
+workflow-evidence
+format-compare
+json-validate
+release-preflight
+```
+
+The report schema is `soturail.bench.v1` and includes environment, engine, case duration, records read/written, files scanned, warnings and summary counts. Tests assert report shape and non-negative timings, not exact performance numbers.
+
+## Native Candidate Planning
+
+v0.9.0 turns native planning into explicit candidate reports. Future optimization must be benchmark-gated and keep TypeScript fallback mandatory.
+
+```bash
+soturail native candidates
+soturail native status
+soturail native doctor
+soturail native compare
+```
+
+Candidate categories:
 
 ```txt
 brain-scan
@@ -69,6 +117,8 @@ workflow-evidence
 ```
 
 Candidate native hot paths may include large JSONL scans, rangeHash computation, source-range relocation and duplicate claim clustering. Agent brief rendering and release preflight are not native candidates until local evidence proves a bottleneck.
+
+See [native-performance-policy.md](native-performance-policy.md).
 
 ## Evaluation Suite
 

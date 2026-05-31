@@ -154,7 +154,14 @@ Check:
 
 ## v0.9.0 Benchmark Seeds
 
-Future native/performance work should be benchmark-gated. Candidate categories include:
+v0.9.0 adds lightweight timing/reporting around Project Brain-related operations through Benchmark Rail 2.0:
+
+```bash
+soturail bench run --suite brain
+soturail native candidates
+```
+
+Candidate categories include:
 
 ```txt
 brain-scan
@@ -168,6 +175,8 @@ workflow-evidence
 ```
 
 TypeScript fallback must always work. Rust/native acceleration remains optional and should not be required for npm install.
+
+Project Brain performance evidence lives under `.soturail/bench/` and can be referenced by release and workflow evidence. Timing values are not public speed claims by themselves.
 
 ## Limitations
 

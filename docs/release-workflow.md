@@ -20,6 +20,8 @@ The check also verifies:
 - `CHANGELOG.md` and `docs/releases/RELEASE_NOTES_vX.Y.Z.md` exist for the local version;
 - README install instructions and `LICENSE` exist.
 - required GitHub CI and community files exist under `.github/`.
+- optional performance evidence paths for benchmark, native candidate and baseline reports when present.
+- TypeScript fallback status and native-optional install policy.
 
 Release notes now live under `docs/releases/`. Root-level `RELEASE_NOTES_vX.Y.Z.md` files should not be created for new releases.
 
@@ -47,6 +49,17 @@ soturail release check
 ```
 
 These commands do not publish to npm or create GitHub releases.
+
+v0.9.0 adds performance evidence for release readiness:
+
+```bash
+soturail bench run --suite brain
+soturail native candidates
+soturail self baseline --check
+soturail release check
+```
+
+Release preflight warns when benchmark/native/baseline reports are missing, but native unavailability is not a release failure. A broken TypeScript fallback is a release blocker.
 
 You can run only the package verification gate with:
 

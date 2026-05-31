@@ -216,6 +216,17 @@ v0.8.1 expands the brain suite with quality fixtures for:
 
 These cases check fields and behavior, not exact timing or fragile prose.
 
+## Benchmark-Gated Performance
+
+v0.9.0 keeps evaluation and benchmarking separate:
+
+```bash
+soturail eval run --suite brain
+soturail bench run --suite brain
+```
+
+Evaluation checks whether evidence survives. Benchmark Rail 2.0 records local timing and operation metadata. SotuRail does not claim native speedups unless a benchmark report proves them, and native unavailability is not an evaluation failure.
+
 ## Acceptance Criteria
 
 Evaluation Suite changes should not be promoted until:

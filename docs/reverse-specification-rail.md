@@ -79,3 +79,14 @@ Outputs:
 ```
 
 Use it as compact context for an agent, then verify against the cited source paths before changing code.
+
+## v0.9.0 Performance Evidence
+
+Reverse claim extraction is now tracked as a Benchmark Rail 2.0 category:
+
+```bash
+soturail bench run --suite brain
+soturail native candidates
+```
+
+`reverse-claims` is classified as a possible native/parser candidate only after local TypeScript benchmark evidence exists. The current rail remains heuristic, local and TypeScript-first.
