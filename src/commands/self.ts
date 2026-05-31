@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { Command } from "commander";
+import { baselineSnapshot } from "../core/baseline-snapshot.js";
 import {
   assertSotuRailRepository,
   createEmptySelfState,
@@ -49,6 +50,24 @@ export function registerSelfCommand(program: Command): void {
     process.stdout.write(formatSelfBench(result));
     process.exitCode = result.ok ? 0 : 1;
   });
+
+  self
+    .command("baseline")
+    .description("Create or report clean baseline source/package artifacts.")
+    .option("--check", "Validate baseline readiness and print recommended artifact commands")
+    .option("--zip", "Create or print a clean git archive source zip command")
+    .option("--bundle", "Create or print a git bundle history backup command")
+    .option("--pack", "Create or print an npm pack package snapshot command")
+    .action(async (options: { check?: boolean; zip?: boolean; bundle?: boolean; pack?: boolean }) => {
+      const selected = [
+        options.zip ? "zip" : null,
+        options.bundle ? "bundle" : null,
+        options.pack ? "pack" : null,
+        options.check || (!options.zip && !options.bundle && !options.pack) ? "check" : null
+      ].filter(Boolean);
+      if (selected.length !== 1) throw new Error("Choose one baseline mode: --check, --zip, --bundle, or --pack.");
+      process.stdout.write((await baselineSnapshot(path.resolve(process.cwd()), selected[0] as "check" | "zip" | "bundle" | "pack")).output);
+    });
 
   self.command("report").description("Write .soturail/reports/self-dogfood.md from current local evidence.").action(async () => {
     const root = path.resolve(process.cwd());
