@@ -7,6 +7,7 @@ import { compareBenchmarkRail, readBenchmarkRailReport, renderBenchmarkList, run
 import { buildWorkflowEvidence } from "../src/core/evidence-pack.js";
 import { nativeCompare, nativeDoctor, nativeStatus, writeNativeCandidateReport } from "../src/core/native-candidates.js";
 import { runReleasePreflight } from "../src/core/release-preflight.js";
+import { SOTURAIL_VERSION } from "../src/core/version.js";
 import { createWorkflowPlan } from "../src/core/workflow-store.js";
 
 async function tempProject(version = "0.9.0"): Promise<string> {
@@ -47,7 +48,7 @@ describe("v0.9.0 benchmark-gated native performance rails", () => {
     expect(json.cases.length).toBe(report.cases.length);
     expect(markdown).toContain("Benchmark Rail 2");
     expect(compare).toContain("native_claim");
-    expect(await readFile(path.join(root, "benchmarks", "reports", "bench-v0.9.0.json"), "utf8")).toContain("soturail.bench.v1");
+    expect(await readFile(path.join(root, "benchmarks", "reports", `bench-v${SOTURAIL_VERSION}.json`), "utf8")).toContain("soturail.bench.v1");
   });
 
   it("reports native candidates, status, doctor and compare with TypeScript fallback", async () => {

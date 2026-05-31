@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { scanReportSafety } from "./report-redaction.js";
 
 export interface ReleaseGateResult {
   id: string;
@@ -160,6 +161,11 @@ export async function runReleasePreflight(
   const benchReport = path.join(resolvedRoot, ".soturail", "bench", "latest.json");
   const nativeCandidates = path.join(resolvedRoot, ".soturail", "native", "candidates.json");
   const baselineReport = path.join(resolvedRoot, ".soturail", "baselines", "latest.json");
+  const statusReport = path.join(resolvedRoot, ".soturail", "status", "latest.json");
+  const localReport = path.join(resolvedRoot, ".soturail", "reports", "latest.json");
+  const dashboardArtifact = path.join(resolvedRoot, ".soturail", "dashboard", "index.html");
+  const observabilityTimeline = path.join(resolvedRoot, ".soturail", "observability", "timeline.json");
+  const mcpReportResources = path.join(resolvedRoot, ".soturail", "mcp", "report-resources.json");
   addGate(
     gates,
     "benchmark_report",
@@ -197,6 +203,60 @@ export async function runReleasePreflight(
     "native optional install policy",
     true,
     "normal npm install does not require Rust or native binaries",
+    false
+  );
+
+  const reportSafety = await scanReportSafety(resolvedRoot).catch(() => null);
+  addGate(
+    gates,
+    "report_safety",
+    "report redaction safety",
+    !reportSafety || reportSafety.ok,
+    reportSafety
+      ? reportSafety.ok
+        ? "report artifacts have no obvious secrets"
+        : `report safety findings: ${reportSafety.findings.join(", ")}`
+      : "report safety unavailable",
+    true
+  );
+  addGate(
+    gates,
+    "unified_status_report",
+    "unified status artifact",
+    existsSync(statusReport),
+    existsSync(statusReport) ? path.relative(resolvedRoot, statusReport) : "missing; run soturail status --json",
+    false
+  );
+  addGate(
+    gates,
+    "local_report",
+    "local report artifact",
+    existsSync(localReport),
+    existsSync(localReport) ? path.relative(resolvedRoot, localReport) : "missing; run soturail report build",
+    false
+  );
+  addGate(
+    gates,
+    "static_dashboard",
+    "static dashboard artifact",
+    existsSync(dashboardArtifact),
+    existsSync(dashboardArtifact) ? path.relative(resolvedRoot, dashboardArtifact) : "missing; run soturail dashboard build",
+    false
+  );
+  addGate(
+    gates,
+    "observability_timeline",
+    "observability timeline artifact",
+    existsSync(observabilityTimeline),
+    existsSync(observabilityTimeline) ? path.relative(resolvedRoot, observabilityTimeline) : "missing; run soturail obs collect",
+    false
+  );
+  addGate(
+    gates,
+    "mcp_report_resources",
+    "read-only MCP report resources",
+    existsSync(mcpReportResources),
+    existsSync(mcpReportResources) ? path.relative(resolvedRoot, mcpReportResources) : "missing; run soturail mcp resources report",
     false
   );
 

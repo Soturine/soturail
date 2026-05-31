@@ -39,6 +39,12 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   const benchMdPath = path.join(paths.workspace, "bench", "latest.md");
   const nativeCandidatePath = path.join(paths.workspace, "native", "candidates.json");
   const baselinePath = path.join(paths.workspace, "baselines", "latest.json");
+  const statusJsonPath = path.join(paths.workspace, "status", "latest.json");
+  const reportJsonPath = path.join(paths.reportsDir, "latest.json");
+  const reportHtmlPath = path.join(paths.reportsDir, "latest.html");
+  const dashboardIndexPath = path.join(paths.workspace, "dashboard", "index.html");
+  const observabilityTimelinePath = path.join(paths.workspace, "observability", "timeline.json");
+  const mcpReportResourcesPath = path.join(paths.workspace, "mcp", "report-resources.json");
   const releaseNotesPath = packageVersion ? path.join(root, "docs", "releases", `RELEASE_NOTES_v${packageVersion}.md`) : "";
   const reportId = makeRailId("evidence", id);
   const reportPath = path.join(paths.reportsDir, `${reportId}.md`);
@@ -117,6 +123,16 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     `- baseline_report: ${await exists(baselinePath) ? relativeToRoot(root, baselinePath) : "missing"}`,
     `- engine_status: typescript fallback OK; native_available=${native?.available ?? false}`,
     "- performance_warnings: no native speedup claimed without a local benchmark report.",
+    "",
+    "## Local Report And Observability Evidence",
+    "",
+    `- status_json: ${await exists(statusJsonPath) ? relativeToRoot(root, statusJsonPath) : "missing"}`,
+    `- report_json: ${await exists(reportJsonPath) ? relativeToRoot(root, reportJsonPath) : "missing"}`,
+    `- report_html: ${await exists(reportHtmlPath) ? relativeToRoot(root, reportHtmlPath) : "missing"}`,
+    `- dashboard_html: ${await exists(dashboardIndexPath) ? relativeToRoot(root, dashboardIndexPath) : "missing"}`,
+    `- observability_timeline: ${await exists(observabilityTimelinePath) ? relativeToRoot(root, observabilityTimelinePath) : "missing"}`,
+    `- mcp_report_resources: ${await exists(mcpReportResourcesPath) ? relativeToRoot(root, mcpReportResourcesPath) : "missing"}`,
+    "- report_policy: local artifacts only; no cloud telemetry upload; static dashboard by default.",
     "",
     "## Release Evidence",
     "",

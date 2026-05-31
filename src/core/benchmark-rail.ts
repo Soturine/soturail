@@ -304,8 +304,8 @@ function benchmarkReportPaths(root: string): { latestJson: string; latestMd: str
   return {
     latestJson: path.join(getWorkspacePaths(root).workspace, "bench", "latest.json"),
     latestMd: path.join(getWorkspacePaths(root).workspace, "bench", "latest.md"),
-    versionedJson: path.join(root, "benchmarks", "reports", "bench-v0.9.0.json"),
-    versionedMd: path.join(root, "benchmarks", "reports", "bench-v0.9.0.md")
+    versionedJson: path.join(root, "benchmarks", "reports", `bench-v${SOTURAIL_VERSION}.json`),
+    versionedMd: path.join(root, "benchmarks", "reports", `bench-v${SOTURAIL_VERSION}.md`)
   };
 }
 
