@@ -8,6 +8,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.9.0] - 2026-05-31
+
+### Added
+
+- Added Benchmark Rail 2.0 commands: `bench list`, suite-aware `bench run`, `bench compare` and stable `.soturail/bench/latest.*` reports.
+- Added lightweight benchmark categories for Project Brain, reducers, JSONL, range hashing, file scanning, workflow evidence, format comparison, JSON validation and release preflight.
+- Added `native candidates`, `native candidates --json`, `native status` and `native compare` with benchmark-gated candidate classifications and TypeScript fallback reporting.
+- Added `self baseline --check|--zip|--bundle|--pack` for clean source archives, git bundles and npm package snapshots.
+- Added benchmark, native candidate and baseline report references to workflow and release evidence.
+- Added native performance policy, baseline snapshot and experimental code-graph planning docs.
+
+### Changed
+
+- Improved `native doctor` with benchmark report and candidate-report guidance.
+- Improved `bench report` to prefer the new Benchmark Rail 2.0 report while preserving the legacy reducer report fallback.
+- Release preflight now treats TypeScript fallback as a required release gate and native availability as optional evidence.
+
+### Security
+
+- Native acceleration remains optional and benchmark-gated. Normal npm install does not require Rust, Cargo or native build tools.
+- SotuRail does not claim native speedups unless a local benchmark report proves them.
+- Parser/graph work remains a local experimental seed and does not add a graph database, embeddings, cloud service or external LLM dependency.
+
 ## [0.8.1] - 2026-05-27
 
 ### Added

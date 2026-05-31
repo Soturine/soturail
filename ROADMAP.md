@@ -441,15 +441,19 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 - Improve troubleshooting docs for noisy suspect records, long briefs and weak rule derivation.
 - Add v0.9.0 planning notes for benchmark categories while preserving TypeScript fallback and optional native-only work.
 
-## v0.9.0 - Native Engine Real
+## v0.9.0 - Benchmark-Gated Native/Performance Engine
 
-- Native stream reducer if benchmarks justify it.
-- Native JSON/TOON-style structured reducer if benchmarks justify it.
-- Native dedupe/hash engine if benchmarks justify it.
-- Native diagram/parser helpers only if benchmarks justify them.
-- Native runner remains optional.
-- TypeScript fallback remains mandatory.
-- Benchmarks must prove native speed/quality gains before the feature is promoted.
+- Add Benchmark Rail 2.0 with `bench list`, suite-aware `bench run`, `bench compare` and `bench report`.
+- Track local benchmark categories for brain scan/stale/consolidate, reverse claims, reducers, JSONL, range hashing, file scanning, workflow evidence, format comparison, JSON validation and release preflight.
+- Write benchmark reports under `.soturail/bench/` and `benchmarks/reports/`.
+- Add native candidate reports with `native candidates`, `native candidates --json`, `native status`, `native doctor` and `native compare`.
+- Classify native candidates as `good-candidate`, `maybe-candidate`, `not-worth-it-yet` or `blocked` before any native implementation claim.
+- Keep native acceleration optional; normal npm install must not require Rust or native build tools.
+- Keep the TypeScript fallback mandatory and treat it as release-blocking evidence.
+- Add baseline snapshot commands through `self baseline --check|--zip|--bundle|--pack` so source archives, git bundles and npm packs are produced deliberately.
+- Connect benchmark, native candidate and baseline reports to workflow and release evidence.
+- Document the native performance policy: no benchmark, no native rewrite.
+- Defer parser/graph runtime work to later releases unless a local, heuristic, optional seed is safe.
 
 ## v0.10.0 - Local Reports, Trace Viewer, Diagrams And Dashboard
 

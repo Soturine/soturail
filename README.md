@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.8.1 is the Project Brain polish milestone. TypeScript mode is stable for local usage. Native Rust mode remains optional and focused on hot paths. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite and Project Brain are local-first and benchmarkable. External comparisons are optional and user-provided.
+v0.9.0 is the benchmark-gated native/performance milestone. TypeScript mode remains the default stable path. Native Rust mode is optional and must be justified by local benchmark evidence before any speedup claim. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite and Project Brain are local-first and benchmarkable. External comparisons are optional and user-provided.
 
-The next product direction is staged: v0.8.x hardens Project Brain quality and v0.9.0 focuses on native engine work only where local benchmarks justify it. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next product direction is staged: v0.9.x hardens benchmark/native evidence and v1.0.0 stabilizes the Context OS surface. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -129,6 +129,31 @@ Reverse Specification Rail extracts deterministic claims and draft specs from lo
 
 v0.8.1 improves trust in that brain: stale detection can report relocated ranges, `brain consolidate --dry-run` groups duplicate claims without deleting history, repair plans explain safe human follow-up and agent briefs separate verified, suspect and stale records.
 
+## v0.9.0 Benchmark-Gated Native/Performance Engine
+
+```bash
+soturail bench list
+soturail bench run --suite brain
+soturail bench run --suite reducers
+soturail bench run --suite filesystem
+soturail bench compare
+soturail bench report
+
+soturail native candidates
+soturail native status
+soturail native doctor
+soturail native compare
+
+soturail self baseline --check
+soturail self baseline --zip
+soturail self baseline --bundle
+soturail self baseline --pack
+```
+
+v0.9.0 adds stable local benchmark reports under `.soturail/bench/`, native candidate reports under `.soturail/native/` and baseline snapshot reports under `.soturail/baselines/`.
+
+The rule is simple: no benchmark, no native rewrite. SotuRail does not claim native speedups unless a local benchmark report proves them. Native acceleration is optional; TypeScript remains the portable baseline and normal npm installs do not require Rust.
+
 ## Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -203,12 +228,12 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage hardens Project Brain quality and prepares benchmark-gated native work:
+The next roadmap stage keeps performance evidence honest while preparing the stable Context OS surface:
 
-- better source-range relocation and stale repair workflows;
-- safer consolidation of duplicate or near-duplicate claims;
-- stronger knowledge-to-rules review gates;
-- Project Brain performance baselines for large local repositories;
+- compare more real-world benchmark fixtures before approving native hot paths;
+- keep TypeScript fallback mandatory for every native candidate;
+- expand parser and graph seeds only as local, heuristic, optional tools;
+- harden release evidence around benchmark/native/baseline reports;
 - future local UI/report mode: HTML reports first, Mermaid rendering and MCP Apps/AG-UI-style event surfaces later.
 
 ## Future Rails Documentation
@@ -225,6 +250,10 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Project Brain](docs/project-brain.md)
 - [Reverse Specification Rail](docs/reverse-specification-rail.md)
 - [Knowledge To Rules](docs/knowledge-to-rules.md)
+- [Benchmarking](docs/benchmarking.md)
+- [Native Performance Policy](docs/native-performance-policy.md)
+- [Baseline Snapshots](docs/baseline-snapshots.md)
+- [Code Graph Seed](docs/code-graph.md)
 - [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
 
 ## Installation
@@ -244,10 +273,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.8.1 is published, install that exact version with:
+When v0.9.0 is published, install that exact version with:
 
 ```bash
-npm install -g soturail@0.8.1
+npm install -g soturail@0.9.0
 ```
 
 For local development from source:
@@ -334,6 +363,10 @@ soturail expand <raw_id> --allow-raw --yes
 soturail dedupe stats
 soturail bench prepare
 soturail bench run --engine ts
+soturail bench list
+soturail bench run --suite brain
+soturail native candidates
+soturail self baseline --check
 soturail hooks list
 soturail agents list
 soturail agents doctor
@@ -488,6 +521,9 @@ SotuRail includes deterministic local fixtures for terminal compression, agent r
 npm run build
 soturail bench prepare
 soturail bench run --engine ts
+soturail bench run --suite brain
+soturail native candidates
+soturail self baseline --check
 soturail bench report
 ```
 
@@ -495,7 +531,7 @@ The latest report is written to [benchmarks/reports/latest.md](benchmarks/report
 
 Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
 
-Future benchmarks will also cover context quality, role-pack quality, diagram validation, evidence-pack completeness and format quality for Markdown vs tagged vs JSON vs compact payloads.
+Benchmark Rail 2.0 writes `.soturail/bench/latest.json`, `.soturail/bench/latest.md`, `benchmarks/reports/bench-v0.9.0.json` and `benchmarks/reports/bench-v0.9.0.md`. It covers `brain-scan`, `brain-stale`, `brain-consolidate`, `reverse-claims`, `reducer-large-log`, `jsonl-read-write`, `range-hash`, `file-scan`, `workflow-evidence`, `format-compare`, `json-validate` and `release-preflight`.
 
 ## Knowledge-to-Rules Engine
 
@@ -569,7 +605,7 @@ v0.6.1  Agent UX polish + full evaluation suite
 v0.7.0  Workflow Rail 2.0 + Harness Rail + Diagram Rail + .spec.md visual contracts
 v0.8.0  Verified Project Brain + Reverse Specification Rail
 v0.8.1  Project Brain polish, stale-evidence quality and agent-brief improvements
-v0.9.0  Native Engine Real
+v0.9.0  Benchmark-gated native/performance engine
 v0.10.0 Local reports, traces, Mermaid rendering and dashboard
 v1.0.0  Stable Context OS
 ```
