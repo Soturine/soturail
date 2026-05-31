@@ -88,12 +88,20 @@ export async function baselineSnapshot(root = process.cwd(), mode: BaselineMode)
     );
   }
 
+  const dirtyStatus = status.stdout.trim() ? "dirty" : "clean";
+  if (dirtyStatus === "dirty") {
+    warnings.push("Working tree is dirty; make a clean commit before final release snapshots.");
+  }
+  for (const failed of signals.filter((signal) => !signal.ok && signal.required)) {
+    warnings.push(baselineSignalGuidance(failed));
+  }
+
   const report: BaselineReport = {
     schemaVersion: "soturail.baseline.v1",
     createdAt: new Date().toISOString(),
     version,
     gitCommit: commit.stdout.trim() || "unknown",
-    dirtyStatus: status.stdout.trim() ? "dirty" : "clean",
+    dirtyStatus,
     githubFolderStatus: existsSync(path.join(resolvedRoot, ".github")) ? "present" : "missing",
     nodeModulesStatus: existsSync(path.join(resolvedRoot, "node_modules")) ? "present-not-for-source-snapshot" : "not present",
     releaseNotesPath: releaseNotes,
@@ -121,15 +129,16 @@ async function baselineSignals(root: string, version: string): Promise<BaselineS
   const packText = `${pack.stdout}\n${pack.stderr}`;
   return [
     signal("git_dir", existsSync(path.join(root, ".git")), ".git exists"),
-    signal("github_dir", existsSync(path.join(root, ".github")), ".github exists"),
-    signal("github_ci", existsSync(path.join(root, ".github", "workflows", "ci.yml")), ".github/workflows/ci.yml exists"),
+    signal("github_dir", existsSync(path.join(root, ".github")), ".github exists; create it before release if missing"),
+    signal("github_ci", existsSync(path.join(root, ".github", "workflows", "ci.yml")), ".github/workflows/ci.yml exists; CI evidence belongs in source snapshots"),
     signal("node_modules_source_snapshot", true, existsSync(path.join(root, "node_modules")) ? "node_modules present; exclude from source snapshots" : "node_modules not present"),
     signal("docs_releases", existsSync(path.join(root, "docs", "releases")), "docs/releases exists"),
     signal("readme", readme.length > 0, "README.md exists"),
-    signal("version_sync", versionTs.includes(`"${version}"`) || SOTURAIL_VERSION === version, `package=${version}, cli=${SOTURAIL_VERSION}`),
+    signal("version_sync", versionTs.includes(`"${version}"`) || SOTURAIL_VERSION === version, `package=${version}, cli=${SOTURAIL_VERSION}; package and CLI versions must match`),
     signal("changelog_entry", changelog.includes(`## [${version}]`), `expected CHANGELOG entry ## [${version}]`),
-    signal("release_notes", existsSync(releaseNotes), path.join("docs", "releases", `RELEASE_NOTES_v${version}.md`)),
-    signal("npm_pack_metadata", pack.code === 0 && packText.includes("README.md") && packText.includes("package.json"), "npm pack dry-run includes package metadata")
+    signal("release_notes", existsSync(releaseNotes), `${path.join("docs", "releases", `RELEASE_NOTES_v${version}.md`)} must exist before release`),
+    signal("npm_pack_metadata", pack.code === 0 && packText.includes("README.md") && packText.includes("package.json"), "npm pack dry-run includes README.md and package.json"),
+    signal("npm_pack_readme_docs_dist", pack.code === 0 && packText.includes("README.md") && packText.includes("docs/") && packText.includes("dist/"), "npm pack dry-run should include README.md, docs/ and dist/")
   ];
 }
 
@@ -201,6 +210,18 @@ function renderBaselineMarkdown(report: BaselineReport): string {
 
 function signal(id: string, ok: boolean, details: string, required = true): BaselineSignal {
   return { id, ok, details, required };
+}
+
+function baselineSignalGuidance(signal: BaselineSignal): string {
+  const guidance: Record<string, string> = {
+    github_dir: ".github is missing; add repository metadata before source snapshots.",
+    github_ci: ".github/workflows/ci.yml is missing; release evidence may lack CI coverage.",
+    release_notes: "Release notes are missing under docs/releases; create RELEASE_NOTES_v<version>.md.",
+    version_sync: "Package and CLI versions do not match; run npm run sync:version after updating package.json.",
+    npm_pack_metadata: "npm pack dry-run is missing README.md/package.json metadata.",
+    npm_pack_readme_docs_dist: "npm pack dry-run should include README.md, docs/ and dist/ for a usable package snapshot."
+  };
+  return guidance[signal.id] ?? `${signal.id} failed: ${signal.details}`;
 }
 
 async function readText(filePath: string): Promise<string> {

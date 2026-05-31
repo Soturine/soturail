@@ -87,6 +87,7 @@ export function renderBenchmarkList(): string {
   return [
     "SotuRail bench list",
     "schemaVersion: soturail.bench.v1",
+    "suite_labels: all, brain, reducers, filesystem, release",
     "",
     ...benchmarkSuites().flatMap((suite) => [
       `## ${suite.suite}`,
@@ -135,10 +136,10 @@ export async function runBenchmarkRail(root = process.cwd(), suite: BenchmarkRai
 
 export async function readBenchmarkRailReport(root = process.cwd()): Promise<string> {
   const latest = path.join(getWorkspacePaths(root).workspace, "bench", "latest.md");
-  return fs.readFile(latest, "utf8").catch(() =>
-    fs.readFile(path.join(root, "benchmarks", "reports", "latest.md"), "utf8")
-      .catch(() => "No benchmark report found. Run: soturail bench run\n")
-  );
+  const markdown = await fs.readFile(latest, "utf8").catch(() => "");
+  if (markdown) return `${await benchmarkReportPreamble(root)}${markdown}`;
+  return fs.readFile(path.join(root, "benchmarks", "reports", "latest.md"), "utf8")
+    .catch(() => "No benchmark report found. Run: soturail bench run\n");
 }
 
 export async function compareBenchmarkRail(root = process.cwd()): Promise<string> {
@@ -156,9 +157,11 @@ export async function compareBenchmarkRail(root = process.cwd()): Promise<string
     "SotuRail bench compare",
     `latest: ${relativeToRoot(root, latestPath)}`,
     `suite: ${report.suite}`,
+    `report_version: ${report.version}`,
     `cases: ${report.cases.length}`,
     "comparison: latest local TypeScript baseline only",
     "native_claim: no native speedup claimed without a native report",
+    "note: timing is evidence, not a release claim by itself",
     "",
     ...candidateRows,
     ""
@@ -182,6 +185,29 @@ export function renderBenchmarkRun(report: BenchmarkRailReport, root = process.c
     `versioned_json: ${relativeToRoot(root, paths.versionedJson)}`,
     `versioned_markdown: ${relativeToRoot(root, paths.versionedMd)}`
   ].join("\n") + "\n";
+}
+
+async function benchmarkReportPreamble(root: string): Promise<string> {
+  const jsonPath = path.join(getWorkspacePaths(root).workspace, "bench", "latest.json");
+  const raw = await fs.readFile(jsonPath, "utf8").catch(() => "");
+  if (!raw) return "";
+  try {
+    const report = JSON.parse(raw) as BenchmarkRailReport;
+    const ageMs = Math.max(0, Date.now() - Date.parse(report.createdAt));
+    const ageHours = Number((ageMs / 3_600_000).toFixed(2));
+    const stale = report.version !== SOTURAIL_VERSION || ageHours > 24;
+    return [
+      "SotuRail bench report",
+      `current_cli_version: ${SOTURAIL_VERSION}`,
+      `report_version: ${report.version}`,
+      `report_age_hours: ${ageHours}`,
+      `stale_benchmark_warning: ${stale}`,
+      "note: timing is evidence, not a release claim by itself.",
+      ""
+    ].join("\n");
+  } catch {
+    return "SotuRail bench report\nstale_benchmark_warning: true\nreason: latest benchmark JSON is not parseable\n\n";
+  }
 }
 
 export function parseBenchmarkSuite(value: string | undefined): BenchmarkRailSuite {

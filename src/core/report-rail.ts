@@ -99,15 +99,22 @@ export async function buildReport(root = process.cwd()): Promise<ReportBuildResu
 export async function reportLatest(root = process.cwd()): Promise<string> {
   const report = await readLatestReport(root);
   if (!report) return "No report found. Run: soturail report build\n";
+  const brainNeedsRefresh = report.status.brain.brainStatus === "needs_refresh" || report.status.brain.brainStatus === "warning";
   return [
     "SotuRail report latest",
     `id: ${report.id}`,
     `version: ${report.version}`,
     `sections: ${report.sections.length}`,
     `warnings: ${report.warnings.length}`,
+    `brain_status: ${report.status.brain.brainStatus}`,
+    ...(brainNeedsRefresh ? [
+      "brain_note: High suspect/stale counts mean the brain evidence may be old; they do not necessarily mean the code is broken."
+    ] : []),
     `json: ${relativeToRoot(root, path.join(getWorkspacePaths(root).reportsDir, "latest.json"))}`,
     `markdown: ${relativeToRoot(root, path.join(getWorkspacePaths(root).reportsDir, "latest.md"))}`,
-    `html: ${relativeToRoot(root, path.join(getWorkspacePaths(root).reportsDir, "latest.html"))}`
+    `html: ${relativeToRoot(root, path.join(getWorkspacePaths(root).reportsDir, "latest.html"))}`,
+    "next_commands:",
+    ...report.nextCommands.slice(0, 8).map((command) => `- ${command}`)
   ].join("\n") + "\n";
 }
 
@@ -130,25 +137,29 @@ export async function reportDoctor(root = process.cwd()): Promise<{ safety: Repo
   const markdownPath = path.join(paths.reportsDir, "latest.md");
   const htmlPath = path.join(paths.reportsDir, "latest.html");
   const report = await readLatestReport(root);
+  const jsonParseable = await isJsonParseable(jsonPath);
   const safety = await scanReportSafety(root);
   const evidenceMissing = report?.sections.flatMap((section) => section.evidencePaths).filter((item) => item !== "missing" && !existsSync(path.join(root, item))) ?? [];
   const tooLarge = await fileSize(markdownPath) > 200_000;
-  const ok = Boolean(report && existsSync(markdownPath) && existsSync(htmlPath) && safety.ok && !tooLarge);
+  const ok = Boolean(report && jsonParseable && existsSync(markdownPath) && existsSync(htmlPath) && safety.ok && !tooLarge);
   return {
     safety,
     output: [
       "SotuRail report doctor",
       `ok: ${ok}`,
       `json_report: ${existsSync(jsonPath) ? "present" : "missing"}`,
+      `json_parseable: ${jsonParseable}`,
       `markdown_report: ${existsSync(markdownPath) ? "present" : "missing"}`,
       `html_report: ${existsSync(htmlPath) ? "present" : "missing"}`,
       `safety_ok: ${safety.ok}`,
       `secret_findings: ${safety.findings.length}`,
       `large_for_agent_export: ${tooLarge}`,
       `missing_evidence_paths: ${evidenceMissing.length}`,
+      ...(evidenceMissing.length > 0 ? [`missing_evidence_sample: ${evidenceMissing.slice(0, 5).join(", ")}`] : []),
       "next_commands:",
       "- soturail report build",
       "- soturail report redact",
+      "- soturail self schemas --check",
       "- soturail dashboard build",
       "- soturail status --agent"
     ].join("\n") + "\n"
@@ -165,28 +176,45 @@ export async function reportDiff(root = process.cwd()): Promise<string> {
   const previous = await latestHistoricalReport(root);
   const diffPath = path.join(paths.reportsDir, "diff.json");
   const diffMd = path.join(paths.reportsDir, "diff.md");
+  const status = !latest ? "missing_latest_report" : previous ? "compared" : "no_previous_report";
+  const nextCommands = status === "missing_latest_report"
+    ? ["soturail report build"]
+    : status === "no_previous_report"
+      ? ["soturail report build"]
+      : ["soturail report latest"];
   const diff = {
     schemaVersion: "soturail.report.diff.v1",
     createdAt: new Date().toISOString(),
+    status,
     latest: latest?.id ?? null,
     previous: previous?.id ?? null,
     changes: latest && previous ? {
       warnings: latest.warnings.length - previous.warnings.length,
       brainSuspect: latest.status.brain.suspect - previous.status.brain.suspect,
+      brainStale: latest.status.brain.stale - previous.status.brain.stale,
       benchCases: latest.status.bench.cases - previous.status.bench.cases,
+      benchWarnings: latest.status.bench.warnings - previous.status.bench.warnings,
       nativeCandidates: latest.status.native.candidates - previous.status.native.candidates,
+      baselineSignals: latest.status.baseline.signalsPassed + latest.status.baseline.signalsFailed - (previous.status.baseline.signalsPassed + previous.status.baseline.signalsFailed),
       baselineFailures: latest.status.baseline.signalsFailed - previous.status.baseline.signalsFailed,
-      releaseCheckChanged: latest.status.release.releaseCheck !== previous.status.release.releaseCheck
-    } : null
+      releaseCheckChanged: latest.status.release.releaseCheck !== previous.status.release.releaseCheck,
+      workflowEvidenceChanged: latest.status.workflow.latestEvidence !== previous.status.workflow.latestEvidence
+    } : null,
+    nextCommands
   };
   await writeJson(diffPath, diff);
   const markdown = [
     "# SotuRail Report Diff",
     "",
+    `status: ${diff.status}`,
     `latest: ${diff.latest ?? "missing"}`,
     `previous: ${diff.previous ?? "none"}`,
     "",
-    diff.changes ? JSON.stringify(diff.changes, null, 2) : "No previous report was available for comparison.",
+    diff.changes ? JSON.stringify(diff.changes, null, 2) : status === "missing_latest_report" ? "No latest report was available. Run `soturail report build`." : "No previous report was available for comparison. Run `soturail report build` again after changes.",
+    "",
+    "## Next",
+    "",
+    ...nextCommands.map((command) => `- \`${command}\``),
     ""
   ].join("\n");
   await fs.writeFile(diffMd, markdown, "utf8");
@@ -241,7 +269,7 @@ export function renderReportMarkdown(report: SotuRailReport): string {
     "## Summary",
     "",
     `- release: ${report.status.release.releaseCheck}`,
-    `- brain: ${report.status.brain.doctor}`,
+    `- brain: ${report.status.brain.doctor} (${report.status.brain.brainStatus})`,
     `- eval: passed=${report.status.eval.passed}, failed=${report.status.eval.failed}, warnings=${report.status.eval.warnings}`,
     `- bench: cases=${report.status.bench.cases}, warnings=${report.status.bench.warnings}`,
     `- native: available=${report.status.native.available}, fallback=${report.status.native.fallback}`,
@@ -270,6 +298,9 @@ export function renderReportMarkdown(report: SotuRailReport): string {
     "## Warnings",
     "",
     ...(report.warnings.length > 0 ? report.warnings.map((warning) => `- ${warning}`) : ["- none"]),
+    ...(report.status.brain.brainStatus === "needs_refresh" ? [
+      "- Brain evidence needs refresh: high suspect/stale counts usually mean evidence is old, not necessarily broken code."
+    ] : []),
     ""
   ].join("\n");
 }
@@ -305,11 +336,14 @@ export function renderAgentReport(report: SotuRailReport, agent: ReportAgent): s
     "",
     `Version: ${report.version}`,
     `Release: ${report.status.release.releaseCheck}`,
-    `Brain: ${report.status.brain.doctor}`,
+    `Brain: ${report.status.brain.doctor} (${report.status.brain.brainStatus})`,
     "",
     "## Known Problems",
     "",
     ...(report.warnings.length > 0 ? report.warnings.slice(0, 12).map((warning) => `- ${warning}`) : ["- none"]),
+    ...(report.status.brain.brainStatus === "needs_refresh" ? [
+      "- High suspect/stale brain counts mean evidence may be old; refresh the brain before relying on claims."
+    ] : []),
     "",
     "## Safe Next Commands",
     "",
@@ -328,6 +362,10 @@ export function renderAgentReport(report: SotuRailReport, agent: ReportAgent): s
     report.status.eval.latestReport !== "missing" ? `- ${report.status.eval.latestReport}` : "- eval report missing",
     report.status.bench.latestReport !== "missing" ? `- ${report.status.bench.latestReport}` : "- bench report missing",
     report.status.baseline.latestReport !== "missing" ? `- ${report.status.baseline.latestReport}` : "- baseline report missing",
+    "",
+    "## Recommended Fix Order",
+    "",
+    ...report.nextCommands.slice(0, 8).map((command) => `- ${command}`),
     ""
   ].join("\n");
   if (agent === "claude") return `<soturail_report>\n${body}\n</soturail_report>\n`;
@@ -351,7 +389,7 @@ async function writeGithubSummary(root: string, report: SotuRailReport): Promise
     `- Release check: ${report.status.release.releaseCheck}`,
     `- Eval: ${report.status.eval.passed} passed, ${report.status.eval.failed} failed, ${report.status.eval.warnings} warnings`,
     `- Bench: ${report.status.bench.cases} cases, ${report.status.bench.warnings} warnings`,
-    `- Brain: ${report.status.brain.claims} claims, ${report.status.brain.suspect} suspect/stale`,
+    `- Brain: ${report.status.brain.claims} claims, ${report.status.brain.suspect} suspect/stale, status=${report.status.brain.brainStatus}`,
     `- Baseline: ${report.status.baseline.signalsPassed} passed, ${report.status.baseline.signalsFailed} failed`,
     `- Native fallback: ${report.status.native.fallback}`,
     "",
@@ -374,7 +412,7 @@ function reportSections(status: SotuRailStatus): ReportSection[] {
   return [
     section("project-status", "Project Status", status.project.dirty ? "warning" : "ok", `Git ${status.project.gitCommit}; dirty=${status.project.dirty}.`, [], ["soturail status --json"]),
     section("release-readiness", "Release Readiness", level(status.release.releaseCheck), `Package ${status.release.packageVersion}, CLI ${status.release.cliVersion}, notes ${status.release.releaseNotesPath}.`, [status.release.releaseNotesPath], ["soturail release check"]),
-    section("brain-health", "Brain Health", level(status.brain.doctor), `${status.brain.claims} claims, ${status.brain.suspect} suspect/stale.`, [".soturail/brain/doctor.json"], ["soturail brain doctor --repair-plan"]),
+    section("brain-health", "Brain Health", brainSeverity(status), `${status.brain.claims} claims, ${status.brain.suspect} suspect, ${status.brain.stale} stale; status=${status.brain.brainStatus}. High suspect/stale counts mean evidence may be old, not necessarily broken code.`, [".soturail/brain/doctor.json"], ["soturail brain stale --repair-plan", "soturail reverse claims ./src", "soturail brain consolidate --dry-run", "soturail brain doctor --repair-plan"]),
     section("eval-summary", "Eval Summary", status.eval.failed > 0 ? "failed" : status.eval.latestReport === "missing" ? "unknown" : "ok", `${status.eval.passed} passed, ${status.eval.failed} failed, ${status.eval.warnings} warnings.`, [status.eval.latestReport], ["soturail eval run --suite brain"]),
     section("benchmark-summary", "Benchmark Summary", status.bench.warnings > 0 ? "warning" : status.bench.latestReport === "missing" ? "unknown" : "ok", `${status.bench.cases} cases, ${status.bench.warnings} warnings.`, [status.bench.latestReport], ["soturail bench run --suite brain"]),
     section("native-candidates", "Native Candidates", "ok", `${status.native.candidates} candidates; fallback=${status.native.fallback}; available=${status.native.available}.`, [".soturail/native/candidates.json"], ["soturail native candidates"]),
@@ -394,6 +432,23 @@ function level(status: StatusLevel): ReportSeverity {
   if (status === "passed") return "ok";
   if (status === "failed") return "failed";
   return status;
+}
+
+function brainSeverity(status: SotuRailStatus): ReportSeverity {
+  if (status.brain.brainStatus === "healthy") return "ok";
+  if (status.brain.brainStatus === "needs_refresh" || status.brain.brainStatus === "warning") return "warning";
+  return level(status.brain.doctor);
+}
+
+async function isJsonParseable(filePath: string): Promise<boolean> {
+  const raw = await fs.readFile(filePath, "utf8").catch(() => "");
+  if (!raw) return false;
+  try {
+    JSON.parse(raw);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 async function preservePreviousReport(root: string): Promise<void> {

@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { appendJsonl, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
-import { makeRailId } from "./rail-utils.js";
+import { sha256Text } from "./rail-utils.js";
 
 export type ObservabilitySeverity = "info" | "warning" | "error";
 
@@ -31,13 +31,17 @@ export async function collectObservability(root = process.cwd()): Promise<{ even
     event(root, now, "release_report", ".soturail/reports/latest.json", "Local report collected.", ["report"]),
     event(root, now, "status_report", ".soturail/status/latest.json", "Unified status collected.", ["status"])
   ].filter((item) => existsSync(path.join(root, item.evidencePath)));
-  for (const item of candidates) await appendJsonl(paths.events, item);
+  const existing = await readJsonl<ObservabilityEvent>(paths.events).catch(() => []);
+  const existingIds = new Set(existing.map((item) => item.id));
+  const newEvents = candidates.filter((item) => !existingIds.has(item.id));
+  for (const item of newEvents) await appendJsonl(paths.events, item);
   await writeTimeline(root);
   return {
-    events: candidates,
+    events: newEvents,
     output: [
       "SotuRail obs collect",
-      `events_written: ${candidates.length}`,
+      `events_written: ${newEvents.length}`,
+      `duplicates_skipped: ${candidates.length - newEvents.length}`,
       `events: ${relativeToRoot(root, paths.events)}`,
       `timeline: ${relativeToRoot(root, paths.timeline)}`,
       `summary: ${relativeToRoot(root, paths.summary)}`
@@ -71,7 +75,8 @@ export async function observabilityExport(root = process.cwd()): Promise<string>
 
 async function writeTimeline(root: string): Promise<void> {
   const paths = obsPaths(root);
-  const events = (await readJsonl<ObservabilityEvent>(paths.events).catch(() => [])).sort((left, right) => left.createdAt.localeCompare(right.createdAt));
+  const events = dedupeEvents(await readJsonl<ObservabilityEvent>(paths.events).catch(() => []))
+    .sort((left, right) => left.createdAt.localeCompare(right.createdAt) || left.type.localeCompare(right.type));
   const timeline = {
     schemaVersion: "soturail.obs.timeline.v1",
     createdAt: new Date().toISOString(),
@@ -81,6 +86,9 @@ async function writeTimeline(root: string): Promise<void> {
   await writeJson(paths.timeline, timeline);
   const counts = new Map<string, number>();
   for (const item of events) counts.set(item.type, (counts.get(item.type) ?? 0) + 1);
+  const warnings = events.filter((item) => item.severity === "warning").slice(-5);
+  const errors = events.filter((item) => item.severity === "error").slice(-5);
+  const evidence = [...new Set(events.map((item) => item.evidencePath))].sort();
   const summary = [
     "# SotuRail Observability Summary",
     "",
@@ -95,6 +103,24 @@ async function writeTimeline(root: string): Promise<void> {
     "## Latest Events",
     "",
     ...events.slice(-10).map((item) => `- ${item.createdAt} [${item.severity}] ${item.type}: ${item.summary} (${item.evidencePath})`),
+    "",
+    "## Latest Warnings",
+    "",
+    ...(warnings.length > 0 ? warnings.map((item) => `- ${item.createdAt} ${item.type}: ${item.summary}`) : ["- none"]),
+    "",
+    "## Latest Errors",
+    "",
+    ...(errors.length > 0 ? errors.map((item) => `- ${item.createdAt} ${item.type}: ${item.summary}`) : ["- none"]),
+    "",
+    "## Evidence Paths",
+    "",
+    ...(evidence.length > 0 ? evidence.map((item) => `- ${item}`) : ["- none"]),
+    "",
+    "## Next Commands",
+    "",
+    "- soturail status --agent",
+    "- soturail report build",
+    "- soturail obs collect",
     ""
   ].join("\n");
   await fs.writeFile(paths.summary, summary, "utf8");
@@ -103,7 +129,7 @@ async function writeTimeline(root: string): Promise<void> {
 function event(root: string, now: string, type: string, evidencePath: string, summary: string, tags: string[]): ObservabilityEvent {
   return {
     schemaVersion: "soturail.obs.event.v1",
-    id: makeRailId("obs", `${type}:${evidencePath}:${now}`),
+    id: `obs_${sha256Text(`${type}:${evidencePath}`).slice(0, 14)}`,
     createdAt: now,
     type,
     source: "soturail",
@@ -112,6 +138,18 @@ function event(root: string, now: string, type: string, evidencePath: string, su
     evidencePath,
     tags
   };
+}
+
+function dedupeEvents(events: ObservabilityEvent[]): ObservabilityEvent[] {
+  const latestByKey = new Map<string, ObservabilityEvent>();
+  for (const item of events) {
+    const key = `${item.type}:${item.evidencePath}`;
+    const current = latestByKey.get(key);
+    if (!current || current.createdAt.localeCompare(item.createdAt) <= 0) {
+      latestByKey.set(key, item);
+    }
+  }
+  return [...latestByKey.values()];
 }
 
 function obsPaths(root: string): { dir: string; events: string; timeline: string; summary: string } {

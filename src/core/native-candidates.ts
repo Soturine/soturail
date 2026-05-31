@@ -87,6 +87,9 @@ export async function writeNativeCandidateReport(root = process.cwd()): Promise<
       `normal_install_requires_native: ${report.engine.normalInstallRequiresNative}`,
       `candidates_count: ${report.candidates.length}`,
       `good_candidates: ${report.candidates.filter((item) => item.classification === "good-candidate").length}`,
+      "native_unavailable_is_non_blocking: true",
+      "top_recommendations:",
+      ...topNativeRecommendations(report).map((item) => `- ${item}`),
       `json: ${relativeToRoot(root, jsonPath)}`,
       `markdown: ${relativeToRoot(root, markdownPath)}`
     ].join("\n") + "\n"
@@ -124,9 +127,14 @@ export async function nativeDoctor(root = process.cwd()): Promise<string> {
     `native_engine: ${status.native_engine}`,
     "normal_npm_install_requires_rust: NO",
     "normal_npm_install_requires_native: NO",
+    "native_unavailable_is_non_blocking: YES",
     `benchmarks_available: ${benchPresent ? "YES" : "NO"}`,
     `candidate_report: ${candidatePresent ? relativeToRoot(root, candidateJson) : "missing"}`,
     "decision_policy: benchmark-before-native",
+    "top_recommendations:",
+    "- keep TypeScript fallback as the default path",
+    "- run local benchmarks before approving native acceleration",
+    "- treat native unavailable as non-blocking unless the TypeScript fallback fails",
     "recommended_next_command:",
     candidatePresent ? "- soturail bench run --suite brain" : "- soturail native candidates",
     "- soturail native compare"
@@ -205,11 +213,27 @@ function renderNativeCandidates(report: NativeCandidateReport): string {
     `fallback: ${report.engine.fallback}`,
     `normalInstallRequiresNative: ${report.engine.normalInstallRequiresNative}`,
     "",
+    "## Top Recommendations",
+    "",
+    ...topNativeRecommendations(report).map((item) => `- ${item}`),
+    "",
     "| area | classification | benchmark | risk | benefit | recommendation | reason |",
     "|---|---|---|---|---|---|---|",
     ...report.candidates.map((item) => `| ${item.area} | ${item.classification} | ${item.benchmarkCategory} | ${item.risk} | ${item.estimatedBenefit} | ${item.recommendation} | ${item.reason} |`),
     ""
   ].join("\n");
+}
+
+function topNativeRecommendations(report: NativeCandidateReport): string[] {
+  const strongest = report.candidates
+    .filter((item) => item.classification === "good-candidate")
+    .slice(0, 3)
+    .map((item) => `${item.area}: benchmark ${item.benchmarkCategory} before any native work`);
+  return [
+    "TypeScript fallback remains mandatory and safe for normal npm installs.",
+    "Native unavailable is non-blocking; no speedup is claimed without benchmark evidence.",
+    ...strongest
+  ];
 }
 
 async function exists(filePath: string): Promise<boolean> {

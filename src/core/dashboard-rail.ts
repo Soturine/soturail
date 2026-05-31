@@ -40,13 +40,17 @@ export async function dashboardDoctor(root = process.cwd()): Promise<string> {
   const html = await fs.readFile(index, "utf8").catch(() => "");
   const external = /https?:\/\//i.test(html) || /<script\s+[^>]*src=/i.test(html) || /<link\s+[^>]*href=["']https?:\/\//i.test(html);
   const tooLarge = html.length > 250_000;
-  const ok = existsSync(index) && existsSync(report) && existsSync(status) && !external && !tooLarge;
+  const reportParseable = await isJsonParseable(report);
+  const statusParseable = await isJsonParseable(status);
+  const ok = existsSync(index) && existsSync(report) && existsSync(status) && reportParseable && statusParseable && !external && !tooLarge;
   return [
     "SotuRail dashboard doctor",
     `ok: ${ok}`,
     `index_html: ${existsSync(index) ? "present" : "missing"}`,
     `report_data: ${existsSync(report) ? "present" : "missing"}`,
     `status_data: ${existsSync(status) ? "present" : "missing"}`,
+    `report_json_parseable: ${reportParseable}`,
+    `status_json_parseable: ${statusParseable}`,
     `external_network_refs: ${external}`,
     `file_size_reasonable: ${!tooLarge}`,
     "server_required: false"
@@ -63,10 +67,15 @@ function dashboardHtml(report: SotuRailReport, status: SotuRailStatus): string {
   const cards: Array<[string, string]> = [
     ["Project Status", `dirty=${status.project.dirty}`],
     ["Release Status", status.release.releaseCheck],
-    ["Brain Health", `${status.brain.claims} claims, ${status.brain.suspect} suspect/stale`],
+    ["Release Readiness", `package=${status.release.packageVersion}, cli=${status.release.cliVersion}`],
+    ["Brain Health", `${status.brain.claims} claims, suspect=${status.brain.suspect}, stale=${status.brain.stale}, status=${status.brain.brainStatus}`],
+    ["Brain Refresh", status.brain.brainStatus === "needs_refresh" ? "Evidence may be old; run brain stale --repair-plan." : status.brain.brainStatus],
+    ["Report Warnings", `${report.warnings.length} warnings`],
     ["Eval Summary", `${status.eval.passed} passed, ${status.eval.failed} failed`],
     ["Benchmark Summary", `${status.bench.cases} cases, ${status.bench.warnings} warnings`],
+    ["Benchmark Warnings", String(status.bench.warnings)],
     ["Native Candidates", `${status.native.candidates} candidates, fallback=${status.native.fallback}`],
+    ["Native Fallback", `typescript fallback, native available=${status.native.available}`],
     ["Baseline Snapshot", `${status.baseline.signalsPassed} passed, ${status.baseline.signalsFailed} failed`],
     ["Workflow Evidence", status.workflow.latestEvidence ?? "missing"],
     ["Harness Failures", String(status.harness.failures)],
@@ -80,4 +89,15 @@ function dashboardHtml(report: SotuRailReport, status: SotuRailStatus): string {
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+async function isJsonParseable(filePath: string): Promise<boolean> {
+  const raw = await fs.readFile(filePath, "utf8").catch(() => "");
+  if (!raw) return false;
+  try {
+    JSON.parse(raw);
+    return true;
+  } catch {
+    return false;
+  }
 }

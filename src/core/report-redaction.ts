@@ -91,6 +91,7 @@ export async function writeRedactedReports(root = process.cwd()): Promise<{ outp
   }
   const safety = await scanReportSafety(root);
   await writeJson(path.join(paths.reportsDir, "safety.json"), safety);
+  const redactionKinds = summarizeRedactions(safety.findings);
   return {
     safety,
     written,
@@ -98,7 +99,23 @@ export async function writeRedactedReports(root = process.cwd()): Promise<{ outp
       "SotuRail report redact",
       `ok: ${safety.ok}`,
       `findings: ${safety.findings.length}`,
+      `redactions: ${redactionKinds.length === 0 ? "none" : redactionKinds.join(", ")}`,
+      "note: redaction reports list finding kinds and counts only; secret values are not printed.",
+      "note: normal package hashes and integrity hashes are not redacted unless they look credential-like.",
       `written: ${written.length === 0 ? "none" : written.map((file) => relativeToRoot(root, file)).join(", ")}`
     ].join("\n") + "\n"
   };
+}
+
+function summarizeRedactions(findings: string[]): string[] {
+  const counts = new Map<string, number>();
+  for (const finding of findings) {
+    const match = /: (\d+) ([\w-]+)/.exec(finding);
+    if (!match) continue;
+    const countText = match[1];
+    const kind = match[2];
+    if (!countText || !kind) continue;
+    counts.set(kind, (counts.get(kind) ?? 0) + Number(countText));
+  }
+  return [...counts.entries()].sort().map(([kind, count]) => `${kind}=${count}`);
 }
