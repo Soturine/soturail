@@ -8,6 +8,33 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.10.1] - 2026-05-31
+
+### Fixed
+
+- Fixed and hardened JSON output contracts so `status --json` and local JSON artifacts are emitted through `JSON.stringify` and covered by parseability tests.
+- Added release-preflight validation for invalid local JSON artifacts before publish.
+
+### Added
+
+- Added `self schemas --check` and `self schemas --check --json` for local schema compatibility checks.
+- Added `self readiness --v1` and `self readiness --v1 --json` for candidate v1.0 readiness reporting.
+- Added v1 preparation docs: stable command surface draft, deprecation policy and migration-to-v1 draft.
+- Added v0.10.1 contract tests for status/report/MCP/bench/native/baseline JSON, redaction, observability de-duplication and readiness output.
+
+### Changed
+
+- Improved report latest, report doctor, report diff, agent reports and dashboard cards with clearer next commands and Project Brain stale/suspect guidance.
+- Improved dashboard doctor with local JSON parseability checks.
+- Improved observability collection with stable event IDs, duplicate skipping, sorted timelines and richer summaries.
+- Improved benchmark/native/baseline messaging around stale reports, TypeScript fallback, normal npm installs and clean baseline guidance.
+- Improved baseline snapshot warnings for missing GitHub files, release notes, dirty trees, version mismatch and npm pack contents.
+
+### Security
+
+- Report redaction now describes redaction kinds without printing secret values and avoids treating normal package hashes as secrets.
+- v0.10.1 does not add cloud, telemetry upload, server mode, destructive MCP tools or breaking command removals.
+
 ## [0.10.0] - 2026-05-31
 
 ### Added
