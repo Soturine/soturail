@@ -13,6 +13,7 @@ import { SOTURAIL_VERSION } from "./version.js";
 const execFileAsync = promisify(execFile);
 
 export type StatusLevel = "passed" | "warning" | "failed" | "unknown";
+export type BrainStatus = "healthy" | "needs_refresh" | "warning" | "unknown";
 
 export interface SotuRailStatus {
   schemaVersion: "soturail.status.v1";
@@ -35,6 +36,7 @@ export interface SotuRailStatus {
     suspect: number;
     stale: number;
     doctor: StatusLevel;
+    brainStatus: BrainStatus;
   };
   eval: {
     latestReport: string;
@@ -121,7 +123,8 @@ export async function buildStatus(root = process.cwd()): Promise<{ status: SotuR
       claims: brainCounts?.claims ?? numberAt(brainDoctor, ["counts", "claims"]),
       suspect: brainCounts?.suspectOrStale ?? 0,
       stale: countStaleEvents(brainDoctor),
-      doctor: doctorStatus(brainDoctor)
+      doctor: doctorStatus(brainDoctor),
+      brainStatus: "unknown"
     },
     eval: {
       latestReport: existsSync(evalReportPath) ? relativeToRoot(resolvedRoot, evalReportPath) : "missing",
@@ -160,6 +163,7 @@ export async function buildStatus(root = process.cwd()): Promise<{ status: SotuR
     },
     nextCommands: []
   };
+  status.brain.brainStatus = brainRefreshStatus(status);
   status.nextCommands = nextCommands(status);
   const jsonPath = path.join(statusDir, "latest.json");
   const markdownPath = path.join(statusDir, "latest.md");
@@ -193,7 +197,7 @@ export function renderStatusMarkdown(status: SotuRailStatus): string {
     "",
     "## Evidence",
     "",
-    `- brain: claims=${status.brain.claims}, suspect=${status.brain.suspect}, stale=${status.brain.stale}, doctor=${status.brain.doctor}`,
+    `- brain: claims=${status.brain.claims}, suspect=${status.brain.suspect}, stale=${status.brain.stale}, doctor=${status.brain.doctor}, brain_status=${status.brain.brainStatus}`,
     `- eval: passed=${status.eval.passed}, failed=${status.eval.failed}, warnings=${status.eval.warnings}`,
     `- bench: cases=${status.bench.cases}, warnings=${status.bench.warnings}`,
     `- native: available=${status.native.available}, fallback=${status.native.fallback}, candidates=${status.native.candidates}`,
@@ -203,6 +207,10 @@ export function renderStatusMarkdown(status: SotuRailStatus): string {
     `- diagram: ${status.diagram.validation}`,
     `- agents: ${status.agents.readiness}`,
     "",
+    ...(status.brain.brainStatus === "needs_refresh" || status.brain.brainStatus === "warning" ? [
+      "Brain note: High suspect/stale counts mean the brain evidence may be old. They do not necessarily mean the code is broken.",
+      ""
+    ] : []),
     "## Next Commands",
     "",
     ...status.nextCommands.map((command) => `- \`${command}\``),
@@ -215,6 +223,7 @@ export function renderStatusAgent(status: SotuRailStatus): string {
     status.project.dirty ? "Working tree is dirty; avoid release/publish until clean." : "",
     status.release.releaseCheck !== "passed" ? `Release readiness is ${status.release.releaseCheck}.` : "",
     status.brain.doctor !== "passed" ? `Brain doctor is ${status.brain.doctor}.` : "",
+    status.brain.brainStatus === "needs_refresh" ? "Brain evidence needs refresh; suspect/stale records may be old rather than broken code." : "",
     status.eval.failed > 0 ? `Eval has ${status.eval.failed} failures.` : "",
     status.baseline.signalsFailed > 0 ? `Baseline has ${status.baseline.signalsFailed} failed signals.` : ""
   ].filter(Boolean);
@@ -223,11 +232,16 @@ export function renderStatusAgent(status: SotuRailStatus): string {
     "",
     `Version: ${status.version}`,
     `Release readiness: ${status.release.releaseCheck}`,
+    `Brain status: ${status.brain.brainStatus}`,
     `Git commit: ${status.project.gitCommit}`,
     "",
     "## Warnings",
     "",
     ...(warnings.length > 0 ? warnings.map((warning) => `- ${warning}`) : ["- none"]),
+    ...(status.brain.brainStatus === "needs_refresh" ? [
+      "",
+      "High suspect/stale counts mean the brain evidence may be old. They do not necessarily mean the code is broken."
+    ] : []),
     "",
     "## Safe Next Commands",
     "",
@@ -268,8 +282,28 @@ function nextCommands(status: SotuRailStatus): string[] {
   if (status.native.candidates === 0) commands.push("soturail native candidates");
   if (status.baseline.latestReport === "missing") commands.push("soturail self baseline --check");
   if (status.brain.doctor === "unknown") commands.push("soturail brain doctor --repair-plan");
+  if (status.brain.brainStatus === "needs_refresh" || status.brain.brainStatus === "warning") {
+    commands.push(...brainRefreshCommands());
+  }
   commands.push("soturail dashboard build");
   return [...new Set(commands)];
+}
+
+export function brainRefreshStatus(status: SotuRailStatus): BrainStatus {
+  if (status.brain.claims === 0 && status.brain.doctor === "unknown") return "unknown";
+  if (status.brain.doctor === "failed") return "warning";
+  if (status.brain.suspect > 0 || status.brain.stale > 0) return "needs_refresh";
+  if (status.brain.doctor === "unknown") return "unknown";
+  return "healthy";
+}
+
+export function brainRefreshCommands(): string[] {
+  return [
+    "soturail brain stale --repair-plan",
+    "soturail reverse claims ./src",
+    "soturail brain consolidate --dry-run",
+    "soturail brain doctor --repair-plan"
+  ];
 }
 
 async function latestEvidencePath(root: string): Promise<string | null> {

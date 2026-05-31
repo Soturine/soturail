@@ -219,6 +219,21 @@ export async function runReleasePreflight(
       : "report safety unavailable",
     true
   );
+  const jsonArtifacts = [statusReport, localReport, benchReport, nativeCandidates, baselineReport, observabilityTimeline, mcpReportResources];
+  const invalidJsonArtifacts = (await Promise.all(jsonArtifacts.map(async (artifact) => ({
+    artifact,
+    exists: existsSync(artifact),
+    parseable: existsSync(artifact) ? await jsonParseable(artifact) : true
+  })))).filter((item) => item.exists && !item.parseable);
+  addGate(
+    gates,
+    "local_json_artifacts_parseable",
+    "local JSON artifacts parseable",
+    invalidJsonArtifacts.length === 0,
+    invalidJsonArtifacts.length === 0
+      ? "status/report/bench/native/baseline/MCP JSON artifacts are parseable when present"
+      : `invalid JSON: ${invalidJsonArtifacts.map((item) => path.relative(resolvedRoot, item.artifact)).join(", ")}`
+  );
   addGate(
     gates,
     "unified_status_report",
@@ -559,6 +574,17 @@ function addGate(
   required = true
 ): void {
   gates.push({ id, label, ok, details, required });
+}
+
+async function jsonParseable(filePath: string): Promise<boolean> {
+  const raw = await readOptionalText(filePath);
+  if (!raw) return false;
+  try {
+    JSON.parse(raw);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function parseAudit(text: string): AuditSummary {
