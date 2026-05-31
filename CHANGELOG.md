@@ -8,6 +8,30 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - No unreleased changes yet.
 
+## [0.10.0] - 2026-05-31
+
+### Added
+
+- Added unified local status artifacts through `status --json`, `status --md` and `status --agent`.
+- Added Report Rail commands for build, latest, export, doctor, redact, GitHub summary, agent reports and report diffs.
+- Added static local dashboard commands: `dashboard build`, `dashboard open` and `dashboard doctor`.
+- Added local observability commands: `obs collect`, `obs summary`, `obs timeline` and `obs export`.
+- Added read-only MCP report resource manifest generation with `mcp resources report`.
+- Added report redaction and safety checks for obvious token, key and secret patterns.
+- Added v0.10.0 docs for status, reports, dashboard, observability, agent-readable reports, MCP report resources and redaction.
+
+### Changed
+
+- Release preflight now checks report redaction safety and references optional status/report/dashboard/observability/MCP evidence.
+- Workflow evidence now references local status, report, dashboard, observability and MCP report resource artifacts when present.
+- README and roadmap now frame v0.10.0 as local reports before dashboards: no cloud, no telemetry and no server requirement.
+
+### Security
+
+- Static dashboard output has no external CDN/script dependencies and `dashboard doctor` flags external references.
+- Report redaction is conservative and avoids exposing obvious fake or real credentials in report handoffs.
+- MCP report resources are read-only and do not expose shell execution or report mutation.
+
 ## [0.9.0] - 2026-05-31
 
 ### Added
