@@ -117,6 +117,7 @@ Evidence packs include:
 - native candidate report path when available;
 - baseline snapshot report path when available;
 - engine status and TypeScript fallback note.
+- unified status, local report, dashboard, observability and read-only MCP report resource paths when available.
 
 SotuRail does not claim build, test, audit, npm pack, publish or GitHub release success unless those results exist as local evidence.
 
@@ -179,3 +180,18 @@ soturail workflow evidence <id>
 ```
 
 This keeps workflow claims tied to source-backed knowledge rather than chat memory.
+
+## v0.10.0 Report Evidence
+
+Workflow evidence can now point to:
+
+```txt
+.soturail/status/latest.json
+.soturail/reports/latest.json
+.soturail/reports/latest.html
+.soturail/dashboard/index.html
+.soturail/observability/timeline.json
+.soturail/mcp/report-resources.json
+```
+
+These are still local artifacts. Workflow evidence does not upload telemetry and does not require a dashboard server.

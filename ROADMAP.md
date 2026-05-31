@@ -455,25 +455,20 @@ Status: implemented in the v0.6.1 local release prep. The suite is local, determ
 - Document the native performance policy: no benchmark, no native rewrite.
 - Defer parser/graph runtime work to later releases unless a local, heuristic, optional seed is safe.
 
-## v0.10.0 - Local Reports, Trace Viewer, Diagrams And Dashboard
+## v0.10.0 - Local Reports, Observability And Dashboard Rail
 
-- `soturail report`.
-- `soturail trace list`.
-- `soturail trace show`.
-- `soturail report serve` or `soturail trace serve` for a local-only HTML view.
-- Local HTML reports for token savings, dedupe, memory recall, context selection and release gates.
-- Workflow report pages.
-- CI failure analysis reports.
-- Context router visual report: selected expert, included evidence, omitted context and reasons.
-- Role-pack report: selected role, evidence included, offloaded logs and recovery pointers.
-- Policy approval report: queued/approved/rejected risky actions.
-- Filesystem evidence report: snapshots, touched files and workflow diffs.
-- Policy/MCP exposure report.
-- Harness evidence report: plan/work/review/release phases, review perspectives and release evidence.
-- Diagram report: Mermaid diagrams rendered locally for workflow, release, policy, MCP and context-router flows.
-- Structured payload report: Markdown vs tagged vs JSON vs compact format token/quality comparison.
-- Agent docs hygiene report: root agent docs length, freshness, missing facts and referenced context health.
-- Public demo assets for README and release pages.
+Status: implemented in the v0.10.0 local release prep as static local artifacts first. Server mode, hosted analytics and telemetry upload remain out of scope.
+
+- `soturail status --json|--md|--agent` for a unified local status model.
+- `soturail report build`, `report latest`, `report export`, `report doctor`, `report redact`, `report github-summary`, `report agent` and `report diff`.
+- `soturail dashboard build|open|doctor` for a static local dashboard without external CDN/script dependencies.
+- `soturail obs collect|summary|timeline|export` for local event timelines derived from SotuRail artifacts, not shell history.
+- Agent-readable reports for Codex, Claude, Gemini and generic hosts.
+- Redaction/safety checks for obvious token, key and secret patterns before report handoff.
+- GitHub Actions step-summary export.
+- Read-only MCP report resource manifest through `soturail mcp resources report`.
+- Release and workflow evidence now reference local report/status/dashboard/observability resources when present.
+- Mermaid rendering, trace viewer pages and optional server mode remain future work.
 
 ## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 
@@ -543,7 +538,7 @@ This matrix maps planned rails to docs so the repository does not hide future wo
 | Diagram Rail / MDDD | `docs/diagram-rail.md`, `docs/spec-driven-workflow.md`, `docs/workflow-rail.md` |
 | Structured Payload Rail | `docs/structured-payload-rail.md`, `docs/context-packs.md`, `docs/rules.md` |
 | Agent Docs Hygiene | `docs/agent-docs-hygiene.md`, `docs/context-packs.md`, `docs/workflow-rail.md` |
-| Reports / Trace Viewer / Dashboard | `docs/workflow-rail.md`, this roadmap |
+| Reports / Observability / Dashboard | `docs/status-command.md`, `docs/report-rail.md`, `docs/dashboard-rail.md`, `docs/observability-rail.md`, `docs/agent-readable-reports.md`, `docs/report-redaction.md`, `docs/mcp-report-resources.md`, this roadmap |
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
 

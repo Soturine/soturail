@@ -1,0 +1,16 @@
+# SotuRail
+
+SotuRail is a local-first Context OS for AI coding agents. It prepares evidence, context, memory, workflow records, reports and safe agent handoffs without cloud telemetry.
+
+Useful entry points:
+
+- README.md
+- ROADMAP.md
+- docs/agents.md
+- docs/project-brain.md
+- docs/benchmarking.md
+- docs/report-rail.md
+- docs/dashboard-rail.md
+- docs/observability-rail.md
+- docs/mcp-report-resources.md
+- docs/releases/

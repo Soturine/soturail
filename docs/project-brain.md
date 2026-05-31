@@ -178,6 +178,20 @@ TypeScript fallback must always work. Rust/native acceleration remains optional 
 
 Project Brain performance evidence lives under `.soturail/bench/` and can be referenced by release and workflow evidence. Timing values are not public speed claims by themselves.
 
+## v0.10.0 Report Integration
+
+Unified status and local reports include Project Brain claim counts, suspect/stale counts and doctor status when available.
+
+Useful commands:
+
+```bash
+soturail brain doctor --repair-plan
+soturail status --agent
+soturail report agent --agent codex
+```
+
+Agent-readable reports separate brain warnings from verified facts and point back to `.soturail/brain/` evidence paths.
+
 ## Limitations
 
 - No LLM extraction.

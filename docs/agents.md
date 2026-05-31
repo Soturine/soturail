@@ -210,6 +210,20 @@ Expected checks:
 
 See [agent-docs-hygiene.md](agent-docs-hygiene.md).
 
+## v0.10.0 Agent-Readable Reports
+
+Use Report Rail when an agent needs current project health instead of a full context dump:
+
+```bash
+soturail status --agent
+soturail report build
+soturail report agent --agent codex
+soturail report agent --agent claude
+soturail report agent --agent gemini
+```
+
+Agent-readable reports separate verified facts from warnings, list safe next commands and point to local evidence paths. They are redaction-checked and should not include raw logs, tokens or `.env` contents.
+
 ## Future Role-Based Exports
 
 Deep Agents-style systems validate role separation, but SotuRail should remain the local rail layer.

@@ -132,6 +132,14 @@ Future resources can expose more local evidence without allowing arbitrary execu
 
 Every resource should have a clear redaction policy and recovery path.
 
+## v0.10.0 Report Resources
+
+`soturail mcp resources report` writes `.soturail/mcp/report-resources.json` as a static read-only manifest for local report artifacts.
+
+Seed URIs include `soturail://reports/latest`, `soturail://reports/status`, `soturail://reports/agent`, `soturail://brain/status`, `soturail://bench/latest`, `soturail://native/candidates`, `soturail://baseline/latest` and `soturail://observability/timeline`.
+
+These resources do not mutate reports, execute shell commands or expose destructive MCP tools.
+
 ## Planned Payload Format Rules
 
 MCP remains JSON. Even if SotuRail supports Markdown, tagged context, TOON/table-like compact formats and Mermaid diagrams for prompts or docs, MCP tool/resource messages must stay machine-readable.

@@ -59,7 +59,21 @@ soturail self baseline --check
 soturail release check
 ```
 
-Release preflight warns when benchmark/native/baseline reports are missing, but native unavailability is not a release failure. A broken TypeScript fallback is a release blocker.
+Release preflight warns when benchmark/native/baseline/status/report/dashboard/observability reports are missing, but native unavailability is not a release failure. A broken TypeScript fallback is a release blocker.
+
+For v0.10.0 local report evidence, run:
+
+```bash
+soturail status --json
+soturail report build
+soturail report doctor
+soturail dashboard build
+soturail obs collect
+soturail mcp resources report
+soturail release check
+```
+
+`report_safety` is a release gate. If report artifacts contain obvious tokens or private keys, run `soturail report redact` and inspect the source artifact before publishing.
 
 You can run only the package verification gate with:
 

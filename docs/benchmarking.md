@@ -18,8 +18,8 @@ Outputs:
 - `benchmarks/reports/latest.md`
 - `.soturail/bench/latest.json`
 - `.soturail/bench/latest.md`
-- `benchmarks/reports/bench-v0.9.0.json`
-- `benchmarks/reports/bench-v0.9.0.md`
+- versioned reports such as `benchmarks/reports/bench-v0.10.0.json`
+- versioned reports such as `benchmarks/reports/bench-v0.10.0.md`
 
 The suite currently groups results as:
 
@@ -330,3 +330,9 @@ Say:
 ```txt
 On this fixture set, SotuRail reduced estimated payload tokens by N while preserving the expected diagnostic lines.
 ```
+
+## v0.10.0 Report Integration
+
+`soturail status --json`, `soturail report build`, `soturail dashboard build` and `soturail report github-summary` include the latest benchmark report path and summary counts when `.soturail/bench/latest.json` exists.
+
+Missing benchmark evidence becomes a warning and a safe next command, not a report-generation failure.

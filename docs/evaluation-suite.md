@@ -227,6 +227,16 @@ soturail bench run --suite brain
 
 Evaluation checks whether evidence survives. Benchmark Rail 2.0 records local timing and operation metadata. SotuRail does not claim native speedups unless a benchmark report proves them, and native unavailability is not an evaluation failure.
 
+## v0.10.0 Report Use
+
+The local report rail reads the latest eval report from `.soturail/eval/latest.json` and includes pass/fail/warning counts in status, dashboard, GitHub summary and agent-readable reports.
+
+If no eval report exists, the report rail suggests:
+
+```bash
+soturail eval run --suite brain
+```
+
 ## Acceptance Criteria
 
 Evaluation Suite changes should not be promoted until:
