@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { getWorkspacePaths, readJsonl } from "./config.js";
+import { getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
+import { redactText } from "./report-redaction.js";
 
 export interface McpResourceInfo {
   uri: string;
@@ -16,7 +17,15 @@ export const mcpResources: McpResourceInfo[] = [
   { uri: "soturail://approved-memory", name: "Approved Memory", mimeType: "application/jsonl", description: "Approved local memory records." },
   { uri: "soturail://self-report", name: "Self Dogfood Report", mimeType: "text/markdown", description: "Latest self-dogfooding report." },
   { uri: "soturail://benchmarks/latest", name: "Latest Benchmarks", mimeType: "application/json", description: "Latest benchmark JSON results." },
-  { uri: "soturail://roadmap", name: "Roadmap", mimeType: "text/markdown", description: "Project roadmap." }
+  { uri: "soturail://roadmap", name: "Roadmap", mimeType: "text/markdown", description: "Project roadmap." },
+  { uri: "soturail://reports/latest", name: "Latest Local Report", mimeType: "text/markdown", description: "Latest redacted local report artifact." },
+  { uri: "soturail://reports/status", name: "Unified Status", mimeType: "application/json", description: "Latest unified SotuRail status model." },
+  { uri: "soturail://reports/agent", name: "Agent Report", mimeType: "text/markdown", description: "Latest generic agent-readable report." },
+  { uri: "soturail://brain/status", name: "Brain Status", mimeType: "application/json", description: "Latest Project Brain doctor report." },
+  { uri: "soturail://bench/latest", name: "Benchmark Rail Latest", mimeType: "application/json", description: "Latest Benchmark Rail 2 report." },
+  { uri: "soturail://native/candidates", name: "Native Candidates", mimeType: "application/json", description: "Latest benchmark-gated native candidate report." },
+  { uri: "soturail://baseline/latest", name: "Baseline Snapshot", mimeType: "application/json", description: "Latest baseline snapshot report." },
+  { uri: "soturail://observability/timeline", name: "Observability Timeline", mimeType: "application/json", description: "Local observability timeline." }
 ];
 
 export async function listMcpResources(): Promise<McpResourceInfo[]> {
@@ -43,13 +52,61 @@ export async function readMcpResource(uri: string, root = process.cwd()): Promis
       return resource(uri, "application/json", await readOptional(path.join(root, "benchmarks", "results", "latest.json"), "{}"));
     case "soturail://roadmap":
       return resource(uri, "text/markdown", await readOptional(path.join(root, "ROADMAP.md"), "No roadmap found."));
+    case "soturail://reports/latest":
+      return resource(uri, "text/markdown", await readOptional(path.join(paths.workspace, "reports", "latest.md"), "No local report found. Run soturail report build."));
+    case "soturail://reports/status":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "status", "latest.json"), "{}"));
+    case "soturail://reports/agent":
+      return resource(uri, "text/markdown", await readOptional(path.join(paths.workspace, "reports", "agent-generic.md"), "No agent report found. Run soturail report agent --agent generic."));
+    case "soturail://brain/status":
+      return resource(uri, "application/json", await readOptional(paths.brainDoctorFile, "{}"));
+    case "soturail://bench/latest":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "bench", "latest.json"), "{}"));
+    case "soturail://native/candidates":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "native", "candidates.json"), "{}"));
+    case "soturail://baseline/latest":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "baselines", "latest.json"), "{}"));
+    case "soturail://observability/timeline":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "observability", "timeline.json"), "{}"));
     default:
       throw new Error(`Unknown MCP resource: ${uri}`);
   }
 }
 
+export async function writeReportResourceManifest(root = process.cwd()): Promise<{ path: string; output: string }> {
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workspace, "mcp");
+  const filePath = path.join(dir, "report-resources.json");
+  await fs.mkdir(dir, { recursive: true });
+  const reportResources = mcpResources.filter((resourceInfo) =>
+    resourceInfo.uri.startsWith("soturail://reports/")
+    || resourceInfo.uri === "soturail://brain/status"
+    || resourceInfo.uri === "soturail://bench/latest"
+    || resourceInfo.uri === "soturail://native/candidates"
+    || resourceInfo.uri === "soturail://baseline/latest"
+    || resourceInfo.uri === "soturail://observability/timeline"
+  );
+  await writeJson(filePath, {
+    schemaVersion: "soturail.mcp.report-resources.v1",
+    createdAt: new Date().toISOString(),
+    mutationAllowed: false,
+    arbitraryShellExecutionExposed: false,
+    resources: reportResources
+  });
+  return {
+    path: filePath,
+    output: [
+      "SotuRail MCP report resources",
+      `resources: ${reportResources.length}`,
+      `manifest: ${relativeToRoot(root, filePath)}`,
+      "mode: read-only",
+      "mutation_allowed: false"
+    ].join("\n") + "\n"
+  };
+}
+
 function resource(uri: string, mimeType: string, text: string): { uri: string; mimeType: string; text: string } {
-  return { uri, mimeType, text: sanitizeMcpResourceText(text) };
+  return { uri, mimeType, text: redactText(sanitizeMcpResourceText(text)).text };
 }
 
 async function readOptional(filePath: string, fallback: string): Promise<string> {
