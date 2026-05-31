@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { Command } from "commander";
 import { baselineSnapshot } from "../core/baseline-snapshot.js";
+import { runSchemaCheck, runV1Readiness } from "../core/schema-readiness.js";
 import {
   assertSotuRailRepository,
   createEmptySelfState,
@@ -67,6 +68,31 @@ export function registerSelfCommand(program: Command): void {
       ].filter(Boolean);
       if (selected.length !== 1) throw new Error("Choose one baseline mode: --check, --zip, --bundle, or --pack.");
       process.stdout.write((await baselineSnapshot(path.resolve(process.cwd()), selected[0] as "check" | "zip" | "bundle" | "pack")).output);
+    });
+
+  self
+    .command("schemas")
+    .description("Check local SotuRail JSON artifact schema compatibility.")
+    .option("--check", "Run schema compatibility checks")
+    .option("--json", "Print machine-readable JSON")
+    .action(async (options: { check?: boolean; json?: boolean }) => {
+      const result = await runSchemaCheck(path.resolve(process.cwd()));
+      process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
+      if (result.report.status === "failed") process.exitCode = 1;
+    });
+
+  self
+    .command("readiness")
+    .description("Check readiness for the candidate v1.0 stable surface.")
+    .option("--v1", "Run v1 readiness checks")
+    .option("--json", "Print machine-readable JSON")
+    .action(async (options: { v1?: boolean; json?: boolean }) => {
+      if (!options.v1) {
+        throw new Error("Use self readiness --v1 to run the v1 readiness draft.");
+      }
+      const result = await runV1Readiness(path.resolve(process.cwd()));
+      process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
+      if (result.report.status === "failed") process.exitCode = 1;
     });
 
   self.command("report").description("Write .soturail/reports/self-dogfood.md from current local evidence.").action(async () => {
