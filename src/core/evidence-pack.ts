@@ -7,6 +7,7 @@ import type { HarnessFailureRecord } from "./harness-rail.js";
 import type { PolicyDecision } from "./policy-rail.js";
 import type { RawRunRecord } from "./raw-store.js";
 import { readBrainCounts } from "./project-brain.js";
+import { detectNativeEngine } from "./native-engine.js";
 import { makeRailId } from "./rail-utils.js";
 import { readWorkflow } from "./workflow-store.js";
 import { SOTURAIL_VERSION } from "./version.js";
@@ -33,6 +34,11 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   const offloadIds = await listOffloadIds(paths.contextOffloadDir);
   const packageVersion = await readPackageVersion(root);
   const brainCounts = await readBrainCounts(root).catch(() => null);
+  const native = await detectNativeEngine(root).catch(() => null);
+  const benchJsonPath = path.join(paths.workspace, "bench", "latest.json");
+  const benchMdPath = path.join(paths.workspace, "bench", "latest.md");
+  const nativeCandidatePath = path.join(paths.workspace, "native", "candidates.json");
+  const baselinePath = path.join(paths.workspace, "baselines", "latest.json");
   const releaseNotesPath = packageVersion ? path.join(root, "docs", "releases", `RELEASE_NOTES_v${packageVersion}.md`) : "";
   const reportId = makeRailId("evidence", id);
   const reportPath = path.join(paths.reportsDir, `${reportId}.md`);
@@ -102,6 +108,15 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     `- brain_stale_events: ${brainCounts?.staleEvents ?? 0}`,
     `- brain_suspect_or_stale: ${brainCounts?.suspectOrStale ?? 0}`,
     `- brain_doctor: ${await exists(paths.brainDoctorFile) ? relativeToRoot(root, paths.brainDoctorFile) : "missing"}`,
+    "",
+    "## Performance Evidence",
+    "",
+    `- latest_benchmark_json: ${await exists(benchJsonPath) ? relativeToRoot(root, benchJsonPath) : "missing"}`,
+    `- latest_benchmark_report: ${await exists(benchMdPath) ? relativeToRoot(root, benchMdPath) : "missing"}`,
+    `- native_candidate_report: ${await exists(nativeCandidatePath) ? relativeToRoot(root, nativeCandidatePath) : "missing"}`,
+    `- baseline_report: ${await exists(baselinePath) ? relativeToRoot(root, baselinePath) : "missing"}`,
+    `- engine_status: typescript fallback OK; native_available=${native?.available ?? false}`,
+    "- performance_warnings: no native speedup claimed without a local benchmark report.",
     "",
     "## Release Evidence",
     "",

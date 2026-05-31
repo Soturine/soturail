@@ -157,6 +157,49 @@ export async function runReleasePreflight(
     version ? path.relative(resolvedRoot, releaseNotesPath) : "missing version"
   );
 
+  const benchReport = path.join(resolvedRoot, ".soturail", "bench", "latest.json");
+  const nativeCandidates = path.join(resolvedRoot, ".soturail", "native", "candidates.json");
+  const baselineReport = path.join(resolvedRoot, ".soturail", "baselines", "latest.json");
+  addGate(
+    gates,
+    "benchmark_report",
+    "benchmark report evidence",
+    existsSync(benchReport),
+    existsSync(benchReport) ? path.relative(resolvedRoot, benchReport) : "missing; run soturail bench run --suite brain",
+    false
+  );
+  addGate(
+    gates,
+    "native_candidate_report",
+    "native candidate evidence",
+    existsSync(nativeCandidates),
+    existsSync(nativeCandidates) ? path.relative(resolvedRoot, nativeCandidates) : "missing; run soturail native candidates",
+    false
+  );
+  addGate(
+    gates,
+    "baseline_report",
+    "baseline snapshot evidence",
+    existsSync(baselineReport),
+    existsSync(baselineReport) ? path.relative(resolvedRoot, baselineReport) : "missing; run soturail self baseline --check",
+    false
+  );
+  addGate(
+    gates,
+    "typescript_fallback",
+    "TypeScript fallback status",
+    existsSync(path.join(resolvedRoot, "dist", "cli.js")),
+    "dist/cli.js is the portable CLI fallback; native remains optional"
+  );
+  addGate(
+    gates,
+    "native_optional",
+    "native optional install policy",
+    true,
+    "normal npm install does not require Rust or native binaries",
+    false
+  );
+
   addGate(gates, "license", "LICENSE file", existsSync(path.join(resolvedRoot, "LICENSE")), "LICENSE");
 
   const requiredGitHubFiles = [
