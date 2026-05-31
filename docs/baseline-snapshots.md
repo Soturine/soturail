@@ -52,3 +52,19 @@ npm pack --pack-destination .soturail/baselines
 ```
 
 Do not manually zip the whole working directory. That tends to include `.git`, `node_modules`, local raw logs or generated artifacts.
+
+## v0.10.1 Baseline Polish
+
+Baseline reports now include clearer warnings for:
+
+- missing `.github` or `.github/workflows/ci.yml`;
+- dirty working trees;
+- missing release notes under `docs/releases/`;
+- package/CLI version mismatch;
+- npm pack output that lacks README, docs or dist files.
+
+The JSON report at `.soturail/baselines/latest.json` is part of the schema compatibility check:
+
+```bash
+soturail self schemas --check
+```

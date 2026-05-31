@@ -26,7 +26,7 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.10.0 is the local reports, observability and dashboard milestone. SotuRail now builds unified status artifacts, local reports, a static dashboard, observability timelines, GitHub step summaries, agent-readable report handoffs and read-only MCP report resources. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite, Project Brain and Benchmark Rail remain local-first and evidence-driven.
+v0.10.1 is the stability and v1-readiness milestone after the local reports release. It fixes and hardens JSON validity, polishes status/report/dashboard/observability output, improves benchmark/native/baseline ergonomics and adds schema compatibility plus candidate v1.0 readiness checks. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite, Project Brain and Benchmark Rail remain local-first and evidence-driven.
 
 The next product direction is staged: v0.10.x hardens local reports and v1.0.0 stabilizes the Context OS surface. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
@@ -154,7 +154,7 @@ v0.9.0 adds stable local benchmark reports under `.soturail/bench/`, native cand
 
 The rule is simple: no benchmark, no native rewrite. SotuRail does not claim native speedups unless a local benchmark report proves them. Native acceleration is optional; TypeScript remains the portable baseline and normal npm installs do not require Rust.
 
-## v0.10.0 Local Reports, Observability And Dashboard
+## v0.10.x Local Reports, Observability And Dashboard
 
 ```bash
 soturail status --json
@@ -179,9 +179,16 @@ soturail obs timeline
 soturail obs export
 
 soturail mcp resources report
+
+soturail self schemas --check
+soturail self schemas --check --json
+soturail self readiness --v1
+soturail self readiness --v1 --json
 ```
 
 v0.10.0 writes local status artifacts under `.soturail/status/`, local reports under `.soturail/reports/`, a static dashboard under `.soturail/dashboard/`, observability events under `.soturail/observability/` and read-only MCP report resources under `.soturail/mcp/report-resources.json`.
+
+v0.10.1 hardens those artifacts: every `--json` output is parseable by `JSON.parse`, report diff and doctor output are more actionable, observability de-duplicates repeated local events, and schema/readiness reports are written under `.soturail/schemas/` and `.soturail/readiness/`.
 
 SotuRail reports are local artifacts. They are designed for humans, CI and coding agents. They do not upload telemetry or require a dashboard server.
 
@@ -312,10 +319,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.10.0 is published, install that exact version with:
+When v0.10.1 is published, install that exact version with:
 
 ```bash
-npm install -g soturail@0.10.0
+npm install -g soturail@0.10.1
 ```
 
 For local development from source:
@@ -570,7 +577,7 @@ The latest report is written to [benchmarks/reports/latest.md](benchmarks/report
 
 Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
 
-Benchmark Rail 2.0 writes `.soturail/bench/latest.json`, `.soturail/bench/latest.md` and versioned reports such as `benchmarks/reports/bench-v0.10.0.json`. It covers `brain-scan`, `brain-stale`, `brain-consolidate`, `reverse-claims`, `reducer-large-log`, `jsonl-read-write`, `range-hash`, `file-scan`, `workflow-evidence`, `format-compare`, `json-validate` and `release-preflight`.
+Benchmark Rail 2.0 writes `.soturail/bench/latest.json`, `.soturail/bench/latest.md` and versioned reports such as `benchmarks/reports/bench-v0.10.1.json`. It covers `brain-scan`, `brain-stale`, `brain-consolidate`, `reverse-claims`, `reducer-large-log`, `jsonl-read-write`, `range-hash`, `file-scan`, `workflow-evidence`, `format-compare`, `json-validate` and `release-preflight`.
 
 ## Knowledge-to-Rules Engine
 
@@ -646,6 +653,7 @@ v0.8.0  Verified Project Brain + Reverse Specification Rail
 v0.8.1  Project Brain polish, stale-evidence quality and agent-brief improvements
 v0.9.0  Benchmark-gated native/performance engine
 v0.10.0 Local reports, observability timeline and static dashboard
+v0.10.1 Stability, JSON validity, report polish and v1 readiness
 v1.0.0  Stable Context OS
 ```
 

@@ -18,8 +18,8 @@ Outputs:
 - `benchmarks/reports/latest.md`
 - `.soturail/bench/latest.json`
 - `.soturail/bench/latest.md`
-- versioned reports such as `benchmarks/reports/bench-v0.10.0.json`
-- versioned reports such as `benchmarks/reports/bench-v0.10.0.md`
+- versioned reports such as `benchmarks/reports/bench-v0.10.1.json`
+- versioned reports such as `benchmarks/reports/bench-v0.10.1.md`
 
 The suite currently groups results as:
 
@@ -334,5 +334,18 @@ On this fixture set, SotuRail reduced estimated payload tokens by N while preser
 ## v0.10.0 Report Integration
 
 `soturail status --json`, `soturail report build`, `soturail dashboard build` and `soturail report github-summary` include the latest benchmark report path and summary counts when `.soturail/bench/latest.json` exists.
+
+## v0.10.1 Benchmark Polish
+
+`soturail bench report` now prints the current CLI version, report version, report age and a stale benchmark warning before the report body.
+
+`soturail bench compare` repeats the core policy:
+
+```txt
+Timing is evidence, not a release claim by itself.
+No native speedup is claimed without a native report.
+```
+
+Tests assert report shape and non-negative timings, not exact duration values.
 
 Missing benchmark evidence becomes a warning and a safe next command, not a report-generation failure.

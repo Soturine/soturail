@@ -34,3 +34,19 @@ SotuRail reports are local artifacts. They are designed for humans, CI and codin
 `report github-summary` writes Markdown that is safe to append to `$GITHUB_STEP_SUMMARY` in GitHub Actions.
 
 `report diff` compares the latest report against the previous report preserved in `.soturail/reports/history/`. It tracks warning count, brain suspect/stale count, benchmark cases, native candidates, baseline failures and release check changes.
+
+## v0.10.1 Polish
+
+- `report latest` shows `brain_status` and safe next commands.
+- `report doctor` verifies that report JSON is parseable and suggests `soturail self schemas --check`.
+- `report diff` writes a status such as `no_previous_report`, `missing_latest_report` or `compared`.
+- `report redact` prints redaction kinds and counts without leaking secret values.
+- Agent reports keep stale/suspect Project Brain warnings separate from verified facts.
+
+If Project Brain has high suspect/stale counts, reports explain that evidence may be old rather than code being broken. Use:
+
+```bash
+soturail brain stale --repair-plan
+soturail reverse claims ./src
+soturail brain consolidate --dry-run
+```

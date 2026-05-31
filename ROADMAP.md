@@ -470,6 +470,21 @@ Status: implemented in the v0.10.0 local release prep as static local artifacts 
 - Release and workflow evidence now reference local report/status/dashboard/observability resources when present.
 - Mermaid rendering, trace viewer pages and optional server mode remain future work.
 
+## v0.10.1 - Stability, JSON Validity And v1 Readiness
+
+Status: implemented as a stabilization release. This is not a breaking-change release and does not promise full v1.0 stability yet.
+
+- Every `--json` output must be valid JSON parseable by `JSON.parse`.
+- Status, report, MCP, benchmark, native and baseline JSON artifacts have stricter contract tests.
+- Report diff, report doctor, redaction output and agent report warnings are more actionable.
+- Dashboard doctor validates local report/status JSON data and keeps the dashboard static, local and dependency-free.
+- Observability collection uses stable event IDs and skips duplicate local artifact events.
+- Benchmark/native/baseline messages now call out stale reports, TypeScript fallback, optional native availability and clean snapshot guidance.
+- Project Brain suspect/stale counts are framed as evidence freshness warnings with safe next commands.
+- `soturail self schemas --check` writes schema compatibility reports under `.soturail/schemas/`.
+- `soturail self readiness --v1` writes candidate v1 readiness reports under `.soturail/readiness/`.
+- Stable command surface, deprecation policy and migration-to-v1 drafts are now documented.
+
 ## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 
 Future UI and gateway modes can be explored only after memory, context selection, policy, evidence, diagrams and reports are stable.
@@ -489,6 +504,9 @@ Possible direction:
 ## v1.0.0 - Stable Context OS
 
 - Stable CLI and local API contracts.
+- Freeze only the documented candidate stable surface, after v0.10.x readiness checks.
+- Keep experimental commands clearly marked until promoted.
+- Maintain schema compatibility or document migrations before breaking changes.
 - Stable init/run/expand/stats/reducers/memory/context/MCP/agents/workflow behavior.
 - Stable harness/policy/evidence behavior for local workflows.
 - Stable structured payload formats for supported targets.

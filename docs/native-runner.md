@@ -72,6 +72,17 @@ SotuRail does not claim native speedups unless a local benchmark report proves t
 
 Native status and candidate counts appear in `soturail status --json`, local reports, the static dashboard, GitHub summary output and agent-readable reports. Native unavailability remains normal and non-fatal as long as the TypeScript fallback works.
 
+## v0.10.1 Native Polish
+
+`soturail native candidates` and `soturail native doctor` now repeat the release policy clearly:
+
+- TypeScript fallback is mandatory.
+- Normal npm install does not require Rust or native binaries.
+- Native unavailable is non-blocking.
+- Candidate recommendations link to benchmark categories.
+
+SotuRail still does not claim native speedups unless a local benchmark report proves them.
+
 ## Current Limitations
 
 - Native binaries are not prebuilt for npm yet.
