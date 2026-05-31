@@ -28,12 +28,14 @@ import { exportSkills } from "../core/skill-exporter.js";
 import { validateSkills } from "../core/skill-validator.js";
 import { SOTURAIL_VERSION } from "../core/version.js";
 import { createWorkflow, listWorkflows, startWorkflow } from "../core/workflow-store.js";
+import { compareBenchmarkRail, parseBenchmarkSuite, readBenchmarkRailReport, renderBenchmarkList, renderBenchmarkRun, runBenchmarkRail } from "../core/benchmark-rail.js";
 
 const execFileAsync = promisify(execFile);
 
 interface BenchOptions {
   engine?: ReducerEngine;
   tool?: string;
+  suite?: string;
 }
 
 export type BenchmarkCategory =
@@ -856,18 +858,29 @@ export async function compareOptional(tool: string, root = process.cwd()): Promi
 
 export function registerBenchCommand(program: Command): void {
   const bench = program.command("bench").description("Run reproducible local SotuRail benchmarks.").action(async () => {
-    const results = await runBenchmarks({ engine: "ts" });
-    process.stdout.write(`Benchmark results written: ${results.length} cases\nbenchmarks/results/latest.json\nbenchmarks/reports/latest.md\n`);
+    const report = await runBenchmarkRail(process.cwd(), "all");
+    process.stdout.write(renderBenchmarkRun(report));
   });
   bench.command("prepare").description("Generate deterministic benchmark fixtures.").action(async () => {
     process.stdout.write(await prepareBenchmarks());
   });
-  bench.command("run").description("Run benchmarks and write latest JSON/Markdown reports.").option("--engine <engine>", "ts, native, or auto", "ts").action(async (options: BenchOptions) => {
-    const results = await runBenchmarks(options);
-    process.stdout.write(`Benchmark results written: ${results.length} cases\nbenchmarks/results/latest.json\nbenchmarks/reports/latest.md\n`);
+  bench.command("list").description("List benchmark suites and categories.").action(() => {
+    process.stdout.write(renderBenchmarkList());
+  });
+  bench.command("run").description("Run benchmarks and write latest JSON/Markdown reports.").option("--engine <engine>", "ts, native, or auto").option("--suite <suite>", "all, brain, reducers, filesystem, or release").action(async (options: BenchOptions) => {
+    if (options.engine && !options.suite) {
+      const results = await runBenchmarks(options);
+      process.stdout.write(`Benchmark results written: ${results.length} cases\nbenchmarks/results/latest.json\nbenchmarks/reports/latest.md\n`);
+      return;
+    }
+    const report = await runBenchmarkRail(process.cwd(), parseBenchmarkSuite(options.suite));
+    process.stdout.write(renderBenchmarkRun(report));
   });
   bench.command("report").description("Print the latest benchmark report.").action(async () => {
-    process.stdout.write(await reportBenchmarks());
+    process.stdout.write(await readBenchmarkRailReport());
+  });
+  bench.command("compare").description("Compare latest local benchmark evidence without claiming native speedups.").action(async () => {
+    process.stdout.write(await compareBenchmarkRail());
   });
   bench.command("compare-optional").description("Detect optional external comparison tool without installing it.").option("--tool <tool>", "rtk or squeez").action(async (options: BenchOptions) => {
     process.stdout.write(await compareOptional(options.tool ?? ""));
