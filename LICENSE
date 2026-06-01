@@ -1,15 +1,17 @@
-SotuRail Reserved Rights Notice
+﻿Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
 
-Copyright (c) 2026 Rafael Ryan Ramos de Souza.
-All rights reserved.
+Copyright 2026 Rafael Ryan Ramos de Souza
 
-No open-source license is currently granted for this repository or for future unreleased versions unless a later LICENSE file or written agreement explicitly says otherwise.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-This repository may be publicly visible for portfolio, planning, research, documentation, and evaluation purposes, but public visibility does not grant permission to copy, redistribute, sublicense, sell, commercialize, or create derivative works from the source code, documentation, assets, designs, roadmap, benchmarks, or related project materials.
+    http://www.apache.org/licenses/LICENSE-2.0
 
-You may view the repository through GitHub according to GitHub's platform terms. Any additional use requires explicit written permission from the copyright holder.
-
-Important historical note:
-Previous published versions or copies of SotuRail that were explicitly released under the MIT License remain governed by the license terms that applied to those specific versions at the time of release. This notice is intended for the current repository state and future versions unless changed later.
-
-This notice is not legal advice. For commercial distribution, open-source release, dual licensing, or contributor agreements, consult a qualified legal professional.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

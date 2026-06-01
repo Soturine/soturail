@@ -6,7 +6,7 @@
 
 [![Node.js >=20](https://img.shields.io/badge/node-%3E%3D20-3c873a)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)](tsconfig.json)
-[![License: Reserved Rights](https://img.shields.io/badge/license-reserved--rights-red)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![CI](https://github.com/Soturine/soturail/actions/workflows/ci.yml/badge.svg)](https://github.com/Soturine/soturail/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/soturail.svg)](https://www.npmjs.com/package/soturail)
 [![npm downloads](https://img.shields.io/npm/dm/soturail.svg)](https://www.npmjs.com/package/soturail)

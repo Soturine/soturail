@@ -1,4 +1,4 @@
-# SotuRail Licensing Strategy
+﻿# SotuRail Licensing Strategy
 
 This document explains the current licensing position of SotuRail.
 
@@ -42,7 +42,7 @@ For future versions, `package.json` should use:
 
 ```json
 {
-  "license": "UNLICENSED"
+  "license": "Apache-2.0"
 }
 ```
 
@@ -133,3 +133,4 @@ Before adding dependencies, check:
 - dataset license;
 - benchmark license;
 - compatibility with SotuRail's distribution model.
+

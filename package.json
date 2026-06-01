@@ -55,7 +55,7 @@
     "soturail"
   ],
   "author": "Rafael Ryan Ramos de Souza",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Soturine/soturail.git"
