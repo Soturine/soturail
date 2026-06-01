@@ -32,6 +32,7 @@ export interface BaselineReport {
   commandsUsedOrRecommended: string[];
   artifacts: string[];
   warnings: string[];
+  nextCommands: string[];
 }
 
 export async function baselineSnapshot(root = process.cwd(), mode: BaselineMode): Promise<{ report: BaselineReport; output: string }> {
@@ -114,7 +115,13 @@ export async function baselineSnapshot(root = process.cwd(), mode: BaselineMode)
     ],
     commandsUsedOrRecommended: commands,
     artifacts: artifacts.map((artifact) => relativeToRoot(resolvedRoot, artifact)),
-    warnings
+    warnings,
+    nextCommands: [
+      "soturail self baseline --check",
+      "soturail self baseline --zip",
+      "soturail self baseline --bundle",
+      "soturail self baseline --pack"
+    ]
   };
   await writeBaselineReports(resolvedRoot, report);
   return { report, output: renderBaselineOutput(resolvedRoot, report) };

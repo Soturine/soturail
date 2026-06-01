@@ -3,7 +3,11 @@ import { existsSync } from "node:fs";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { buildDashboard } from "./dashboard-rail.js";
+import { buildReport } from "./report-rail.js";
 import { scanReportSafety } from "./report-redaction.js";
+import { runArchitectureCheck, runCodeHealth } from "./code-health.js";
+import { runSchemaCheck, runV1Readiness } from "./schema-readiness.js";
 
 export interface ReleaseGateResult {
   id: string;
@@ -26,6 +30,7 @@ export interface ReleasePreflightOptions {
   runAudit?: boolean;
   runPack?: boolean;
   cliCommand?: string[];
+  strict?: boolean;
 }
 
 interface ProcessResult {
@@ -60,6 +65,7 @@ export async function runReleasePreflight(
   const resolvedRoot = path.resolve(root);
   const runAudit = options.runAudit ?? true;
   const runPack = options.runPack ?? true;
+  const strict = options.strict === true;
   const gates: ReleaseGateResult[] = [];
   const packageJson = await readOptionalJson(path.join(resolvedRoot, "package.json"));
   const packageName = typeof packageJson?.name === "string" ? packageJson.name : null;
@@ -157,6 +163,70 @@ export async function runReleasePreflight(
     Boolean(version && existsSync(releaseNotesPath)),
     version ? path.relative(resolvedRoot, releaseNotesPath) : "missing version"
   );
+
+  if (strict) {
+    await buildReport(resolvedRoot).catch(() => undefined);
+    await buildDashboard(resolvedRoot).catch(() => undefined);
+    const codeHealth = await runCodeHealth(resolvedRoot, { strict: true }).catch(() => null);
+    const architecture = await runArchitectureCheck(resolvedRoot, { strict: true }).catch(() => null);
+    const schemaCheck = await runSchemaCheck(resolvedRoot, { strict: true }).catch(() => null);
+    const readiness = await runV1Readiness(resolvedRoot, { strict: true }).catch(() => null);
+    addGate(
+      gates,
+      "strict_schema_check",
+      "strict schema compatibility",
+      Boolean(schemaCheck && schemaCheck.report.status !== "failed"),
+      schemaCheck ? `status=${schemaCheck.report.status}` : "strict schema check failed to run"
+    );
+    addGate(
+      gates,
+      "strict_v1_readiness",
+      "strict v1 readiness",
+      Boolean(readiness && readiness.report.blockingIssues.length === 0),
+      readiness ? `status=${readiness.report.status}, blocking=${readiness.report.blockingIssues.length}` : "strict readiness failed to run"
+    );
+    addGate(
+      gates,
+      "clean_code_gate",
+      "clean code maintainability gate",
+      Boolean(codeHealth && codeHealth.report.summary.blockingIssues === 0),
+      codeHealth ? `status=${codeHealth.report.status}, blocking=${codeHealth.report.summary.blockingIssues}` : "code health failed to run"
+    );
+    addGate(
+      gates,
+      "architecture_gate",
+      "architecture boundary gate",
+      Boolean(architecture && architecture.report.summary.blockingIssues === 0),
+      architecture ? `status=${architecture.report.status}, blocking=${architecture.report.summary.blockingIssues}` : "architecture check failed to run"
+    );
+    const strictDocs = [
+      "docs/quickstart.md",
+      "docs/v1-contract.md",
+      "docs/schema-contracts.md",
+      "docs/agent-hosts.md",
+      "docs/clean-code-guidelines.md",
+      "docs/architecture-boundaries.md",
+      "docs/stable-command-surface.md",
+      "docs/deprecation-policy.md",
+      "docs/migration-v1.md"
+    ];
+    const missingStrictDocs = strictDocs.filter((file) => !existsSync(path.join(resolvedRoot, file)));
+    addGate(
+      gates,
+      "v1_contract_docs",
+      "v1 contract documentation",
+      missingStrictDocs.length === 0,
+      missingStrictDocs.length === 0 ? "v1 contract docs present" : `missing: ${missingStrictDocs.join(", ")}`
+    );
+    const contamination = await docsScopeContamination(resolvedRoot);
+    addGate(
+      gates,
+      "soturail_scope_only_docs",
+      "SotuRail-only roadmap docs",
+      contamination.length === 0,
+      contamination.length === 0 ? "no SoturAI/finance/trading/backtest contamination found" : `scope contamination: ${contamination.slice(0, 5).join(", ")}`
+    );
+  }
 
   const benchReport = path.join(resolvedRoot, ".soturail", "bench", "latest.json");
   const nativeCandidates = path.join(resolvedRoot, ".soturail", "native", "candidates.json");
@@ -585,6 +655,29 @@ async function jsonParseable(filePath: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+async function docsScopeContamination(root: string): Promise<string[]> {
+  const files = [
+    "README.md",
+    "ROADMAP.md",
+    "docs/quickstart.md",
+    "docs/v1-contract.md",
+    "docs/schema-contracts.md",
+    "docs/stable-command-surface.md",
+    "docs/migration-v1.md",
+    "docs/future-rails-index.md"
+  ];
+  const terms = /\b(SoturAI|trading|finance|backtest)\b/i;
+  const findings: string[] = [];
+  for (const file of files) {
+    const text = await readOptionalText(path.join(root, file));
+    if (!text) continue;
+    text.split(/\r?\n/).forEach((line, index) => {
+      if (terms.test(line)) findings.push(`${file}:${index + 1}`);
+    });
+  }
+  return findings;
 }
 
 function parseAudit(text: string): AuditSummary {

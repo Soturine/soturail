@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { Command } from "commander";
 import { baselineSnapshot } from "../core/baseline-snapshot.js";
+import { runArchitectureCheck, runCodeHealth } from "../core/code-health.js";
 import { runSchemaCheck, runV1Readiness } from "../core/schema-readiness.js";
 import {
   assertSotuRailRepository,
@@ -74,9 +75,10 @@ export function registerSelfCommand(program: Command): void {
     .command("schemas")
     .description("Check local SotuRail JSON artifact schema compatibility.")
     .option("--check", "Run schema compatibility checks")
+    .option("--strict", "Require stable v1 artifacts and stricter output-shape checks")
     .option("--json", "Print machine-readable JSON")
-    .action(async (options: { check?: boolean; json?: boolean }) => {
-      const result = await runSchemaCheck(path.resolve(process.cwd()));
+    .action(async (options: { check?: boolean; strict?: boolean; json?: boolean }) => {
+      const result = await runSchemaCheck(path.resolve(process.cwd()), { strict: options.strict === true });
       process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
       if (result.report.status === "failed") process.exitCode = 1;
     });
@@ -85,12 +87,37 @@ export function registerSelfCommand(program: Command): void {
     .command("readiness")
     .description("Check readiness for the candidate v1.0 stable surface.")
     .option("--v1", "Run v1 readiness checks")
+    .option("--strict", "Run strict v1 readiness gates")
     .option("--json", "Print machine-readable JSON")
-    .action(async (options: { v1?: boolean; json?: boolean }) => {
+    .action(async (options: { v1?: boolean; strict?: boolean; json?: boolean }) => {
       if (!options.v1) {
         throw new Error("Use self readiness --v1 to run the v1 readiness draft.");
       }
-      const result = await runV1Readiness(path.resolve(process.cwd()));
+      const result = await runV1Readiness(path.resolve(process.cwd()), { strict: options.strict === true });
+      process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
+      if (result.report.status === "failed") process.exitCode = 1;
+    });
+
+  self
+    .command("code-health")
+    .description("Run lightweight clean-code and maintainability checks.")
+    .option("--json", "Print machine-readable JSON")
+    .option("--strict", "Promote critical architecture and JSON-output issues to blockers")
+    .action(async (options: { json?: boolean; strict?: boolean }) => {
+      const result = await runCodeHealth(path.resolve(process.cwd()), { strict: options.strict === true });
+      process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
+      if (result.report.status === "failed") process.exitCode = 1;
+    });
+
+  self
+    .command("architecture")
+    .description("Check lightweight architecture boundaries.")
+    .option("--check", "Run architecture checks")
+    .option("--json", "Print machine-readable JSON")
+    .option("--strict", "Promote core/command boundary issues to blockers")
+    .action(async (options: { check?: boolean; json?: boolean; strict?: boolean }) => {
+      if (!options.check) throw new Error("Use self architecture --check to run architecture checks.");
+      const result = await runArchitectureCheck(path.resolve(process.cwd()), { strict: options.strict === true });
       process.stdout.write(options.json ? `${JSON.stringify(result.report, null, 2)}\n` : result.output);
       if (result.report.status === "failed") process.exitCode = 1;
     });

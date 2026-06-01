@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { detectNativeEngine } from "./native-engine.js";
 import { getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
+import { SOTURAIL_VERSION } from "./version.js";
 
 export type NativeCandidateClassification = "good-candidate" | "maybe-candidate" | "not-worth-it-yet" | "blocked";
 
@@ -20,12 +21,16 @@ export interface NativeCandidate {
 export interface NativeCandidateReport {
   schemaVersion: "soturail.native.candidates.v1";
   createdAt: string;
+  version: string;
+  status: "passed" | "warning" | "failed" | "unknown";
   engine: {
     nativeAvailable: boolean;
     fallback: "typescript";
     normalInstallRequiresNative: false;
   };
   candidates: NativeCandidate[];
+  warnings: string[];
+  nextCommands: string[];
 }
 
 export interface NativeStatusReport {
@@ -62,12 +67,16 @@ export async function writeNativeCandidateReport(root = process.cwd()): Promise<
   const report: NativeCandidateReport = {
     schemaVersion: "soturail.native.candidates.v1",
     createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    status: "warning",
     engine: {
       nativeAvailable: status.native_available,
       fallback: "typescript",
       normalInstallRequiresNative: false
     },
-    candidates: nativeCandidates()
+    candidates: nativeCandidates(),
+    warnings: ["Native acceleration remains optional and benchmark-gated; unavailable native engines are non-blocking."],
+    nextCommands: ["soturail bench run --suite brain", "soturail native doctor", "soturail native compare"]
   };
   const dir = path.join(getWorkspacePaths(root).workspace, "native");
   const jsonPath = path.join(dir, "candidates.json");

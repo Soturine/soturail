@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import { redactText } from "./report-redaction.js";
+import { SOTURAIL_VERSION } from "./version.js";
 
 export interface McpResourceInfo {
   uri: string;
@@ -89,9 +90,13 @@ export async function writeReportResourceManifest(root = process.cwd()): Promise
   await writeJson(filePath, {
     schemaVersion: "soturail.mcp.report-resources.v1",
     createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    status: "passed",
     mutationAllowed: false,
     arbitraryShellExecutionExposed: false,
-    resources: reportResources
+    resources: reportResources,
+    warnings: [],
+    nextCommands: ["soturail report build", "soturail mcp exposure"]
   });
   return {
     path: filePath,

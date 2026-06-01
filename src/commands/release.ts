@@ -13,10 +13,11 @@ export function registerReleaseCommand(program: Command): void {
   release
     .command("check")
     .description("Validate package, CLI, changelog, release notes, pack metadata and runtime audit.")
-    .action(async () => {
+    .option("--strict", "Run strict v1 release gates")
+    .action(async (options: { strict?: boolean }) => {
       const packageJson = JSON.parse(await fs.readFile(path.resolve(process.cwd(), "package.json"), "utf8")) as { version?: string };
       if (!packageJson.version) throw new Error("package.json version is missing.");
-      await runReleaseGate(packageJson.version);
+      await runReleaseGate(packageJson.version, { strict: options.strict === true });
       process.stdout.write("Release check passed.\n");
     });
 
@@ -140,13 +141,13 @@ export async function writeReleaseNotesSkeleton(version: string, root = process.
   return filePath;
 }
 
-async function runReleaseGate(version: string): Promise<void> {
+async function runReleaseGate(version: string, options: { strict?: boolean } = {}): Promise<void> {
   const packageJson = JSON.parse(await fs.readFile(path.resolve(process.cwd(), "package.json"), "utf8")) as { version?: string };
   if (packageJson.version !== version) throw new Error(`package.json version is ${packageJson.version}, expected ${version}.`);
   const status = await runCapture("git", ["status", "--short"]);
   if (status.stdout.trim()) throw new Error(`git working tree is dirty:\n${status.stdout}`);
   await runChecked("npm", ["run", "build"]);
-  const preflight = await runReleasePreflight(process.cwd());
+  const preflight = await runReleasePreflight(process.cwd(), { strict: options.strict === true });
   process.stdout.write(`${formatReleasePreflight(preflight)}\n`);
   if (!preflight.ok) throw new Error("Release preflight failed.");
   await runChecked("npm", ["test"]);

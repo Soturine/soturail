@@ -73,6 +73,7 @@ export interface SotuRailStatus {
   agents: {
     readiness: StatusLevel;
   };
+  warnings: string[];
   nextCommands: string[];
 }
 
@@ -161,9 +162,11 @@ export async function buildStatus(root = process.cwd()): Promise<{ status: SotuR
     agents: {
       readiness: agentExports ? "passed" : "unknown"
     },
+    warnings: [],
     nextCommands: []
   };
   status.brain.brainStatus = brainRefreshStatus(status);
+  status.warnings = statusWarnings(status);
   status.nextCommands = nextCommands(status);
   const jsonPath = path.join(statusDir, "latest.json");
   const markdownPath = path.join(statusDir, "latest.md");
@@ -219,14 +222,7 @@ export function renderStatusMarkdown(status: SotuRailStatus): string {
 }
 
 export function renderStatusAgent(status: SotuRailStatus): string {
-  const warnings = [
-    status.project.dirty ? "Working tree is dirty; avoid release/publish until clean." : "",
-    status.release.releaseCheck !== "passed" ? `Release readiness is ${status.release.releaseCheck}.` : "",
-    status.brain.doctor !== "passed" ? `Brain doctor is ${status.brain.doctor}.` : "",
-    status.brain.brainStatus === "needs_refresh" ? "Brain evidence needs refresh; suspect/stale records may be old rather than broken code." : "",
-    status.eval.failed > 0 ? `Eval has ${status.eval.failed} failures.` : "",
-    status.baseline.signalsFailed > 0 ? `Baseline has ${status.baseline.signalsFailed} failed signals.` : ""
-  ].filter(Boolean);
+  const warnings = status.warnings;
   return [
     "# Current Project Status",
     "",
@@ -287,6 +283,17 @@ function nextCommands(status: SotuRailStatus): string[] {
   }
   commands.push("soturail dashboard build");
   return [...new Set(commands)];
+}
+
+function statusWarnings(status: SotuRailStatus): string[] {
+  return [
+    status.project.dirty ? "Working tree is dirty; avoid release/publish until clean." : "",
+    status.release.releaseCheck !== "passed" ? `Release readiness is ${status.release.releaseCheck}.` : "",
+    status.brain.doctor !== "passed" ? `Brain doctor is ${status.brain.doctor}.` : "",
+    status.brain.brainStatus === "needs_refresh" ? "Brain evidence needs refresh; suspect/stale records may be old rather than broken code." : "",
+    status.eval.failed > 0 ? `Eval has ${status.eval.failed} failures.` : "",
+    status.baseline.signalsFailed > 0 ? `Baseline has ${status.baseline.signalsFailed} failed signals.` : ""
+  ].filter(Boolean);
 }
 
 export function brainRefreshStatus(status: SotuRailStatus): BrainStatus {
