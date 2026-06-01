@@ -7,6 +7,9 @@ Useful entry points:
 - README.md
 - ROADMAP.md
 - docs/agents.md
+- docs/quickstart.md
+- docs/v1-contract.md
+- docs/schema-contracts.md
 - docs/project-brain.md
 - docs/benchmarking.md
 - docs/report-rail.md

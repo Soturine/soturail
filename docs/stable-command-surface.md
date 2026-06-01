@@ -1,10 +1,8 @@
-# Candidate Stable Command Surface
+# Stable Command Surface
 
-This document is a v1.0 draft, not a final stability promise.
+SotuRail v1.0.0 freezes the first stable local Context OS surface. Experimental rails remain available, but they are not part of the stable contract until promoted in release notes.
 
-SotuRail v0.10.1 starts separating the candidate stable surface from experimental and advanced areas so v1.0 can freeze the right contracts without removing useful local-first rails.
-
-## Stable Candidate
+## Stable Surface For v1.0
 
 - `soturail status`
 - `soturail report`
@@ -17,48 +15,52 @@ SotuRail v0.10.1 starts separating the candidate stable surface from experimenta
 - `soturail self baseline`
 - `soturail self schemas --check`
 - `soturail self readiness --v1`
+- `soturail self code-health`
+- `soturail self architecture --check`
 - `soturail release check`
 - `soturail workflow`
 - `soturail harness`
 - `soturail diagram`
 - `soturail agents`
+- `soturail agents matrix`
+- `soturail mcp exposure`
+- `soturail mcp resources report`
 
-## Experimental
+Stable means the command should remain local, documented, covered by smoke or contract tests, and changed compatibly where possible.
 
-- graph and parse seeds
-- native acceleration beyond candidate reporting
-- extended MCP tools beyond read-only report resources
-- future dashboard server modes
-- large parser integrations
+## Experimental Or Planned
 
-Experimental commands can change before v1.0. They should stay local, optional and documented.
+- `graph` and `parse` seeds.
+- Real native acceleration beyond detection, candidates and compare reports.
+- Extended MCP mutation tools.
+- Dashboard server mode.
+- Large parser integrations.
+- Full Knowledge Graph runtime.
+- Full Design Rail runtime.
+- Skill Rail 2.0 runtime.
+- Governance and cost runtime.
+
+Experimental surfaces may change before promotion. They must stay local, optional and honest about limitations.
 
 ## Internal Or Advanced
 
-- reducer benchmark internals
-- native build commands
-- low-level MCP smoke/serve flows
-- self dogfood helpers
-- raw log expansion and internal evidence stores
+- Native build commands.
+- Reducer benchmark internals.
+- Low-level MCP smoke and serve flows.
+- Self dogfood helpers beyond the stable baseline/readiness/code-health checks.
+- Raw log expansion and internal evidence stores.
 
-Advanced commands should remain available for development and diagnostics, but they are not the first v1.0 compatibility promise.
+Advanced commands remain useful for diagnostics, but v1.0 compatibility focuses on the stable surface above.
 
 ## Deprecated
 
-No public commands are deprecated in v0.10.1.
+No public commands are deprecated in v1.0.0.
 
-If a command becomes deprecated later, release notes must name the replacement command and the planned removal window.
+Future deprecations must name a replacement command, state the release that introduced the warning and include removal timing in release notes. See [deprecation policy](deprecation-policy.md).
 
-## v1.0 Rule
+## Related Contracts
 
-v1.0 will freeze only the documented stable surface. Experimental commands remain useful, but their contracts can still evolve with clear release-note warnings.
-
-## Post-v1 Candidate Rails
-
-The v1.0 stable surface should not accidentally freeze every future idea. The following rails are planned as post-v1 candidates and should remain clearly documented as future or experimental until implemented and tested:
-
-- Host Compatibility Rail for OpenCode, Antigravity, Deep Agents-style and generic host exports.
-- Spec, Design And Diagram Rail for `PRD.md`, `requirements.md`, `design.md`, `tasks.md`, `DESIGN.md` and Mermaid visual contracts.
-- Knowledge Graph Rail for local graph build/explain/impact/tour outputs.
-- Skill Rail 2.0 for domain skill templates, skill eval and role-aware exports.
-- Governance And Cost Rail for context budget, dynamic workflow and MCP/skill exposure warnings.
+- [v1 contract](v1-contract.md)
+- [schema contracts](schema-contracts.md)
+- [migration to v1](migration-v1.md)
+- [agent hosts](agent-hosts.md)

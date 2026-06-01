@@ -1,5 +1,7 @@
 # Baseline Snapshots
 
+v1.0.0 keeps baseline snapshots in the stable surface through `soturail self baseline --check|--zip|--bundle|--pack`. Baseline reports use `soturail.baseline.v1` and are checked by schema/readiness gates when present.
+
 v0.9.0 adds baseline snapshot helpers so source, history and package artifacts are created with reviewed commands instead of manual whole-folder zips.
 
 ```bash

@@ -1,5 +1,16 @@
 # Release Workflow
 
+v1.0.0 adds strict local release gates:
+
+```bash
+soturail self schemas --check --strict
+soturail self readiness --v1 --strict
+soturail self code-health
+soturail release check --strict
+```
+
+Strict release checks must pass before publishing v1 packages.
+
 SotuRail releases should be repeatable and evidence-backed. Release helpers are exposed through `soturail release`.
 
 ## Check

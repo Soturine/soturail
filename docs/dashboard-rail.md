@@ -1,5 +1,7 @@
 # Dashboard Rail
 
+v1.0.0 keeps the dashboard static and local. There is no server requirement, no external CDN and no telemetry upload.
+
 Dashboard Rail builds a static local HTML dashboard from report and status artifacts.
 
 ```bash

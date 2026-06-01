@@ -1,6 +1,6 @@
 # Future Rails Index
 
-This document is the quick index for planned SotuRail rails after v0.4.x.
+This document is the quick index for implemented rails and planned SotuRail rails after the v1.0 stable surface.
 
 It does not replace `ROADMAP.md`. It exists so planned features are not scattered only across long roadmap sections.
 
@@ -18,6 +18,16 @@ SotuRail should remain:
 - benchmark-driven;
 - independent from any single agent host;
 - small enough to use in normal developer projects.
+
+v1.0.0 freezes the first stable local Context OS surface. The post-v1 sequence remains staged:
+
+```txt
+v1.1.0  Host Compatibility Rail
+v1.2.0  Spec, Design And Diagram Rail
+v1.3.0  Knowledge Graph Rail
+v1.4.0  Skill Rail 2.0
+v1.5.0  Governance And Cost Rail
+```
 
 ## 2026 Agent Runtime Update
 

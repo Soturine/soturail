@@ -1,5 +1,7 @@
 # Observability Rail
 
+v1.0.0 keeps observability local. Events are derived from SotuRail artifacts, not shell history, and are not uploaded.
+
 Observability Rail collects a local timeline from existing SotuRail artifacts. It does not read shell history and does not upload telemetry.
 
 ```bash

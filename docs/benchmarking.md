@@ -18,8 +18,8 @@ Outputs:
 - `benchmarks/reports/latest.md`
 - `.soturail/bench/latest.json`
 - `.soturail/bench/latest.md`
-- versioned reports such as `benchmarks/reports/bench-v0.10.1.json`
-- versioned reports such as `benchmarks/reports/bench-v0.10.1.md`
+- versioned reports such as `benchmarks/reports/bench-v1.0.0.json`
+- versioned reports such as `benchmarks/reports/bench-v1.0.0.md`
 
 The suite currently groups results as:
 

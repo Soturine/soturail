@@ -1,5 +1,17 @@
 # Project Brain
 
+v1.0.0 treats Project Brain suspect/stale counts as evidence freshness warnings. High counts mean the local brain may need refresh; they do not necessarily mean the code is broken.
+
+Recommended v1 refresh commands:
+
+```bash
+soturail brain stale --repair-plan
+soturail reverse claims ./src
+soturail brain consolidate --dry-run
+soturail brain doctor --repair-plan
+soturail brain export --agent codex --limit 20
+```
+
 Project Brain is SotuRail's verified local knowledge layer. It turns local evidence into auditable claims, decisions, bugs, gaps, rules and stale-evidence events.
 
 It is not a vector database, cloud memory service, LLM crawler or autonomous code reviewer. It is deterministic, local-first and evidence-backed.

@@ -38,6 +38,10 @@ SotuRail reports are local artifacts. They are designed for humans, CI and codin
 ## v0.10.1 Polish
 
 - `report latest` shows `brain_status` and safe next commands.
+
+## v1 Stable Contract
+
+`report build`, `report export --format json`, `report doctor`, `report redact`, `report diff`, `report github-summary` and `report agent --agent codex` are part of the v1 stable surface. Report JSON uses `soturail.report.v1`, stays local and is checked by `soturail self schemas --check --strict`.
 - `report doctor` verifies that report JSON is parseable and suggests `soturail self schemas --check`.
 - `report diff` writes a status such as `no_previous_report`, `missing_latest_report` or `compared`.
 - `report redact` prints redaction kinds and counts without leaking secret values.

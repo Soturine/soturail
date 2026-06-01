@@ -1,6 +1,6 @@
-# Migration To v1 Draft
+# Migration To v1
 
-This is a draft for preparing SotuRail users and agents for v1.0. It is not the final v1.0 migration guide.
+This guide prepares SotuRail users and agents for the v1.0 stable local Context OS surface.
 
 ## What Changed From v0.7 To v0.10
 
@@ -10,6 +10,7 @@ This is a draft for preparing SotuRail users and agents for v1.0. It is not the 
 - v0.9 added benchmark-gated performance evidence, native candidate reports and baseline snapshots.
 - v0.10 added local reports, unified status, static dashboard, observability timeline, agent reports and read-only MCP report resources.
 - v0.10.1 hardens JSON validity, report polish, schema compatibility checks and v1 readiness reporting.
+- v1.0 freezes the stable command surface, adds strict schema/readiness/release gates, adds code-health and architecture checks, and documents the v1 contracts.
 
 ## Core Command Map
 
@@ -22,10 +23,13 @@ This is a draft for preparing SotuRail users and agents for v1.0. It is not the 
 - Native policy: `soturail native candidates`, `native doctor`, `native compare`
 - Baselines: `soturail self baseline --check|--zip|--bundle|--pack`
 - Readiness: `soturail self schemas --check`, `soturail self readiness --v1`
+- v1 gates: `soturail self schemas --check --strict`, `soturail self readiness --v1 --strict`, `soturail release check --strict`
+- Maintainability: `soturail self code-health`, `soturail self architecture --check`
+- Agent hosts: `soturail agents matrix`
 
-## Stable Candidates
+## Stable Surface
 
-See [stable-command-surface.md](stable-command-surface.md). v1.0 should freeze the documented candidate stable surface, not every experimental seed.
+See [stable-command-surface.md](stable-command-surface.md). v1.0 freezes the documented stable surface, not every experimental seed.
 
 ## Experimental Commands
 
@@ -57,7 +61,10 @@ Do not manually zip the full working directory with `node_modules`, `.git` and g
 
 ```bash
 soturail self schemas --check
+soturail self schemas --check --strict
 soturail self readiness --v1
+soturail self readiness --v1 --strict
+soturail self code-health
 npm test
 npm run release:check
 ```

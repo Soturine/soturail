@@ -1,5 +1,7 @@
 # Native Runner
 
+v1.0.0 keeps native acceleration optional and benchmark-gated. Normal npm installs use the TypeScript fallback and do not require Rust.
+
 SotuRail v0.2.1 keeps TypeScript as the public CLI, policy orchestration, docs and npm distribution layer. Rust is used only for optional hot paths where streaming, lower overhead and binary execution are useful.
 
 ## Responsibility Split

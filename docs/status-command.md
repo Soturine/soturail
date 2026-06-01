@@ -20,11 +20,11 @@ The status model aggregates package and CLI version, release notes path, git sta
 
 `--agent` is intentionally concise. It separates warnings from verified facts, lists safe next commands and avoids raw logs or secrets.
 
-## v0.10.1 JSON Contract
+## v1 JSON Contract
 
 `status --json` prints a plain JavaScript object through `JSON.stringify(object, null, 2)`. It must be parseable by `JSON.parse(stdout)`.
 
-The status artifact at `.soturail/status/latest.json` uses the same object. v0.10.1 adds contract tests for stdout and disk JSON so manual string assembly cannot introduce trailing commas.
+The status artifact at `.soturail/status/latest.json` uses the same object. v1 keeps `soturail.status.v1` stable and adds warnings/next commands without requiring network access.
 
 ## Brain Freshness
 

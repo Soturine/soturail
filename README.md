@@ -26,9 +26,9 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v0.10.1 is the stability and v1-readiness milestone after the local reports release. It fixes and hardens JSON validity, polishes status/report/dashboard/observability output, improves benchmark/native/baseline ergonomics and adds schema compatibility plus candidate v1.0 readiness checks. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite, Project Brain and Benchmark Rail remain local-first and evidence-driven.
+v1.0.0 freezes the first stable local Context OS surface for AI coding agents. The stable surface covers status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow/harness/diagram rails, agent exports and read-only MCP report resources.
 
-The next product direction is staged: v0.10.x hardens local reports, v1.0.0 stabilizes the Context OS surface, and v1.1+ adds Host Compatibility, Spec/Design, Knowledge Graph, Skill Rail 2.0 and Governance/Cost rails. See [ROADMAP.md](ROADMAP.md), [docs/future-rails-index.md](docs/future-rails-index.md) and [docs/external-projects-audit.md](docs/external-projects-audit.md).
+Experimental rails remain available but are not part of the stable contract until promoted. SotuRail does not add cloud telemetry, a required dashboard server, destructive MCP tools or a native-only runtime. TypeScript remains the portable fallback. See [ROADMAP.md](ROADMAP.md), [docs/v1-contract.md](docs/v1-contract.md), [docs/schema-contracts.md](docs/schema-contracts.md), [docs/stable-command-surface.md](docs/stable-command-surface.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
 ## v0.5.x MVP Rails
 
@@ -192,6 +192,23 @@ v0.10.1 hardens those artifacts: every `--json` output is parseable by `JSON.par
 
 SotuRail reports are local artifacts. They are designed for humans, CI and coding agents. They do not upload telemetry or require a dashboard server.
 
+## v1.0.0 Stable Context OS Surface
+
+```bash
+soturail status --json
+soturail report build
+soturail dashboard build
+soturail obs summary
+soturail self schemas --check --strict
+soturail self readiness --v1 --strict
+soturail self code-health
+soturail self architecture --check
+soturail agents matrix
+soturail release check --strict
+```
+
+v1.0.0 adds strict schema/readiness/release gates, lightweight code-health and architecture checks, a documented v1 contract, a host compatibility matrix and a golden smoke suite for stable commands. See [docs/quickstart.md](docs/quickstart.md), [docs/v1-contract.md](docs/v1-contract.md), [docs/schema-contracts.md](docs/schema-contracts.md), [docs/clean-code-guidelines.md](docs/clean-code-guidelines.md), [docs/architecture-boundaries.md](docs/architecture-boundaries.md) and [docs/agent-hosts.md](docs/agent-hosts.md).
+
 ## Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -266,14 +283,15 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-The next roadmap stage keeps performance evidence honest while preparing the stable Context OS surface:
+Post-v1 work is staged so the stable Context OS surface stays reliable:
 
-- compare more real-world benchmark fixtures before approving native hot paths;
-- keep TypeScript fallback mandatory for every native candidate;
-- expand parser and graph seeds only as local, heuristic, optional tools;
-- harden report redaction and status aggregation across more rails;
-- expand static local report pages before any optional server mode;
-- keep MCP report resources read-only and mutation-free.
+- v1.1.0 Host Compatibility Rail;
+- v1.2.0 Spec, Design And Diagram Rail;
+- v1.3.0 Knowledge Graph Rail;
+- v1.4.0 Skill Rail 2.0;
+- v1.5.0 Governance And Cost Rail.
+
+These are not v1.0.0 stable contracts until promoted.
 
 ## Future Rails Documentation
 
@@ -296,6 +314,13 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Report Rail](docs/report-rail.md)
 - [Dashboard Rail](docs/dashboard-rail.md)
 - [Observability Rail](docs/observability-rail.md)
+- [Quickstart](docs/quickstart.md)
+- [v1 Contract](docs/v1-contract.md)
+- [Schema Contracts](docs/schema-contracts.md)
+- [Stable Command Surface](docs/stable-command-surface.md)
+- [Agent Hosts](docs/agent-hosts.md)
+- [Clean Code Guidelines](docs/clean-code-guidelines.md)
+- [Architecture Boundaries](docs/architecture-boundaries.md)
 - [Agent-Readable Reports](docs/agent-readable-reports.md)
 - [MCP Report Resources](docs/mcp-report-resources.md)
 - [Report Redaction](docs/report-redaction.md)
@@ -326,10 +351,10 @@ soturail --help
 soturail --version
 ```
 
-When v0.10.1 is published, install that exact version with:
+Install the stable v1 release exactly with:
 
 ```bash
-npm install -g soturail@0.10.1
+npm install -g soturail@1.0.0
 ```
 
 For local development from source:
@@ -584,7 +609,7 @@ The latest report is written to [benchmarks/reports/latest.md](benchmarks/report
 
 Local token counts are deterministic estimates. SotuRail reports raw payload tokens, reduced payload tokens, metadata overhead and net estimated tokens. For tiny outputs, compression may be ineffective once recovery metadata is included; SotuRail says that directly while preserving raw recovery paths.
 
-Benchmark Rail 2.0 writes `.soturail/bench/latest.json`, `.soturail/bench/latest.md` and versioned reports such as `benchmarks/reports/bench-v0.10.1.json`. It covers `brain-scan`, `brain-stale`, `brain-consolidate`, `reverse-claims`, `reducer-large-log`, `jsonl-read-write`, `range-hash`, `file-scan`, `workflow-evidence`, `format-compare`, `json-validate` and `release-preflight`.
+Benchmark Rail 2.0 writes `.soturail/bench/latest.json`, `.soturail/bench/latest.md` and versioned reports such as `benchmarks/reports/bench-v1.0.0.json`. It covers `brain-scan`, `brain-stale`, `brain-consolidate`, `reverse-claims`, `reducer-large-log`, `jsonl-read-write`, `range-hash`, `file-scan`, `workflow-evidence`, `format-compare`, `json-validate` and `release-preflight`.
 
 ## Knowledge-to-Rules Engine
 
@@ -661,7 +686,7 @@ v0.8.1  Project Brain polish, stale-evidence quality and agent-brief improvement
 v0.9.0  Benchmark-gated native/performance engine
 v0.10.0 Local reports, observability timeline and static dashboard
 v0.10.1 Stability, JSON validity, report polish and v1 readiness
-v1.0.0  Stable Context OS
+v1.0.0  Stable Context OS surface and strict contracts
 v1.1.0  Host Compatibility Rail
 v1.2.0  Spec, Design And Diagram Rail
 v1.3.0  Knowledge Graph Rail

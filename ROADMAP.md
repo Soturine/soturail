@@ -493,14 +493,14 @@ Status: implemented as a stabilization release. This is not a breaking-change re
 
 ## v1.0.0 - Stable Context OS
 
-v1.0.0 should be a stabilization release, not a large feature dump. It should freeze only the documented candidate stable surface after the v0.10.1 readiness checks are clean.
+Status: implemented as the first stable local Context OS surface. This is a stabilization release, not a large feature dump.
 
 Primary goals:
 
-- finalize the candidate stable command surface documented in `docs/stable-command-surface.md`;
+- finalize the stable command surface documented in `docs/stable-command-surface.md`;
 - keep experimental commands clearly marked until promoted;
-- maintain schema compatibility for `status`, `report`, `dashboard`, `obs`, `bench`, `native`, `baseline`, `mcp` and `readiness` artifacts;
-- run `soturail self schemas --check` and `soturail self readiness --v1` as release gates;
+- maintain schema compatibility for `status`, `report`, `dashboard`, `obs`, `bench`, `native`, `baseline`, `mcp`, `readiness`, `code-health`, `architecture` and `agents matrix` artifacts;
+- run `soturail self schemas --check --strict`, `soturail self readiness --v1 --strict`, `soturail self code-health` and `soturail release check --strict` as release gates;
 - refresh Project Brain evidence before freezing v1 contracts;
 - keep report/status/readiness messages clean and actionable;
 - keep static local dashboard and read-only MCP report resources as the safe default;

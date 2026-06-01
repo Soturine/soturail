@@ -1,6 +1,6 @@
 # Deprecation Policy
 
-SotuRail is still pre-v1.0, but v0.10.1 starts treating command and schema stability as a first-class release concern.
+SotuRail v1.0.0 treats command and schema stability as a first-class release concern.
 
 ## Policy
 
@@ -9,15 +9,15 @@ SotuRail is still pre-v1.0, but v0.10.1 starts treating command and schema stabi
 - Schema v1 artifacts should maintain compatibility when possible.
 - Breaking schema changes require release-note warnings and migration guidance.
 - Deprecated commands should print or document replacement guidance.
-- v1.0 will freeze only the documented stable command surface.
+- v1.0 freezes only the documented stable command surface.
 
 ## Stable Commands
 
-Commands listed in [stable-command-surface.md](stable-command-surface.md) are candidate stable commands. They are not fully frozen until v1.0, but v0.10.x changes should avoid breaking them.
+Commands listed in [stable-command-surface.md](stable-command-surface.md) are the v1.0 stable surface. Compatible additions are allowed. Removals, meaning changes or output-shape breaks require a warning period and migration notes.
 
 ## Experimental Commands
 
-Experimental commands include graph/parse seeds, native acceleration beyond reports and extended MCP tools. These can change before v1.0 while SotuRail keeps TypeScript fallback, local artifacts and safe defaults.
+Experimental commands include graph/parse seeds, native acceleration beyond reports, dashboard server ideas and extended MCP mutation tools. These can change until promoted while SotuRail keeps TypeScript fallback, local artifacts and safe defaults.
 
 ## Schema Compatibility
 
@@ -26,6 +26,7 @@ Use:
 ```bash
 soturail self schemas --check
 soturail self schemas --check --json
+soturail self schemas --check --strict
 ```
 
 The schema checker validates local JSON artifacts for parseability, `schemaVersion` and required top-level fields.
