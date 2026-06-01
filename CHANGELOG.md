@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 All notable changes to SotuRail are documented in this file.
 
@@ -6,6 +6,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.0.1]
+
+### Changed
+
+- Updated package and repository licensing metadata to Apache-2.0.
+- Aligned README and licensing strategy docs with Apache-2.0.
+- No runtime behavior changes intended.
 ## [1.0.0] - 2026-06-01
 
 ### Added
@@ -533,3 +540,4 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Spec, memory, doctor, cache and stats commands.
 - Vitest coverage for MVP behavior.
 - English-first documentation with pt-BR overview.
+

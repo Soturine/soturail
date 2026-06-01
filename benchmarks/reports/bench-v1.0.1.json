@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "soturail.bench.v1",
+  "id": "bench_mpuwh14z",
+  "createdAt": "2026-06-01T07:41:36.131Z",
+  "suite": "brain",
+  "version": "1.0.1",
+  "environment": {
+    "platform": "win32/x64",
+    "node": "v24.11.1",
+    "nativeAvailable": false,
+    "engine": "typescript"
+  },
+  "cases": [
+    {
+      "id": "brain-scan-small",
+      "category": "brain-scan",
+      "operation": "brain scan",
+      "durationMs": 101.474,
+      "recordsRead": 0,
+      "recordsWritten": 23,
+      "filesScanned": 8,
+      "engine": "typescript",
+      "status": "passed",
+      "warnings": []
+    },
+    {
+      "id": "brain-stale-small",
+      "category": "brain-stale",
+      "operation": "brain stale",
+      "durationMs": 117.491,
+      "recordsRead": 46,
+      "recordsWritten": 14,
+      "filesScanned": 1,
+      "engine": "typescript",
+      "status": "warning",
+      "warnings": [
+        "claim_20260601074135_cdfd649d: fileHash changed but rangeHash is unchanged",
+        "claim_20260601074135_a349a0c9: fileHash changed but rangeHash is unchanged"
+      ]
+    },
+    {
+      "id": "brain-consolidate-small",
+      "category": "brain-consolidate",
+      "operation": "brain consolidate",
+      "durationMs": 103.022,
+      "recordsRead": 70,
+      "recordsWritten": 13,
+      "filesScanned": 0,
+      "engine": "typescript",
+      "status": "passed",
+      "warnings": []
+    },
+    {
+      "id": "reverse-claims-small",
+      "category": "reverse-claims",
+      "operation": "reverse claims",
+      "durationMs": 24.588,
+      "recordsRead": 5,
+      "recordsWritten": 5,
+      "filesScanned": 6,
+      "engine": "typescript",
+      "status": "passed",
+      "warnings": []
+    },
+    {
+      "id": "jsonl-read-write-small",
+      "category": "jsonl-read-write",
+      "operation": "jsonl read write",
+      "durationMs": 7.388,
+      "recordsRead": 12,
+      "recordsWritten": 12,
+      "filesScanned": 1,
+      "engine": "typescript",
+      "status": "passed",
+      "warnings": []
+    },
+    {
+      "id": "range-hash-small",
+      "category": "range-hash",
+      "operation": "range hash",
+      "durationMs": 0.437,
+      "recordsRead": 20,
+      "recordsWritten": 20,
+      "filesScanned": 1,
+      "engine": "typescript",
+      "status": "passed",
+      "warnings": []
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "warnings": 3,
+    "totalDurationMs": 354.4
+  }
+}

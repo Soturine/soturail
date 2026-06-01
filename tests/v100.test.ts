@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+﻿import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -21,7 +21,7 @@ import { SOTURAIL_VERSION } from "../src/core/version.js";
 
 describe("v1.0.0 stable context os contracts", () => {
   it("uses the stable v1 package/CLI version constant", () => {
-    expect(SOTURAIL_VERSION).toBe("1.0.0");
+    expect(SOTURAIL_VERSION).toMatch(/^1\.0\.\d+$/);
   });
 
   it("emits valid status JSON and builds local report/dashboard artifacts", async () => {
@@ -32,7 +32,7 @@ describe("v1.0.0 stable context os contracts", () => {
     const dashboard = await buildDashboard(root);
 
     expect(status.schemaVersion).toBe("soturail.status.v1");
-    expect(status.version).toBe("1.0.0");
+    expect(status.version).toMatch(/^1\.0\.\d+$/);
     expect(Array.isArray(status.warnings)).toBe(true);
     expect(Array.isArray(status.nextCommands)).toBe(true);
     expect(JSON.parse(await readFile(report.paths.json, "utf8")).schemaVersion).toBe("soturail.report.v1");
@@ -205,3 +205,4 @@ async function captureCommand(root: string, register: (program: Command) => void
     process.exitCode = previousExitCode;
   }
 }
+
