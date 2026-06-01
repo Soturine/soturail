@@ -40,7 +40,9 @@ export interface AgentCapability {
 
 export interface AgentRuntimeStatus {
   schemaVersion: "soturail.agent-status.v1";
+  createdAt: string;
   version: string;
+  status: "passed" | "warning" | "failed" | "unknown";
   root: string;
   detectedFiles: Array<{ path: string; present: boolean; kind: string }>;
   contextPacks: string[];
@@ -57,8 +59,33 @@ export interface AgentRuntimeStatus {
     decisions: number;
   };
   runs: string[];
+  warnings: string[];
+  nextCommands: string[];
   nextSteps: string[];
   setupExamples: string[];
+}
+
+export interface AgentHostMatrixRow {
+  host: string;
+  id: string;
+  status: "stable" | "experimental" | "planned" | "legacy" | "unknown";
+  exportSupport: CapabilityStatus;
+  reportAgentSupport: CapabilityStatus;
+  contextPackSupport: CapabilityStatus;
+  mcpResourcesSupport: CapabilityStatus;
+  installDryRunSupport: CapabilityStatus;
+  knownLimitations: string[];
+  recommendedCommand: string;
+}
+
+export interface AgentHostMatrixReport {
+  schemaVersion: "soturail.agents.matrix.v1";
+  createdAt: string;
+  version: string;
+  status: "passed" | "warning" | "failed" | "unknown";
+  hosts: AgentHostMatrixRow[];
+  warnings: string[];
+  nextCommands: string[];
 }
 
 export const AGENT_POLICY_NOTES = [
@@ -267,6 +294,58 @@ export function renderAgentCapabilities(): string {
   ].join("\n").trimEnd() + "\n";
 }
 
+export function buildAgentHostMatrix(): AgentHostMatrixReport {
+  const hosts = listAgentCapabilities().map((capability): AgentHostMatrixRow => ({
+    host: displayHostName(capability),
+    id: capability.id,
+    status: stableHostStatus(capability),
+    exportSupport: capability.instructionDocs,
+    reportAgentSupport: reportAgentSupport(capability.id),
+    contextPackSupport: capability.contextPacks,
+    mcpResourcesSupport: capability.mcp,
+    installDryRunSupport: capability.dryRunSupport,
+    knownLimitations: capability.notes,
+    recommendedCommand: setupCommandFor(capability.id)
+  }));
+  const warnings = [
+    "OpenCode, Antigravity-style and DeepAgents-style targets are prompt-only or experimental until host-specific surfaces are verified.",
+    "No host matrix row grants destructive MCP tools or arbitrary shell execution."
+  ];
+  return {
+    schemaVersion: "soturail.agents.matrix.v1",
+    createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    status: "warning",
+    hosts,
+    warnings,
+    nextCommands: [
+      "soturail agents export --agent codex",
+      "soturail report agent --agent codex",
+      "soturail mcp resources report",
+      "soturail agents doctor --verbose"
+    ]
+  };
+}
+
+export function renderAgentHostMatrix(report = buildAgentHostMatrix()): string {
+  return [
+    "SotuRail agent host compatibility matrix",
+    `schemaVersion: ${report.schemaVersion}`,
+    `version: ${report.version}`,
+    `status: ${report.status}`,
+    "",
+    "| host | status | export | report agent | context packs | MCP resources | dry-run install | recommended command |",
+    "|---|---|---|---|---|---|---|---|",
+    ...report.hosts.map((host) => `| ${host.host} | ${host.status} | ${host.exportSupport} | ${host.reportAgentSupport} | ${host.contextPackSupport} | ${host.mcpResourcesSupport} | ${host.installDryRunSupport} | \`${host.recommendedCommand}\` |`),
+    "",
+    "Warnings:",
+    ...report.warnings.map((warning) => `- ${warning}`),
+    "",
+    "Next commands:",
+    ...report.nextCommands.map((command) => `- ${command}`)
+  ].join("\n") + "\n";
+}
+
 export function payloadRecommendationsFor(id: AgentId): string[] {
   return getAgentCapability(id).recommendedPayloads;
 }
@@ -314,7 +393,9 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
   ];
   return {
     schemaVersion: "soturail.agent-status.v1",
+    createdAt: new Date().toISOString(),
     version: SOTURAIL_VERSION,
+    status: detectedFiles.some((item) => item.present) ? "passed" : "unknown",
     root: path.resolve(root),
     detectedFiles,
     contextPacks,
@@ -331,6 +412,8 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
       decisions: decisions.length
     },
     runs,
+    warnings: [],
+    nextCommands: nextSteps,
     nextSteps,
     setupExamples
   };
@@ -370,6 +453,27 @@ function setupCommandFor(id: AgentId): string {
   if (id === "antigravity" || id === "opencode" || id === "amp" || id === "kiro") return `soturail agents export --agent ${id}`;
   if (id === "deepagents" || id === "deepagents-js") return `soturail agents export --agent ${id}`;
   return `soturail agents install --agent ${id} --dry-run`;
+}
+
+function displayHostName(capability: AgentCapability): string {
+  if (capability.id === "antigravity") return "Antigravity-style hosts";
+  if (capability.id === "gemini") return "Gemini legacy/compatible hosts";
+  if (capability.id === "deepagents" || capability.id === "deepagents-js") return "DeepAgents-style targets";
+  if (capability.id === "opencode") return "OpenCode";
+  return capability.displayName;
+}
+
+function stableHostStatus(capability: AgentCapability): AgentHostMatrixRow["status"] {
+  if (capability.id === "generic") return "stable";
+  if (capability.id === "claude" || capability.id === "codex" || capability.id === "cursor") return "stable";
+  if (capability.id === "gemini") return "legacy";
+  if (capability.maturity === "experimental") return "experimental";
+  if (capability.maturity === "planned") return "planned";
+  return capability.maturity === "prompt-only" ? "experimental" : "unknown";
+}
+
+function reportAgentSupport(id: AgentId): CapabilityStatus {
+  return id === "claude" || id === "codex" || id === "gemini" || id === "generic" ? "supported" : "prompt-only";
 }
 
 async function detect(root: string, relativePath: string, kind: string): Promise<{ path: string; present: boolean; kind: string }> {

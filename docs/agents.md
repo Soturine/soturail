@@ -6,6 +6,8 @@ SotuRail provides reviewed, project-local agent integration exports for Claude, 
 soturail agents list
 soturail agents capabilities
 soturail agents capabilities --json
+soturail agents matrix
+soturail agents matrix --json
 soturail agents status
 soturail agents status --json
 soturail agents doctor
@@ -42,6 +44,8 @@ Project Brain exports are written under `.soturail/brain/exports/`. They provide
 ## Runtime Adapter Commands
 
 `soturail agents capabilities` prints the host capability matrix. Use `--json` for a stable machine-readable shape.
+
+`soturail agents matrix` prints the v1 host compatibility matrix with stable, legacy, experimental and planned status labels. It does not claim full OpenCode, Antigravity-style or DeepAgents-style runtime support unless the row says so.
 
 `soturail agents status` inspects local files such as `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursor/rules/`, `.claude/settings.json`, `.soturail/exports/agents/`, role packs, skills, MCP exports, policy queues and run workspaces.
 

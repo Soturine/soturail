@@ -2,7 +2,8 @@ import type { Command } from "commander";
 import { explainAgents, lintAgentDocs, splitContextPlan } from "../core/agent-docs-hygiene.js";
 import { agentDoctor, exportAgents, installAgent, uninstallAgent } from "../core/agent-exporter.js";
 import { formatAgentList } from "../core/agent-registry.js";
-import { agentStatus, listAgentCapabilities, renderAgentCapabilities, renderAgentStatus } from "../core/agent-runtime.js";
+import { agentStatus, buildAgentHostMatrix, listAgentCapabilities, renderAgentCapabilities, renderAgentHostMatrix, renderAgentStatus } from "../core/agent-runtime.js";
+import { SOTURAIL_VERSION } from "../core/version.js";
 
 interface AgentOptions {
   agent?: string;
@@ -26,10 +27,27 @@ export function registerAgentsCommand(program: Command): void {
     .option("--json", "Print machine-readable JSON")
     .action((options: { json?: boolean }) => {
       if (options.json) {
-        process.stdout.write(`${JSON.stringify({ schemaVersion: "soturail.agent-capabilities.v1", agents: listAgentCapabilities() }, null, 2)}\n`);
+        process.stdout.write(`${JSON.stringify({
+          schemaVersion: "soturail.agent-capabilities.v1",
+          createdAt: new Date().toISOString(),
+          version: SOTURAIL_VERSION,
+          status: "warning",
+          agents: listAgentCapabilities(),
+          warnings: ["Experimental hosts remain prompt-only or dry-run-first until promoted."],
+          nextCommands: ["soturail agents matrix", "soturail agents doctor --verbose"]
+        }, null, 2)}\n`);
         return;
       }
       process.stdout.write(renderAgentCapabilities());
+    });
+
+  agents
+    .command("matrix")
+    .description("Show the v1 agent host compatibility matrix.")
+    .option("--json", "Print machine-readable JSON")
+    .action((options: { json?: boolean }) => {
+      const report = buildAgentHostMatrix();
+      process.stdout.write(options.json ? `${JSON.stringify(report, null, 2)}\n` : renderAgentHostMatrix(report));
     });
 
   agents
