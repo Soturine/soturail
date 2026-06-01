@@ -6,11 +6,30 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-01
+
+### Added
+
+- Added strict v1 schema checks with `self schemas --check --strict`.
+- Added strict v1 readiness checks with `self readiness --v1 --strict`.
+- Added strict release gates with `release check --strict`.
+- Added lightweight maintainability checks with `self code-health` and `self code-health --json`.
+- Added lightweight architecture boundary checks with `self architecture --check` and `self architecture --check --json`.
+- Added `agents matrix` and `agents matrix --json` for conservative host compatibility reporting.
+- Added v1 docs for quickstart, contract, schema contracts, agent hosts, clean-code guidance and architecture boundaries.
+- Added v1 golden smoke coverage for stable contracts.
+
 ### Changed
 
-- Updated the roadmap after the v0.10.1 baseline to stage v1.0.0 stabilization followed by Host Compatibility, Spec/Design, Knowledge Graph, Skill Rail 2.0 and Governance/Cost rails.
-- Added docs for external project audit findings, Host Compatibility Rail, Design Rail, Knowledge Graph Rail, Skill Rail 2.0, Governance And Cost Rail and roadmap docs audit.
-- Updated future-rails, comparisons, ecosystem and README docs to align with the new post-v1 roadmap.
+- Finalized the v1.0 stable command surface and marked post-v1 rails as experimental/planned.
+- Hardened status/report/schema/readiness/native/baseline/MCP JSON output shapes with additive v1 fields where safe.
+- Updated release preflight to include strict schema, readiness, code-health, architecture and SotuRail-only docs gates.
+- Updated README, ROADMAP, migration and deprecation docs for the stable v1 surface and post-v1 direction.
+
+### Security
+
+- v1.0.0 does not add cloud telemetry, server requirements, destructive MCP tools, native-only runtime requirements or autonomous editing behavior.
+- TypeScript fallback remains mandatory, and native acceleration remains optional and benchmark-gated.
 
 ## [0.10.1] - 2026-05-31
 
