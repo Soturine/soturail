@@ -67,3 +67,17 @@ Fix invalid JSON artifacts before publish. Treat high Project Brain suspect/stal
 ## Known Non-goals
 
 SotuRail v1.0 is not a SaaS dashboard, hosted analytics product, vector database, cloud gateway, autonomous editing agent or native-only package. TypeScript fallback stays mandatory.
+
+## After v1.0
+
+The intended post-v1 sequence is staged so the stable Context OS surface remains reliable:
+
+```txt
+v1.1.0  Host Compatibility Rail
+v1.2.0  Spec, Design And Diagram Rail
+v1.3.0  Knowledge Graph Rail
+v1.4.0  Skill Rail 2.0 And Domain Skill Packs
+v1.5.0  Governance And Cost Rail
+```
+
+These rails should not be treated as v1.0 requirements unless they are explicitly promoted into the stable surface before release.

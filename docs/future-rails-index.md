@@ -56,6 +56,13 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Evaluation Suite | Quality benchmarks for context, payload formats, diagrams, evidence and role packs | v0.6.1 | `docs/evaluation-suite.md`, `docs/benchmarking.md`, `ROADMAP.md` |
 | Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary | `docs/reverse-specification-rail.md`, `docs/knowledge-to-rules.md` |
 | Project Brain | Verified claims, decisions, bugs, gaps, rules, stale events and agent-safe briefs | v0.8.0 | `docs/project-brain.md`, `ROADMAP.md` |
+| Host Compatibility Rail | Host-aware exports, capability matrix and conservative prompt-only fallback for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style and generic hosts | v1.1.0 | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md` |
+| Spec Rail | PRD, requirements, design, tasks and acceptance criteria as workflow inputs | v1.2.0 | `docs/spec-driven-workflow.md`, `docs/design-rail.md`, `docs/diagram-rail.md` |
+| Design Rail | Local `DESIGN.md`, design token lint/diff/export and agent-readable visual guidance | v1.2.0 | `docs/design-rail.md`, `docs/dashboard-rail.md` |
+| Knowledge Graph Rail | Local graph of files, claims, decisions, tests, workflows, diagrams and releases | v1.3.0 | `docs/knowledge-graph-rail.md`, `docs/code-graph.md`, `docs/project-brain.md` |
+| Skill Rail 2.0 | Domain skill templates, lint/eval/report and role-aware exports | v1.4.0 | `docs/skill-rail-2.md`, `docs/skill-rail.md`, `docs/policy-rail.md` |
+| Governance And Cost Rail | Context budget, dynamic workflow risk and MCP/skill exposure warnings | v1.5.0 | `docs/governance-cost-rail.md`, `docs/report-rail.md`, `docs/policy-rail.md` |
+| Redacted Evidence Sharing | Local redacted evidence bundles for reports/logs without hosting by default | v1.4+ exploration | `docs/report-redaction.md`, `docs/external-projects-audit.md` |
 | Local Dashboard | Local reports, trace viewer, Mermaid rendering and policy/evidence views | v0.10.0 | `ROADMAP.md` |
 
 ## Version Summary
@@ -170,6 +177,75 @@ Focus:
 - policy/evidence/context selection reports;
 - structured payload comparison reports.
 
+### v0.10.1
+
+Focus:
+
+- JSON validity and schema compatibility checks;
+- report/status/dashboard/observability polish;
+- benchmark/native/baseline messaging polish;
+- v1 readiness reports;
+- stable command surface draft;
+- deprecation policy;
+- migration-to-v1 draft.
+
+### v1.0.0
+
+Focus:
+
+- stable Context OS surface;
+- schema compatibility commitments;
+- stable command surface freeze;
+- Project Brain refresh before v1 contracts;
+- clean onboarding and release evidence;
+- no new large rail shipped as a surprise.
+
+### v1.1.0
+
+Focus:
+
+- Host Compatibility Rail;
+- OpenCode, Antigravity, Deep Agents-style and generic host exports;
+- host capability matrix;
+- read-only MCP host manifests.
+
+### v1.2.0
+
+Focus:
+
+- Spec, Design And Diagram Rail;
+- PRD/requirements/design/tasks scaffolds;
+- local `DESIGN.md` lint/diff/export;
+- Mermaid render/diff validation.
+
+### v1.3.0
+
+Focus:
+
+- Knowledge Graph Rail;
+- graph build/explain/impact/tour;
+- local dashboard graph views;
+- stale-edge detection.
+
+### v1.4.0
+
+Focus:
+
+- Skill Rail 2.0;
+- domain skill templates;
+- skill lint/eval/report;
+- role-aware exports and safety gates.
+
+### v1.5.0
+
+Focus:
+
+- Governance And Cost Rail;
+- context budget reports;
+- dynamic workflow guardrails;
+- MCP/skill exposure risk summaries.
+
+
 ## What Should Not Happen
 
 SotuRail should not become:
@@ -181,7 +257,12 @@ SotuRail should not become:
 - a Leoflow/Airflow clone;
 - a Kubernetes volume orchestrator;
 - a tool that claims token savings without quality checks;
-- a tool that exposes arbitrary shell execution through MCP by default.
+- a tool that exposes arbitrary shell execution through MCP by default;
+- a design-system platform;
+- a cloud knowledge graph;
+- a tool marketplace;
+- a pastebin/hosting service;
+- an offensive security automation tool.
 
 ## Related Docs
 

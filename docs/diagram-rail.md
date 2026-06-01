@@ -133,3 +133,13 @@ Diagram Rail is successful only if:
 - no agent host is required to support Mermaid natively for the files to be useful.
 
 Future versions can add `diagram sync`, `diagram from-repo` and richer local rendering after the workflow and evidence model is stable.
+
+## Spec And Design Rail Connection
+
+The post-v1 roadmap connects Diagram Rail with Spec and Design Rail:
+
+- `spec init/check/plan` should connect PRD, requirements, design, tasks and diagrams;
+- `design init/lint/diff/export` should keep dashboard/report/design guidance consistent;
+- Mermaid render/diff should remain local and evidence-focused.
+
+See [`design-rail.md`](design-rail.md) and [`spec-driven-workflow.md`](spec-driven-workflow.md).

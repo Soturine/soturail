@@ -52,3 +52,13 @@ If a command becomes deprecated later, release notes must name the replacement c
 ## v1.0 Rule
 
 v1.0 will freeze only the documented stable surface. Experimental commands remain useful, but their contracts can still evolve with clear release-note warnings.
+
+## Post-v1 Candidate Rails
+
+The v1.0 stable surface should not accidentally freeze every future idea. The following rails are planned as post-v1 candidates and should remain clearly documented as future or experimental until implemented and tested:
+
+- Host Compatibility Rail for OpenCode, Antigravity, Deep Agents-style and generic host exports.
+- Spec, Design And Diagram Rail for `PRD.md`, `requirements.md`, `design.md`, `tasks.md`, `DESIGN.md` and Mermaid visual contracts.
+- Knowledge Graph Rail for local graph build/explain/impact/tour outputs.
+- Skill Rail 2.0 for domain skill templates, skill eval and role-aware exports.
+- Governance And Cost Rail for context budget, dynamic workflow and MCP/skill exposure warnings.

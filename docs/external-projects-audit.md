@@ -1,0 +1,115 @@
+# External Projects Audit For Future SotuRail Rails
+
+This audit records external projects and patterns reviewed for the post-v0.10.1 roadmap. It is not a claim that SotuRail depends on, vendors, wraps or outperforms any of them.
+
+SotuRail's product position remains:
+
+```txt
+SotuRail is the local Context OS layer for AI coding agents.
+It prepares context, specs, memory, evidence, policies, reports and safe handoff artifacts.
+It is not the model, not the agent brain, not a heavy gateway and not a clone of any host.
+```
+
+## Audit Summary
+
+| Project | Confidence | Primary pattern | SotuRail action |
+| --- | --- | --- | --- |
+| `google-labs-code/design.md` | High | Agent-readable design tokens and rules | Add future Design Rail: `design init/lint/diff/export` |
+| `anomalyco/opencode` | High | Open-source coding-agent host | Add Host Compatibility Rail and OpenCode exports |
+| `henriquesantanati/openclaude` | Medium | Claude-compatible host/wrapper pattern | Treat as generic/Claude-compatible host, not core dependency |
+| `henriquesantanati/mermaid` | Medium | Mermaid/diagram workflow tooling | Strengthen Diagram Rail render/diff/validate paths |
+| `langchain-ai/deepagents` | High | Agent harness with subagents, filesystem, memory and HITL | Export role packs and evidence for Deep Agents-style harnesses without becoming one |
+| `JulioCRFilho/mermaid-diagram-driven-development` | Medium | Spec/diagram-driven development structure | Add Spec Rail and improve `.spec.md` workflow contracts |
+| `darkhucx/claude-code-harness` | Medium | Harness/acceptance discipline | Strengthen Harness Rail acceptance contracts and evidence gates |
+| `henrysssilveira/MCP-Host-Universal` | Medium | Universal MCP host pattern | Keep SotuRail on read-only resources/manifests/policy, not a mutable host |
+| `Lum1104/Understand-Anything` | High | Code/document knowledge graph and guided understanding | Add Knowledge Graph Rail after v1.0 stabilization |
+| `renanrdev/dumps` | Medium | CLI-first redacted paste/evidence sharing | Add redacted local evidence bundles, no hosting by default |
+| `murillo-romeu/sonar-totvs` | High | Domain-specific AI skill/report | Add Skill Rail 2.0 domain skill templates and safety gates |
+| `Acauhi99/opencode-agent-system` | Medium | OpenCode agent system patterns | Add OpenCode host export and role/skill packaging |
+| `ComposioHQ/composio` | High | Tool/provider integration layer | Stay compatible through manifests and reports, do not become a tool marketplace |
+
+## What SotuRail Should Absorb
+
+### 1. Host compatibility without becoming a host
+
+OpenCode, Claude-compatible hosts, Antigravity-style hosts, Codex, Cursor and Deep Agents-style harnesses all need different context formats, rules, reports and safety guidance.
+
+SotuRail should provide:
+
+- host capability matrix;
+- host-aware report exports;
+- role packs and context packs per host;
+- conservative prompt-only fallback;
+- safe MCP resource manifests;
+- clear policy warnings for tools, hooks and config writes.
+
+### 2. Specs and design before implementation
+
+`design.md` and MDDD-style workflows show that agents need durable specs, design tokens, tasks and visual contracts before code changes.
+
+SotuRail should provide:
+
+- `spec init/check/plan`;
+- local `DESIGN.md` support;
+- design token lint/diff/export;
+- Mermaid render/diff validation;
+- `.spec.md` files as reviewable contracts.
+
+### 3. Knowledge graph after Project Brain
+
+Understand-Anything-style tools show the value of code/docs/decision graphs. SotuRail already has Project Brain and Reverse Specification Rail; the next step is connecting records into a local graph.
+
+SotuRail should provide:
+
+- graph build/explain/impact/tour;
+- graph dashboard as a local artifact;
+- stale edge detection;
+- agent-readable project tours.
+
+### 4. Skills must be domain-aware and safe
+
+Sonar/TOTVS-style skills show how valuable narrow domain skills can be. They also show why SotuRail must keep evidence, severity, confidence and review boundaries explicit.
+
+SotuRail should provide:
+
+- domain skill templates;
+- skill lint/eval/report;
+- role-aware skill exports;
+- explicit human approval requirements;
+- defensive-only security skill boundaries.
+
+### 5. Governance and cost matter more as agents become dynamic
+
+Dynamic workflows, subagents and long-horizon agents can burn tokens, time and external tool calls quickly. SotuRail should not manage provider billing, but it can show local risk signals before handoff.
+
+SotuRail should provide:
+
+- context budget reports;
+- dynamic workflow warnings;
+- MCP exposure risk summaries;
+- repeated instruction/large context detection;
+- safe next commands to prune/offload/role-pack before running an agent.
+
+## Security Note
+
+Some referenced posts and screenshots involved security, pentest or mobile analysis contexts. SotuRail may support authorized defensive review as a reporting and governance layer, but it must not ship bypass, exploit, evasion, credential theft, malware or unauthorized access instructions.
+
+For security-oriented workflows, SotuRail should emphasize:
+
+- authorization and scope;
+- evidence redaction;
+- policy gates;
+- non-operational findings summaries;
+- safe remediation guidance;
+- human approval before risky actions.
+
+## Roadmap Mapping
+
+| Roadmap stage | External pattern absorbed |
+| --- | --- |
+| v1.0.0 Stable Context OS | v0.10.1 readiness, JSON contracts, stable docs |
+| v1.1.0 Host Compatibility Rail | OpenCode, Deep Agents, MCP Host Universal, OpenCode agent systems |
+| v1.2.0 Spec, Design And Diagram Rail | design.md, MDDD, Mermaid workflows |
+| v1.3.0 Knowledge Graph Rail | Understand-Anything and Project Brain evolution |
+| v1.4.0 Skill Rail 2.0 | Sonar/TOTVS-style domain skill, Deep Agents skills, host exports |
+| v1.5.0 Governance And Cost Rail | dynamic workflows, long-horizon agents, context/token budget risks |

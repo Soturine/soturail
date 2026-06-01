@@ -46,6 +46,37 @@ SotuRail's product identity is deliberately narrower than a full agent runtime a
 | Kiro-style workflows | Specs, steering, hooks and smart context | Strengthen PRD/tasks/TDD/release workflows and safe steering docs | `workflow`, `spec`, `rules` |
 | Gemini CLI / Claude Code / Codex / Cursor / Antigravity / OpenCode / Amp-like hosts | Agent hosts with different context, hook, MCP and config surfaces | Maintain a host capability matrix and conservative prompt-only fallback | `agents capabilities`, `agents export`, `mcp` |
 
+## 2026 Repository Audit Addendum
+
+The current roadmap also considers the following external repositories as product signals. These are references for pattern extraction only; SotuRail does not vendor or depend on them.
+
+| Project / family | Primary focus | What SotuRail should learn | Where it maps |
+| --- | --- | --- | --- |
+| `google-labs-code/design.md` | agent-readable design specs | keep visual/design rules versioned and lintable | future Design Rail |
+| `anomalyco/opencode` | open-source coding-agent host | export context/reports/rules to OpenCode instead of competing with it | Host Compatibility Rail |
+| `henriquesantanati/openclaude` | Claude-compatible host/wrapper pattern | keep generic host exports and Claude-compatible fallbacks | Agent Runtime Adapter |
+| `henriquesantanati/mermaid` | diagram tooling | validate/render/diff diagrams as local evidence | Diagram Rail |
+| `langchain-ai/deepagents` | batteries-included agent harness | role packs, filesystem evidence, memory and HITL without becoming the runtime | Context Packs, Workflow, Policy |
+| `JulioCRFilho/mermaid-diagram-driven-development` | spec/diagram-driven workflow | scaffold PRD/requirements/design/tasks/agent rules and phase gates | Spec Rail, Diagram Rail |
+| `darkhucx/claude-code-harness` | Claude Code acceptance harness | acceptance contracts and proof-before-done evidence | Harness Rail |
+| `henrysssilveira/MCP-Host-Universal` | universal MCP host | expose safe read-only resources/manifests, not destructive tools | MCP Report Resources, Policy |
+| `Lum1104/Understand-Anything` | codebase knowledge graph | graph build/explain/impact/tour after Project Brain stabilizes | Knowledge Graph Rail |
+| `renanrdev/dumps` | redacted CLI sharing | local redacted evidence bundles without hosting by default | Report Redaction, Evidence Pack |
+| `murillo-romeu/sonar-totvs` | domain skill/report | skill templates, skill eval and domain-specific findings | Skill Rail 2.0 |
+| `Acauhi99/opencode-agent-system` | OpenCode agent packaging | OpenCode-specific role/rules/skills exports | Host Compatibility Rail |
+| `ComposioHQ/composio` | tools/providers integration | compatibility manifests and policy reports, not a tool marketplace | MCP, Policy, Agent Exports |
+
+Roadmap mapping:
+
+```txt
+v1.0.0  stabilize Context OS surface
+v1.1.0  Host Compatibility Rail
+v1.2.0  Spec, Design And Diagram Rail
+v1.3.0  Knowledge Graph Rail
+v1.4.0  Skill Rail 2.0
+v1.5.0  Governance And Cost Rail
+```
+
 ## Terminal Compression
 
 RTK-like and Squeez-like terminal compression are conceptually related. SotuRail focuses on reversible raw logs, `raw_id` recovery, local safety policy and reducer quality.

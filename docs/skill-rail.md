@@ -81,3 +81,12 @@ Skill Rail should keep human approval requirements explicit for:
 - global configuration writes;
 - raw log expansion without redaction;
 - MCP exposure changes.
+
+## Skill Rail 2.0 Planning
+
+Skill Rail 2.0 is tracked separately in [`skill-rail-2.md`](skill-rail-2.md). The short version:
+
+- domain skill templates should include metadata, fixtures, safety notes and report formats;
+- skill exports should be host-aware and role-aware;
+- skill reports should separate finding, severity, confidence, evidence path and safe next command;
+- security-oriented skills must stay defensive, scoped, redacted and authorization-aware.

@@ -18,6 +18,45 @@ It is not the model, not the agent brain and not a heavy production gateway.
 - Do not claim superiority over adjacent projects without reproducible benchmarks.
 - Prefer small releases with tests, clean-folder smoke coverage and release evidence.
 
+## 2026 External Project Audit Update
+
+The latest roadmap update reviewed a focused set of agent-infrastructure repositories and posts. The detailed audit lives in [`external-projects-audit.md`](external-projects-audit.md).
+
+Main conclusion:
+
+```txt
+Agent hosts are converging on context, tools, skills, MCP, specs, memory, reports, dashboards and governance.
+SotuRail should remain the local rail layer that prepares those artifacts for any host.
+```
+
+### Projects Reviewed
+
+| Project | Pattern to absorb | Planned SotuRail rail |
+| --- | --- | --- |
+| `google-labs-code/design.md` | agent-readable design tokens and rules | Design Rail |
+| `anomalyco/opencode` | open-source coding-agent host | Host Compatibility Rail |
+| `henriquesantanati/openclaude` | Claude-compatible host pattern | generic/Claude-compatible host export |
+| `henriquesantanati/mermaid` | diagram tooling | Diagram Rail render/diff polish |
+| `langchain-ai/deepagents` | subagents, filesystem, memory, HITL and skills | role packs and Deep Agents-style export |
+| `JulioCRFilho/mermaid-diagram-driven-development` | PRD/requirements/design/tasks + visual contracts | Spec, Design And Diagram Rail |
+| `darkhucx/claude-code-harness` | acceptance harness discipline | Harness Rail contracts and evidence gates |
+| `henrysssilveira/MCP-Host-Universal` | universal MCP host boundary | read-only MCP manifests and policy reports |
+| `Lum1104/Understand-Anything` | knowledge graph and codebase tours | Knowledge Graph Rail |
+| `renanrdev/dumps` | redacted CLI evidence sharing | redacted evidence bundle concept |
+| `murillo-romeu/sonar-totvs` | domain-specific skill/report | Skill Rail 2.0 |
+| `Acauhi99/opencode-agent-system` | OpenCode agent system packaging | OpenCode export and role/skill packaging |
+| `ComposioHQ/composio` | tool/provider integration ecosystem | compatibility manifests, not marketplace cloning |
+
+### Product Rule
+
+SotuRail should absorb the durable patterns and avoid cloning products:
+
+- Host Compatibility Rail should support external hosts but not become a host.
+- Design Rail should validate local design guidance but not become a design platform.
+- Knowledge Graph Rail should explain local code/docs evidence but not require cloud embeddings.
+- Skill Rail 2.0 should package safe domain skills but not hide risky commands.
+- Governance And Cost Rail should warn about context/workflow risk but not claim provider billing accuracy without evidence.
+
 ## 2026 Agent Runtime Update
 
 Newer agent hosts are converging around the same architecture: a coding agent surface, local or cloud workspaces, MCP or tool adapters, reusable skills/instructions, hooks/approvals, context budgeting and evidence that proves the task is actually complete.

@@ -31,3 +31,7 @@ These commands are deferred until v0.9.1 or later unless benchmark reports show 
 - no LLM extraction;
 - TypeScript fallback stays mandatory;
 - any native/parser acceleration must have a benchmark first.
+
+## Knowledge Graph Rail Planning
+
+The broader Knowledge Graph Rail is tracked in [`knowledge-graph-rail.md`](knowledge-graph-rail.md). `code-graph.md` remains the seed for code-focused graph ideas, while the future rail connects code, docs, claims, decisions, diagrams, workflows, reports and releases.
