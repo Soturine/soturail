@@ -698,12 +698,12 @@ v1.5.0  Governance And Cost Rail
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Reducers, hooks and rules should include tests, safety notes and benchmark impact when relevant.
 
-## License Status
+## License
 
-SotuRail is not currently licensed as open source for the current repository state or future versions.
+SotuRail is licensed under the [Apache License 2.0](LICENSE).
 
-All rights are reserved unless a later LICENSE file or written agreement explicitly grants permissions. This repository may be public for portfolio, planning, research, documentation and evaluation visibility, but broad copying, redistribution, sublicensing, commercial use or derivative works are not granted by default.
+This means you can use, copy, modify, distribute and build on the project under the Apache-2.0 terms, including commercial use, as long as the license notice is preserved.
 
-Important: older SotuRail versions or copies that were explicitly released under MIT remain governed by the MIT terms that applied to those specific versions at the time of release.
+Older releases remain governed by the license terms that applied at the time of each release.
 
 See [docs/licensing-strategy.md](docs/licensing-strategy.md).
