@@ -60,6 +60,12 @@ See also:
 - [docs/structured-payload-rail.md](docs/structured-payload-rail.md)
 - [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md)
 - [docs/roadmap-harness-diagram-payload-addendum.md](docs/roadmap-harness-diagram-payload-addendum.md)
+- [docs/external-projects-audit.md](docs/external-projects-audit.md)
+- [docs/host-compatibility-rail.md](docs/host-compatibility-rail.md)
+- [docs/design-rail.md](docs/design-rail.md)
+- [docs/knowledge-graph-rail.md](docs/knowledge-graph-rail.md)
+- [docs/skill-rail-2.md](docs/skill-rail-2.md)
+- [docs/governance-cost-rail.md](docs/governance-cost-rail.md)
 
 ### Agent Brain Patterns
 
@@ -485,9 +491,148 @@ Status: implemented as a stabilization release. This is not a breaking-change re
 - `soturail self readiness --v1` writes candidate v1 readiness reports under `.soturail/readiness/`.
 - Stable command surface, deprecation policy and migration-to-v1 drafts are now documented.
 
+## v1.0.0 - Stable Context OS
+
+v1.0.0 should be a stabilization release, not a large feature dump. It should freeze only the documented candidate stable surface after the v0.10.1 readiness checks are clean.
+
+Primary goals:
+
+- finalize the candidate stable command surface documented in `docs/stable-command-surface.md`;
+- keep experimental commands clearly marked until promoted;
+- maintain schema compatibility for `status`, `report`, `dashboard`, `obs`, `bench`, `native`, `baseline`, `mcp` and `readiness` artifacts;
+- run `soturail self schemas --check` and `soturail self readiness --v1` as release gates;
+- refresh Project Brain evidence before freezing v1 contracts;
+- keep report/status/readiness messages clean and actionable;
+- keep static local dashboard and read-only MCP report resources as the safe default;
+- update onboarding docs for clean-folder use on Windows, Linux and macOS;
+- keep CI green on Windows, Linux and macOS;
+- avoid introducing a server mode, cloud telemetry, destructive MCP tools or native-only runtime requirements.
+
+v1.0.0 should not attempt to ship Host Compatibility Rail, Design Rail, Knowledge Graph Rail or Skill Rail 2.0 as major new surfaces. Those rails should be staged after the stable base is released.
+
+## v1.1.0 - Host Compatibility Rail
+
+Inspired by OpenCode, Deep Agents-style harnesses, MCP host projects and emerging Antigravity-style agent hosts.
+
+Goal: make SotuRail a better context/report/spec provider for external agents without becoming the agent runtime.
+
+Planned work:
+
+- `soturail agents export --agent opencode` for OpenCode-friendly instructions, context packs, reports and safe next commands;
+- `soturail agents export --agent antigravity` for Antigravity-style host guidance and prompt-only fallback;
+- `soturail agents export --agent deepagents` for Deep Agents-style role-pack and filesystem/memory context bundles;
+- `soturail agents export --agent claude|codex|gemini|cursor|generic` polish based on the v1 stable surface;
+- `soturail agents matrix` to show host capabilities, limitations, supported context formats, MCP support, skills support, hooks support and policy notes;
+- `soturail agents doctor --host <host>` to check whether the repo has appropriate host-specific rules, references, context packs and report exports;
+- read-only MCP host manifests that expose reports, status, brain summaries, benchmark summaries and baseline state without mutation;
+- docs for Gemini CLI legacy/transition notes, Antigravity-style hosts, OpenCode, Deep Agents-style role packs and generic MCP hosts;
+- keep host support conservative: do not claim direct integration until export paths are verified.
+
+Non-goals:
+
+- do not build a new agent host;
+- do not create a destructive MCP tool server;
+- do not require a specific model provider;
+- do not replace OpenCode, Claude Code, Codex, Cursor or Deep Agents.
+
+## v1.2.0 - Spec, Design And Diagram Rail
+
+Inspired by `design.md`, Mermaid Diagram Driven Development and spec-driven workflows.
+
+Goal: make specs, visual contracts and design constraints first-class local context for agents.
+
+Planned work:
+
+- `soturail spec init` to scaffold `PRD.md`, `requirements.md`, `design.md`, `tasks.md`, `AGENTS.md`/host rules and verification phases;
+- `soturail spec check` to validate that requirements, design notes, diagrams, tasks and acceptance criteria stay connected;
+- `soturail spec plan` to turn specs into role-aware workflow tasks without executing them;
+- `soturail design init` to scaffold a local `DESIGN.md` with tokens, style rules, accessibility notes and component guidance;
+- `soturail design lint` for missing tokens, inconsistent names, obvious contrast/accessibility warnings and stale references;
+- `soturail design diff` to explain design-token changes across releases or workflow phases;
+- `soturail design export --agent <host>` to provide concise design guidance to Codex, Claude, OpenCode, Cursor, Antigravity and generic agents;
+- `soturail diagram render` to generate local HTML/SVG previews where feasible;
+- `soturail diagram diff` to show visual-contract changes in PR/release reports;
+- connect spec/design/diagram evidence to `workflow`, `report`, `dashboard`, `project brain` and `release check`.
+
+Rules:
+
+- diagrams and specs guide implementation; they do not replace tests, review or human approval;
+- JSON and Markdown remain source formats where appropriate;
+- rendered diagrams are local artifacts, not remote services;
+- design guidance must be agent-readable but not huge enough to poison context windows.
+
+## v1.3.0 - Knowledge Graph Rail
+
+Inspired by codebase-understanding tools and the existing Project Brain / Reverse Specification Rail.
+
+Goal: connect files, symbols, decisions, claims, bugs, tests, workflows and releases into a local explainable project graph.
+
+Planned work:
+
+- `soturail graph build` to create a local graph from source files, docs, reverse claims, Project Brain records, release notes, diagrams and workflow evidence;
+- `soturail graph explain <path-or-id>` to show why a file, claim, diagram, workflow or test matters;
+- `soturail graph impact` to estimate what docs/specs/tests/claims may be affected by changed files;
+- `soturail graph tour` to generate agent-readable onboarding paths through the codebase;
+- `soturail graph dashboard` to add local dashboard graph views without cloud dependencies;
+- `soturail graph export --format json` for agent/tool consumption;
+- stale-edge detection when files move, claims lose evidence or diagrams point at removed behavior;
+- keep graph construction deterministic and local-first before considering embeddings or external indexes.
+
+Non-goals:
+
+- no required vector database;
+- no required cloud embeddings;
+- no unsupported semantic claims without source evidence;
+- no full static analyzer promise before benchmarks and fixtures justify it.
+
+## v1.4.0 - Skill Rail 2.0 And Domain Skill Packs
+
+Inspired by domain-specific skills such as Sonar/TOTVS-style analysis, Deep Agents-style skills and OpenCode/agent skill systems.
+
+Goal: make local skills safer, smaller, role-aware and measurable.
+
+Planned work:
+
+- `soturail skills template <domain>` for TypeScript CLI, Java, PHP, docs, release, accessibility, security-review, AdvPL/TOTVS-style analysis and other local domains;
+- `soturail skills lint` to validate metadata, supported hosts, risk level, examples, verification steps and embedded scripts;
+- `soturail skills eval` to run local fixtures for a skill before exporting it;
+- `soturail skills report` to summarize skill purpose, risk, evidence needs and verification requirements;
+- `soturail skills export --agent claude|codex|opencode|cursor|antigravity|generic` with role-aware bundles instead of always-loaded skill dumps;
+- domain skill reports should separate findings, severity, confidence, evidence path and suggested safe next command;
+- no skill should hide destructive commands, remote writes, dependency installs, secrets access or unsafe MCP exposure.
+
+Security boundary:
+
+- security/pentest-related skills must stay defensive, authorization-aware and evidence/report-focused;
+- SotuRail should not ship exploit, bypass, credential theft, malware, evasion or unauthorized access instructions;
+- reports should be useful for authorized review without making harmful steps operational.
+
+## v1.5.0 - Governance, Cost And Dynamic Workflow Guardrails
+
+Inspired by dynamic agent workflows, long-horizon agents, token-budget concerns and provider/tool-cost discussions.
+
+Goal: give users local warnings and evidence before expensive or high-risk agent workflows run.
+
+Planned work:
+
+- `soturail budget doctor` or an equivalent report section for context size, repeated instructions, giant tool outputs, always-loaded skills, MCP exposure and long session history;
+- workflow budget gates for dynamic/sub-agent workflows;
+- policy warnings for workflows that can spawn many subagents, run long sessions or repeatedly execute tools;
+- model/provider capability and cost notes stored as local config/docs, not live billing claims unless user supplies data;
+- report cards for budget risk, stale context risk, MCP exposure risk and workflow depth;
+- safe recommendations: prune context, offload raw logs, use role packs, reduce root agent docs, disable unmanaged dynamic workflows where appropriate, and add explicit approval gates;
+- keep cost reports explicit about estimates and assumptions.
+
+Non-goals:
+
+- no billing integration by default;
+- no live provider telemetry upload;
+- no claims about provider prices without versioned evidence and user review;
+- no automatic disabling of external tools without user action.
+
 ## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 
-Future UI and gateway modes can be explored only after memory, context selection, policy, evidence, diagrams and reports are stable.
+Future UI and gateway modes can be explored only after memory, context selection, policy, evidence, diagrams, reports and v1 stable contracts are mature.
 
 Possible direction:
 
@@ -500,22 +645,6 @@ Possible direction:
 - no cloud dependency by default;
 - no arbitrary shell execution through MCP;
 - no production proxy claims until benchmarks and real use justify them.
-
-## v1.0.0 - Stable Context OS
-
-- Stable CLI and local API contracts.
-- Freeze only the documented candidate stable surface, after v0.10.x readiness checks.
-- Keep experimental commands clearly marked until promoted.
-- Maintain schema compatibility or document migrations before breaking changes.
-- Stable init/run/expand/stats/reducers/memory/context/MCP/agents/workflow behavior.
-- Stable harness/policy/evidence behavior for local workflows.
-- Stable structured payload formats for supported targets.
-- Stable Diagram Rail behavior if promoted before v1.0.
-- Safe MCP defaults.
-- Reliable release workflow.
-- Good docs and clean-folder onboarding.
-- CI green on Windows, Linux and macOS.
-- Long-term compatibility guarantees.
 
 ## Internal Module Ideas
 
@@ -540,15 +669,22 @@ These are not separate products yet. They are submodules that can grow inside So
 - SotuRail Agent Reports: what changed, what commands ran, what raw IDs exist and what to do next.
 - SotuRail Project Brain: architecture, decisions, bugs, rules, diagrams and release history.
 - SotuRail Local Dashboard: local reports, Mermaid rendering and trace viewer before any gateway mode.
+- SotuRail Host Compatibility: host-aware exports and capability matrix for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style harnesses and generic agents.
+- SotuRail Spec Rail: PRD, requirements, design, tasks and acceptance criteria as agent-readable workflow inputs.
+- SotuRail Design Rail: local `DESIGN.md`, design tokens, lint/diff/export and dashboard/report consistency guidance.
+- SotuRail Knowledge Graph: local file/symbol/claim/decision/workflow/release graph with explain, impact and tour outputs.
+- SotuRail Skill Rail 2.0: domain skill templates, validation, evaluation and role-aware exports.
+- SotuRail Governance And Cost Rail: context budget, dynamic workflow guardrails, provider/model assumptions and cost-risk reports.
+- SotuRail Redacted Evidence Sharing: local safe bundles for reports/logs without hosting or secret leakage.
 - SotuRail Gateway Lite: future local event router after the core rails mature.
 
 ## Docs Coverage Matrix
 
-This matrix maps planned rails to docs so the repository does not hide future work only inside the roadmap.
+This matrix maps implemented and planned rails to docs so the repository does not hide future work only inside the roadmap.
 
 | Planned area | Primary docs |
 | --- | --- |
-| Memory Rail | `docs/memory.md`, `docs/context-packs.md`, this roadmap |
+| Memory Rail | `docs/memory-rail.md`, `docs/context-packs.md`, this roadmap |
 | Context Intelligence / Router | `docs/context-packs.md`, `docs/ecosystem-influences.md`, `docs/comparisons.md` |
 | Role Packs | `docs/context-packs.md`, `docs/workflow-rail.md`, `docs/deep-agents-patterns.md` |
 | Harness Rail / Evidence Pack | `docs/harness-rail.md`, `docs/workflow-rail.md`, `docs/roadmap-harness-diagram-payload-addendum.md` |
@@ -557,6 +693,13 @@ This matrix maps planned rails to docs so the repository does not hide future wo
 | Structured Payload Rail | `docs/structured-payload-rail.md`, `docs/context-packs.md`, `docs/rules.md` |
 | Agent Docs Hygiene | `docs/agent-docs-hygiene.md`, `docs/context-packs.md`, `docs/workflow-rail.md` |
 | Reports / Observability / Dashboard | `docs/status-command.md`, `docs/report-rail.md`, `docs/dashboard-rail.md`, `docs/observability-rail.md`, `docs/agent-readable-reports.md`, `docs/report-redaction.md`, `docs/mcp-report-resources.md`, this roadmap |
+| Host Compatibility Rail | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md`, `docs/future-rails-index.md` |
+| Spec / Design / Diagram Rail | `docs/spec-driven-workflow.md`, `docs/design-rail.md`, `docs/diagram-rail.md`, `docs/future-rails-index.md` |
+| Knowledge Graph Rail | `docs/knowledge-graph-rail.md`, `docs/code-graph.md`, `docs/project-brain.md`, `docs/reverse-specification-rail.md` |
+| Skill Rail 2.0 / Domain Skills | `docs/skill-rail.md`, `docs/skill-rail-2.md`, `docs/policy-rail.md`, `docs/security-model.md` |
+| Governance / Cost Guardrails | `docs/governance-cost-rail.md`, `docs/policy-rail.md`, `docs/report-rail.md`, `docs/observability-rail.md` |
+| External Project Audit | `docs/external-projects-audit.md`, `docs/ecosystem-influences.md`, `docs/comparisons.md` |
+| Roadmap Docs Audit | `docs/roadmap-docs-audit.md`, this roadmap |
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
 

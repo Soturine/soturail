@@ -6,7 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-- No unreleased changes yet.
+### Changed
+
+- Updated the roadmap after the v0.10.1 baseline to stage v1.0.0 stabilization followed by Host Compatibility, Spec/Design, Knowledge Graph, Skill Rail 2.0 and Governance/Cost rails.
+- Added docs for external project audit findings, Host Compatibility Rail, Design Rail, Knowledge Graph Rail, Skill Rail 2.0, Governance And Cost Rail and roadmap docs audit.
+- Updated future-rails, comparisons, ecosystem and README docs to align with the new post-v1 roadmap.
 
 ## [0.10.1] - 2026-05-31
 

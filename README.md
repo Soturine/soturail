@@ -13,7 +13,7 @@
 [![local-first](https://img.shields.io/badge/local--first-yes-f97316)](docs/security-model.md)
 [![context-engineering](https://img.shields.io/badge/context--engineering-SotuRail-7c3aed)](docs/prompt-caching.md)
 
-SotuRail — Local-first context rails for AI coding agents.  
+SotuRail — Local-first context rails for AI coding agents.
 SotuRail — trilhos locais de contexto para agentes de IA.
 
 ## 1. What Is SotuRail?
@@ -28,7 +28,7 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 v0.10.1 is the stability and v1-readiness milestone after the local reports release. It fixes and hardens JSON validity, polishes status/report/dashboard/observability output, improves benchmark/native/baseline ergonomics and adds schema compatibility plus candidate v1.0 readiness checks. Skill Rail, MCP, context packs, agent exports, Workflow Rail, Memory Rail, Context Intelligence, Policy Rail, evidence packs, the host-aware Agent Runtime Adapter, Diagram Rail, the local evaluation suite, Project Brain and Benchmark Rail remain local-first and evidence-driven.
 
-The next product direction is staged: v0.10.x hardens local reports and v1.0.0 stabilizes the Context OS surface. See [ROADMAP.md](ROADMAP.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
+The next product direction is staged: v0.10.x hardens local reports, v1.0.0 stabilizes the Context OS surface, and v1.1+ adds Host Compatibility, Spec/Design, Knowledge Graph, Skill Rail 2.0 and Governance/Cost rails. See [ROADMAP.md](ROADMAP.md), [docs/future-rails-index.md](docs/future-rails-index.md) and [docs/external-projects-audit.md](docs/external-projects-audit.md).
 
 ## v0.5.x MVP Rails
 
@@ -223,7 +223,7 @@ Dense-agent setup: every task gets every instruction, file and rule.
 SotuRail setup: route the task to the right local context expert, memory, role pack, rule set, payload format, diagram and workflow evidence.
 ```
 
-SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default. Research notes and product ideas live in [docs/ecosystem-influences.md](docs/ecosystem-influences.md), [docs/comparisons.md](docs/comparisons.md), [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md), [docs/future-rails-index.md](docs/future-rails-index.md), [docs/harness-rail.md](docs/harness-rail.md), [docs/policy-rail.md](docs/policy-rail.md), [docs/diagram-rail.md](docs/diagram-rail.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md).
+SotuRail absorbs patterns from the context-engineering ecosystem without vendoring or copying adjacent projects. It stays small, local-first, npm-friendly and safe-by-default. Research notes and product ideas live in [docs/ecosystem-influences.md](docs/ecosystem-influences.md), [docs/comparisons.md](docs/comparisons.md), [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md), [docs/future-rails-index.md](docs/future-rails-index.md), [docs/external-projects-audit.md](docs/external-projects-audit.md), [docs/host-compatibility-rail.md](docs/host-compatibility-rail.md), [docs/harness-rail.md](docs/harness-rail.md), [docs/policy-rail.md](docs/policy-rail.md), [docs/diagram-rail.md](docs/diagram-rail.md), [docs/structured-payload-rail.md](docs/structured-payload-rail.md) and [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md).
 
 ## Built With SotuRail
 
@@ -301,6 +301,13 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Report Redaction](docs/report-redaction.md)
 - [Code Graph Seed](docs/code-graph.md)
 - [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
+- [External Projects Audit](docs/external-projects-audit.md)
+- [Host Compatibility Rail](docs/host-compatibility-rail.md)
+- [Design Rail](docs/design-rail.md)
+- [Knowledge Graph Rail](docs/knowledge-graph-rail.md)
+- [Skill Rail 2.0](docs/skill-rail-2.md)
+- [Governance And Cost Rail](docs/governance-cost-rail.md)
+- [Roadmap Docs Audit](docs/roadmap-docs-audit.md)
 
 ## Installation
 
@@ -655,6 +662,11 @@ v0.9.0  Benchmark-gated native/performance engine
 v0.10.0 Local reports, observability timeline and static dashboard
 v0.10.1 Stability, JSON validity, report polish and v1 readiness
 v1.0.0  Stable Context OS
+v1.1.0  Host Compatibility Rail
+v1.2.0  Spec, Design And Diagram Rail
+v1.3.0  Knowledge Graph Rail
+v1.4.0  Skill Rail 2.0 And Domain Skill Packs
+v1.5.0  Governance And Cost Rail
 ```
 
 ## Contributing
