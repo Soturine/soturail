@@ -113,3 +113,22 @@ For security-oriented workflows, SotuRail should emphasize:
 | v1.3.0 Knowledge Graph Rail | Understand-Anything and Project Brain evolution |
 | v1.4.0 Skill Rail 2.0 | Sonar/TOTVS-style domain skill, Deep Agents skills, host exports |
 | v1.5.0 Governance And Cost Rail | dynamic workflows, long-horizon agents, context/token budget risks |
+
+## 2026 Harness/Eval/Provenance Review Addendum
+
+This addendum records the later review wave that directly affects post-v1 docs and roadmap planning.
+
+| Project/Product | Confidence | Primary pattern | SotuRail action |
+| --- | --- | --- | --- |
+| `ijmf/qa-ai-agent` | High | Agent QA through tests, datasets, traces and CI | Add Agent QA Rail, eval datasets, golden exports and optional judge policy |
+| `duckdogersxd/Orquestrando-Agents-CrewAI` | Medium | Multi-agent role workflow plus fallback/rate-limit lessons | Add multi-agent workflow templates and Resilience Rail notes |
+| `CaioTakedaIA/agentesdeIA` | Medium | Validate/fix/revalidate/analyze pipeline with visible logs | Add pipeline recorder concept and dashboard timeline ideas |
+| `OpenTracy/OpenTracy` | High | Propose/eval/approve/apply loop, trace, ledger and candidates | Add Agent Governance/Evolution Rail after governance foundations |
+| `walkinglabs/learn-harness-engineering` | High | Instructions, state, verification, scope, lifecycle | Add Harness Lifecycle Rail docs and feature/session handoff planning |
+| `affaan-m/ECC` | High | Cross-host harness system with skills/rules/doctor/repair/install state | Add install profiles, audit score, skills/rules profiles and host export polish |
+| `companion-inc/feynman` | High | Provenance sidecars and verification statuses | Add Evidence/Provenance Rail |
+| `virgiliojr94/book-to-skill` | High | Document-to-skill with on-demand chapters/glossary/patterns | Add Knowledge Rail and skill build/fold-in planning |
+| Tasklet.ai | Low | Public information was limited; small reusable task concept only | Add Tasklet Rail as local templates, not a vendor integration |
+| 9Router | Medium | Router metaphor, multi-host compatibility, token/context savings | Add Host Router Rail for context exports; explicitly avoid proxy/MITM behavior |
+
+The safe SotuRail interpretation is to generate local artifacts for external agents, not to become a model router, hosted agent platform, provider gateway or automation system that edits without approval.

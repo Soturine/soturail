@@ -79,3 +79,13 @@ soturail brain stale --repair-plan
 | MCP Report Resources | exposure inventory |
 | Workflow Rail | phase depth and evidence completeness |
 | Benchmark Rail | performance evidence and stale report warnings |
+
+## Resilience And Host Router Expansion
+
+Future v1.5 planning now includes Resilience Rail and Host Router Rail:
+
+- [`resilience-rail.md`](resilience-rail.md) for retry/fallback/rate-limit documentation and risk reports;
+- [`rate-limit-and-fallback-policy.md`](rate-limit-and-fallback-policy.md) for local policy shape;
+- [`host-router-rail.md`](host-router-rail.md) for context-format routing across hosts.
+
+This does not turn SotuRail into a model proxy, account manager, MITM bridge or billing gateway.

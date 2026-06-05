@@ -97,3 +97,12 @@ They may provide:
 | Workflow Rail | phase-specific skills |
 | Evaluation Suite | fixture-based skill quality checks |
 | Project Brain | repeated findings can become rules or stale evidence |
+
+## Knowledge-To-Skill And Tasklet Expansion
+
+Future Skill Rail 2.0 work now includes:
+
+- [`knowledge-rail.md`](knowledge-rail.md) for compiling docs/specs/notes into on-demand skill knowledge packs;
+- [`tasklet-rail.md`](tasklet-rail.md) for small reusable local task templates.
+
+The key principle is progressive disclosure: export a small `SKILL.md`/tasklet entry point first and load topic files only when needed.

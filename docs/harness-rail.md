@@ -139,3 +139,19 @@ Harness Rail is successful only if it makes SotuRail more predictable without ma
 - tests cover clean workflow fixtures;
 - reports distinguish token savings from quality preservation;
 - no arbitrary shell execution is exposed through MCP by default.
+
+## Harness Lifecycle Expansion
+
+Future harness lifecycle work is tracked in [`harness-lifecycle-rail.md`](harness-lifecycle-rail.md).
+
+The expansion adds five explicit subsystems:
+
+```txt
+Instructions
+State
+Verification
+Scope
+Session Lifecycle
+```
+
+The goal is to make `harness init`, `harness audit`, `session start/end`, feature lists and handoff files first-class local artifacts without becoming a Claude-only plugin or autonomous runtime.

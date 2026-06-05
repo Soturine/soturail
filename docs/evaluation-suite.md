@@ -247,3 +247,9 @@ Evaluation Suite changes should not be promoted until:
 - token savings and quality are separated;
 - benchmark reports are refreshed only when intentionally requested;
 - public claims match reproducible local results.
+
+## Agent QA Rail Expansion
+
+Future Agent QA work is tracked in [`agent-qa-rail.md`](agent-qa-rail.md), [`eval-datasets.md`](eval-datasets.md), [`golden-agent-tests.md`](golden-agent-tests.md) and [`llm-as-judge-policy.md`](llm-as-judge-policy.md).
+
+The important rule remains: default evals must stay offline, deterministic and provider-agnostic. Provider-backed judges can exist only as explicit optional integration evidence.

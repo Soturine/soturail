@@ -76,3 +76,15 @@ Each host entry should eventually report:
 | Policy Rail | config write, hook and tool exposure checks |
 | Skill Rail | host-aware skill export without always loading every skill |
 | Workflow Rail | phase-specific host handoff |
+
+## Host Router Expansion
+
+Future host work is tracked in [`host-router-rail.md`](host-router-rail.md).
+
+The host-router idea means context-format routing, not model-request routing:
+
+```txt
+one SotuRail context source -> Claude/Codex/Cursor/OpenCode/Gemini/generic exports
+```
+
+SotuRail must not intercept IDE traffic, proxy provider requests, manage browser tokens or bypass quotas.

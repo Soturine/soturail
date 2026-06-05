@@ -36,3 +36,19 @@ The timeline is sorted deterministically, and the summary includes:
 - safe next commands.
 
 Observability still does not collect private shell history and does not upload telemetry.
+
+## Pipeline Recorder Expansion
+
+Future observability work can add a pipeline recorder inspired by validate/fix/verify/report agent flows:
+
+```txt
+agent_started
+agent_finished
+agent_failed
+file_read
+schema_validated
+repair_applied
+report_generated
+```
+
+The first implementation can remain local artifacts and dashboard cards. A live SSE/server mode is optional and should not become required.

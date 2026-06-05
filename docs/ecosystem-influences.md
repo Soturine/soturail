@@ -472,3 +472,34 @@ These ideas are intentionally staged after the core rails are stable:
 15. **Auth Rail**: optional agent-readable auth docs and redaction checks.
 16. **UI/Report Rail**: local HTML dashboard and optional MCP Apps/AG-UI-style event outputs.
 17. **Gateway Lite**: local event routing only after memory, context selection, policy and reports are mature.
+
+## 2026 Agent Harness Synthesis Update
+
+A later review wave added QA-agent, multi-agent orchestration, pipeline-agent, self-improving harness, harness-engineering, cross-host ECC, Feynman-style provenance, book-to-skill, Tasklet and 9Router-style context-routing ideas.
+
+See [`agent-harness-synthesis-2026.md`](agent-harness-synthesis-2026.md) for the consolidated table.
+
+The main product update is:
+
+```txt
+SotuRail should evolve from context manager into a local harness manager:
+context + state + verification + scope + lifecycle + evidence + host export.
+```
+
+New patterns to absorb:
+
+- Agent QA with offline datasets and golden export checks.
+- Validate -> fix -> verify -> report pipelines with evidence per stage.
+- File-based handoff and provenance sidecars.
+- Knowledge packs generated from docs, loaded on demand.
+- Host router behavior for context formats, not model traffic.
+- Rate-limit/fallback policy docs, not provider proxying.
+- Human approval gates for improve/eval/apply loops.
+
+Hard boundaries:
+
+- no SoturAI/trading scope in SotuRail docs or exports;
+- no mandatory provider APIs;
+- no MITM/proxy/account/quota bypass features;
+- no autonomous patching without approval;
+- no hidden cloud telemetry.

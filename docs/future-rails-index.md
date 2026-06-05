@@ -19,13 +19,15 @@ SotuRail should remain:
 - independent from any single agent host;
 - small enough to use in normal developer projects.
 
-v1.0.0 froze the first stable local Context OS surface. v1.1.0 delivered Host Compatibility Rail 1.0. The remaining post-v1 sequence remains staged:
+v1.0.0 froze the first stable local Context OS surface. v1.1.0 delivered Host Compatibility Rail 1.0. The remaining post-v1 sequence is now staged with the 2026 agent-harness synthesis:
 
 ```txt
-v1.2.0  Spec, Design And Diagram Rail
-v1.3.0  Knowledge Graph Rail
-v1.4.0  Skill Rail 2.0
-v1.5.0  Governance And Cost Rail
+v1.1.1  Host Compatibility Polish, ecosystem docs and golden export checks
+v1.2.0  Spec, Design, Diagram and Harness Lifecycle Rail
+v1.3.0  Knowledge, Evidence and Evaluation Rail
+v1.4.0  Skill Rail 2.0, Knowledge-to-Skill and Tasklet Packs
+v1.5.0  Governance, Cost, Resilience and Host Router Rail
+v1.6.0  Agent Governance / Evolution Rail
 ```
 
 ## 2026 Agent Runtime Update
@@ -66,6 +68,14 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary | `docs/reverse-specification-rail.md`, `docs/knowledge-to-rules.md` |
 | Project Brain | Verified claims, decisions, bugs, gaps, rules, stale events and agent-safe briefs | v0.8.0 | `docs/project-brain.md`, `ROADMAP.md` |
 | Host Compatibility Rail | Host-aware exports, capability matrix, host doctors and conservative prompt-only fallback for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style and generic hosts | v1.1.0 implemented | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md`, `docs/agent-export-contract.md` |
+| Agent QA Rail | Offline datasets, golden exports, regression reports and optional LLM-as-judge policy | v1.1.1 docs, v1.3.0 planned | `docs/agent-qa-rail.md`, `docs/eval-datasets.md`, `docs/golden-agent-tests.md`, `docs/llm-as-judge-policy.md` |
+| Harness Lifecycle Rail | Instructions, state, verification, scope, feature list and session handoff lifecycle | v1.2.0 | `docs/harness-lifecycle-rail.md`, `docs/harness-rail.md`, `docs/workflow-rail.md` |
+| Evidence And Provenance Rail | Provenance sidecars, verification statuses and evidence per run/report | v1.3.0 | `docs/evidence-provenance-rail.md`, `docs/report-rail.md`, `docs/filesystem-evidence-rail.md` |
+| Knowledge Rail | Compile docs/specs/notes into on-demand SKILL.md/topic/glossary/pattern packs | v1.3.0 docs, v1.4.0 skill integration | `docs/knowledge-rail.md`, `docs/skill-rail-2.md`, `docs/project-brain.md` |
+| Resilience Rail | Rate-limit, fallback and provider-risk documentation/reporting without proxying traffic | v1.5.0 | `docs/resilience-rail.md`, `docs/rate-limit-and-fallback-policy.md`, `docs/governance-cost-rail.md` |
+| Host Router Rail | Route one local context source into host-specific export formats with safe fallback | v1.5.0 | `docs/host-router-rail.md`, `docs/host-compatibility-rail.md`, `docs/context-packs.md` |
+| Tasklet Rail | Small local reusable task templates for agents | v1.4.0 exploration | `docs/tasklet-rail.md`, `docs/skill-rail-2.md`, `docs/workflow-rail.md` |
+| Agent Governance/Evolution Rail | Trace, ledger, experiments, approval gates and improve/eval/apply loop | v1.6.0 | `docs/agent-governance-rail.md`, `docs/evaluation-suite.md`, `docs/policy-rail.md` |
 | Spec Rail | PRD, requirements, design, tasks and acceptance criteria as workflow inputs | v1.2.0 | `docs/spec-driven-workflow.md`, `docs/design-rail.md`, `docs/diagram-rail.md` |
 | Design Rail | Local `DESIGN.md`, design token lint/diff/export and agent-readable visual guidance | v1.2.0 | `docs/design-rail.md`, `docs/dashboard-rail.md` |
 | Knowledge Graph Rail | Local graph of files, claims, decisions, tests, workflows, diagrams and releases | v1.3.0 | `docs/knowledge-graph-rail.md`, `docs/code-graph.md`, `docs/project-brain.md` |
@@ -219,41 +229,71 @@ Focus:
 - per-host doctor reports;
 - read-only MCP host manifests.
 
+### v1.1.1
+
+Focus:
+
+- 2026 agent-harness synthesis docs;
+- Agent QA, golden export and optional judge policy docs;
+- Evidence/Provenance, Knowledge, Resilience, Host Router, Tasklet and Agent Governance planning docs;
+- validate -> fix -> verify -> report workflow example;
+- multi-agent researcher/analyst/writer/verifier template example.
+
 ### v1.2.0
 
 Focus:
 
-- Spec, Design And Diagram Rail;
+- Spec, Design, Diagram and Harness Lifecycle Rail;
 - PRD/requirements/design/tasks scaffolds;
 - local `DESIGN.md` lint/diff/export;
-- Mermaid render/diff validation.
+- Mermaid render/diff validation;
+- `harness init` and `harness audit` planning;
+- feature list, session start/end and handoff lifecycle.
 
 ### v1.3.0
 
 Focus:
 
-- Knowledge Graph Rail;
+- Knowledge, Evidence and Evaluation Rail;
 - graph build/explain/impact/tour;
-- local dashboard graph views;
-- stale-edge detection.
+- Knowledge Rail ingest/estimate/compile/update/verify;
+- evidence and provenance sidecars;
+- local eval datasets, golden checks and regression reports;
+- optional LLM-as-judge outside default release gates;
+- stale-edge and missing-evidence detection.
 
 ### v1.4.0
 
 Focus:
 
-- Skill Rail 2.0;
+- Skill Rail 2.0, Knowledge-to-Skill and Tasklet Packs;
 - domain skill templates;
 - skill lint/eval/report;
-- role-aware exports and safety gates.
+- role-aware exports and safety gates;
+- `skill build` and `skill fold-in` planning;
+- small reusable tasklet templates.
 
 ### v1.5.0
 
 Focus:
 
-- Governance And Cost Rail;
-- context budget reports;
+- Governance, Cost, Resilience and Host Router Rail;
+- context budget reports and compact context variants;
+- rate-limit/fallback policy reports;
+- host-format fallback without provider proxying;
 - dynamic workflow guardrails;
 - MCP/skill exposure risk summaries.
+
+### v1.6.0
+
+Focus:
+
+- Agent Governance / Evolution Rail;
+- trace and ledger artifacts;
+- agent boundary policy;
+- experiments/candidates/results;
+- propose -> eval -> approve -> apply loop;
+- approval gates before any patch application.
 
 
 ## What Should Not Happen
@@ -298,3 +338,17 @@ SotuRail should not become:
 - `docs/ecosystem-influences.md`
 - `docs/comparisons.md`
 - `docs/roadmap-harness-diagram-payload-addendum.md`
+- `docs/agent-harness-synthesis-2026.md`
+- `docs/agent-qa-rail.md`
+- `docs/eval-datasets.md`
+- `docs/golden-agent-tests.md`
+- `docs/llm-as-judge-policy.md`
+- `docs/evidence-provenance-rail.md`
+- `docs/agent-governance-rail.md`
+- `docs/harness-lifecycle-rail.md`
+- `docs/knowledge-rail.md`
+- `docs/resilience-rail.md`
+- `docs/rate-limit-and-fallback-policy.md`
+- `docs/multi-agent-workflow-templates.md`
+- `docs/host-router-rail.md`
+- `docs/tasklet-rail.md`
