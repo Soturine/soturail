@@ -508,24 +508,26 @@ Primary goals:
 - keep CI green on Windows, Linux and macOS;
 - avoid introducing a server mode, cloud telemetry, destructive MCP tools or native-only runtime requirements.
 
-v1.0.0 should not attempt to ship Host Compatibility Rail, Design Rail, Knowledge Graph Rail or Skill Rail 2.0 as major new surfaces. Those rails should be staged after the stable base is released.
+v1.0.0 did not attempt to ship Host Compatibility Rail, Design Rail, Knowledge Graph Rail or Skill Rail 2.0 as major new surfaces. Those rails are staged after the stable base.
 
 ## v1.1.0 - Host Compatibility Rail
+
+Status: implemented as Host Compatibility Rail 1.0.
 
 Inspired by OpenCode, Deep Agents-style harnesses, MCP host projects and emerging Antigravity-style agent hosts.
 
 Goal: make SotuRail a better context/report/spec provider for external agents without becoming the agent runtime.
 
-Planned work:
+Delivered work:
 
-- `soturail agents export --agent opencode` for OpenCode-friendly instructions, context packs, reports and safe next commands;
-- `soturail agents export --agent antigravity` for Antigravity-style host guidance and prompt-only fallback;
-- `soturail agents export --agent deepagents` for Deep Agents-style role-pack and filesystem/memory context bundles;
-- `soturail agents export --agent claude|codex|gemini|cursor|generic` polish based on the v1 stable surface;
-- `soturail agents matrix` to show host capabilities, limitations, supported context formats, MCP support, skills support, hooks support and policy notes;
-- `soturail agents doctor --host <host>` to check whether the repo has appropriate host-specific rules, references, context packs and report exports;
-- read-only MCP host manifests that expose reports, status, brain summaries, benchmark summaries and baseline state without mutation;
-- docs for Gemini CLI legacy/transition notes, Antigravity-style hosts, OpenCode, Deep Agents-style role packs and generic MCP hosts;
+- `soturail agents export --agent opencode` for OpenCode-compatible instructions, context packs, reports and safe next commands;
+- `soturail agents export --agent antigravity` for high-priority experimental Antigravity-style host guidance and prompt-only fallback;
+- `soturail agents export --agent deepagents` for DeepAgents-style role-pack and subagent-note bundles;
+- `soturail agents export --agent claude|codex|gemini|gemini-legacy|cursor|generic` polish based on the v1 stable surface;
+- `soturail agents matrix` with host capabilities, limitations, supported context formats, MCP support, skills support, hooks support and policy notes;
+- `soturail agents doctor --host <host>` and `--all --json` to check host export safety and write per-host artifacts;
+- read-only MCP host manifests that expose reports, status, brain summaries, benchmark summaries, baseline state, host exports and host doctor reports without mutation;
+- docs for Gemini CLI legacy/transition notes, Antigravity-style hosts, OpenCode, DeepAgents-style role packs and generic MCP hosts;
 - keep host support conservative: do not claim direct integration until export paths are verified.
 
 Non-goals:

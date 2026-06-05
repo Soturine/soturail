@@ -6,6 +6,29 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-05
+
+### Added
+
+- Added Host Compatibility Rail 1.0 with expanded `agents matrix` metadata and the compatible `soturail.agent-host-matrix.v1` contract id.
+- Added `agents doctor --host <host>`, `agents doctor --all` and JSON output for host-specific export safety checks.
+- Added mirrored v1.1 agent exports under `.soturail/agents/<host>/` while keeping `.soturail/exports/agents/<host>/` compatibility.
+- Added `mcp resources host-manifest --host <host> [--json]` for read-only host resource manifests.
+- Added OpenCode-compatible, Antigravity, Gemini legacy-compatible and DeepAgents role-pack export coverage.
+- Added host matrix schema, agent export contract, MCP host manifest, OpenCode tutorial and media guide docs.
+- Added sanitized local SVG screenshots for status, host matrix and host doctor docs.
+
+### Changed
+
+- Improved host-aware agent reports for OpenCode, Antigravity, Cursor, Gemini legacy and DeepAgents-style targets.
+- Improved agent export briefs with safe commands, evidence paths, Project Brain freshness warnings and explicit non-goals.
+- Updated README, ROADMAP, schema contracts, stable surface and MCP docs for v1.1 host compatibility.
+
+### Security
+
+- Host manifests remain read-only and set `mutationAllowed: false` and `arbitraryShellExecutionExposed: false`.
+- Host exports avoid raw evidence paths, secrets, cloud telemetry claims, destructive MCP claims and autonomous runtime claims.
+
 ## [1.0.1]
 
 ### Changed
@@ -13,6 +36,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Updated package and repository licensing metadata to Apache-2.0.
 - Aligned README and licensing strategy docs with Apache-2.0.
 - No runtime behavior changes intended.
+
 ## [1.0.0] - 2026-06-01
 
 ### Added
