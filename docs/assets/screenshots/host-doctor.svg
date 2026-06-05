@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">SotuRail host doctor screenshot</title>
+  <desc id="desc">Illustrative per-host doctor output.</desc>
+  <rect width="960" height="520" fill="#f8fafc"/>
+  <rect x="56" y="48" width="852" height="424" rx="8" fill="#0f172a"/>
+  <text x="88" y="94" font-family="Consolas, monospace" font-size="22" fill="#d1fae5">$ soturail agents doctor --host codex</text>
+  <g font-family="Consolas, monospace" font-size="18">
+    <text x="88" y="142" fill="#e5e7eb">SotuRail agent host doctor</text>
+    <text x="88" y="176" fill="#93c5fd">schemaVersion:</text>
+    <text x="246" y="176" fill="#fde68a">soturail.agent-host-doctor.v1</text>
+    <text x="88" y="210" fill="#93c5fd">host:</text>
+    <text x="160" y="210" fill="#fde68a">codex</text>
+    <text x="88" y="244" fill="#93c5fd">status:</text>
+    <text x="176" y="244" fill="#86efac">passed</text>
+    <text x="88" y="292" fill="#e5e7eb">Checks:</text>
+    <text x="112" y="326" fill="#86efac">- matrix-row: passed</text>
+    <text x="112" y="360" fill="#86efac">- export-generated: passed</text>
+    <text x="112" y="394" fill="#86efac">- mcp-read-only: passed</text>
+    <text x="112" y="428" fill="#86efac">- scope-contamination: passed</text>
+  </g>
+</svg>

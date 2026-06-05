@@ -158,6 +158,9 @@ export async function runV1Readiness(root = process.cwd(), options: SchemaReadin
     docsExist(resolvedRoot, "docs/v1-contract.md", options.strict === true),
     docsExist(resolvedRoot, "docs/schema-contracts.md", options.strict === true),
     docsExist(resolvedRoot, "docs/agent-hosts.md", options.strict === true),
+    docsExist(resolvedRoot, "docs/host-matrix-schema.md", options.strict === true),
+    docsExist(resolvedRoot, "docs/agent-export-contract.md", options.strict === true),
+    docsExist(resolvedRoot, "docs/mcp-host-manifest.md", options.strict === true),
     docsExist(resolvedRoot, "docs/clean-code-guidelines.md", options.strict === true),
     docsExist(resolvedRoot, "docs/architecture-boundaries.md", options.strict === true),
     docsExist(resolvedRoot, path.join("docs", "releases", `RELEASE_NOTES_v${packageVersion(resolvedRoot)}.md`))

@@ -77,6 +77,9 @@ const requiredV1Docs = [
   "docs/deprecation-policy.md",
   "docs/migration-v1.md",
   "docs/agent-hosts.md",
+  "docs/host-matrix-schema.md",
+  "docs/agent-export-contract.md",
+  "docs/mcp-host-manifest.md",
   "docs/clean-code-guidelines.md",
   "docs/architecture-boundaries.md"
 ];

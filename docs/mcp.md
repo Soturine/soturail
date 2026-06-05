@@ -9,6 +9,8 @@ soturail mcp config --agent generic
 soturail mcp smoke
 soturail mcp exposure
 soturail mcp exposure --json
+soturail mcp resources report
+soturail mcp resources host-manifest --host codex
 soturail mcp serve --transport stdio
 ```
 
@@ -74,6 +76,8 @@ soturail mcp serve --transport stdio
 ```
 
 It does not assume a global application config path. Review it before adding it to an agent host.
+
+`soturail mcp resources host-manifest --host <host>` writes `.soturail/mcp/host-manifest.json` and `.soturail/mcp/host-manifests/<host>.json`. The manifest lists local status, report, brain, schema, readiness, benchmark, native, baseline, dashboard, host export and host doctor artifacts. It sets `mutationAllowed: false` and `arbitraryShellExecutionExposed: false`.
 
 For v0.6.0 agent-runtime setup, prefer host-aware dry-runs before copying MCP snippets into a host:
 

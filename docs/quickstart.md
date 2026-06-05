@@ -1,6 +1,6 @@
 # Quickstart
 
-SotuRail is a local-first Context OS for AI coding agents. v1.0.0 freezes the first stable command surface for local status, reports, dashboard artifacts, Project Brain checks, benchmarks, release readiness and agent handoff.
+SotuRail is a local-first Context OS for AI coding agents. v1.0.0 froze the first stable command surface for local status, reports, dashboard artifacts, Project Brain checks, benchmarks, release readiness and agent handoff. v1.1.0 adds host-compatible exports, host doctors and read-only MCP host manifests.
 
 ## Install
 

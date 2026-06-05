@@ -1,6 +1,6 @@
 # Stable Command Surface
 
-SotuRail v1.0.0 freezes the first stable local Context OS surface. Experimental rails remain available, but they are not part of the stable contract until promoted in release notes.
+SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 keeps that surface stable and adds Host Compatibility Rail commands for local exports, host doctors and read-only host manifests.
 
 ## Stable Surface For v1.0
 
@@ -23,8 +23,11 @@ SotuRail v1.0.0 freezes the first stable local Context OS surface. Experimental 
 - `soturail diagram`
 - `soturail agents`
 - `soturail agents matrix`
+- `soturail agents doctor --host <host>`
+- `soturail agents doctor --all`
 - `soturail mcp exposure`
 - `soturail mcp resources report`
+- `soturail mcp resources host-manifest`
 
 Stable means the command should remain local, documented, covered by smoke or contract tests, and changed compatibly where possible.
 
@@ -64,3 +67,6 @@ Future deprecations must name a replacement command, state the release that intr
 - [schema contracts](schema-contracts.md)
 - [migration to v1](migration-v1.md)
 - [agent hosts](agent-hosts.md)
+- [host matrix schema](host-matrix-schema.md)
+- [agent export contract](agent-export-contract.md)
+- [MCP host manifest](mcp-host-manifest.md)

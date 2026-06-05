@@ -12,7 +12,11 @@ soturail agents status
 soturail agents status --json
 soturail agents doctor
 soturail agents doctor --verbose
+soturail agents doctor --host codex
+soturail agents doctor --all --json
 soturail agents export --agent all
+soturail agents export --agent opencode --out .soturail/agents/opencode
+soturail agents export --agent deepagents --role reviewer
 soturail brain export --agent codex
 soturail agents export --agent deepagents
 soturail agents export --agent deepagents-js
@@ -26,7 +30,7 @@ soturail agents install --agent cursor --mode rules --dry-run
 soturail agents uninstall --agent claude --dry-run
 ```
 
-Exports are written under `.soturail/exports/agents/<agent>/`. They are meant to be reviewed before use.
+Default exports are written under both `.soturail/agents/<agent>/` and `.soturail/exports/agents/<agent>/`. The older exports path remains for compatibility; the `.soturail/agents/` path is the v1.1 host workspace. They are meant to be reviewed before use.
 
 Project Brain exports are written under `.soturail/brain/exports/`. They provide verified claims, rules, gaps, stale warnings and source references for agent handoff.
 
@@ -45,11 +49,13 @@ Project Brain exports are written under `.soturail/brain/exports/`. They provide
 
 `soturail agents capabilities` prints the host capability matrix. Use `--json` for a stable machine-readable shape.
 
-`soturail agents matrix` prints the v1 host compatibility matrix with stable, legacy, experimental and planned status labels. It does not claim full OpenCode, Antigravity-style or DeepAgents-style runtime support unless the row says so.
+`soturail agents matrix` prints the v1/v1.1 host compatibility matrix with stable, generic-compatible, legacy, experimental and planned status labels. It does not claim full OpenCode, Antigravity-style or DeepAgents-style runtime support unless the row says so.
 
 `soturail agents status` inspects local files such as `CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursor/rules/`, `.claude/settings.json`, `.soturail/exports/agents/`, role packs, skills, MCP exports, policy queues and run workspaces.
 
 `soturail agents doctor --verbose` combines readiness checks with host capability, payload, policy and dry-run install guidance.
+
+`soturail agents doctor --host <host>` generates `.soturail/agents/<host>/doctor.json` and `.md`. `--all --json` writes `.soturail/agents/doctor-summary.json` and checks every host export for obvious secret patterns, unsafe MCP claims, raw evidence references and SotuRail scope contamination.
 
 ## v0.6.1 UX Flow
 
@@ -116,12 +122,14 @@ If context packs or exports already exist, the doctor omits those setup steps an
 
 - Claude: `CLAUDE.md`, `mcp-config.json`, `safe-hooks.md`, `context-pack.md`.
 - Codex: `AGENTS.md`, `context-pack.md`, `prompt-only.md`.
-- Gemini: `GEMINI.md`, `context-pack.md`, `prompt-only.md`.
-- Cursor: `cursor-rules.md`, `context-pack.md`, `prompt-only.md`.
-- Antigravity: `context-pack.md`, `prompt-only.md`.
-- Generic: `context-pack.md`, `prompt-only.md`.
-- OpenCode/Amp/Kiro-style hosts: `context-pack.md`, `prompt-only.md`.
-- Deep Agents/deepagents-js: `<agent>.md`, `runtime-config.json`, `context-pack.md`.
+- Gemini: `AGENTS.md`, `GEMINI.md`, `context-pack.md`, `prompt-only.md`.
+- Gemini legacy-compatible: `AGENTS.md`, `GEMINI.md`, `context-pack.md`, `prompt-only.md`.
+- Cursor: `rules.md`, `cursor-rules.md`, `context-pack.md`, `prompt-only.md`.
+- Antigravity: `AGENTS.md`, `context-pack.md`, `prompt-only.md`.
+- Generic: `AGENT_CONTEXT.md`, `context-pack.md`, `prompt-only.md`.
+- OpenCode-style hosts: `AGENTS.md`, `context-pack.md`, `prompt-only.md`.
+- Amp/Kiro-style hosts: `context-pack.md`, `prompt-only.md`.
+- Deep Agents/deepagents-js: `role-pack.md`, `subagents.md`, `<agent>.md`, `runtime-config.json`, `context-pack.md`.
 
 ## Host Capability Matrix
 
@@ -136,7 +144,8 @@ SotuRail encodes host capabilities instead of assuming every agent supports the 
 | Antigravity | prompt-only Markdown/tagged fallback | prompt-only/context-pack | unknown/experimental | no deep integration until stable official surfaces are verified | do not invent config paths |
 | Deep Agents / deepagents-js | role packs, context offload notes, skills routing | export-only | future resource/config export only | no runtime coupling by default | human approval and filesystem evidence required for risky flows |
 | Claude Code Harness-style workflows | workflow/evidence docs, guardrail policy, review perspectives | docs/export only | no special MCP assumption | compatibility notes only | keep SotuRail independent from Claude-only flows |
-| OpenCode/Amp/Kiro-style hosts | Markdown/context packs/specs | prompt/context export first | optional read-only if supported | deeper integrations only after official surfaces are clear | host docs must remain conservative |
+| OpenCode-style hosts | AGENTS.md/context packs/specs | prompt/context export first | optional read-only if supported | deeper integrations only after official surfaces are clear | generic-compatible, not full host-native support |
+| Amp/Kiro-style hosts | Markdown/context packs/specs | prompt/context export first | optional read-only if supported | deeper integrations only after official surfaces are clear | host docs must remain conservative |
 | Generic agents | Markdown/context packs | file export | MCP read-only resources | none | safest fallback for unknown hosts |
 
 ## Host-Aware Payload Formats

@@ -1,6 +1,6 @@
 # Release Workflow
 
-v1.0.0 adds strict local release gates:
+v1.x uses strict local release gates:
 
 ```bash
 soturail self schemas --check --strict
@@ -85,6 +85,17 @@ soturail release check
 ```
 
 `report_safety` is a release gate. If report artifacts contain obvious tokens or private keys, run `soturail report redact` and inspect the source artifact before publishing.
+
+For v1.1.0 host compatibility evidence, run:
+
+```bash
+soturail agents matrix --json
+soturail agents doctor --all --json
+soturail mcp resources host-manifest --host codex
+soturail report agent --agent opencode
+```
+
+Host evidence must stay local, read-only and redaction-aware. It must not claim destructive MCP, shell execution through MCP, cloud telemetry or full host-native runtime support for experimental targets.
 
 You can run only the package verification gate with:
 

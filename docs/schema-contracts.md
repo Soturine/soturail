@@ -17,6 +17,10 @@ Stable v1 JSON artifacts are local files designed for humans, CI and coding agen
 - `soturail.code-health.v1`
 - `soturail.architecture.check.v1`
 - `soturail.agents.matrix.v1`
+- `soturail.agent-host-matrix.v1` as the v1.1 contract id on the compatible matrix report
+- `soturail.agent-host-doctor.v1`
+- `soturail.agent-host-doctor-summary.v1`
+- `soturail.mcp.host-manifest.v1`
 
 ## Required Principles
 
@@ -36,3 +40,14 @@ soturail self schemas --check --strict
 ```
 
 Strict mode creates code-health and architecture artifacts, then validates required stable report shapes. It warns on optional missing evidence and fails on invalid JSON, missing schema versions, malformed arrays and version mismatches in required artifacts.
+
+Host compatibility artifacts are local-first and safe-by-default:
+
+```bash
+soturail agents matrix --json
+soturail agents doctor --host codex --json
+soturail agents doctor --all --json
+soturail mcp resources host-manifest --host codex --json
+```
+
+They must not grant mutation resources, shell execution through MCP, cloud telemetry or raw evidence exposure. See [host-matrix-schema.md](host-matrix-schema.md), [agent-export-contract.md](agent-export-contract.md) and [mcp-host-manifest.md](mcp-host-manifest.md).

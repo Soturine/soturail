@@ -1,6 +1,6 @@
 # v1 Contract
 
-SotuRail v1.0.0 freezes the first stable local Context OS surface. Experimental rails remain documented, but they are not part of the v1 stable contract until promoted.
+SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 extends that surface with host-compatible exports and read-only host manifests while keeping experimental host runtimes outside the stable contract.
 
 ## Stable Promise
 
@@ -10,15 +10,16 @@ SotuRail v1.0.0 freezes the first stable local Context OS surface. Experimental 
 - Generated report/check artifacts include `createdAt`.
 - Reports, dashboards and MCP report resources are local artifacts.
 - Read-only MCP report resources do not mutate files and do not expose shell execution.
+- Host manifests and agent exports are local artifacts. They do not grant mutation access by default.
 - TypeScript fallback remains mandatory. Native acceleration remains optional and benchmark-gated.
 
 ## Stable Commands
 
-The stable command surface is listed in [stable-command-surface.md](stable-command-surface.md). It includes status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow, harness, diagrams, agent exports and read-only MCP report resources.
+The stable command surface is listed in [stable-command-surface.md](stable-command-surface.md). It includes status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow, harness, diagrams, agent exports, host doctors and read-only MCP report/host resources.
 
 ## Non-Goals
 
-SotuRail v1.0.0 does not add a cloud dashboard, hosted analytics, telemetry upload, login system, database, vector DB, autonomous editing agent, destructive MCP tool provider or native-only package.
+SotuRail does not add a cloud dashboard, hosted analytics, telemetry upload, login system, database, vector DB, autonomous editing agent, destructive MCP tool provider, native-only package or host-specific runtime engine.
 
 ## Compatibility
 

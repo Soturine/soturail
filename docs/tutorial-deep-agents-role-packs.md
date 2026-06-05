@@ -11,6 +11,8 @@ soturail context pack --role release-manager
 soturail context pack --role researcher
 soturail agents export --agent deepagents
 soturail agents export --agent deepagents-js
+soturail agents export --agent deepagents --role reviewer
+soturail agents doctor --host deepagents
 ```
 
 Use role packs as reviewed context boundaries:
@@ -22,3 +24,5 @@ Use role packs as reviewed context boundaries:
 - researcher gets docs/ecosystem constraints.
 
 Keep risky actions in SotuRail policy queues and keep raw evidence recoverable by ID.
+
+v1.1 exports write `role-pack.md` and `subagents.md` under `.soturail/agents/deepagents/`. These files are prompt/context artifacts only; they are not a runtime registration file and do not install Deep Agents dependencies.

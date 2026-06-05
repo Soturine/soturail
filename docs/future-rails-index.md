@@ -19,10 +19,9 @@ SotuRail should remain:
 - independent from any single agent host;
 - small enough to use in normal developer projects.
 
-v1.0.0 freezes the first stable local Context OS surface. The post-v1 sequence remains staged:
+v1.0.0 froze the first stable local Context OS surface. v1.1.0 delivered Host Compatibility Rail 1.0. The remaining post-v1 sequence remains staged:
 
 ```txt
-v1.1.0  Host Compatibility Rail
 v1.2.0  Spec, Design And Diagram Rail
 v1.3.0  Knowledge Graph Rail
 v1.4.0  Skill Rail 2.0
@@ -66,7 +65,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Evaluation Suite | Quality benchmarks for context, payload formats, diagrams, evidence and role packs | v0.6.1 | `docs/evaluation-suite.md`, `docs/benchmarking.md`, `ROADMAP.md` |
 | Reverse Specification Rail | Turn existing code/docs/config/logs into claims, rules, specs, gaps and validation tasks | v0.8.0 primary | `docs/reverse-specification-rail.md`, `docs/knowledge-to-rules.md` |
 | Project Brain | Verified claims, decisions, bugs, gaps, rules, stale events and agent-safe briefs | v0.8.0 | `docs/project-brain.md`, `ROADMAP.md` |
-| Host Compatibility Rail | Host-aware exports, capability matrix and conservative prompt-only fallback for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style and generic hosts | v1.1.0 | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md` |
+| Host Compatibility Rail | Host-aware exports, capability matrix, host doctors and conservative prompt-only fallback for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style and generic hosts | v1.1.0 implemented | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md`, `docs/agent-export-contract.md` |
 | Spec Rail | PRD, requirements, design, tasks and acceptance criteria as workflow inputs | v1.2.0 | `docs/spec-driven-workflow.md`, `docs/design-rail.md`, `docs/diagram-rail.md` |
 | Design Rail | Local `DESIGN.md`, design token lint/diff/export and agent-readable visual guidance | v1.2.0 | `docs/design-rail.md`, `docs/dashboard-rail.md` |
 | Knowledge Graph Rail | Local graph of files, claims, decisions, tests, workflows, diagrams and releases | v1.3.0 | `docs/knowledge-graph-rail.md`, `docs/code-graph.md`, `docs/project-brain.md` |
@@ -214,9 +213,10 @@ Focus:
 
 Focus:
 
-- Host Compatibility Rail;
-- OpenCode, Antigravity, Deep Agents-style and generic host exports;
-- host capability matrix;
+- Host Compatibility Rail 1.0 delivered;
+- OpenCode, Antigravity, DeepAgents-style, Gemini legacy-compatible and generic host exports;
+- host capability matrix 2.0 fields with backward-compatible schema;
+- per-host doctor reports;
 - read-only MCP host manifests.
 
 ### v1.2.0

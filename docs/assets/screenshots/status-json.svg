@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-labelledby="title desc">
+  <title id="title">SotuRail status JSON screenshot</title>
+  <desc id="desc">Illustrative terminal screenshot showing valid JSON status output.</desc>
+  <rect width="960" height="520" fill="#f7fafc"/>
+  <rect x="48" y="48" width="864" height="424" rx="8" fill="#111827"/>
+  <rect x="48" y="48" width="864" height="40" rx="8" fill="#243044"/>
+  <circle cx="72" cy="68" r="6" fill="#ef4444"/>
+  <circle cx="92" cy="68" r="6" fill="#f59e0b"/>
+  <circle cx="112" cy="68" r="6" fill="#22c55e"/>
+  <text x="72" y="126" font-family="Consolas, monospace" font-size="22" fill="#d1fae5">$ soturail status --json</text>
+  <text x="72" y="166" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">{</text>
+  <text x="96" y="198" font-family="Consolas, monospace" font-size="18" fill="#93c5fd">"schemaVersion"</text>
+  <text x="256" y="198" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">: </text>
+  <text x="282" y="198" font-family="Consolas, monospace" font-size="18" fill="#fde68a">"soturail.status.v1"</text>
+  <text x="96" y="230" font-family="Consolas, monospace" font-size="18" fill="#93c5fd">"version"</text>
+  <text x="196" y="230" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">: </text>
+  <text x="222" y="230" font-family="Consolas, monospace" font-size="18" fill="#fde68a">"1.1.0"</text>
+  <text x="96" y="262" font-family="Consolas, monospace" font-size="18" fill="#93c5fd">"brain"</text>
+  <text x="174" y="262" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">: { </text>
+  <text x="230" y="262" font-family="Consolas, monospace" font-size="18" fill="#93c5fd">"brainStatus"</text>
+  <text x="374" y="262" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">: </text>
+  <text x="400" y="262" font-family="Consolas, monospace" font-size="18" fill="#fde68a">"warning"</text>
+  <text x="496" y="262" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb"> },</text>
+  <text x="96" y="294" font-family="Consolas, monospace" font-size="18" fill="#93c5fd">"nextCommands"</text>
+  <text x="248" y="294" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">: [</text>
+  <text x="128" y="326" font-family="Consolas, monospace" font-size="18" fill="#fde68a">"soturail report build"</text>
+  <text x="128" y="358" font-family="Consolas, monospace" font-size="18" fill="#fde68a">"soturail self readiness --v1 --strict"</text>
+  <text x="96" y="390" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">]</text>
+  <text x="72" y="422" font-family="Consolas, monospace" font-size="18" fill="#e5e7eb">}</text>
+</svg>
