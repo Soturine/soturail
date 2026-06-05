@@ -4,7 +4,7 @@ import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "../core/config.js";
 import { mcpConfig } from "../core/agent-exporter.js";
 import { mcpExposureReport, renderMcpExposure } from "../core/mcp-exposure.js";
-import { writeReportResourceManifest } from "../core/mcp-resources.js";
+import { writeHostResourceManifest, writeReportResourceManifest } from "../core/mcp-resources.js";
 import { mcpDoctor, mcpManifest, mcpSmoke, serveMcpStdio } from "../core/mcp-server.js";
 import { SOTURAIL_VERSION } from "../core/version.js";
 
@@ -23,6 +23,15 @@ export function registerMcpCommand(program: Command): void {
   resources.command("report").description("Write a static manifest for read-only report resources.").action(async () => {
     process.stdout.write((await writeReportResourceManifest(process.cwd())).output);
   });
+  resources
+    .command("host-manifest")
+    .description("Write a host-specific read-only MCP resource manifest.")
+    .option("--host <host>", "Agent host id", "generic")
+    .option("--json", "Print machine-readable JSON")
+    .action(async (options: { host?: string; json?: boolean }) => {
+      const result = await writeHostResourceManifest(process.cwd(), options.host ?? "generic");
+      process.stdout.write(options.json ? `${JSON.stringify(result.manifest, null, 2)}\n` : result.output);
+    });
 
   mcp.command("exposure").description("Report MCP tools/resources/prompts and risk notes.").option("--json", "Print machine-readable JSON").action(async (options: { json?: boolean }) => {
     const report = await mcpExposureReport();

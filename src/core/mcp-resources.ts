@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { parseAgentId } from "./agent-registry.js";
 import { getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
@@ -9,6 +10,30 @@ export interface McpResourceInfo {
   name: string;
   mimeType: string;
   description: string;
+}
+
+export interface McpHostManifestResource {
+  id: string;
+  uri: string;
+  path: string;
+  mimeType: string;
+  description: string;
+  exists: boolean;
+  redacted: boolean;
+}
+
+export interface McpHostManifest {
+  schemaVersion: "soturail.mcp.host-manifest.v1";
+  createdAt: string;
+  version: string;
+  host: string;
+  status: "passed" | "warning";
+  mode: "read-only";
+  mutationAllowed: false;
+  arbitraryShellExecutionExposed: false;
+  resources: McpHostManifestResource[];
+  warnings: string[];
+  nextCommands: string[];
 }
 
 export const mcpResources: McpResourceInfo[] = [
@@ -26,7 +51,8 @@ export const mcpResources: McpResourceInfo[] = [
   { uri: "soturail://bench/latest", name: "Benchmark Rail Latest", mimeType: "application/json", description: "Latest Benchmark Rail 2 report." },
   { uri: "soturail://native/candidates", name: "Native Candidates", mimeType: "application/json", description: "Latest benchmark-gated native candidate report." },
   { uri: "soturail://baseline/latest", name: "Baseline Snapshot", mimeType: "application/json", description: "Latest baseline snapshot report." },
-  { uri: "soturail://observability/timeline", name: "Observability Timeline", mimeType: "application/json", description: "Local observability timeline." }
+  { uri: "soturail://observability/timeline", name: "Observability Timeline", mimeType: "application/json", description: "Local observability timeline." },
+  { uri: "soturail://agents/host-manifest", name: "Agent Host Manifest", mimeType: "application/json", description: "Read-only host-specific MCP resource manifest." }
 ];
 
 export async function listMcpResources(): Promise<McpResourceInfo[]> {
@@ -69,6 +95,8 @@ export async function readMcpResource(uri: string, root = process.cwd()): Promis
       return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "baselines", "latest.json"), "{}"));
     case "soturail://observability/timeline":
       return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "observability", "timeline.json"), "{}"));
+    case "soturail://agents/host-manifest":
+      return resource(uri, "application/json", await readOptional(path.join(paths.workspace, "mcp", "host-manifest.json"), "{}"));
     default:
       throw new Error(`Unknown MCP resource: ${uri}`);
   }
@@ -110,8 +138,112 @@ export async function writeReportResourceManifest(root = process.cwd()): Promise
   };
 }
 
+export async function writeHostResourceManifest(root = process.cwd(), hostValue = "generic"): Promise<{ path: string; manifest: McpHostManifest; output: string }> {
+  const parsed = parseAgentId(hostValue);
+  if (parsed === "all") throw new Error("Use a single host for mcp resources host-manifest.");
+  const paths = getWorkspacePaths(root);
+  const dir = path.join(paths.workspace, "mcp");
+  const hostDir = path.join(dir, "host-manifests");
+  await fs.mkdir(hostDir, { recursive: true });
+  const hostResources = await buildHostManifestResources(root, parsed);
+  const missing = hostResources.filter((resourceInfo) => !resourceInfo.exists);
+  const manifest: McpHostManifest = {
+    schemaVersion: "soturail.mcp.host-manifest.v1",
+    createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    host: parsed,
+    status: missing.length > 0 ? "warning" : "passed",
+    mode: "read-only",
+    mutationAllowed: false,
+    arbitraryShellExecutionExposed: false,
+    resources: hostResources,
+    warnings: [
+      ...(missing.length > 0 ? [`${missing.length} resource artifact(s) are missing; run the recommended commands to generate them.`] : []),
+      "Host manifests expose redacted local summaries only and do not grant write access."
+    ],
+    nextCommands: [
+      "soturail status --json",
+      "soturail report build",
+      `soturail report agent --agent ${reportAgentName(parsed)}`,
+      `soturail agents export --agent ${parsed}`,
+      `soturail agents doctor --host ${parsed}`
+    ]
+  };
+  const hostPath = path.join(hostDir, `${parsed}.json`);
+  const latestPath = path.join(dir, "host-manifest.json");
+  await writeJson(hostPath, manifest);
+  await writeJson(latestPath, manifest);
+  return {
+    path: latestPath,
+    manifest,
+    output: [
+      "SotuRail MCP host manifest",
+      `host: ${parsed}`,
+      `resources: ${hostResources.length}`,
+      `missing: ${missing.length}`,
+      `manifest: ${relativeToRoot(root, latestPath)}`,
+      "mode: read-only",
+      "mutation_allowed: false",
+      "arbitrary_shell_execution_exposed: false"
+    ].join("\n") + "\n"
+  };
+}
+
 function resource(uri: string, mimeType: string, text: string): { uri: string; mimeType: string; text: string } {
   return { uri, mimeType, text: redactText(sanitizeMcpResourceText(text)).text };
+}
+
+type McpHostManifestResourceDraft = Omit<McpHostManifestResource, "exists"> & { fullPath: string };
+
+async function buildHostManifestResources(root: string, host: string): Promise<McpHostManifestResource[]> {
+  const paths = getWorkspacePaths(root);
+  const items = [
+    hostResource(root, "status-json", "soturail://status/latest", path.join(paths.workspace, "status", "latest.json"), "application/json", "Latest unified status JSON."),
+    hostResource(root, "status-agent", "soturail://status/agent", path.join(paths.workspace, "status", "agent.md"), "text/markdown", "Concise agent-safe status."),
+    hostResource(root, "report-json", "soturail://reports/latest/json", path.join(paths.reportsDir, "latest.json"), "application/json", "Latest local report JSON."),
+    hostResource(root, "report-md", "soturail://reports/latest/md", path.join(paths.reportsDir, "latest.md"), "text/markdown", "Latest local report Markdown."),
+    hostResource(root, "report-html", "soturail://reports/latest/html", path.join(paths.reportsDir, "latest.html"), "text/html", "Static local report HTML."),
+    hostResource(root, "agent-report", `soturail://reports/agent/${host}`, path.join(paths.reportsDir, `agent-${reportAgentName(host)}.md`), "text/markdown", "Host-oriented agent report."),
+    hostResource(root, "brain-brief", `soturail://brain/export/${host}`, path.join(paths.brainExportsDir, `${brainExportName(host)}.md`), "text/markdown", "Project Brain host brief when available."),
+    hostResource(root, "schema-check", "soturail://schemas/check", path.join(paths.workspace, "schemas", "check.json"), "application/json", "Schema compatibility check."),
+    hostResource(root, "v1-readiness", "soturail://readiness/v1", path.join(paths.workspace, "readiness", "v1.json"), "application/json", "v1 readiness report."),
+    hostResource(root, "bench-latest", "soturail://bench/latest", path.join(paths.workspace, "bench", "latest.json"), "application/json", "Latest benchmark report."),
+    hostResource(root, "native-candidates", "soturail://native/candidates", path.join(paths.workspace, "native", "candidates.json"), "application/json", "Native candidate report."),
+    hostResource(root, "baseline-latest", "soturail://baseline/latest", path.join(paths.workspace, "baselines", "latest.json"), "application/json", "Baseline snapshot report."),
+    hostResource(root, "dashboard", "soturail://dashboard/index", path.join(paths.workspace, "dashboard", "index.html"), "text/html", "Static local dashboard."),
+    hostResource(root, "host-export", `soturail://agents/${host}/export`, path.join(paths.workspace, "agents", host), "inode/directory", "Host-specific v1.1 export directory."),
+    hostResource(root, "host-doctor", `soturail://agents/${host}/doctor`, path.join(paths.workspace, "agents", host, "doctor.json"), "application/json", "Host doctor report.")
+  ];
+  return Promise.all(items.map(async (item) => {
+    const { fullPath, ...publicItem } = item;
+    return { ...publicItem, exists: await exists(fullPath) };
+  }));
+}
+
+function hostResource(root: string, id: string, uri: string, filePath: string, mimeType: string, description: string): McpHostManifestResourceDraft {
+  return {
+    id,
+    uri,
+    path: relativeToRoot(root, filePath).replace(/\\/g, "/"),
+    fullPath: filePath,
+    mimeType,
+    description,
+    redacted: true
+  };
+}
+
+function reportAgentName(host: string): string {
+  if (host === "amp" || host === "kiro") return "generic";
+  return host;
+}
+
+function brainExportName(host: string): string {
+  if (host === "claude" || host === "codex" || host === "gemini" || host === "cursor" || host === "generic") return host;
+  return "generic";
+}
+
+async function exists(filePath: string): Promise<boolean> {
+  return fs.access(filePath).then(() => true).catch(() => false);
 }
 
 async function readOptional(filePath: string, fallback: string): Promise<string> {
