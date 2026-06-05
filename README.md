@@ -298,12 +298,14 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-Post-v1 work is staged so the stable Context OS surface stays reliable. v1.1.0 Host Compatibility Rail is now delivered; the next staged rails remain:
+Post-v1 work is staged so the stable Context OS surface stays reliable. v1.1.0 Host Compatibility Rail is now delivered; the next staged rails now include the 2026 agent-harness synthesis:
 
-- v1.2.0 Spec, Design And Diagram Rail;
-- v1.3.0 Knowledge Graph Rail;
-- v1.4.0 Skill Rail 2.0;
-- v1.5.0 Governance And Cost Rail.
+- v1.1.1 Host Compatibility Polish, ecosystem docs and golden export checks;
+- v1.2.0 Spec, Design, Diagram and Harness Lifecycle Rail;
+- v1.3.0 Knowledge, Evidence and Evaluation Rail;
+- v1.4.0 Skill Rail 2.0, Knowledge-to-Skill and Tasklet Packs;
+- v1.5.0 Governance, Cost, Resilience and Host Router Rail;
+- v1.6.0 Agent Governance / Evolution Rail.
 
 Experimental portions of those rails are not stable contracts until promoted.
 
@@ -341,6 +343,20 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Code Graph Seed](docs/code-graph.md)
 - [Roadmap Addendum](docs/roadmap-harness-diagram-payload-addendum.md)
 - [External Projects Audit](docs/external-projects-audit.md)
+- [2026 Agent Harness Synthesis](docs/agent-harness-synthesis-2026.md)
+- [Agent QA Rail](docs/agent-qa-rail.md)
+- [Eval Datasets](docs/eval-datasets.md)
+- [Golden Agent Tests](docs/golden-agent-tests.md)
+- [LLM-As-Judge Policy](docs/llm-as-judge-policy.md)
+- [Evidence And Provenance Rail](docs/evidence-provenance-rail.md)
+- [Agent Governance Rail](docs/agent-governance-rail.md)
+- [Harness Lifecycle Rail](docs/harness-lifecycle-rail.md)
+- [Knowledge Rail](docs/knowledge-rail.md)
+- [Resilience Rail](docs/resilience-rail.md)
+- [Rate Limit And Fallback Policy](docs/rate-limit-and-fallback-policy.md)
+- [Multi-Agent Workflow Templates](docs/multi-agent-workflow-templates.md)
+- [Host Router Rail](docs/host-router-rail.md)
+- [Tasklet Rail](docs/tasklet-rail.md)
 - [Host Compatibility Rail](docs/host-compatibility-rail.md)
 - [Design Rail](docs/design-rail.md)
 - [Knowledge Graph Rail](docs/knowledge-graph-rail.md)

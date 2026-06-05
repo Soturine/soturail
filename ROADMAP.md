@@ -61,6 +61,13 @@ See also:
 - [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md)
 - [docs/roadmap-harness-diagram-payload-addendum.md](docs/roadmap-harness-diagram-payload-addendum.md)
 - [docs/external-projects-audit.md](docs/external-projects-audit.md)
+- [docs/agent-harness-synthesis-2026.md](docs/agent-harness-synthesis-2026.md)
+- [docs/agent-qa-rail.md](docs/agent-qa-rail.md)
+- [docs/evidence-provenance-rail.md](docs/evidence-provenance-rail.md)
+- [docs/knowledge-rail.md](docs/knowledge-rail.md)
+- [docs/resilience-rail.md](docs/resilience-rail.md)
+- [docs/host-router-rail.md](docs/host-router-rail.md)
+- [docs/tasklet-rail.md](docs/tasklet-rail.md)
 - [docs/host-compatibility-rail.md](docs/host-compatibility-rail.md)
 - [docs/design-rail.md](docs/design-rail.md)
 - [docs/knowledge-graph-rail.md](docs/knowledge-graph-rail.md)
@@ -537,7 +544,31 @@ Non-goals:
 - do not require a specific model provider;
 - do not replace OpenCode, Claude Code, Codex, Cursor or Deep Agents.
 
-## v1.2.0 - Spec, Design And Diagram Rail
+## v1.1.1 - Host Compatibility Polish, Ecosystem Docs And Golden Export Checks
+
+Status: planned patch release after v1.1.0. This should be docs/fixtures/polish first, not a large runtime expansion.
+
+Influenced by QA-agent, agent-pipeline, harness, router and skill-generation projects reviewed in the 2026 agent-harness synthesis.
+
+Planned work:
+
+- add consolidated ecosystem docs for Agent QA, Evidence/Provenance, Knowledge, Resilience, Host Router, Tasklets and Agent Governance;
+- add golden checks for agent exports and host manifests where possible;
+- clarify that default evals remain offline, deterministic and provider-agnostic;
+- add examples for validate -> fix -> verify -> report and multi-agent role templates;
+- add host-router language for context export fallback without proxying model traffic;
+- update roadmap docs so future rails are staged instead of bundled into one large release.
+
+Non-goals:
+
+- no provider proxy;
+- no MITM bridge;
+- no live billing integration;
+- no required LLM-as-judge;
+- no autonomous self-modifying loop;
+- no mandatory server/dashboard runtime.
+
+## v1.2.0 - Spec, Design, Diagram And Harness Lifecycle Rail
 
 Inspired by `design.md`, Mermaid Diagram Driven Development and spec-driven workflows.
 
@@ -546,6 +577,11 @@ Goal: make specs, visual contracts and design constraints first-class local cont
 Planned work:
 
 - `soturail spec init` to scaffold `PRD.md`, `requirements.md`, `design.md`, `tasks.md`, `AGENTS.md`/host rules and verification phases;
+- `soturail harness init` to scaffold instructions, state, verification, scope and lifecycle files;
+- `soturail harness audit` to score instruction/state/verification/scope/lifecycle readiness;
+- `soturail session start|verify|handoff|end` to make long agent sessions resumable;
+- `soturail feature add|start|done` to keep one active feature and definition-of-done at a time;
+- multi-agent workflow templates for researcher, analyst, writer and verifier role packs;
 - `soturail spec check` to validate that requirements, design notes, diagrams, tasks and acceptance criteria stay connected;
 - `soturail spec plan` to turn specs into role-aware workflow tasks without executing them;
 - `soturail design init` to scaffold a local `DESIGN.md` with tokens, style rules, accessibility notes and component guidance;
@@ -563,11 +599,11 @@ Rules:
 - rendered diagrams are local artifacts, not remote services;
 - design guidance must be agent-readable but not huge enough to poison context windows.
 
-## v1.3.0 - Knowledge Graph Rail
+## v1.3.0 - Knowledge, Evidence And Evaluation Rail
 
-Inspired by codebase-understanding tools and the existing Project Brain / Reverse Specification Rail.
+Inspired by codebase-understanding tools, Project Brain, reverse specification, document-to-skill workflows, provenance-focused research agents and QA-agent evaluation patterns.
 
-Goal: connect files, symbols, decisions, claims, bugs, tests, workflows and releases into a local explainable project graph.
+Goal: connect files, symbols, decisions, claims, bugs, tests, workflows and releases into local explainable knowledge, evidence and eval artifacts.
 
 Planned work:
 
@@ -577,8 +613,13 @@ Planned work:
 - `soturail graph tour` to generate agent-readable onboarding paths through the codebase;
 - `soturail graph dashboard` to add local dashboard graph views without cloud dependencies;
 - `soturail graph export --format json` for agent/tool consumption;
+- `soturail knowledge ingest|estimate|compile|update|verify` to turn docs/specs/notes into on-demand knowledge packs;
+- `soturail evidence collect|verify|report` and report `.provenance.md` sidecars;
+- explicit `verified`, `unverified`, `blocked` and `inferred` status in evidence/provenance reports;
+- `soturail eval dataset init|run`, `eval golden`, `eval regression` and `eval report` for local Agent QA;
+- optional `soturail eval judge --optional` with provider-backed judges kept outside default release gates;
 - stale-edge detection when files move, claims lose evidence or diagrams point at removed behavior;
-- keep graph construction deterministic and local-first before considering embeddings or external indexes.
+- keep graph construction, knowledge packs and eval datasets deterministic and local-first before considering embeddings, provider judges or external indexes.
 
 Non-goals:
 
@@ -587,7 +628,7 @@ Non-goals:
 - no unsupported semantic claims without source evidence;
 - no full static analyzer promise before benchmarks and fixtures justify it.
 
-## v1.4.0 - Skill Rail 2.0 And Domain Skill Packs
+## v1.4.0 - Skill Rail 2.0, Knowledge-To-Skill And Tasklet Packs
 
 Inspired by domain-specific skills such as Sonar/TOTVS-style analysis, Deep Agents-style skills and OpenCode/agent skill systems.
 
@@ -600,6 +641,10 @@ Planned work:
 - `soturail skills eval` to run local fixtures for a skill before exporting it;
 - `soturail skills report` to summarize skill purpose, risk, evidence needs and verification requirements;
 - `soturail skills export --agent claude|codex|opencode|cursor|antigravity|generic` with role-aware bundles instead of always-loaded skill dumps;
+- `soturail skill build <paths>` to compile local docs into skill folders with `SKILL.md`, topics, glossary, patterns, cheatsheet and metadata;
+- `soturail skill fold-in <skill> <paths>` to update an existing skill with new source material;
+- `soturail tasklet create|run|list|export` for small reusable local task templates;
+- skills-only export/install modes for hosts that support local skill folders, with prompt-only fallback for hosts that do not;
 - domain skill reports should separate findings, severity, confidence, evidence path and suggested safe next command;
 - no skill should hide destructive commands, remote writes, dependency installs, secrets access or unsafe MCP exposure.
 
@@ -609,7 +654,7 @@ Security boundary:
 - SotuRail should not ship exploit, bypass, credential theft, malware, evasion or unauthorized access instructions;
 - reports should be useful for authorized review without making harmful steps operational.
 
-## v1.5.0 - Governance, Cost And Dynamic Workflow Guardrails
+## v1.5.0 - Governance, Cost, Resilience And Host Router Rail
 
 Inspired by dynamic agent workflows, long-horizon agents, token-budget concerns and provider/tool-cost discussions.
 
@@ -618,6 +663,10 @@ Goal: give users local warnings and evidence before expensive or high-risk agent
 Planned work:
 
 - `soturail budget doctor` or an equivalent report section for context size, repeated instructions, giant tool outputs, always-loaded skills, MCP exposure and long session history;
+- `soturail context optimize|budget|compact` to produce full/compact/ultra context variants;
+- `soturail hosts status`, `soturail export all` and `soturail export --fallback` for context-format fallback across hosts;
+- `soturail agents resilience doctor` or report sections for retry/fallback/rate-limit documentation gaps;
+- `soturail governance fallback-policy` and `soturail governance rate-limit` documentation/report helpers;
 - workflow budget gates for dynamic/sub-agent workflows;
 - policy warnings for workflows that can spawn many subagents, run long sessions or repeatedly execute tools;
 - model/provider capability and cost notes stored as local config/docs, not live billing claims unless user supplies data;
@@ -630,7 +679,29 @@ Non-goals:
 - no billing integration by default;
 - no live provider telemetry upload;
 - no claims about provider prices without versioned evidence and user review;
-- no automatic disabling of external tools without user action.
+- no automatic disabling of external tools without user action;
+- no model-request proxy, MITM bridge, browser-token reuse, quota bypass or provider-account automation.
+
+## v1.6.0 - Agent Governance And Evolution Rail
+
+Inspired by self-improving harness systems, but scoped to local evidence and human approval.
+
+Planned work:
+
+- `soturail trace start|stop|list|show|export` for local agent/session traces;
+- `soturail ledger list` and append-only decision records under `.soturail/ledger/`;
+- `.soturail/policies/agent-boundary.yaml` with mutable/read-only/append-only boundaries;
+- `.soturail/experiments/candidates` and `.soturail/experiments/results` for proposed changes;
+- `soturail experiment create|run|compare`;
+- `soturail improve propose|eval|approve|apply` with deterministic evals before approval;
+- dashboard timeline cards for trace, ledger, evidence, eval and approval status.
+
+Non-goals:
+
+- no autonomous self-modifying loop by default;
+- no patch apply without reviewable diff and explicit approval;
+- no hosted control plane requirement;
+- no required LLM provider.
 
 ## Later Exploration - MCP Apps, AG-UI And Gateway Lite
 

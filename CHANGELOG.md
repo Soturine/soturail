@@ -1,10 +1,21 @@
-﻿# Changelog
+# Changelog
 
 All notable changes to SotuRail are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses semantic versioning before npm publication.
 
 ## [Unreleased]
+
+### Added
+
+- Added 2026 agent-harness synthesis docs covering Agent QA, Resilience, Evidence/Provenance, Knowledge, Host Router, Tasklet and Agent Governance directions.
+- Added planning docs for eval datasets, golden agent tests and optional LLM-as-judge policy.
+- Added example workflow templates for validate -> fix -> verify -> report pipelines and multi-agent research/report role packs.
+
+### Changed
+
+- Updated README, ROADMAP, Future Rails Index, Ecosystem Influences and External Projects Audit with the new post-v1 planning sequence through v1.6.0.
+
 
 ## [1.1.0] - 2026-06-05
 
