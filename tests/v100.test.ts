@@ -21,7 +21,7 @@ import { SOTURAIL_VERSION } from "../src/core/version.js";
 
 describe("v1.0.0 stable context os contracts", () => {
   it("uses the stable v1 package/CLI version constant", () => {
-    expect(SOTURAIL_VERSION).toMatch(/^1\.0\.\d+$/);
+    expect(SOTURAIL_VERSION).toMatch(/^1\.\d+\.\d+$/);
   });
 
   it("emits valid status JSON and builds local report/dashboard artifacts", async () => {
@@ -32,7 +32,7 @@ describe("v1.0.0 stable context os contracts", () => {
     const dashboard = await buildDashboard(root);
 
     expect(status.schemaVersion).toBe("soturail.status.v1");
-    expect(status.version).toMatch(/^1\.0\.\d+$/);
+    expect(status.version).toMatch(/^1\.\d+\.\d+$/);
     expect(Array.isArray(status.warnings)).toBe(true);
     expect(Array.isArray(status.nextCommands)).toBe(true);
     expect(JSON.parse(await readFile(report.paths.json, "utf8")).schemaVersion).toBe("soturail.report.v1");
@@ -94,6 +94,9 @@ describe("v1.0.0 stable context os contracts", () => {
       "docs/v1-contract.md",
       "docs/schema-contracts.md",
       "docs/agent-hosts.md",
+      "docs/host-matrix-schema.md",
+      "docs/agent-export-contract.md",
+      "docs/mcp-host-manifest.md",
       "docs/clean-code-guidelines.md",
       "docs/architecture-boundaries.md",
       "docs/stable-command-surface.md",
@@ -173,6 +176,9 @@ async function tempProject(): Promise<string> {
     "v1-contract.md",
     "schema-contracts.md",
     "agent-hosts.md",
+    "host-matrix-schema.md",
+    "agent-export-contract.md",
+    "mcp-host-manifest.md",
     "clean-code-guidelines.md",
     "architecture-boundaries.md"
   ]) {

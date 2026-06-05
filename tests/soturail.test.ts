@@ -573,7 +573,7 @@ describe("agent integrations", () => {
     const exported = await exportAgents("all", root);
     const doctor = await agentDoctor(root);
 
-    expect(list).toContain("agents_count: 11");
+    expect(list).toContain("agents_count: 12");
     expect(list).toContain("- antigravity [low]");
     expect(list).toContain("- deepagents-js [medium]");
     expect(exported.written).toContain(path.normalize(".soturail/exports/agents/claude/CLAUDE.md"));
@@ -587,7 +587,7 @@ describe("agent integrations", () => {
     expect(cleanDoctor).toContain(`version: ${SOTURAIL_VERSION}`);
     expect(cleanDoctor).toContain("workspace: ready");
     expect(cleanDoctor).toContain("context_packs:");
-    for (const agent of ["claude", "codex", "gemini", "cursor", "antigravity", "generic", "opencode", "amp", "kiro", "deepagents", "deepagents-js"]) {
+    for (const agent of ["claude", "codex", "gemini", "gemini-legacy", "cursor", "antigravity", "generic", "opencode", "amp", "kiro", "deepagents", "deepagents-js"]) {
       expect(cleanDoctor).toContain(agent);
     }
     expect(cleanDoctor).toContain("Next steps:");
