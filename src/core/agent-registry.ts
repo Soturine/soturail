@@ -38,6 +38,18 @@ export const agentProfiles: AgentProfile[] = [
     notes: ["Use GEMINI.md and context packs for portable guidance."]
   },
   {
+    id: "gemini-legacy",
+    display_name: "Gemini Legacy/Compatible",
+    integration_modes: ["prompt-only"],
+    default_mode: "prompt-only",
+    risk_level: "low",
+    supports_mcp: false,
+    supports_project_rules: true,
+    supports_hooks: false,
+    safe_by_default: true,
+    notes: ["Legacy/compatible Gemini-style exports use AGENTS.md plus GEMINI.md for broad host portability."]
+  },
+  {
     id: "cursor",
     display_name: "Cursor",
     integration_modes: ["prompt-only", "rules"],

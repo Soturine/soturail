@@ -45,7 +45,7 @@ export function registerReportCommand(program: Command): void {
     process.stdout.write(await reportGithubSummary());
   });
 
-  report.command("agent").description("Write an agent-readable report.").requiredOption("--agent <agent>", "codex, claude, gemini, or generic").action(async (options: { agent: string }) => {
+  report.command("agent").description("Write an agent-readable report.").requiredOption("--agent <agent>", "codex, claude, gemini, gemini-legacy, cursor, opencode, antigravity, deepagents, deepagents-js, amp, kiro, or generic").action(async (options: { agent: string }) => {
     process.stdout.write(await reportAgent(process.cwd(), parseAgent(options.agent)));
   });
 
@@ -60,6 +60,19 @@ function parseFormat(value: string): ReportFormat {
 }
 
 function parseAgent(value: string): ReportAgent {
-  if (value === "codex" || value === "claude" || value === "gemini" || value === "generic") return value;
-  throw new Error("Supported report agents: codex, claude, gemini, generic.");
+  if (
+    value === "codex"
+    || value === "claude"
+    || value === "gemini"
+    || value === "gemini-legacy"
+    || value === "cursor"
+    || value === "opencode"
+    || value === "antigravity"
+    || value === "deepagents"
+    || value === "deepagents-js"
+    || value === "generic"
+    || value === "amp"
+    || value === "kiro"
+  ) return value;
+  throw new Error("Supported report agents: codex, claude, gemini, gemini-legacy, cursor, opencode, antigravity, deepagents, deepagents-js, amp, kiro, generic.");
 }

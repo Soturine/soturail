@@ -68,7 +68,20 @@ export interface AgentRuntimeStatus {
 export interface AgentHostMatrixRow {
   host: string;
   id: string;
-  status: "stable" | "experimental" | "planned" | "legacy" | "unknown";
+  status: "stable" | "experimental" | "planned" | "legacy" | "unknown" | "generic-compatible";
+  displayName: string;
+  priority: "high" | "normal" | "low";
+  instructionFiles: string[];
+  contextFormats: string[];
+  reportFormats: string[];
+  mcpSupport: "read-only-resources" | "host-config" | "prompt-only" | "planned" | "not-supported";
+  skillsSupport: CapabilityStatus;
+  hooksSupport: CapabilityStatus;
+  installSupport: CapabilityStatus;
+  mutationAllowedByDefault: false;
+  recommendedCommands: string[];
+  limitations: string[];
+  policyNotes: string[];
   exportSupport: CapabilityStatus;
   reportAgentSupport: CapabilityStatus;
   contextPackSupport: CapabilityStatus;
@@ -80,6 +93,7 @@ export interface AgentHostMatrixRow {
 
 export interface AgentHostMatrixReport {
   schemaVersion: "soturail.agents.matrix.v1";
+  contractId: "soturail.agent-host-matrix.v1";
   createdAt: string;
   version: string;
   status: "passed" | "warning" | "failed" | "unknown";
@@ -155,9 +169,29 @@ const capabilityOverrides: Record<AgentId, Omit<AgentCapability, "id" | "display
     promptOnlyFallback: "supported",
     safeInstallModes: ["prompt-only"],
     defaultInstallMode: "prompt-only",
-    configPaths: ["GEMINI.md", ".soturail/exports/agents/gemini/"],
+    configPaths: ["GEMINI.md", ".soturail/agents/gemini/", ".soturail/exports/agents/gemini/"],
     recommendedPayloads: ["GEMINI.md", "Markdown", "JSON summaries", "large-context docs"],
     notes: ["Gemini support uses portable prompt/context artifacts and does not assume hooks."]
+  },
+  "gemini-legacy": {
+    maturity: "prompt-only",
+    instructionDocs: "supported",
+    rulesSettings: "prompt-only",
+    hooks: "not-supported",
+    mcp: "planned",
+    skills: "supported",
+    contextPacks: "supported",
+    rolePacks: "supported",
+    policyNotes: "supported",
+    installSupport: "prompt-only",
+    dryRunSupport: "supported",
+    backupSupport: "supported",
+    promptOnlyFallback: "supported",
+    safeInstallModes: ["prompt-only"],
+    defaultInstallMode: "prompt-only",
+    configPaths: ["AGENTS.md", "GEMINI.md", ".soturail/agents/gemini-legacy/", ".soturail/exports/agents/gemini-legacy/"],
+    recommendedPayloads: ["AGENTS.md", "GEMINI.md", "Markdown", "JSON summaries", "large-context docs"],
+    notes: ["Gemini legacy/compatible support is prompt-only and aimed at hosts that have not adopted a stable project config contract."]
   },
   cursor: {
     maturity: "dry-run-first",
@@ -175,7 +209,7 @@ const capabilityOverrides: Record<AgentId, Omit<AgentCapability, "id" | "display
     promptOnlyFallback: "supported",
     safeInstallModes: ["prompt-only", "rules"],
     defaultInstallMode: "prompt-only",
-    configPaths: [".cursor/rules/soturail.mdc", ".soturail/exports/agents/cursor/"],
+    configPaths: [".cursor/rules/soturail.mdc", ".soturail/agents/cursor/", ".soturail/exports/agents/cursor/"],
     recommendedPayloads: ["Cursor rules", "Markdown docs", "file references", "compact tables"],
     notes: ["Cursor rules are project-local files and should be reviewed before enabling."]
   },
@@ -195,9 +229,9 @@ const capabilityOverrides: Record<AgentId, Omit<AgentCapability, "id" | "display
     promptOnlyFallback: "supported",
     safeInstallModes: ["prompt-only"],
     defaultInstallMode: "prompt-only",
-    configPaths: [".soturail/exports/agents/antigravity/prompt-only.md"],
-    recommendedPayloads: ["Markdown", "context pack export", "prompt-only fallback"],
-    notes: ["Antigravity remains prompt-only until stable local config surfaces are confirmed."]
+    configPaths: [".soturail/agents/antigravity/AGENTS.md", ".soturail/exports/agents/antigravity/prompt-only.md"],
+    recommendedPayloads: ["AGENTS.md", "Markdown", "context pack export", "prompt-only fallback"],
+    notes: ["Antigravity is high-priority but experimental; it remains prompt-only until a stable Google-local config surface is documented."]
   },
   generic: {
     maturity: "supported",
@@ -215,11 +249,11 @@ const capabilityOverrides: Record<AgentId, Omit<AgentCapability, "id" | "display
     promptOnlyFallback: "supported",
     safeInstallModes: ["prompt-only", "mcp"],
     defaultInstallMode: "prompt-only",
-    configPaths: [".soturail/exports/agents/generic/prompt-only.md"],
-    recommendedPayloads: ["Markdown", "JSON reports", "MCP stdio notes", "prompt-only fallback"],
+    configPaths: [".soturail/agents/generic/AGENT_CONTEXT.md", ".soturail/exports/agents/generic/prompt-only.md"],
+    recommendedPayloads: ["AGENT_CONTEXT.md", "Markdown", "JSON reports", "MCP stdio notes", "prompt-only fallback"],
     notes: ["Generic support is portable Markdown plus reviewed MCP snippets."]
   },
-  opencode: promptOnlyHost("opencode", [".soturail/exports/agents/opencode/prompt-only.md"], [
+  opencode: promptOnlyHost("opencode", [".soturail/agents/opencode/AGENTS.md", ".soturail/exports/agents/opencode/prompt-only.md"], [
     "Markdown",
     "AGENTS-style root instructions",
     "context pack references",
@@ -237,8 +271,8 @@ const capabilityOverrides: Record<AgentId, Omit<AgentCapability, "id" | "display
     "context pack references",
     "prompt-only fallback"
   ]),
-  deepagents: experimentalDeepHost("deepagents", [".soturail/exports/agents/deepagents/deepagents.md"]),
-  "deepagents-js": experimentalDeepHost("deepagents-js", [".soturail/exports/agents/deepagents-js/deepagents-js.md"])
+  deepagents: experimentalDeepHost("deepagents", [".soturail/agents/deepagents/role-pack.md", ".soturail/exports/agents/deepagents/deepagents.md"]),
+  "deepagents-js": experimentalDeepHost("deepagents-js", [".soturail/agents/deepagents-js/role-pack.md", ".soturail/exports/agents/deepagents-js/deepagents-js.md"])
 };
 
 export function listAgentCapabilities(): AgentCapability[] {
@@ -299,6 +333,23 @@ export function buildAgentHostMatrix(): AgentHostMatrixReport {
     host: displayHostName(capability),
     id: capability.id,
     status: stableHostStatus(capability),
+    displayName: capability.displayName,
+    priority: hostPriority(capability.id),
+    instructionFiles: instructionFilesFor(capability.id),
+    contextFormats: contextFormatsFor(capability.id),
+    reportFormats: reportFormatsFor(capability.id),
+    mcpSupport: mcpSupportFor(capability),
+    skillsSupport: capability.skills,
+    hooksSupport: capability.hooks,
+    installSupport: capability.installSupport,
+    mutationAllowedByDefault: false,
+    recommendedCommands: recommendedCommandsFor(capability.id),
+    limitations: capability.notes,
+    policyNotes: [
+      "Local artifacts only.",
+      "Read-only MCP resources by default.",
+      "No host receives destructive tool access from SotuRail exports."
+    ],
     exportSupport: capability.instructionDocs,
     reportAgentSupport: reportAgentSupport(capability.id),
     contextPackSupport: capability.contextPacks,
@@ -313,6 +364,7 @@ export function buildAgentHostMatrix(): AgentHostMatrixReport {
   ];
   return {
     schemaVersion: "soturail.agents.matrix.v1",
+    contractId: "soturail.agent-host-matrix.v1",
     createdAt: new Date().toISOString(),
     version: SOTURAIL_VERSION,
     status: "warning",
@@ -320,6 +372,8 @@ export function buildAgentHostMatrix(): AgentHostMatrixReport {
     warnings,
     nextCommands: [
       "soturail agents export --agent codex",
+      "soturail agents doctor --all",
+      "soturail mcp resources host-manifest --host codex",
       "soturail report agent --agent codex",
       "soturail mcp resources report",
       "soturail agents doctor --verbose"
@@ -336,7 +390,7 @@ export function renderAgentHostMatrix(report = buildAgentHostMatrix()): string {
     "",
     "| host | status | export | report agent | context packs | MCP resources | dry-run install | recommended command |",
     "|---|---|---|---|---|---|---|---|",
-    ...report.hosts.map((host) => `| ${host.host} | ${host.status} | ${host.exportSupport} | ${host.reportAgentSupport} | ${host.contextPackSupport} | ${host.mcpResourcesSupport} | ${host.installDryRunSupport} | \`${host.recommendedCommand}\` |`),
+    ...report.hosts.map((host) => `| ${host.host} | ${host.status} | ${host.exportSupport} | ${host.reportAgentSupport} | ${host.contextPackSupport} | ${host.mcpSupport} | ${host.installDryRunSupport} | \`${host.recommendedCommand}\` |`),
     "",
     "Warnings:",
     ...report.warnings.map((warning) => `- ${warning}`),
@@ -450,14 +504,15 @@ export function renderAgentStatus(status: AgentRuntimeStatus): string {
 }
 
 function setupCommandFor(id: AgentId): string {
-  if (id === "antigravity" || id === "opencode" || id === "amp" || id === "kiro") return `soturail agents export --agent ${id}`;
+  if (id === "antigravity" || id === "opencode" || id === "amp" || id === "kiro" || id === "gemini-legacy") return `soturail agents export --agent ${id}`;
   if (id === "deepagents" || id === "deepagents-js") return `soturail agents export --agent ${id}`;
   return `soturail agents install --agent ${id} --dry-run`;
 }
 
 function displayHostName(capability: AgentCapability): string {
   if (capability.id === "antigravity") return "Antigravity-style hosts";
-  if (capability.id === "gemini") return "Gemini legacy/compatible hosts";
+  if (capability.id === "gemini") return "Gemini";
+  if (capability.id === "gemini-legacy") return "Gemini legacy/compatible hosts";
   if (capability.id === "deepagents" || capability.id === "deepagents-js") return "DeepAgents-style targets";
   if (capability.id === "opencode") return "OpenCode";
   return capability.displayName;
@@ -466,14 +521,73 @@ function displayHostName(capability: AgentCapability): string {
 function stableHostStatus(capability: AgentCapability): AgentHostMatrixRow["status"] {
   if (capability.id === "generic") return "stable";
   if (capability.id === "claude" || capability.id === "codex" || capability.id === "cursor") return "stable";
-  if (capability.id === "gemini") return "legacy";
+  if (capability.id === "gemini" || capability.id === "gemini-legacy") return "legacy";
+  if (capability.id === "opencode") return "generic-compatible";
   if (capability.maturity === "experimental") return "experimental";
   if (capability.maturity === "planned") return "planned";
   return capability.maturity === "prompt-only" ? "experimental" : "unknown";
 }
 
 function reportAgentSupport(id: AgentId): CapabilityStatus {
-  return id === "claude" || id === "codex" || id === "gemini" || id === "generic" ? "supported" : "prompt-only";
+  if (id === "claude" || id === "codex" || id === "gemini" || id === "gemini-legacy" || id === "cursor" || id === "generic") return "supported";
+  return "prompt-only";
+}
+
+function hostPriority(id: AgentId): AgentHostMatrixRow["priority"] {
+  if (id === "antigravity") return "high";
+  if (id === "opencode" || id === "gemini-legacy" || id === "deepagents" || id === "deepagents-js") return "normal";
+  return "low";
+}
+
+function instructionFilesFor(id: AgentId): string[] {
+  const files: Record<AgentId, string[]> = {
+    claude: ["CLAUDE.md", "context-pack.md"],
+    codex: ["AGENTS.md", "context-pack.md"],
+    gemini: ["GEMINI.md", "AGENTS.md", "context-pack.md"],
+    "gemini-legacy": ["AGENTS.md", "GEMINI.md", "context-pack.md"],
+    cursor: ["rules.md", "cursor-rules.md", "context-pack.md"],
+    antigravity: ["AGENTS.md", "prompt-only.md", "context-pack.md"],
+    generic: ["AGENT_CONTEXT.md", "prompt-only.md", "context-pack.md"],
+    opencode: ["AGENTS.md", "prompt-only.md", "context-pack.md"],
+    amp: ["prompt-only.md", "context-pack.md"],
+    kiro: ["prompt-only.md", "context-pack.md"],
+    deepagents: ["role-pack.md", "subagents.md", "deepagents.md"],
+    "deepagents-js": ["role-pack.md", "subagents.md", "deepagents-js.md"]
+  };
+  return files[id];
+}
+
+function contextFormatsFor(id: AgentId): string[] {
+  if (id === "deepagents" || id === "deepagents-js") return ["Markdown role pack", "JSON runtime note", "context-pack.md"];
+  return ["Markdown", "context-pack.md", "agent report references"];
+}
+
+function reportFormatsFor(id: AgentId): string[] {
+  if (id === "claude") return ["Markdown", "tagged sections"];
+  if (id === "cursor") return ["short Markdown rules"];
+  if (id === "deepagents" || id === "deepagents-js") return ["role-pack Markdown", "agent report Markdown"];
+  return ["Markdown", "JSON evidence paths"];
+}
+
+function mcpSupportFor(capability: AgentCapability): AgentHostMatrixRow["mcpSupport"] {
+  if (capability.mcp === "supported") return "host-config";
+  if (capability.mcp === "experimental") return "read-only-resources";
+  if (capability.mcp === "planned" || capability.mcp === "docs-only") return "planned";
+  if (capability.promptOnlyFallback === "supported") return "prompt-only";
+  return "not-supported";
+}
+
+function recommendedCommandsFor(id: AgentId): string[] {
+  return [
+    setupCommandFor(id),
+    `soturail agents doctor --host ${id}`,
+    `soturail report agent --agent ${reportAgentIdFor(id)}`,
+    `soturail mcp resources host-manifest --host ${id}`
+  ];
+}
+
+function reportAgentIdFor(id: AgentId): AgentId {
+  return id;
 }
 
 async function detect(root: string, relativePath: string, kind: string): Promise<{ path: string; present: boolean; kind: string }> {

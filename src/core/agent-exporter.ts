@@ -6,10 +6,12 @@ import { listMcpTools } from "./mcp-tools.js";
 import { listMcpResources } from "./mcp-resources.js";
 import { getAgentProfile, listAgentProfiles, parseAgentId } from "./agent-registry.js";
 import type { AgentExportFile, AgentId, AgentInstallOptions, AgentMode } from "./agent-profile.js";
+import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
 import {
   AGENT_POLICY_NOTES,
   agentStatus,
+  buildAgentHostMatrix,
   getAgentCapability,
   listAgentCapabilities,
   payloadRecommendationsFor,
@@ -20,24 +22,60 @@ export interface AgentExportResult {
   written: string[];
 }
 
+export interface AgentExportOptions {
+  out?: string;
+  format?: string;
+  include?: string;
+  role?: string;
+}
+
 export interface AgentInstallResult {
   lines: string[];
 }
 
-export async function exportAgents(agentValue: string, root = process.cwd()): Promise<AgentExportResult> {
+export interface AgentHostDoctorReport {
+  schemaVersion: "soturail.agent-host-doctor.v1";
+  createdAt: string;
+  version: string;
+  host: string;
+  status: "passed" | "warning" | "failed";
+  matrixStatus: string;
+  exportPaths: string[];
+  checks: Array<{ id: string; status: "passed" | "warning" | "failed"; summary: string }>;
+  warnings: string[];
+  blockingIssues: string[];
+  nextCommands: string[];
+}
+
+export interface AgentHostDoctorSummary {
+  schemaVersion: "soturail.agent-host-doctor-summary.v1";
+  createdAt: string;
+  version: string;
+  status: "passed" | "warning" | "failed";
+  hosts: AgentHostDoctorReport[];
+  warnings: string[];
+  blockingIssues: string[];
+  nextCommands: string[];
+}
+
+export async function exportAgents(agentValue: string, rootOrOptions: string | AgentExportOptions = process.cwd(), maybeRoot = process.cwd()): Promise<AgentExportResult> {
+  const root = typeof rootOrOptions === "string" ? rootOrOptions : maybeRoot;
+  const options: AgentExportOptions = typeof rootOrOptions === "string" ? {} : rootOrOptions;
   await ensureWorkspace(root);
   const parsed = parseAgentId(agentValue);
   const selected: AgentId[] = parsed === "all" ? allAgentIds() : [parsed];
   const paths = getWorkspacePaths(root);
   const written: string[] = [];
   for (const agent of selected) {
-    const targetDir = path.join(paths.agentExportsDir, agent);
-    await fs.mkdir(targetDir, { recursive: true });
-    for (const file of await buildAgentExportFiles(agent, root)) {
-      const filePath = path.join(targetDir, file.relativePath);
-      await fs.mkdir(path.dirname(filePath), { recursive: true });
-      await fs.writeFile(filePath, file.content, "utf8");
-      written.push(relativeToRoot(root, filePath));
+    const targetDirs = exportTargetDirs(root, paths.agentExportsDir, agent, selected.length, options);
+    for (const targetDir of targetDirs) {
+      await fs.mkdir(targetDir, { recursive: true });
+      for (const file of await buildAgentExportFiles(agent, root, options)) {
+        const filePath = path.join(targetDir, file.relativePath);
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.writeFile(filePath, file.content, "utf8");
+        written.push(relativeToRoot(root, filePath));
+      }
     }
   }
   return { written };
@@ -180,6 +218,142 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
   return lines.join("\n") + "\n";
 }
 
+export async function agentHostDoctor(agentValue: string, root = process.cwd()): Promise<AgentHostDoctorReport> {
+  await ensureWorkspace(root);
+  const parsed = parseAgentId(agentValue);
+  if (parsed === "all") throw new Error("Use agents doctor --all for all host checks.");
+  const matrix = buildAgentHostMatrix();
+  const row = matrix.hosts.find((host) => host.id === parsed);
+  const exportResult = await exportAgents(parsed, root);
+  const generatedFiles = exportResult.written.filter((file) => file.includes(`/agents/${parsed}/`) || file.includes(`\\agents\\${parsed}\\`));
+  const exportTexts = await Promise.all(exportResult.written
+    .filter((file) => file.endsWith(".md") || file.endsWith(".json"))
+    .map((file) => fs.readFile(path.resolve(root, file), "utf8").catch(() => "")));
+  const joined = exportTexts.join("\n");
+  const redaction = redactText(joined);
+  const unsafeClaim = /(mutationAllowed\s*:\s*true|mutationAllowed"\s*:\s*true|arbitrary_shell_execution"\s*:\s*true|arbitrary shell execution enabled)/i.test(joined);
+  const rawPathLeak = /\.soturail[\\/]+raw/i.test(joined);
+  const contamination = /\b(SoturAI|trading|backtest|portfolio|broker)\b/i.test(joined);
+  const warnings: string[] = [];
+  const blockingIssues: string[] = [];
+  if (!row) blockingIssues.push(`No matrix row exists for ${parsed}.`);
+  if (redaction.redactions.length > 0) blockingIssues.push(`Export text contains ${redaction.redactions.length} probable secret pattern(s).`);
+  if (unsafeClaim) blockingIssues.push("Export text appears to claim mutable or arbitrary-shell MCP behavior.");
+  if (rawPathLeak) blockingIssues.push("Export text references raw evidence paths; agent handoffs should use redacted summaries.");
+  if (contamination) blockingIssues.push("Export text contains non-SotuRail scope contamination terms.");
+  if (generatedFiles.length === 0) warnings.push("No v1.1 .soturail/agents mirror files were generated.");
+  if (parsed === "antigravity" && !/experimental|high-priority|Google-local/i.test(joined)) warnings.push("Antigravity export should describe the experimental Google-local transition boundary.");
+  if (parsed === "gemini-legacy" && !/legacy|compatible/i.test(joined)) warnings.push("Gemini legacy export should include compatibility notes.");
+  if ((parsed === "deepagents" || parsed === "deepagents-js") && !/role pack|runtime boundary|does not run/i.test(joined)) warnings.push("DeepAgents export should make the role-pack-only boundary explicit.");
+  const checks: AgentHostDoctorReport["checks"] = [
+    { id: "matrix-row", status: row ? "passed" : "failed", summary: row ? `${row.status} host matrix row present.` : "Host missing from matrix." },
+    { id: "export-generated", status: exportResult.written.length > 0 ? "passed" : "failed", summary: `${exportResult.written.length} export artifact(s) generated.` },
+    { id: "v110-export-path", status: generatedFiles.length > 0 ? "passed" : "warning", summary: `${generatedFiles.length} v1.1 .soturail/agents artifact(s) generated.` },
+    { id: "secret-redaction", status: redaction.redactions.length === 0 ? "passed" : "failed", summary: redaction.redactions.length === 0 ? "No probable secret patterns found." : "Probable secret patterns were found and must be redacted." },
+    { id: "mcp-read-only", status: unsafeClaim ? "failed" : "passed", summary: "Generated exports describe MCP as read-only/resource-first by default." },
+    { id: "scope-contamination", status: contamination ? "failed" : "passed", summary: "Generated exports stay within SotuRail scope." }
+  ];
+  const status: AgentHostDoctorReport["status"] = blockingIssues.length > 0 ? "failed" : warnings.length > 0 ? "warning" : "passed";
+  const report: AgentHostDoctorReport = {
+    schemaVersion: "soturail.agent-host-doctor.v1",
+    createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    host: parsed,
+    status,
+    matrixStatus: row?.status ?? "unknown",
+    exportPaths: exportResult.written,
+    checks,
+    warnings,
+    blockingIssues,
+    nextCommands: [
+      `soturail agents export --agent ${parsed}`,
+      `soturail report agent --agent ${reportAgentName(parsed)}`,
+      `soturail mcp resources host-manifest --host ${parsed}`,
+      "soturail agents matrix"
+    ]
+  };
+  await writeAgentHostDoctorArtifacts(root, parsed, report);
+  return report;
+}
+
+export async function agentHostDoctorAll(root = process.cwd()): Promise<AgentHostDoctorSummary> {
+  await ensureWorkspace(root);
+  const hosts = [];
+  for (const profile of listAgentProfiles()) {
+    hosts.push(await agentHostDoctor(profile.id, root));
+  }
+  const warnings = hosts.flatMap((host) => host.warnings.map((warning) => `${host.host}: ${warning}`));
+  const blockingIssues = hosts.flatMap((host) => host.blockingIssues.map((issue) => `${host.host}: ${issue}`));
+  const summary: AgentHostDoctorSummary = {
+    schemaVersion: "soturail.agent-host-doctor-summary.v1",
+    createdAt: new Date().toISOString(),
+    version: SOTURAIL_VERSION,
+    status: blockingIssues.length > 0 ? "failed" : warnings.length > 0 ? "warning" : "passed",
+    hosts,
+    warnings,
+    blockingIssues,
+    nextCommands: [
+      "soturail agents matrix",
+      "soturail agents export --agent all",
+      "soturail mcp resources host-manifest --host codex"
+    ]
+  };
+  const agentsDir = path.join(getWorkspacePaths(root).workspace, "agents");
+  await fs.mkdir(agentsDir, { recursive: true });
+  await fs.writeFile(path.join(agentsDir, "doctor-summary.json"), `${JSON.stringify(summary, null, 2)}\n`, "utf8");
+  await fs.writeFile(path.join(agentsDir, "doctor-summary.md"), renderAgentHostDoctorSummary(summary), "utf8");
+  return summary;
+}
+
+export function renderAgentHostDoctor(report: AgentHostDoctorReport): string {
+  return [
+    "SotuRail agent host doctor",
+    `schemaVersion: ${report.schemaVersion}`,
+    `version: ${report.version}`,
+    `host: ${report.host}`,
+    `status: ${report.status}`,
+    `matrix_status: ${report.matrixStatus}`,
+    "",
+    "Checks:",
+    ...report.checks.map((check) => `- ${check.id}: ${check.status} - ${check.summary}`),
+    "",
+    "Export paths:",
+    ...report.exportPaths.map((file) => `- ${file}`),
+    "",
+    "Warnings:",
+    ...(report.warnings.length > 0 ? report.warnings.map((warning) => `- ${warning}`) : ["- none"]),
+    "",
+    "Blocking issues:",
+    ...(report.blockingIssues.length > 0 ? report.blockingIssues.map((issue) => `- ${issue}`) : ["- none"]),
+    "",
+    "Next commands:",
+    ...report.nextCommands.map((command) => `- ${command}`)
+  ].join("\n") + "\n";
+}
+
+export function renderAgentHostDoctorSummary(summary: AgentHostDoctorSummary): string {
+  return [
+    "SotuRail agent host doctor summary",
+    `schemaVersion: ${summary.schemaVersion}`,
+    `version: ${summary.version}`,
+    `status: ${summary.status}`,
+    `hosts_checked: ${summary.hosts.length}`,
+    "",
+    "| host | status | matrix | exports |",
+    "|---|---|---|---|",
+    ...summary.hosts.map((host) => `| ${host.host} | ${host.status} | ${host.matrixStatus} | ${host.exportPaths.length} |`),
+    "",
+    "Warnings:",
+    ...(summary.warnings.length > 0 ? summary.warnings.map((warning) => `- ${warning}`) : ["- none"]),
+    "",
+    "Blocking issues:",
+    ...(summary.blockingIssues.length > 0 ? summary.blockingIssues.map((issue) => `- ${issue}`) : ["- none"]),
+    "",
+    "Next commands:",
+    ...summary.nextCommands.map((command) => `- ${command}`)
+  ].join("\n") + "\n";
+}
+
 function hostSetupExamples(): string[] {
   return [
     "- Claude Code: soturail agents install --agent claude --dry-run && soturail agents export --agent claude",
@@ -192,10 +366,10 @@ function hostSetupExamples(): string[] {
   ];
 }
 
-export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()): Promise<AgentExportFile[]> {
+export async function buildAgentExportFiles(agent: AgentId, root = process.cwd(), options: AgentExportOptions = {}): Promise<AgentExportFile[]> {
   const contextTarget = contextTargetFor(agent);
   const context = await buildContextPack(contextTarget, root);
-  const prompt = promptOnly(agent);
+  const prompt = promptOnly(agent, options);
   switch (agent) {
     case "claude":
       return [
@@ -212,27 +386,43 @@ export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()
       ];
     case "gemini":
       return [
+        { relativePath: "AGENTS.md", content: prompt },
+        { relativePath: "GEMINI.md", content: prompt },
+        { relativePath: "context-pack.md", content: context.payload },
+        { relativePath: "prompt-only.md", content: prompt }
+      ];
+    case "gemini-legacy":
+      return [
+        { relativePath: "AGENTS.md", content: prompt },
         { relativePath: "GEMINI.md", content: prompt },
         { relativePath: "context-pack.md", content: context.payload },
         { relativePath: "prompt-only.md", content: prompt }
       ];
     case "cursor":
       return [
+        { relativePath: "rules.md", content: cursorRules() },
         { relativePath: "cursor-rules.md", content: cursorRules() },
         { relativePath: "context-pack.md", content: context.payload },
         { relativePath: "prompt-only.md", content: prompt }
       ];
     case "antigravity":
       return [
+        { relativePath: "AGENTS.md", content: prompt },
         { relativePath: "context-pack.md", content: context.payload },
         { relativePath: "prompt-only.md", content: prompt }
       ];
     case "generic":
       return [
+        { relativePath: "AGENT_CONTEXT.md", content: prompt },
         { relativePath: "context-pack.md", content: context.payload },
         { relativePath: "prompt-only.md", content: prompt }
       ];
     case "opencode":
+      return [
+        { relativePath: "AGENTS.md", content: prompt },
+        { relativePath: "context-pack.md", content: context.payload },
+        { relativePath: "prompt-only.md", content: prompt }
+      ];
     case "amp":
     case "kiro":
       return [
@@ -275,29 +465,51 @@ function listMcpResourcesPreview(): string[] {
   ];
 }
 
-function promptOnly(agent: AgentId): string {
+function promptOnly(agent: AgentId, options: AgentExportOptions = {}): string {
   const profile = getAgentProfile(agent);
   const capability = getAgentCapability(agent);
+  const roleLine = options.role ? `Role focus: ${options.role}` : "Role focus: general project assistance";
+  const includeLine = options.include ? `Include hint: ${options.include}` : "Include hint: verified status, reports, Project Brain briefs and host-safe context only";
   return [
     `# SotuRail ${profile.display_name} Integration`,
     "",
-    "SotuRail aims to unify local-first context engineering ideas into one auditable workflow.",
+    "SotuRail is a local-first Context OS for AI coding agents. It builds auditable local artifacts for humans, CI and agent hosts.",
+    "",
+    "SotuRail is not a cloud gateway, autonomous editing agent, telemetry uploader, vector database or provider-specific plugin.",
     "",
     `Agent: ${profile.id}`,
     `Risk level: ${profile.risk_level}`,
     `Supported modes: ${profile.integration_modes.join(", ")}`,
     `Payloads: ${capability.recommendedPayloads.join(" + ")}`,
+    roleLine,
+    includeLine,
     "",
-    "## Rules",
+    "## Verified Starting Points",
     "",
-    "- Use `soturail index` before large repository changes.",
-    "- Use `soturail brain export --agent " + agent + "` for verified Project Brain briefs when available.",
-    "- Use `soturail context pack --target generic` or the target-specific pack for stable project context.",
-    "- Use `soturail read <file> --query \"goal\"` for large files.",
-    "- Use `soturail run <command>` for tests/builds/logs so raw evidence is recoverable.",
-    "- Use `soturail expand <raw_id>` only when a compressed summary lacks needed evidence; redaction is on by default.",
-    "- Never route `git push` through `soturail run`.",
-    "- Do not enable generated hooks or scripts without human review.",
+    "- Status: `.soturail/status/latest.json` and `.soturail/status/agent.md`.",
+    "- Reports: `.soturail/reports/latest.md`, `.soturail/reports/latest.json` and `.soturail/reports/agent-" + reportAgentName(agent) + ".md`.",
+    "- Project Brain: `.soturail/brain/exports/agent-brief.md` and host-specific exports when generated.",
+    "- Schemas/readiness: `.soturail/schemas/check.json` and `.soturail/readiness/v1.json`.",
+    "- MCP host manifest: `.soturail/mcp/host-manifest.json` from `soturail mcp resources host-manifest --host " + agent + "`.",
+    "",
+    "## Safe Commands",
+    "",
+    "- `soturail status --agent`",
+    "- `soturail report agent --agent " + reportAgentName(agent) + "`",
+    "- `soturail agents doctor --host " + agent + "`",
+    "- `soturail brain doctor --repair-plan`",
+    "- `soturail brain export --agent " + brainExportName(agent) + " --limit 20`",
+    "- `soturail self schemas --check --strict`",
+    "- `soturail self readiness --v1 --strict`",
+    "- `soturail release check --strict`",
+    "",
+    "## Forbidden Defaults",
+    "",
+    "- Do not assume network access, cloud telemetry, external LLM calls or paid embeddings.",
+    "- Do not expose write/mutation MCP resources by default.",
+    "- Do not use shell execution through MCP; SotuRail manifests are read-only by default.",
+    "- Do not publish, tag, push, delete or rewrite history without explicit human approval.",
+    "- Do not include private environment files, tokens, credentials or raw run evidence in host handoff files.",
     "",
     "## Host-Aware Policy Notes",
     "",
@@ -306,8 +518,19 @@ function promptOnly(agent: AgentId): string {
     "## MCP",
     "",
     profile.supports_mcp
-      ? "Use `soturail mcp config --agent " + agent + "` to export a reviewed stdio server snippet."
-      : "MCP host configuration is not assumed for this agent; use prompt-only/context-pack guidance.",
+      ? "Use `soturail mcp config --agent " + mcpConfigName(agent) + "` for a reviewed stdio snippet and `soturail mcp resources host-manifest --host " + agent + "` for read-only resource mapping."
+      : "MCP host configuration is not assumed for this agent; use prompt-only/context-pack guidance plus the read-only host manifest.",
+    "",
+    "## Warnings",
+    "",
+    hostSpecificWarning(agent),
+    "- High Project Brain suspect/stale counts mean evidence may be old. They do not necessarily mean the code is broken; run the repair-plan commands before overclaiming.",
+    "",
+    "## Next Commands",
+    "",
+    "- `soturail agents matrix`",
+    "- `soturail agents export --agent " + agent + "`",
+    "- `soturail mcp resources host-manifest --host " + agent + "`",
     ""
   ].join("\n");
 }
@@ -348,6 +571,7 @@ function installTargetsFor(agent: AgentId, mode: AgentMode): Array<{ path: strin
     claude: "CLAUDE.md",
     codex: "AGENTS.md",
     gemini: "GEMINI.md",
+    "gemini-legacy": ".soturail/exports/agents/gemini-legacy/AGENTS.md",
     cursor: ".cursor/rules/soturail.mdc",
     antigravity: ".soturail/exports/agents/antigravity/prompt-only.md",
     generic: ".soturail/exports/agents/generic/prompt-only.md",
@@ -365,6 +589,7 @@ function allAgentIds(): AgentId[] {
 }
 
 function contextTargetFor(agent: AgentId): ContextTarget {
+  if (agent === "gemini-legacy") return "gemini";
   if (agent === "claude" || agent === "codex" || agent === "gemini" || agent === "cursor" || agent === "antigravity") return agent;
   return "generic";
 }
@@ -380,6 +605,45 @@ function installReferencesFor(agent: AgentId): string[] {
   ];
 }
 
+function exportTargetDirs(root: string, legacyExportsDir: string, agent: AgentId, selectedCount: number, options: AgentExportOptions): string[] {
+  if (options.out) {
+    const requested = path.resolve(root, options.out);
+    return [selectedCount === 1 ? requested : path.join(requested, agent)];
+  }
+  const workspaceAgentsDir = path.join(getWorkspacePaths(root).workspace, "agents", agent);
+  return [path.join(legacyExportsDir, agent), workspaceAgentsDir];
+}
+
+async function writeAgentHostDoctorArtifacts(root: string, host: AgentId, report: AgentHostDoctorReport): Promise<void> {
+  const dir = path.join(getWorkspacePaths(root).workspace, "agents", host);
+  await fs.mkdir(dir, { recursive: true });
+  await fs.writeFile(path.join(dir, "doctor.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  await fs.writeFile(path.join(dir, "doctor.md"), renderAgentHostDoctor(report), "utf8");
+}
+
+function reportAgentName(agent: AgentId): string {
+  if (agent === "amp" || agent === "kiro") return "generic";
+  return agent;
+}
+
+function brainExportName(agent: AgentId): string {
+  if (agent === "opencode" || agent === "amp" || agent === "kiro" || agent === "deepagents" || agent === "deepagents-js" || agent === "gemini-legacy") return "generic";
+  return agent;
+}
+
+function mcpConfigName(agent: AgentId): "claude" | "cursor" | "generic" {
+  if (agent === "claude" || agent === "cursor") return agent;
+  return "generic";
+}
+
+function hostSpecificWarning(agent: AgentId): string {
+  if (agent === "antigravity") return "- Antigravity is high-priority but experimental; use AGENTS.md/context-pack handoffs until stable Google-local project config is documented.";
+  if (agent === "gemini" || agent === "gemini-legacy") return "- Gemini-compatible exports are prompt/context artifacts. Treat legacy/compatible hosts as prompt-only unless a host contract is verified.";
+  if (agent === "opencode") return "- OpenCode support is generic-compatible AGENTS.md/context export, not a claim of full host-native integration.";
+  if (agent === "deepagents" || agent === "deepagents-js") return "- DeepAgents exports are role-pack/context artifacts only. SotuRail does not run a Deep Agents runtime.";
+  return "- Review generated files before copying them into a host-specific project location.";
+}
+
 function deepAgentFiles(agent: "deepagents" | "deepagents-js", contextPayload: string, prompt: string): AgentExportFile[] {
   const title = agent === "deepagents" ? "Deep Agents-style" : "Deep Agents JS-style";
   const config = {
@@ -392,6 +656,33 @@ function deepAgentFiles(agent: "deepagents" | "deepagents-js", contextPayload: s
     payloadRecommendations: payloadRecommendationsFor(agent)
   };
   return [
+    {
+      relativePath: "role-pack.md",
+      content: [
+        `# SotuRail ${title} Role Pack`,
+        "",
+        "Use this as reviewed context for a host that supports role-oriented prompts.",
+        "",
+        "Boundary: SotuRail exports role/context artifacts only. It does not install dependencies, run a Deep Agents runtime or create autonomous editing loops.",
+        "",
+        prompt.trim(),
+        ""
+      ].join("\n")
+    },
+    {
+      relativePath: "subagents.md",
+      content: [
+        `# SotuRail ${title} Subagent Notes`,
+        "",
+        "- Planner: read status/report/schema artifacts before proposing work.",
+        "- Executor: use local safe commands and preserve user changes.",
+        "- Reviewer: verify reports, tests, redaction and release gates.",
+        "- Release manager: check package version, release notes, schemas and npm publish gates.",
+        "",
+        "These are prompt notes, not a runtime registration file.",
+        ""
+      ].join("\n")
+    },
     {
       relativePath: `${agent}.md`,
       content: [

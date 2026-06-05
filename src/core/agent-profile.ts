@@ -2,6 +2,7 @@ export type AgentId =
   | "claude"
   | "codex"
   | "gemini"
+  | "gemini-legacy"
   | "cursor"
   | "antigravity"
   | "generic"
