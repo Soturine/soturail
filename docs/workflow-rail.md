@@ -195,3 +195,15 @@ Workflow evidence can now point to:
 ```
 
 These are still local artifacts. Workflow evidence does not upload telemetry and does not require a dashboard server.
+
+## Related Harness And Multi-Agent Workflow Docs
+
+Workflow Rail is the natural parent for the newer harness/session/task planning docs:
+
+- [`harness-lifecycle-rail.md`](harness-lifecycle-rail.md): instructions, state, verification, scope and session handoff.
+- [`multi-agent-workflow-templates.md`](multi-agent-workflow-templates.md): researcher, analyst, writer, verifier and reviewer role-pack templates.
+- [`evidence-provenance-rail.md`](evidence-provenance-rail.md): workflow evidence sidecars and verification status.
+- [`agent-governance-rail.md`](agent-governance-rail.md): trace, ledger and approval records for long-running workflows.
+- [`resilience-rail.md`](resilience-rail.md): retry/fallback/rate-limit policy notes for workflows that depend on external agent/model providers.
+
+These docs should keep SotuRail as the workflow/handoff/evidence layer. They should not turn it into a CrewAI, LangGraph or autonomous agent runtime.

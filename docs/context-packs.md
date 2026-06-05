@@ -280,3 +280,15 @@ Context selection, formatting and role packs should preserve:
 - raw recovery hints.
 
 If pruning or formatting would remove required evidence, SotuRail should report that pruning was not effective rather than pretending the context is sufficient.
+
+## Related Context Routing And Knowledge Docs
+
+Context Packs connect directly to the newer knowledge and host-routing plans:
+
+- [`knowledge-rail.md`](knowledge-rail.md): compile docs/specs/notes into on-demand topic packs instead of loading everything into one prompt.
+- [`host-router-rail.md`](host-router-rail.md): translate one local context source into host-specific exports for Claude, Codex, Cursor, OpenCode, Gemini and generic Markdown.
+- [`tasklet-rail.md`](tasklet-rail.md): attach a small task template to a minimal context pack.
+- [`resilience-rail.md`](resilience-rail.md): warn when a context pack implies expensive, provider-dependent or long-running workflows.
+- [`agent-qa-rail.md`](agent-qa-rail.md): test whether compact/role-specific context packs preserve required facts.
+
+The key rule is progressive disclosure: SotuRail should send the smallest useful context first and keep large raw evidence recoverable by path, id or offload pointer.

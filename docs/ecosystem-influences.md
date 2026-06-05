@@ -503,3 +503,22 @@ Hard boundaries:
 - no MITM/proxy/account/quota bypass features;
 - no autonomous patching without approval;
 - no hidden cloud telemetry.
+
+## Coverage Checklist For The 2026 Harness Review
+
+The reviewed materials are now mapped into SotuRail planning as follows:
+
+| Source idea | SotuRail docs now covering it |
+| --- | --- |
+| QA agent with tests, datasets, CI and traces | [`agent-qa-rail.md`](agent-qa-rail.md), [`eval-datasets.md`](eval-datasets.md), [`golden-agent-tests.md`](golden-agent-tests.md), [`llm-as-judge-policy.md`](llm-as-judge-policy.md) |
+| CrewAI/LiteLLM-style roles, fallback and rate limits | [`multi-agent-workflow-templates.md`](multi-agent-workflow-templates.md), [`resilience-rail.md`](resilience-rail.md), [`rate-limit-and-fallback-policy.md`](rate-limit-and-fallback-policy.md) |
+| Validate -> fix -> verify -> report agent pipeline | [`observability-rail.md`](observability-rail.md), [`workflow-rail.md`](workflow-rail.md), [`examples/workflows/agent-pipeline-workflow.md`](../examples/workflows/agent-pipeline-workflow.md) |
+| OpenTracy-style trace, ledger, approval and experiments | [`agent-governance-rail.md`](agent-governance-rail.md), [`evidence-provenance-rail.md`](evidence-provenance-rail.md) |
+| Harness engineering lifecycle | [`harness-lifecycle-rail.md`](harness-lifecycle-rail.md), [`harness-rail.md`](harness-rail.md), [`workflow-rail.md`](workflow-rail.md) |
+| ECC-style cross-host harness, doctor, audit and skills | [`host-compatibility-rail.md`](host-compatibility-rail.md), [`agent-hosts.md`](agent-hosts.md), [`skill-rail-2.md`](skill-rail-2.md), [`future-rails-index.md`](future-rails-index.md) |
+| Feynman-style provenance and verifier status | [`evidence-provenance-rail.md`](evidence-provenance-rail.md), [`report-rail.md`](report-rail.md) |
+| book-to-skill-style document-to-skill packs | [`knowledge-rail.md`](knowledge-rail.md), [`skill-rail-2.md`](skill-rail-2.md), [`context-packs.md`](context-packs.md) |
+| Tasklet-style small reusable task blocks | [`tasklet-rail.md`](tasklet-rail.md), [`workflow-rail.md`](workflow-rail.md) |
+| 9Router-style router metaphor and token/context savings | [`host-router-rail.md`](host-router-rail.md), [`context-packs.md`](context-packs.md), [`governance-cost-rail.md`](governance-cost-rail.md) |
+
+This checklist is intentionally documentation-only. Runtime implementation should happen gradually through roadmap milestones and tests.

@@ -36,3 +36,15 @@ soturail mcp resources host-manifest --host codex
 No host row enables destructive MCP tools or arbitrary shell execution. Config writes remain dry-run or review-first. Use `soturail report agent --agent <host>`, `soturail agents doctor --host <host>` and review the output before agent handoff.
 
 See [host-matrix-schema.md](host-matrix-schema.md), [agent-export-contract.md](agent-export-contract.md) and [mcp-host-manifest.md](mcp-host-manifest.md).
+
+## Related Host Router And Resilience Docs
+
+Host docs are connected to several planned rails:
+
+- [`host-router-rail.md`](host-router-rail.md): one local context source exported into host-specific formats with safe fallback.
+- [`host-compatibility-rail.md`](host-compatibility-rail.md): current host matrix, schema and export contracts.
+- [`rate-limit-and-fallback-policy.md`](rate-limit-and-fallback-policy.md): local documentation shape for retry/fallback/rate-limit expectations.
+- [`resilience-rail.md`](resilience-rail.md): provider and workflow-risk warnings without proxying model traffic.
+- [`agent-qa-rail.md`](agent-qa-rail.md): golden checks for host exports.
+
+SotuRail host support means context, instruction, report, skill and MCP-resource packaging. It does not mean intercepting IDE traffic, reusing browser tokens, routing model requests or bypassing provider quotas.

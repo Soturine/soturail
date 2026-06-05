@@ -54,3 +54,15 @@ soturail brain stale --repair-plan
 soturail reverse claims ./src
 soturail brain consolidate --dry-run
 ```
+
+## Related Evidence, Eval And Governance Docs
+
+Report Rail is the parent surface where several future rails should become visible:
+
+- [`evidence-provenance-rail.md`](evidence-provenance-rail.md): report sidecars, source paths and `verified` / `unverified` / `blocked` / `inferred` statuses.
+- [`agent-qa-rail.md`](agent-qa-rail.md): dataset runs, golden export checks and regression summaries.
+- [`golden-agent-tests.md`](golden-agent-tests.md): deterministic host-export checks that can be summarized in reports.
+- [`agent-governance-rail.md`](agent-governance-rail.md): trace, ledger, approval and experiment status.
+- [`host-router-rail.md`](host-router-rail.md): context-format fallback decisions per host.
+
+A future report should not simply say an agent task is complete. It should say what evidence exists, what was checked, what is still inferred or blocked and which safe next command can improve confidence.

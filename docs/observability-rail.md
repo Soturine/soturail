@@ -52,3 +52,14 @@ report_generated
 ```
 
 The first implementation can remain local artifacts and dashboard cards. A live SSE/server mode is optional and should not become required.
+
+## Related 2026 Harness Rails
+
+Observability Rail is the local timeline layer that feeds several planned rails:
+
+- [`agent-qa-rail.md`](agent-qa-rail.md) defines eval runs, scores and regression artifacts that can become observability events.
+- [`evidence-provenance-rail.md`](evidence-provenance-rail.md) defines verification status and provenance sidecars that reports and timelines should surface.
+- [`agent-governance-rail.md`](agent-governance-rail.md) extends observability into trace, ledger, experiment and approval records.
+- [`resilience-rail.md`](resilience-rail.md) adds rate-limit/fallback/provider-risk warnings as local events, not cloud telemetry.
+
+This keeps the boundary clear: SotuRail observes local artifacts and user-approved records; it does not upload traces or become a hosted LangFuse/OpenTelemetry replacement by default.
