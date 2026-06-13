@@ -6,6 +6,30 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-13
+
+### Added
+
+- Added deterministic Knowledge Rail commands: `knowledge estimate|compile|update|verify|list`.
+- Added local Evidence And Provenance Rail commands: `evidence collect|verify|report`.
+- Added Agent QA dataset, golden and regression commands under `eval`.
+- Added Skill Rail 2.0 template, build, fold-in, lint, eval and report commands.
+- Added dry-run Tasklet Rail commands: `tasklet create|list|run|export`.
+- Added a documentation index, v1.4 command reference and local Markdown link validation.
+
+### Changed
+
+- Reorganized the crowded `docs/` root into task- and rail-focused subdirectories while preserving local links.
+- Rewrote README as a concise product landing page.
+- Absorbed the previously planned v1.3.0 Knowledge, Evidence and Evaluation scope into v1.4.0.
+
+### Security
+
+- Knowledge compilation remains local and rejects paths outside the project root.
+- Evidence reports do not invent verification or silently execute checks.
+- Tasklets remain simulation-only and do not execute shell commands.
+- Default Agent QA remains offline, deterministic and provider-agnostic.
+
 ## [1.2.0] - 2026-06-12
 
 ### Added
