@@ -112,6 +112,10 @@ export interface WorkspacePaths {
   progressFile: string;
   sessionFile: string;
   sessionHandoffFile: string;
+  knowledgeDir: string;
+  evidenceDir: string;
+  taskletsDir: string;
+  evalsDir: string;
   policyDir: string;
   policyQueueFile: string;
   policyDecisionsFile: string;
@@ -205,6 +209,10 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     progressFile: path.resolve(workspace, "state", "progress.md"),
     sessionFile: path.resolve(workspace, "state", "session.json"),
     sessionHandoffFile: path.resolve(workspace, "state", "session-handoff.md"),
+    knowledgeDir: path.resolve(workspace, "knowledge"),
+    evidenceDir: path.resolve(workspace, "evidence"),
+    taskletsDir: path.resolve(workspace, "tasklets"),
+    evalsDir: path.resolve(workspace, "evals"),
     policyDir: path.resolve(workspace, "policy"),
     policyQueueFile: path.resolve(workspace, "policy", "queue.jsonl"),
     policyDecisionsFile: path.resolve(workspace, "policy", "decisions.jsonl"),
@@ -315,6 +323,10 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.harnessDir,
     paths.harnessContractsDir,
     paths.stateDir,
+    paths.knowledgeDir,
+    paths.evidenceDir,
+    paths.taskletsDir,
+    paths.evalsDir,
     paths.policyDir,
     paths.fsDir,
     paths.fsSnapshotsDir,
