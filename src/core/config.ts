@@ -105,6 +105,13 @@ export interface WorkspacePaths {
   harnessDir: string;
   harnessFailuresFile: string;
   harnessContractsDir: string;
+  harnessAuditJson: string;
+  harnessAuditMd: string;
+  stateDir: string;
+  featureListFile: string;
+  progressFile: string;
+  sessionFile: string;
+  sessionHandoffFile: string;
   policyDir: string;
   policyQueueFile: string;
   policyDecisionsFile: string;
@@ -191,6 +198,13 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     harnessDir: path.resolve(workspace, "harness"),
     harnessFailuresFile: path.resolve(workspace, "harness", "failures.jsonl"),
     harnessContractsDir: path.resolve(workspace, "harness", "contracts"),
+    harnessAuditJson: path.resolve(workspace, "harness", "audit.json"),
+    harnessAuditMd: path.resolve(workspace, "harness", "audit.md"),
+    stateDir: path.resolve(workspace, "state"),
+    featureListFile: path.resolve(workspace, "state", "feature_list.json"),
+    progressFile: path.resolve(workspace, "state", "progress.md"),
+    sessionFile: path.resolve(workspace, "state", "session.json"),
+    sessionHandoffFile: path.resolve(workspace, "state", "session-handoff.md"),
     policyDir: path.resolve(workspace, "policy"),
     policyQueueFile: path.resolve(workspace, "policy", "queue.jsonl"),
     policyDecisionsFile: path.resolve(workspace, "policy", "decisions.jsonl"),
@@ -300,6 +314,7 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.contextRolePacksDir,
     paths.harnessDir,
     paths.harnessContractsDir,
+    paths.stateDir,
     paths.policyDir,
     paths.fsDir,
     paths.fsSnapshotsDir,

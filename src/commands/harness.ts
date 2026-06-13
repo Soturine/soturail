@@ -9,9 +9,31 @@ import {
   noteHarnessFailure,
   renderHarnessFailures
 } from "../core/harness-rail.js";
+import { auditHarnessLifecycle, initHarnessLifecycle, renderHarnessAudit } from "../core/harness-lifecycle.js";
 
 export function registerHarnessCommand(program: Command): void {
   const harness = program.command("harness").description("Record local harness failures and acceptance contracts.");
+
+  harness.command("init").description("Create the safe local Harness Lifecycle scaffold.")
+    .option("--force", "Overwrite lifecycle scaffold files after explicit review")
+    .action(async (options: { force?: boolean }) => {
+      const result = await initHarnessLifecycle(process.cwd(), { force: options.force === true });
+      process.stdout.write([
+        "SotuRail harness init",
+        `created: ${result.created.length}`,
+        `skipped: ${result.skipped.length}`,
+        ...result.created.map((file) => `- created ${file}`),
+        ...result.skipped.map((file) => `- preserved ${file}`),
+        "next: soturail harness audit"
+      ].join("\n") + "\n");
+    });
+
+  harness.command("audit").description("Audit local harness lifecycle readiness without executing checks.")
+    .option("--json", "Print machine-readable JSON")
+    .action(async (options: { json?: boolean }) => {
+      const report = await auditHarnessLifecycle();
+      process.stdout.write(options.json ? `${JSON.stringify(report, null, 2)}\n` : renderHarnessAudit(report));
+    });
 
   harness
     .command("note")

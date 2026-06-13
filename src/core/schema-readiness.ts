@@ -137,14 +137,19 @@ export async function runV1Readiness(root = process.cwd(), options: SchemaReadin
     "soturail release check",
     "soturail self schemas --check",
     "soturail self readiness --v1",
-    "soturail workflow",
-    "soturail harness",
-    "soturail diagram",
+      "soturail workflow",
+      "soturail harness",
+      "soturail harness init",
+      "soturail harness audit",
+      "soturail session start|end",
+      "soturail handoff generate",
+      "soturail feature add|start|done|list",
+      "soturail diagram",
     "soturail agents",
     "soturail mcp exposure",
     "soturail mcp resources report"
   ];
-  const experimentalCommands = ["graph", "parse", "native acceleration", "extended MCP tools"];
+  const experimentalCommands = ["graph", "parse", "native acceleration", "extended MCP tools", "SotuRail Conductor"];
   const checks = [
     docsExist(resolvedRoot, "README.md"),
     docsExist(resolvedRoot, "CHANGELOG.md"),
@@ -236,6 +241,9 @@ function schemaArtifacts(root: string, strict: boolean): ArtifactSpec[] {
     artifact("mcp_report_resources", path.join(workspace, "mcp", "report-resources.json"), false, ["schemaVersion", "createdAt", "resources"]),
     artifact("eval", path.join(workspace, "eval", "latest.json"), false, ["schemaVersion", "createdAt", "summary"]),
     artifact("observability_timeline", path.join(workspace, "observability", "timeline.json"), false, ["schemaVersion", "createdAt", "events"]),
+    artifact("harness_audit", path.join(workspace, "harness", "audit.json"), false, ["schemaVersion", "createdAt", "status", "score", "checks", "warnings", "nextCommands"], false, ["checks", "warnings", "nextCommands"]),
+    artifact("feature_list", path.join(workspace, "state", "feature_list.json"), false, ["schemaVersion", "active", "features"], false, ["features"]),
+    artifact("session", path.join(workspace, "state", "session.json"), false, ["schemaVersion", "id", "objective", "status", "startedAt"]),
     artifact("code_health", path.join(workspace, "code-health", "latest.json"), strict, ["schemaVersion", "createdAt", "version", "status", "warnings", "nextCommands"], true, ["warnings", "nextCommands"]),
     artifact("architecture", path.join(workspace, "architecture", "check.json"), strict, ["schemaVersion", "createdAt", "version", "status", "warnings", "nextCommands"], true, ["warnings", "nextCommands"])
   ];

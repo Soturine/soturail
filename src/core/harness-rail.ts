@@ -89,6 +89,7 @@ export async function harnessDoctor(root = process.cwd()): Promise<string> {
   lines.push("workflow_connection: workflow verify/evidence reads harness contracts and failures.");
   lines.push("brain_connection: repeated failures can become brain bugs, draft rules or workflow checks after `soturail brain scan`.");
   lines.push("brain_next_commands: soturail brain consolidate --dry-run; soturail rules from-brain");
+  lines.push("lifecycle_next_commands: soturail harness init; soturail harness audit; soturail handoff generate");
   return `${lines.join("\n")}\n`;
 }
 
