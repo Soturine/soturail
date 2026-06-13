@@ -30,6 +30,8 @@ v1.5.0  Governance, Cost, Resilience and Host Router Rail
 v1.6.0  Agent Governance / Evolution Rail
 ```
 
+v1.2.0 also delivers a focused Harness Lifecycle slice: safe scaffold initialization, lifecycle audit, feature state, sessions and handoffs. Spec/design/diagram expansion remains staged and must be documented honestly when not implemented.
+
 ## 2026 Agent Runtime Update
 
 The newest planning layer is tracked in [`docs/roadmap-agent-runtime-addendum.md`](roadmap-agent-runtime-addendum.md).
@@ -57,6 +59,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | MCP Exposure Rail | Report exposed MCP tools/resources/prompts/roots and local risk notes | v0.5.0 seed | `docs/roadmap-agent-runtime-addendum.md`, `docs/mcp.md`, `docs/policy-rail.md` |
 | Skill Boundary Rail | Route skills by task, role, evidence and host capability instead of always loading them | v0.5.0 seed | `docs/roadmap-agent-runtime-addendum.md`, `docs/skill-rail.md` |
 | Harness Rail | setup/plan/work/review/release discipline, evidence packs and failure ledger | v0.5.0 seeds, v0.7.0 expansion | `docs/harness-rail.md`, `docs/workflow-rail.md` |
+| Harness Lifecycle Rail | Safe local instructions, state, sessions, features, audits and handoffs | v1.2.0 implemented | `docs/harness-lifecycle-rail.md`, `docs/security-boundaries.md` |
 | Acceptance Harness Contracts | Require build/typecheck/lint/test/coverage/docs/policy gates before accepting work | v0.5.0 seed, v0.7.0 expansion | `docs/roadmap-agent-runtime-addendum.md`, `docs/harness-rail.md` |
 | Policy Rail | Rules, approvals, risky action queue, auth checks and MCP exposure reports | v0.5.0+ | `docs/policy-rail.md`, `docs/security-model.md`, `docs/rules.md` |
 | Structured Payload Rail | Target-aware Markdown/JSON/tagged/TOON-table/Mermaid context formats | v0.5.1+ | `docs/structured-payload-rail.md`, `docs/context-packs.md` |
@@ -69,7 +72,6 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Project Brain | Verified claims, decisions, bugs, gaps, rules, stale events and agent-safe briefs | v0.8.0 | `docs/project-brain.md`, `ROADMAP.md` |
 | Host Compatibility Rail | Host-aware exports, capability matrix, host doctors and conservative prompt-only fallback for OpenCode, Antigravity, Claude, Codex, Cursor, Deep Agents-style and generic hosts | v1.1.0 implemented | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md`, `docs/agent-export-contract.md` |
 | Agent QA Rail | Offline datasets, golden exports, regression reports and optional LLM-as-judge policy | v1.1.1 docs, v1.3.0 planned | `docs/agent-qa-rail.md`, `docs/eval-datasets.md`, `docs/golden-agent-tests.md`, `docs/llm-as-judge-policy.md` |
-| Harness Lifecycle Rail | Instructions, state, verification, scope, feature list and session handoff lifecycle | v1.2.0 | `docs/harness-lifecycle-rail.md`, `docs/harness-rail.md`, `docs/workflow-rail.md` |
 | Evidence And Provenance Rail | Provenance sidecars, verification statuses and evidence per run/report | v1.3.0 | `docs/evidence-provenance-rail.md`, `docs/report-rail.md`, `docs/filesystem-evidence-rail.md` |
 | Knowledge Rail | Compile docs/specs/notes into on-demand SKILL.md/topic/glossary/pattern packs | v1.3.0 docs, v1.4.0 skill integration | `docs/knowledge-rail.md`, `docs/skill-rail-2.md`, `docs/project-brain.md` |
 | Resilience Rail | Rate-limit, fallback and provider-risk documentation/reporting without proxying traffic | v1.5.0 | `docs/resilience-rail.md`, `docs/rate-limit-and-fallback-policy.md`, `docs/governance-cost-rail.md` |
@@ -83,6 +85,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Governance And Cost Rail | Context budget, dynamic workflow risk and MCP/skill exposure warnings | v1.5.0 | `docs/governance-cost-rail.md`, `docs/report-rail.md`, `docs/policy-rail.md` |
 | Redacted Evidence Sharing | Local redacted evidence bundles for reports/logs without hosting by default | v1.4+ exploration | `docs/report-redaction.md`, `docs/external-projects-audit.md` |
 | Local Dashboard | Local reports, trace viewer, Mermaid rendering and policy/evidence views | v0.10.0 | `ROADMAP.md` |
+| SotuRail Conductor | Optional future planner/verifier/reviewer/tasklet coordinator behind approval gates | Future proposed | `docs/conductor-mode.md`, `docs/security-boundaries.md` |
 
 ## Version Summary
 
@@ -243,12 +246,11 @@ Focus:
 
 Focus:
 
-- Spec, Design, Diagram and Harness Lifecycle Rail;
+- Harness Lifecycle Rail implemented with `harness init`, `harness audit`, sessions, handoffs and feature state;
+- Spec, Design And Diagram Rail;
 - PRD/requirements/design/tasks scaffolds;
 - local `DESIGN.md` lint/diff/export;
-- Mermaid render/diff validation;
-- `harness init` and `harness audit` planning;
-- feature list, session start/end and handoff lifecycle.
+- Mermaid render/diff validation.
 
 ### v1.3.0
 
@@ -352,3 +354,5 @@ SotuRail should not become:
 - `docs/multi-agent-workflow-templates.md`
 - `docs/host-router-rail.md`
 - `docs/tasklet-rail.md`
+- `docs/security-boundaries.md`
+- `docs/conductor-mode.md`

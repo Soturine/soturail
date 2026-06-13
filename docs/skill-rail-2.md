@@ -2,6 +2,8 @@
 
 Skill Rail 2.0 is the planned v1.4.x direction for safer, smaller, domain-aware skills that can be exported to different agent hosts.
 
+Hermes Agent's skill self-improvement model is useful inspiration, but SotuRail skills remain reviewed local operating procedures rather than self-modifying agent behavior. Any future improvement proposal must preserve evidence, safety checks and human approval.
+
 ## Goal
 
 Move from generic skills to reviewed domain skill packs with metadata, fixtures, reports, role-aware exports and explicit safety boundaries.

@@ -2,6 +2,12 @@
 
 Host Compatibility Rail is the v1.1.0 direction for making SotuRail outputs useful across coding-agent hosts without becoming an agent host itself.
 
+## Host Fit
+
+`soturail agents matrix`, `agents doctor --host <host>` and `agents doctor --all` form the current Host Fit Doctor surface. They report compatibility, export support, limitations and safe next commands without model serving or runtime installation.
+
+Hermes and Odysseus are ecosystem influences, not direct stable host integrations. Hermes is an agent runtime and Odysseus is a broader workspace/runtime stack. Generic-compatible exports remain the safe fallback until a host-specific path is implemented and tested.
+
 ## Goal
 
 ```txt

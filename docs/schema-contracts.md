@@ -21,6 +21,9 @@ Stable v1 JSON artifacts are local files designed for humans, CI and coding agen
 - `soturail.agent-host-doctor.v1`
 - `soturail.agent-host-doctor-summary.v1`
 - `soturail.mcp.host-manifest.v1`
+- `soturail.harness.audit.v1`
+- `soturail.feature-list.v1`
+- `soturail.session.v1`
 
 ## Required Principles
 
@@ -51,3 +54,5 @@ soturail mcp resources host-manifest --host codex --json
 ```
 
 They must not grant mutation resources, shell execution through MCP, cloud telemetry or raw evidence exposure. See [host-matrix-schema.md](host-matrix-schema.md), [agent-export-contract.md](agent-export-contract.md) and [mcp-host-manifest.md](mcp-host-manifest.md).
+
+Harness Lifecycle JSON artifacts are optional until `soturail harness init` or `soturail session start` is run. Once present, schema checks validate their shape. See [Harness Lifecycle Rail](harness-lifecycle-rail.md).

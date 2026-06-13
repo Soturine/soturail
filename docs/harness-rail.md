@@ -15,6 +15,11 @@ Harness Rail focuses on workflow discipline, policy decisions, review evidence, 
 
 ```bash
 soturail harness note "agent said done before tests passed"
+soturail harness init
+soturail harness audit
+soturail session start "objective"
+soturail handoff generate
+soturail feature list
 soturail harness list
 soturail harness explain <id>
 soturail harness doctor
@@ -24,6 +29,12 @@ soturail workflow evidence <id>
 ```
 
 `harness contract check` validates the local contract. It does not run build, typecheck or test commands by default.
+
+## v1.2.0 Harness Lifecycle
+
+Harness Lifecycle Rail adds safe project-local state for instructions, scope, verification, sessions, handoffs and features. `harness init` preserves existing files by default, and `harness audit` scores lifecycle readiness without executing verification commands.
+
+See [Harness Lifecycle Rail](harness-lifecycle-rail.md) and [Security Boundaries](security-boundaries.md).
 
 ## v0.7.0 Workflow Connection
 

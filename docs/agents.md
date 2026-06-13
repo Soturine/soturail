@@ -263,11 +263,19 @@ Those exports should explain:
 - which payload format was chosen;
 - whether any long context was offloaded.
 
-## Future Harness And Handoff Support
+## Harness And Handoff Support
 
-SotuRail can support disciplined handoffs without becoming the agent runtime.
+SotuRail supports disciplined local handoffs without becoming the agent runtime:
 
-Possible future commands:
+```bash
+soturail harness init
+soturail harness audit
+soturail session start "objective"
+soturail handoff generate
+soturail feature list
+```
+
+Additional role-to-role host handoff aliases remain future possibilities:
 
 ```bash
 soturail agents handoff --from planner --to executor
@@ -285,3 +293,5 @@ A handoff should include:
 - evidence pack pointers;
 - raw/offload recovery IDs;
 - next safe command suggestions.
+
+Current handoffs are written to `.soturail/state/session-handoff.md`. They include bounded local state and changed-file names, do not read private shell history and do not run verification commands.

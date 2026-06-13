@@ -4,6 +4,12 @@ v1.0.0 keeps the dashboard static and local. There is no server requirement, no 
 
 Dashboard Rail builds a static local HTML dashboard from report and status artifacts.
 
+## Lifecycle Cards
+
+Odysseus-style local workspace organization is useful dashboard inspiration, but SotuRail remains static and server-free by default. Future dashboard polish may surface bounded cards for Context Packs, Memory, Reports, Evidence, Workflows, Host Compatibility, Skills, Tasklets and Handoffs from existing local artifacts.
+
+Harness Lifecycle state is currently available under `.soturail/state/`; dedicated dashboard cards remain planned.
+
 ```bash
 soturail dashboard build
 soturail dashboard open

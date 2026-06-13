@@ -63,3 +63,12 @@ Observability Rail is the local timeline layer that feeds several planned rails:
 - [`resilience-rail.md`](resilience-rail.md) adds rate-limit/fallback/provider-risk warnings as local events, not cloud telemetry.
 
 This keeps the boundary clear: SotuRail observes local artifacts and user-approved records; it does not upload traces or become a hosted LangFuse/OpenTelemetry replacement by default.
+
+## Ecosystem Direction
+
+Hermes-style trajectory compression and Odysseus-style visual workspaces reinforce two SotuRail rules:
+
+- keep observability as local, recoverable evidence rather than uploaded telemetry;
+- present Context Packs, Memory, Reports, Evidence, Workflows, Host Compatibility, Skills, lifecycle state and Handoffs as bounded dashboard/report sections.
+
+SotuRail does not add a required server, chat workspace or central shell interface. See [Security Boundaries](security-boundaries.md).

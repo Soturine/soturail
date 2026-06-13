@@ -266,6 +266,12 @@ Possible future diagram context:
 
 See [diagram-rail.md](diagram-rail.md).
 
+## Lifecycle And Context Budget
+
+Harness Lifecycle handoffs should stay bounded. Prefer the active objective, feature state, changed-file names, verification status, blockers and next commands over copying full session history.
+
+Hermes-style trajectory compression is useful inspiration only when raw evidence remains recoverable. Odysseus-style workspace breadth should not cause every local artifact to enter every context pack. Use `context budget`, role packs, offload pointers and host-specific exports to keep handoffs focused.
+
 ## Quality Rules
 
 Context selection, formatting and role packs should preserve:

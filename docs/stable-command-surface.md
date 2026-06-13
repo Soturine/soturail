@@ -1,6 +1,6 @@
 # Stable Command Surface
 
-SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 keeps that surface stable and adds Host Compatibility Rail commands for local exports, host doctors and read-only host manifests.
+SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 kept that surface stable and added Host Compatibility Rail commands. SotuRail v1.2.0 adds the compatible local Harness Lifecycle command family.
 
 ## Stable Surface For v1.0
 
@@ -20,6 +20,11 @@ SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0
 - `soturail release check`
 - `soturail workflow`
 - `soturail harness`
+- `soturail harness init`
+- `soturail harness audit`
+- `soturail session start|end`
+- `soturail handoff generate`
+- `soturail feature add|start|done|list`
 - `soturail diagram`
 - `soturail agents`
 - `soturail agents matrix`
@@ -42,6 +47,7 @@ Stable means the command should remain local, documented, covered by smoke or co
 - Full Design Rail runtime.
 - Skill Rail 2.0 runtime.
 - Governance and cost runtime.
+- SotuRail Conductor commands and autonomous/runtime behavior.
 
 Experimental surfaces may change before promotion. They must stay local, optional and honest about limitations.
 
@@ -70,3 +76,6 @@ Future deprecations must name a replacement command, state the release that intr
 - [host matrix schema](host-matrix-schema.md)
 - [agent export contract](agent-export-contract.md)
 - [MCP host manifest](mcp-host-manifest.md)
+- [Harness Lifecycle Rail](harness-lifecycle-rail.md)
+- [Security Boundaries](security-boundaries.md)
+- [Conductor Mode](conductor-mode.md)
