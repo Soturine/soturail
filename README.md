@@ -11,6 +11,7 @@ SotuRail is a local-first Context OS for AI coding agents. It prepares compact p
 ```bash
 npm install -g soturail
 soturail --version
+npx soturail --help
 ```
 
 SotuRail requires Node.js 20 or newer. TypeScript is the portable default; native acceleration remains optional.
