@@ -5,9 +5,9 @@ index 1111111..2222222 100644
 @@ -1,3 +1,5 @@
 -  return 1;
 +  return 2;
-diff --git a/docs/usage.md b/docs/usage.md
---- a/docs/usage.md
-+++ b/docs/usage.md
+diff --git a/docs/getting-started/usage.md b/docs/getting-started/usage.md
+--- a/docs/getting-started/usage.md
++++ b/docs/getting-started/usage.md
 @@ -10,4 +10,8 @@
 +Use soturail self all before release commits.
 rename from src/old.ts

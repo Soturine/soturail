@@ -122,4 +122,4 @@ Changes not staged for commit:
  modified: src/generated-119.ts
  deleted: src/old.ts
 Untracked files:
- docs/windows.md
+ docs/getting-started/windows.md
