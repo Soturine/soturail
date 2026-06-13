@@ -26,7 +26,7 @@ SotuRail is not the agent, not a Claude-only harness, not a Mermaid-only workflo
 
 ## Project Status
 
-v1.1.0 keeps the stable local Context OS surface and adds Host Compatibility Rail 1.0. The stable surface covers status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow/harness/diagram rails, agent exports, host doctors and read-only MCP report/host resources.
+v1.2.0 keeps the stable local Context OS surface, polishes Host Compatibility Rail and adds Harness Lifecycle Rail. The stable surface covers status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow/harness/diagram rails, lifecycle state, agent exports, host doctors and read-only MCP report/host resources.
 
 Experimental host runtimes remain documented but are not part of the stable contract until promoted. SotuRail does not add cloud telemetry, a required dashboard server, destructive MCP tools, shell execution through MCP or a native-only runtime. TypeScript remains the portable fallback. See [ROADMAP.md](ROADMAP.md), [docs/v1-contract.md](docs/v1-contract.md), [docs/schema-contracts.md](docs/schema-contracts.md), [docs/stable-command-surface.md](docs/stable-command-surface.md), [docs/agent-hosts.md](docs/agent-hosts.md) and [docs/future-rails-index.md](docs/future-rails-index.md).
 
@@ -224,6 +224,22 @@ soturail report agent --agent opencode
 
 v1.1.0 adds host matrix 2.0 fields, mirrored exports under `.soturail/agents/<host>/`, per-host doctor reports, OpenCode-compatible exports, Antigravity transition guidance, Gemini legacy-compatible exports, DeepAgents role-pack exports and read-only MCP host manifests. See [docs/host-matrix-schema.md](docs/host-matrix-schema.md), [docs/agent-export-contract.md](docs/agent-export-contract.md), [docs/mcp-host-manifest.md](docs/mcp-host-manifest.md), [docs/tutorial-opencode.md](docs/tutorial-opencode.md) and [docs/media-guide.md](docs/media-guide.md).
 
+## v1.2.0 Harness Lifecycle Rail
+
+```bash
+soturail harness init
+soturail harness audit --json
+soturail session start "Implement a focused change"
+soturail feature add "Lifecycle-backed feature"
+soturail feature list
+soturail handoff generate
+soturail session end --summary "Verified the focused change"
+```
+
+v1.2.0 adds safe local harness scaffolds, lifecycle audits, one-active-feature tracking, session state and bounded handoffs under `.soturail/harness/` and `.soturail/state/`. Initialization preserves existing files by default, audit does not execute verification commands, and handoffs do not read private shell history.
+
+The ecosystem review now distinguishes Hermes as an agent runtime, Odysseus as a workspace/runtime stack and SotuRail as the local-first context/harness OS. A future optional [SotuRail Conductor](docs/conductor-mode.md) remains proposed and is not implemented. See [Harness Lifecycle Rail](docs/harness-lifecycle-rail.md), [Agent And Harness Synthesis 2026](docs/agent-harness-synthesis-2026.md) and [Security Boundaries](docs/security-boundaries.md).
+
 ## Why SotuRail Exists
 
 AI coding agents often receive too much unstable context: full files, noisy test logs, repeated terminal output and long conversational summaries. SotuRail is designed to unify those workflows into one independent local-first tool without sending telemetry or inventing provider metrics.
@@ -298,10 +314,9 @@ Reports are written to `.soturail/reports/self-dogfood.md` with stable project c
 
 ## Planned Next Features
 
-Post-v1 work is staged so the stable Context OS surface stays reliable. v1.1.0 Host Compatibility Rail is now delivered; the next staged rails now include the 2026 agent-harness synthesis:
+Post-v1 work is staged so the stable Context OS surface stays reliable. v1.1.1 ecosystem documentation/golden export polish and the v1.2.0 Harness Lifecycle slice are delivered; the remaining staged rails include:
 
-- v1.1.1 Host Compatibility Polish, ecosystem docs and golden export checks;
-- v1.2.0 Spec, Design, Diagram and Harness Lifecycle Rail;
+- v1.2.x Spec, Design And Diagram Rail expansion;
 - v1.3.0 Knowledge, Evidence and Evaluation Rail;
 - v1.4.0 Skill Rail 2.0, Knowledge-to-Skill and Tasklet Packs;
 - v1.5.0 Governance, Cost, Resilience and Host Router Rail;
@@ -358,6 +373,8 @@ Future planning is split across focused docs so the roadmap does not become the 
 - [Host Router Rail](docs/host-router-rail.md)
 - [Tasklet Rail](docs/tasklet-rail.md)
 - [Host Compatibility Rail](docs/host-compatibility-rail.md)
+- [Security Boundaries](docs/security-boundaries.md)
+- [SotuRail Conductor Mode](docs/conductor-mode.md)
 - [Design Rail](docs/design-rail.md)
 - [Knowledge Graph Rail](docs/knowledge-graph-rail.md)
 - [Skill Rail 2.0](docs/skill-rail-2.md)
@@ -384,7 +401,7 @@ soturail --version
 Install the stable v1 release exactly with:
 
 ```bash
-npm install -g soturail@1.1.0
+npm install -g soturail@1.2.0
 ```
 
 For local development from source:
@@ -718,7 +735,7 @@ v0.10.0 Local reports, observability timeline and static dashboard
 v0.10.1 Stability, JSON validity, report polish and v1 readiness
 v1.0.0  Stable Context OS surface and strict contracts
 v1.1.0  Host Compatibility Rail
-v1.2.0  Spec, Design And Diagram Rail
+v1.2.0  Harness Lifecycle Rail + Spec/Design/Diagram planning
 v1.3.0  Knowledge Graph Rail
 v1.4.0  Skill Rail 2.0 And Domain Skill Packs
 v1.5.0  Governance And Cost Rail

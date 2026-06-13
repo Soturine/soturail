@@ -25,6 +25,16 @@ Plano-like systems: the gateway, router and production data plane.
 SotuRail: the local Context OS that prepares, filters, formats, remembers, governs and reports what agents need.
 ```
 
+Hermes Agent and Odysseus sharpen this boundary:
+
+```txt
+Hermes = self-improving personal agent runtime.
+Odysseus = workspace + runtime + agent + UI + local services.
+SotuRail = local-first context/harness OS for preparing and governing agents.
+```
+
+The optional future **SotuRail Conductor** may coordinate planning, verification, review, tasklets and evidence behind approval gates. It is not implemented in v1.2.0 and must not replace the stable CLI-first Core.
+
 Newer v0.5+ planning model:
 
 ```txt
@@ -73,6 +83,10 @@ See also:
 - [docs/knowledge-graph-rail.md](docs/knowledge-graph-rail.md)
 - [docs/skill-rail-2.md](docs/skill-rail-2.md)
 - [docs/governance-cost-rail.md](docs/governance-cost-rail.md)
+- [docs/agent-harness-synthesis-2026.md](docs/agent-harness-synthesis-2026.md)
+- [docs/harness-lifecycle-rail.md](docs/harness-lifecycle-rail.md)
+- [docs/security-boundaries.md](docs/security-boundaries.md)
+- [docs/conductor-mode.md](docs/conductor-mode.md)
 
 ### Agent Brain Patterns
 
@@ -546,11 +560,11 @@ Non-goals:
 
 ## v1.1.1 - Host Compatibility Polish, Ecosystem Docs And Golden Export Checks
 
-Status: planned patch release after v1.1.0. This should be docs/fixtures/polish first, not a large runtime expansion.
+Status: delivered as part of the combined v1.2.0 batch.
 
 Influenced by QA-agent, agent-pipeline, harness, router and skill-generation projects reviewed in the 2026 agent-harness synthesis.
 
-Planned work:
+Delivered work:
 
 - add consolidated ecosystem docs for Agent QA, Evidence/Provenance, Knowledge, Resilience, Host Router, Tasklets and Agent Governance;
 - add golden checks for agent exports and host manifests where possible;
@@ -570,17 +584,27 @@ Non-goals:
 
 ## v1.2.0 - Spec, Design, Diagram And Harness Lifecycle Rail
 
-Inspired by `design.md`, Mermaid Diagram Driven Development and spec-driven workflows.
+Status: Harness Lifecycle Rail implemented; additional Spec/Design/Diagram expansion remains staged.
 
-Goal: make specs, visual contracts and design constraints first-class local context for agents.
+Inspired by `design.md`, Mermaid Diagram Driven Development, spec-driven workflows, Hermes-style session handoffs and Odysseus-style local workspace organization.
 
-Planned work:
+Goal: make lifecycle state, specs, visual contracts and design constraints first-class local context for agents.
+
+Delivered work:
+
+- `soturail harness init` creates safe local lifecycle instructions, verification, scope and state files without overwriting existing content;
+- `soturail harness audit [--json]` scores Instructions, State, Verification, Scope, Session Lifecycle, Host Compatibility, Evidence/Reports and Security Boundaries without running commands;
+- `soturail session start|end` records bounded local session state;
+- `soturail handoff generate` writes current objective, completed work, changed-file names, verification status, blockers and next steps;
+- `soturail feature add|start|done|list` manages one-active-feature local state in `.soturail/state/feature_list.json`;
+- deterministic golden checks keep host exports aligned with SotuRail's local-first harness identity and safe boundaries;
+- Hermes and Odysseus are classified as ecosystem influences without turning SotuRail into an agent runtime or required workspace server;
+- future optional SotuRail Conductor is documented as proposed and approval-gated.
+
+Remaining planned work:
 
 - `soturail spec init` to scaffold `PRD.md`, `requirements.md`, `design.md`, `tasks.md`, `AGENTS.md`/host rules and verification phases;
-- `soturail harness init` to scaffold instructions, state, verification, scope and lifecycle files;
-- `soturail harness audit` to score instruction/state/verification/scope/lifecycle readiness;
-- `soturail session start|verify|handoff|end` to make long agent sessions resumable;
-- `soturail feature add|start|done` to keep one active feature and definition-of-done at a time;
+- `soturail session verify` and a dedicated `session handoff` alias to extend the implemented session lifecycle;
 - multi-agent workflow templates for researcher, analyst, writer and verifier role packs;
 - `soturail spec check` to validate that requirements, design notes, diagrams, tasks and acceptance criteria stay connected;
 - `soturail spec plan` to turn specs into role-aware workflow tasks without executing them;

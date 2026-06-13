@@ -6,16 +6,28 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-12
+
 ### Added
 
+- Added Harness Lifecycle Rail with `harness init`, `harness audit [--json]`, `session start|end`, `handoff generate` and `feature add|start|done|list`.
+- Added safe local lifecycle state under `.soturail/harness/` and `.soturail/state/`, including `feature_list.json`, progress and session handoff artifacts.
+- Added deterministic host-export golden checks for identity, safe MCP boundaries and autonomous-runtime overclaim prevention.
+- Added Hermes Agent and Odysseus ecosystem classifications, Agent And Harness Synthesis, Security Boundaries, Harness Lifecycle and proposed Conductor docs.
 - Added 2026 agent-harness synthesis docs covering Agent QA, Resilience, Evidence/Provenance, Knowledge, Host Router, Tasklet and Agent Governance directions.
 - Added planning docs for eval datasets, golden agent tests and optional LLM-as-judge policy.
 - Added example workflow templates for validate -> fix -> verify -> report pipelines and multi-agent research/report role packs.
 
 ### Changed
 
-- Updated README, ROADMAP, Future Rails Index, Ecosystem Influences and External Projects Audit with the new post-v1 planning sequence through v1.6.0.
+- Updated README, roadmap, ecosystem audit, future rails, host compatibility, dashboard, observability, Harness Rail and Skill Rail 2.0 docs.
+- Clarified that SotuRail Core remains the local-first harness/context OS while Conductor is a future optional approval-gated mode.
+- Staged the post-v1 planning sequence through v1.6.0 without promoting planned rails to implemented status.
 
+### Security
+
+- `harness init` preserves existing files by default.
+- `harness audit` and handoff generation do not execute verification commands, read private shell history, upload telemetry or expose destructive MCP tools.
 
 ## [1.1.0] - 2026-06-05
 
@@ -575,4 +587,3 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Spec, memory, doctor, cache and stats commands.
 - Vitest coverage for MVP behavior.
 - English-first documentation with pt-BR overview.
-
