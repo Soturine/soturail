@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { Command } from "commander";
 import { listEvaluationCases, readEvaluationReport, runEvaluationSuite } from "../core/evaluation-suite.js";
+import { initEvalDataset, renderAgentQaReport, runEvalDataset, runGoldenChecks, runRegression } from "../core/agent-qa.js";
 
 export function registerEvalCommand(program: Command): void {
   const evalCommand = program.command("eval").description("Run deterministic local SotuRail evaluation fixtures.");
@@ -25,6 +26,22 @@ export function registerEvalCommand(program: Command): void {
 
   evalCommand.command("report").description("Print the latest local evaluation report.").action(async () => {
     process.stdout.write(await readEvaluationReport());
+  });
+
+  const dataset = evalCommand.command("dataset").description("Manage deterministic local Agent QA datasets.");
+  dataset.command("init").action(async () => {
+    process.stdout.write(`Eval dataset initialized: ${path.normalize(path.relative(process.cwd(), await initEvalDataset()))}\n`);
+  });
+  dataset.command("run").action(async () => {
+    process.stdout.write(renderAgentQaReport(await runEvalDataset()));
+  });
+
+  evalCommand.command("golden").description("Run deterministic golden checks for agent-facing artifacts.").action(async () => {
+    process.stdout.write(renderAgentQaReport(await runGoldenChecks()));
+  });
+
+  evalCommand.command("regression").description("Compare current deterministic golden checks with the local baseline.").action(async () => {
+    process.stdout.write(renderAgentQaReport(await runRegression()));
   });
 }
 

@@ -10,6 +10,7 @@ import { registerDedupeCommand } from "./commands/dedupe.js";
 import { registerDiagramCommand } from "./commands/diagram.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerEvalCommand } from "./commands/eval.js";
+import { registerEvidenceCommand } from "./commands/evidence.js";
 import { registerExpandCommand } from "./commands/expand.js";
 import { registerFsCommand } from "./commands/fs.js";
 import { registerFormatCommand } from "./commands/format.js";
@@ -19,6 +20,7 @@ import { registerHandoffCommand } from "./commands/handoff.js";
 import { registerHooksCommand } from "./commands/hooks.js";
 import { registerIngestCommand } from "./commands/ingest.js";
 import { registerIndexCommand } from "./commands/index.js";
+import { registerKnowledgeCommand } from "./commands/knowledge.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerMemoryCommand } from "./commands/memory.js";
 import { registerMcpCommand } from "./commands/mcp.js";
@@ -37,6 +39,7 @@ import { registerSessionCommand } from "./commands/session.js";
 import { registerSkillsCommand } from "./commands/skills.js";
 import { registerSpecCommand } from "./commands/spec.js";
 import { registerStatsCommand } from "./commands/stats.js";
+import { registerTaskletCommand } from "./commands/tasklet.js";
 import { registerStatusCommand } from "./commands/status.js";
 import { registerReleaseCommand } from "./commands/release.js";
 import { registerValidateCommand } from "./commands/validate.js";
@@ -64,6 +67,7 @@ export function buildProgram(): Command {
   registerDedupeCommand(program);
   registerDiagramCommand(program);
   registerEvalCommand(program);
+  registerEvidenceCommand(program);
   registerExpandCommand(program);
   registerFsCommand(program);
   registerFormatCommand(program);
@@ -72,6 +76,7 @@ export function buildProgram(): Command {
   registerHandoffCommand(program);
   registerHooksCommand(program);
   registerIngestCommand(program);
+  registerKnowledgeCommand(program);
   registerSpecCommand(program);
   registerMemoryCommand(program);
   registerMcpCommand(program);
@@ -88,6 +93,7 @@ export function buildProgram(): Command {
   registerStatusCommand(program);
   registerDoctorCommand(program);
   registerStatsCommand(program);
+  registerTaskletCommand(program);
   registerValidateCommand(program);
   registerWorkflowCommand(program);
 

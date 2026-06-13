@@ -4,6 +4,7 @@ import { exportSkills, packSkills } from "../core/skill-exporter.js";
 import { formatSkillValidation, validateSkills } from "../core/skill-validator.js";
 import { SkillTargetSchema } from "../core/skill-schema.js";
 import { routeSkill, suggestSkills } from "../core/skill-routing.js";
+import { buildSkill, createSkillTemplate, evaluateSkillsV2, foldInSkill, lintSkillsV2, renderSkillV2Report, writeSkillV2Report } from "../core/skill-rail-v2.js";
 
 export function registerSkillsCommand(program: Command): void {
   const skills = program.command("skills").description("Create, validate, export and pack safe local agent skills.");
@@ -62,4 +63,33 @@ export function registerSkillsCommand(program: Command): void {
       }
       process.stdout.write(await packSkills(options.format));
     });
+
+  skills.command("template").argument("<domain>", "Skill domain").action(async (domain: string) => {
+    process.stdout.write(`Skill template: ${await createSkillTemplate(domain)}\n`);
+  });
+
+  skills.command("lint").action(async () => {
+    const report = await lintSkillsV2();
+    process.stdout.write(renderSkillV2Report(report));
+    if (report.status === "failed") process.exitCode = 1;
+  });
+
+  skills.command("eval").action(async () => {
+    const report = await evaluateSkillsV2();
+    process.stdout.write(renderSkillV2Report(report));
+    if (report.status === "failed") process.exitCode = 1;
+  });
+
+  skills.command("report").action(async () => {
+    const result = await writeSkillV2Report();
+    process.stdout.write(`Skill report: ${result.report.status}\njson: ${result.json}\nmarkdown: ${result.markdown}\n`);
+  });
+
+  skills.command("build").argument("<paths...>", "Local source paths").requiredOption("--name <name>", "Skill name").action(async (paths: string[], options: { name: string }) => {
+    process.stdout.write(`Skill built: ${await buildSkill(options.name, paths)}\n`);
+  });
+
+  skills.command("fold-in").argument("<skill>", "Skill id").argument("<paths...>", "Additional source paths").action(async (skill: string, paths: string[]) => {
+    process.stdout.write(`Skill updated: ${await foldInSkill(skill, paths)}\n`);
+  });
 }
