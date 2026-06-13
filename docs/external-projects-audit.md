@@ -27,8 +27,18 @@ It is not the model, not the agent brain, not a heavy gateway and not a clone of
 | `murillo-romeu/sonar-totvs` | High | Domain-specific AI skill/report | Add Skill Rail 2.0 domain skill templates and safety gates |
 | `Acauhi99/opencode-agent-system` | Medium | OpenCode agent system patterns | Add OpenCode host export and role/skill packaging |
 | `ComposioHQ/composio` | High | Tool/provider integration layer | Stay compatible through manifests and reports, do not become a tool marketplace |
+| Hermes Agent | High | Self-improving personal agent runtime with tools, skills, routines, subagents and trajectory compression | Absorb context optimization and role-pack patterns while keeping SotuRail a harness |
+| Odysseus | High | Self-hosted AI workspace combining runtime, UI, local services, memory and tools | Absorb dashboard/host-fit/report patterns without adding a required server or model manager |
 
 ## What SotuRail Should Absorb
+
+### Hermes And Odysseus Classification
+
+Hermes is an agent runtime. Odysseus is a workspace plus runtime and local-service stack. SotuRail remains the local-first harness/context OS that prepares and governs artifacts for those kinds of hosts.
+
+Useful patterns include trajectory compression, session search, toolset profiles, role packs, local dashboard cards, visual evidence and explicit privacy boundaries. Model serving, mandatory web UI, central shell access and bundled personal productivity services remain outside SotuRail scope.
+
+See [Agent And Harness Synthesis 2026](agent-harness-synthesis-2026.md) and [Security Boundaries](security-boundaries.md).
 
 ### 1. Host compatibility without becoming a host
 

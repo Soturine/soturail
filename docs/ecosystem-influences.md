@@ -46,6 +46,8 @@ SotuRail should remain the local rail layer that prepares those artifacts for an
 | `murillo-romeu/sonar-totvs` | domain-specific skill/report | Skill Rail 2.0 |
 | `Acauhi99/opencode-agent-system` | OpenCode agent system packaging | OpenCode export and role/skill packaging |
 | `ComposioHQ/composio` | tool/provider integration ecosystem | compatibility manifests, not marketplace cloning |
+| Hermes Agent | self-improving agent runtime, skills, routines, subagents and trajectory compression | context optimization, role packs and tasklet inspiration without becoming the runtime |
+| Odysseus | self-hosted AI workspace, runtime, UI and local services | local dashboard, host-fit and evidence-report inspiration without adding a required server |
 
 ### Product Rule
 
@@ -56,6 +58,19 @@ SotuRail should absorb the durable patterns and avoid cloning products:
 - Knowledge Graph Rail should explain local code/docs evidence but not require cloud embeddings.
 - Skill Rail 2.0 should package safe domain skills but not hide risky commands.
 - Governance And Cost Rail should warn about context/workflow risk but not claim provider billing accuracy without evidence.
+
+### Hermes Agent And Odysseus Boundary
+
+Hermes and Odysseus reinforce why SotuRail must distinguish agents from harness components:
+
+```txt
+Agent = model + tools + state/memory + decision/execution loop.
+SotuRail = local context, harness, evidence, policy and host handoff layer.
+```
+
+Hermes contributes useful inspiration for trajectory compression, session search, toolset profiles, skills and subagent role packs. Odysseus contributes useful inspiration for local dashboard cards, host fit checks, visual evidence reports and privacy/security documentation.
+
+SotuRail does not copy their runtime, chat UI, model serving, local-service stack or central shell behavior. See [`agent-harness-synthesis-2026.md`](agent-harness-synthesis-2026.md), [`security-boundaries.md`](security-boundaries.md) and [`conductor-mode.md`](conductor-mode.md).
 
 ## 2026 Agent Runtime Update
 
