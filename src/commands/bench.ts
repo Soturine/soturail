@@ -138,9 +138,9 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
     "@@ -1,3 +1,5 @@",
     "-  return 1;",
     "+  return 2;",
-    "diff --git a/docs/usage.md b/docs/usage.md",
-    "--- a/docs/usage.md",
-    "+++ b/docs/usage.md",
+    "diff --git a/docs/getting-started/usage.md b/docs/getting-started/usage.md",
+    "--- a/docs/getting-started/usage.md",
+    "+++ b/docs/getting-started/usage.md",
     "@@ -10,4 +10,8 @@",
     "+Use soturail self all before release commits.",
     "rename from src/old.ts",
@@ -153,7 +153,7 @@ export async function prepareBenchmarks(root = process.cwd()): Promise<string> {
     ...Array.from({ length: 120 }, (_, index) => ` modified: src/generated-${index}.ts`),
     " deleted: src/old.ts",
     "Untracked files:",
-    " docs/windows.md"
+    " docs/getting-started/windows.md"
   ].join("\n");
   const jsonPayload = JSON.stringify({
     status: "error",

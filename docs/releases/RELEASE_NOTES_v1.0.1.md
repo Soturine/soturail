@@ -4,7 +4,7 @@
 
 - Updated package and repository licensing metadata to Apache-2.0.
 - Aligned README license badge and license section with Apache-2.0.
-- Aligned `docs/licensing-strategy.md` with the Apache-2.0 licensing decision.
+- Aligned `docs/reference/licensing-strategy.md` with the Apache-2.0 licensing decision.
 
 ## Notes
 

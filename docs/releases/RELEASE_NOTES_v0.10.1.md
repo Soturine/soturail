@@ -51,9 +51,9 @@ soturail release check
 .soturail/schemas/check.md
 .soturail/readiness/v1.json
 .soturail/readiness/v1.md
-docs/stable-command-surface.md
-docs/deprecation-policy.md
-docs/migration-v1.md
+docs/reference/commands/stable-command-surface.md
+docs/reference/contracts/deprecation-policy.md
+docs/getting-started/migration-v1.md
 ```
 
 ## Stability And Safety

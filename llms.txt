@@ -6,14 +6,14 @@ Useful entry points:
 
 - README.md
 - ROADMAP.md
-- docs/agents.md
-- docs/quickstart.md
-- docs/v1-contract.md
-- docs/schema-contracts.md
-- docs/project-brain.md
-- docs/benchmarking.md
-- docs/report-rail.md
-- docs/dashboard-rail.md
-- docs/observability-rail.md
-- docs/mcp-report-resources.md
+- docs/rails/hosts/agents.md
+- docs/getting-started/quickstart.md
+- docs/reference/contracts/v1-contract.md
+- docs/reference/schemas/schema-contracts.md
+- docs/rails/knowledge/project-brain.md
+- docs/rails/evaluation/benchmarking.md
+- docs/rails/evidence/report-rail.md
+- docs/architecture/dashboard-rail.md
+- docs/architecture/observability-rail.md
+- docs/rails/hosts/mcp-report-resources.md
 - docs/releases/

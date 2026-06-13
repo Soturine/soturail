@@ -120,12 +120,12 @@ describe("v1.2.0 harness lifecycle rail", () => {
 
   it("links the new lifecycle and boundary docs from README or the future rails index", async () => {
     const root = process.cwd();
-    const parent = `${await readFile(path.join(root, "README.md"), "utf8")}\n${await readFile(path.join(root, "docs", "future-rails-index.md"), "utf8")}`;
+    const parent = `${await readFile(path.join(root, "README.md"), "utf8")}\n${await readFile(path.join(root, "docs", "roadmap", "future-rails-index.md"), "utf8")}`;
     for (const doc of [
-      "docs/harness-lifecycle-rail.md",
-      "docs/security-boundaries.md",
-      "docs/conductor-mode.md",
-      "docs/agent-harness-synthesis-2026.md"
+      "docs/rails/harness/harness-lifecycle-rail.md",
+      "docs/security/security-boundaries.md",
+      "docs/ecosystem/conductor-mode.md",
+      "docs/ecosystem/agent-harness-synthesis-2026.md"
     ]) {
       expect(existsSync(path.join(root, doc))).toBe(true);
       expect(parent).toContain(doc.replace("docs/", ""));

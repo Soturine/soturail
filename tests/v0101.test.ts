@@ -148,9 +148,9 @@ describe("v0.10.1 JSON stability and v1 readiness", () => {
   it("ships v1 readiness policy docs", () => {
     const root = process.cwd();
 
-    expect(existsSync(path.join(root, "docs", "stable-command-surface.md"))).toBe(true);
-    expect(existsSync(path.join(root, "docs", "deprecation-policy.md"))).toBe(true);
-    expect(existsSync(path.join(root, "docs", "migration-v1.md"))).toBe(true);
+    expect(existsSync(path.join(root, "docs", "reference", "commands", "stable-command-surface.md"))).toBe(true);
+    expect(existsSync(path.join(root, "docs", "reference", "contracts", "deprecation-policy.md"))).toBe(true);
+    expect(existsSync(path.join(root, "docs", "getting-started", "migration-v1.md"))).toBe(true);
   });
 });
 

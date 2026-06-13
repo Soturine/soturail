@@ -1110,9 +1110,9 @@ describe("documentation files", () => {
   it("includes Windows, Skill Rail, Workflow Rail and required GitHub files", async () => {
     const root = process.cwd();
 
-    await expect(fs.access(path.join(root, "docs", "windows.md"))).resolves.toBeUndefined();
-    await expect(fs.access(path.join(root, "docs", "skill-rail.md"))).resolves.toBeUndefined();
-    await expect(fs.access(path.join(root, "docs", "workflow-rail.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "getting-started", "windows.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "rails", "skills", "skill-rail.md"))).resolves.toBeUndefined();
+    await expect(fs.access(path.join(root, "docs", "rails", "harness", "workflow-rail.md"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, ".gitattributes"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, ".github", "workflows", "ci.yml"))).resolves.toBeUndefined();
     await expect(fs.access(path.join(root, ".github", "ISSUE_TEMPLATE", "bug_report.md"))).resolves.toBeUndefined();

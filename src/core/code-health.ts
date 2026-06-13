@@ -70,18 +70,18 @@ const requiredV1Docs = [
   "README.md",
   "ROADMAP.md",
   "CHANGELOG.md",
-  "docs/quickstart.md",
-  "docs/v1-contract.md",
-  "docs/schema-contracts.md",
-  "docs/stable-command-surface.md",
-  "docs/deprecation-policy.md",
-  "docs/migration-v1.md",
-  "docs/agent-hosts.md",
-  "docs/host-matrix-schema.md",
-  "docs/agent-export-contract.md",
-  "docs/mcp-host-manifest.md",
-  "docs/clean-code-guidelines.md",
-  "docs/architecture-boundaries.md"
+  "docs/getting-started/quickstart.md",
+  "docs/reference/contracts/v1-contract.md",
+  "docs/reference/schemas/schema-contracts.md",
+  "docs/reference/commands/stable-command-surface.md",
+  "docs/reference/contracts/deprecation-policy.md",
+  "docs/getting-started/migration-v1.md",
+  "docs/rails/hosts/agent-hosts.md",
+  "docs/reference/schemas/host-matrix-schema.md",
+  "docs/reference/contracts/agent-export-contract.md",
+  "docs/rails/hosts/mcp-host-manifest.md",
+  "docs/architecture/clean-code-guidelines.md",
+  "docs/architecture/architecture-boundaries.md"
 ];
 
 export async function runCodeHealth(root = process.cwd(), options: QualityOptions = {}): Promise<{ report: CodeHealthReport; jsonPath: string; markdownPath: string; output: string }> {
@@ -236,12 +236,12 @@ async function checkScopeContamination(root: string): Promise<QualityFinding[]> 
   const files = [
     "README.md",
     "ROADMAP.md",
-    "docs/quickstart.md",
-    "docs/v1-contract.md",
-    "docs/schema-contracts.md",
-    "docs/stable-command-surface.md",
-    "docs/migration-v1.md",
-    "docs/future-rails-index.md"
+    "docs/getting-started/quickstart.md",
+    "docs/reference/contracts/v1-contract.md",
+    "docs/reference/schemas/schema-contracts.md",
+    "docs/reference/commands/stable-command-surface.md",
+    "docs/getting-started/migration-v1.md",
+    "docs/roadmap/future-rails-index.md"
   ];
   const terms = /\b(SoturAI|trading|finance|backtest)\b/i;
   const findings: QualityFinding[] = [];
@@ -293,7 +293,7 @@ function makeArchitectureReport(filesScanned: number, findings: QualityFinding[]
     nextCommands: [
       "soturail self architecture --check --json",
       "soturail self code-health",
-      "docs/architecture-boundaries.md"
+      "docs/architecture/architecture-boundaries.md"
     ]
   };
 }

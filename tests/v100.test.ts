@@ -90,18 +90,18 @@ describe("v1.0.0 stable context os contracts", () => {
   it("keeps v1 docs present and free from unrelated roadmap scope", async () => {
     const root = process.cwd();
     const docs = [
-      "docs/quickstart.md",
-      "docs/v1-contract.md",
-      "docs/schema-contracts.md",
-      "docs/agent-hosts.md",
-      "docs/host-matrix-schema.md",
-      "docs/agent-export-contract.md",
-      "docs/mcp-host-manifest.md",
-      "docs/clean-code-guidelines.md",
-      "docs/architecture-boundaries.md",
-      "docs/stable-command-surface.md",
-      "docs/deprecation-policy.md",
-      "docs/migration-v1.md"
+      "docs/getting-started/quickstart.md",
+      "docs/reference/contracts/v1-contract.md",
+      "docs/reference/schemas/schema-contracts.md",
+      "docs/rails/hosts/agent-hosts.md",
+      "docs/reference/schemas/host-matrix-schema.md",
+      "docs/reference/contracts/agent-export-contract.md",
+      "docs/rails/hosts/mcp-host-manifest.md",
+      "docs/architecture/clean-code-guidelines.md",
+      "docs/architecture/architecture-boundaries.md",
+      "docs/reference/commands/stable-command-surface.md",
+      "docs/reference/contracts/deprecation-policy.md",
+      "docs/getting-started/migration-v1.md"
     ];
 
     for (const doc of docs) {
@@ -166,22 +166,23 @@ async function tempProject(): Promise<string> {
   await writeFile(path.join(root, "src", "core", "release-preflight.ts"), `export const releaseNotesPath = "docs/releases/RELEASE_NOTES_v${SOTURAIL_VERSION}.md";\n`, "utf8");
   await writeFile(path.join(root, "src", "commands", "status.ts"), "export const statusCommand = true;\n", "utf8");
   for (const doc of [
-    "status-command.md",
-    "report-rail.md",
-    "dashboard-rail.md",
-    "stable-command-surface.md",
-    "deprecation-policy.md",
-    "migration-v1.md",
-    "quickstart.md",
-    "v1-contract.md",
-    "schema-contracts.md",
-    "agent-hosts.md",
-    "host-matrix-schema.md",
-    "agent-export-contract.md",
-    "mcp-host-manifest.md",
-    "clean-code-guidelines.md",
-    "architecture-boundaries.md"
+    "reference/commands/status-command.md",
+    "rails/evidence/report-rail.md",
+    "architecture/dashboard-rail.md",
+    "reference/commands/stable-command-surface.md",
+    "reference/contracts/deprecation-policy.md",
+    "getting-started/migration-v1.md",
+    "getting-started/quickstart.md",
+    "reference/contracts/v1-contract.md",
+    "reference/schemas/schema-contracts.md",
+    "rails/hosts/agent-hosts.md",
+    "reference/schemas/host-matrix-schema.md",
+    "reference/contracts/agent-export-contract.md",
+    "rails/hosts/mcp-host-manifest.md",
+    "architecture/clean-code-guidelines.md",
+    "architecture/architecture-boundaries.md"
   ]) {
+    await mkdir(path.dirname(path.join(root, "docs", doc)), { recursive: true });
     await writeFile(path.join(root, "docs", doc), `# ${doc}\n\nSotuRail fixture.\n`, "utf8");
   }
   await writeFile(path.join(root, "docs", "releases", `RELEASE_NOTES_v${SOTURAIL_VERSION}.md`), "# Notes\n", "utf8");

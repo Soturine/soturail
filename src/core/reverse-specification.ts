@@ -153,7 +153,7 @@ export async function reverseGaps(root = process.cwd()): Promise<{ gaps: BrainGa
       gap: "Project Brain docs are missing.",
       severity: "high",
       needsHumanValidation: true,
-      sourcePath: "docs/project-brain.md",
+      sourcePath: "docs/rails/knowledge/project-brain.md",
       status: "open",
       createdAt: now
     });
@@ -165,7 +165,7 @@ export async function reverseGaps(root = process.cwd()): Promise<{ gaps: BrainGa
       gap: "Diagram docs exist but diagram command was not found.",
       severity: "medium",
       needsHumanValidation: true,
-      sourcePath: "docs/diagram-rail.md",
+      sourcePath: "docs/rails/design/diagram-rail.md",
       status: "open",
       createdAt: now
     });

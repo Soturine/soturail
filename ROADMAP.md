@@ -33,7 +33,7 @@ Odysseus = workspace + runtime + agent + UI + local services.
 SotuRail = local-first context/harness OS for preparing and governing agents.
 ```
 
-The optional future **SotuRail Conductor** may coordinate planning, verification, review, tasklets and evidence behind approval gates. It is not implemented in v1.2.0 and must not replace the stable CLI-first Core.
+The optional future **SotuRail Conductor** may coordinate planning, verification, review, tasklets and evidence behind approval gates. It is not implemented in v1.4.0 and must not replace the stable CLI-first Core.
 
 Newer v0.5+ planning model:
 
@@ -61,32 +61,32 @@ The next stages are influenced by the broader context-engineering and agent-infr
 
 See also:
 
-- [docs/comparisons.md](docs/comparisons.md)
-- [docs/ecosystem-influences.md](docs/ecosystem-influences.md)
-- [docs/deep-agents-patterns.md](docs/deep-agents-patterns.md)
-- [docs/harness-rail.md](docs/harness-rail.md)
-- [docs/policy-rail.md](docs/policy-rail.md)
-- [docs/diagram-rail.md](docs/diagram-rail.md)
-- [docs/structured-payload-rail.md](docs/structured-payload-rail.md)
-- [docs/agent-docs-hygiene.md](docs/agent-docs-hygiene.md)
-- [docs/roadmap-harness-diagram-payload-addendum.md](docs/roadmap-harness-diagram-payload-addendum.md)
-- [docs/external-projects-audit.md](docs/external-projects-audit.md)
-- [docs/agent-harness-synthesis-2026.md](docs/agent-harness-synthesis-2026.md)
-- [docs/agent-qa-rail.md](docs/agent-qa-rail.md)
-- [docs/evidence-provenance-rail.md](docs/evidence-provenance-rail.md)
-- [docs/knowledge-rail.md](docs/knowledge-rail.md)
-- [docs/resilience-rail.md](docs/resilience-rail.md)
-- [docs/host-router-rail.md](docs/host-router-rail.md)
-- [docs/tasklet-rail.md](docs/tasklet-rail.md)
-- [docs/host-compatibility-rail.md](docs/host-compatibility-rail.md)
-- [docs/design-rail.md](docs/design-rail.md)
-- [docs/knowledge-graph-rail.md](docs/knowledge-graph-rail.md)
-- [docs/skill-rail-2.md](docs/skill-rail-2.md)
-- [docs/governance-cost-rail.md](docs/governance-cost-rail.md)
-- [docs/agent-harness-synthesis-2026.md](docs/agent-harness-synthesis-2026.md)
-- [docs/harness-lifecycle-rail.md](docs/harness-lifecycle-rail.md)
-- [docs/security-boundaries.md](docs/security-boundaries.md)
-- [docs/conductor-mode.md](docs/conductor-mode.md)
+- [docs/ecosystem/comparisons.md](docs/ecosystem/comparisons.md)
+- [docs/ecosystem/ecosystem-influences.md](docs/ecosystem/ecosystem-influences.md)
+- [docs/rails/hosts/deep-agents-patterns.md](docs/rails/hosts/deep-agents-patterns.md)
+- [docs/rails/harness/harness-rail.md](docs/rails/harness/harness-rail.md)
+- [docs/rails/governance/policy-rail.md](docs/rails/governance/policy-rail.md)
+- [docs/rails/design/diagram-rail.md](docs/rails/design/diagram-rail.md)
+- [docs/rails/context/structured-payload-rail.md](docs/rails/context/structured-payload-rail.md)
+- [docs/rails/hosts/agent-docs-hygiene.md](docs/rails/hosts/agent-docs-hygiene.md)
+- [docs/roadmap/roadmap-harness-diagram-payload-addendum.md](docs/roadmap/roadmap-harness-diagram-payload-addendum.md)
+- [docs/ecosystem/external-projects-audit.md](docs/ecosystem/external-projects-audit.md)
+- [docs/ecosystem/agent-harness-synthesis-2026.md](docs/ecosystem/agent-harness-synthesis-2026.md)
+- [docs/rails/evaluation/agent-qa-rail.md](docs/rails/evaluation/agent-qa-rail.md)
+- [docs/rails/evidence/evidence-provenance-rail.md](docs/rails/evidence/evidence-provenance-rail.md)
+- [docs/rails/knowledge/knowledge-rail.md](docs/rails/knowledge/knowledge-rail.md)
+- [docs/rails/governance/resilience-rail.md](docs/rails/governance/resilience-rail.md)
+- [docs/rails/hosts/host-router-rail.md](docs/rails/hosts/host-router-rail.md)
+- [docs/rails/tasklets/tasklet-rail.md](docs/rails/tasklets/tasklet-rail.md)
+- [docs/rails/hosts/host-compatibility-rail.md](docs/rails/hosts/host-compatibility-rail.md)
+- [docs/rails/design/design-rail.md](docs/rails/design/design-rail.md)
+- [docs/rails/knowledge/knowledge-graph-rail.md](docs/rails/knowledge/knowledge-graph-rail.md)
+- [docs/rails/skills/skill-rail-2.md](docs/rails/skills/skill-rail-2.md)
+- [docs/rails/governance/governance-cost-rail.md](docs/rails/governance/governance-cost-rail.md)
+- [docs/ecosystem/agent-harness-synthesis-2026.md](docs/ecosystem/agent-harness-synthesis-2026.md)
+- [docs/rails/harness/harness-lifecycle-rail.md](docs/rails/harness/harness-lifecycle-rail.md)
+- [docs/security/security-boundaries.md](docs/security/security-boundaries.md)
+- [docs/ecosystem/conductor-mode.md](docs/ecosystem/conductor-mode.md)
 
 ### Agent Brain Patterns
 
@@ -518,7 +518,7 @@ Status: implemented as the first stable local Context OS surface. This is a stab
 
 Primary goals:
 
-- finalize the stable command surface documented in `docs/stable-command-surface.md`;
+- finalize the stable command surface documented in `docs/reference/commands/stable-command-surface.md`;
 - keep experimental commands clearly marked until promoted;
 - maintain schema compatibility for `status`, `report`, `dashboard`, `obs`, `bench`, `native`, `baseline`, `mcp`, `readiness`, `code-health`, `architecture` and `agents matrix` artifacts;
 - run `soturail self schemas --check --strict`, `soturail self readiness --v1 --strict`, `soturail self code-health` and `soturail release check --strict` as release gates;
@@ -623,60 +623,33 @@ Rules:
 - rendered diagrams are local artifacts, not remote services;
 - design guidance must be agent-readable but not huge enough to poison context windows.
 
-## v1.3.0 - Knowledge, Evidence And Evaluation Rail
+## v1.3.0 - Absorbed Into v1.4.0
 
-Inspired by codebase-understanding tools, Project Brain, reverse specification, document-to-skill workflows, provenance-focused research agents and QA-agent evaluation patterns.
+v1.3.0 was not published as a separate feature release. Its Knowledge, Evidence and Evaluation scope was absorbed into v1.4.0 because knowledge packs, provenance, deterministic evals, skills and tasklets are tightly connected. A useful Skill Rail 2.0 needs knowledge compilation plus evidence and evaluation support.
 
-Goal: connect files, symbols, decisions, claims, bugs, tests, workflows and releases into local explainable knowledge, evidence and eval artifacts.
+The larger Knowledge Graph runtime remains planned and experimental.
 
-Planned work:
+## v1.4.0 - Knowledge, Evidence, Evaluation, Skills And Tasklets
 
-- `soturail graph build` to create a local graph from source files, docs, reverse claims, Project Brain records, release notes, diagrams and workflow evidence;
-- `soturail graph explain <path-or-id>` to show why a file, claim, diagram, workflow or test matters;
-- `soturail graph impact` to estimate what docs/specs/tests/claims may be affected by changed files;
-- `soturail graph tour` to generate agent-readable onboarding paths through the codebase;
-- `soturail graph dashboard` to add local dashboard graph views without cloud dependencies;
-- `soturail graph export --format json` for agent/tool consumption;
-- `soturail knowledge ingest|estimate|compile|update|verify` to turn docs/specs/notes into on-demand knowledge packs;
-- `soturail evidence collect|verify|report` and report `.provenance.md` sidecars;
-- explicit `verified`, `unverified`, `blocked` and `inferred` status in evidence/provenance reports;
-- `soturail eval dataset init|run`, `eval golden`, `eval regression` and `eval report` for local Agent QA;
-- optional `soturail eval judge --optional` with provider-backed judges kept outside default release gates;
-- stale-edge detection when files move, claims lose evidence or diagrams point at removed behavior;
-- keep graph construction, knowledge packs and eval datasets deterministic and local-first before considering embeddings, provider judges or external indexes.
+Goal: turn local project sources into concise knowledge, preserve honest provenance, evaluate agent-facing artifacts, build reviewed skills and describe reusable bounded tasks.
 
-Non-goals:
+Implemented scope:
 
-- no required vector database;
-- no required cloud embeddings;
-- no unsupported semantic claims without source evidence;
-- no full static analyzer promise before benchmarks and fixtures justify it.
+- `soturail knowledge estimate|compile|update|verify|list`;
+- `.soturail/knowledge/<name>/` packs with `SKILL.md`, topics, glossary, patterns, cheatsheet, metadata and source maps;
+- `soturail evidence collect|verify|report` with explicit `verified`, `unverified`, `blocked` and `inferred` statuses;
+- `soturail eval dataset init|run`, `eval golden` and `eval regression`;
+- `soturail skills template|lint|eval|report|build|fold-in`;
+- `soturail tasklet create|list|run --dry-run|export`;
+- reorganized documentation, a concise README and local Markdown link validation.
 
-## v1.4.0 - Skill Rail 2.0, Knowledge-To-Skill And Tasklet Packs
+Boundaries:
 
-Inspired by domain-specific skills such as Sonar/TOTVS-style analysis, Deep Agents-style skills and OpenCode/agent skill systems.
-
-Goal: make local skills safer, smaller, role-aware and measurable.
-
-Planned work:
-
-- `soturail skills template <domain>` for TypeScript CLI, Java, PHP, docs, release, accessibility, security-review, AdvPL/TOTVS-style analysis and other local domains;
-- `soturail skills lint` to validate metadata, supported hosts, risk level, examples, verification steps and embedded scripts;
-- `soturail skills eval` to run local fixtures for a skill before exporting it;
-- `soturail skills report` to summarize skill purpose, risk, evidence needs and verification requirements;
-- `soturail skills export --agent claude|codex|opencode|cursor|antigravity|generic` with role-aware bundles instead of always-loaded skill dumps;
-- `soturail skill build <paths>` to compile local docs into skill folders with `SKILL.md`, topics, glossary, patterns, cheatsheet and metadata;
-- `soturail skill fold-in <skill> <paths>` to update an existing skill with new source material;
-- `soturail tasklet create|run|list|export` for small reusable local task templates;
-- skills-only export/install modes for hosts that support local skill folders, with prompt-only fallback for hosts that do not;
-- domain skill reports should separate findings, severity, confidence, evidence path and suggested safe next command;
-- no skill should hide destructive commands, remote writes, dependency installs, secrets access or unsafe MCP exposure.
-
-Security boundary:
-
-- security/pentest-related skills must stay defensive, authorization-aware and evidence/report-focused;
-- SotuRail should not ship exploit, bypass, credential theft, malware, evasion or unauthorized access instructions;
-- reports should be useful for authorized review without making harmful steps operational.
+- no embeddings, cloud calls, required model provider or mandatory database;
+- no unsupported verification claims;
+- no autonomous tasklet execution or hidden shell commands;
+- no full Knowledge Graph runtime in this release;
+- provider-backed judging remains optional and outside default release gates.
 
 ## v1.5.0 - Governance, Cost, Resilience And Host Router Rail
 
@@ -706,7 +679,7 @@ Non-goals:
 - no automatic disabling of external tools without user action;
 - no model-request proxy, MITM bridge, browser-token reuse, quota bypass or provider-account automation.
 
-## v1.6.0 - Agent Governance And Evolution Rail
+## v1.6.0 - Agent Governance / Evolution Rail
 
 Inspired by self-improving harness systems, but scoped to local evidence and human approval.
 
@@ -781,22 +754,22 @@ This matrix maps implemented and planned rails to docs so the repository does no
 
 | Planned area | Primary docs |
 | --- | --- |
-| Memory Rail | `docs/memory-rail.md`, `docs/context-packs.md`, this roadmap |
-| Context Intelligence / Router | `docs/context-packs.md`, `docs/ecosystem-influences.md`, `docs/comparisons.md` |
-| Role Packs | `docs/context-packs.md`, `docs/workflow-rail.md`, `docs/deep-agents-patterns.md` |
-| Harness Rail / Evidence Pack | `docs/harness-rail.md`, `docs/workflow-rail.md`, `docs/roadmap-harness-diagram-payload-addendum.md` |
-| Policy Rail / Approval Queue | `docs/policy-rail.md`, `docs/security-model.md`, `docs/rules.md` |
-| Diagram Rail / MDDD | `docs/diagram-rail.md`, `docs/spec-driven-workflow.md`, `docs/workflow-rail.md` |
-| Structured Payload Rail | `docs/structured-payload-rail.md`, `docs/context-packs.md`, `docs/rules.md` |
-| Agent Docs Hygiene | `docs/agent-docs-hygiene.md`, `docs/context-packs.md`, `docs/workflow-rail.md` |
-| Reports / Observability / Dashboard | `docs/status-command.md`, `docs/report-rail.md`, `docs/dashboard-rail.md`, `docs/observability-rail.md`, `docs/agent-readable-reports.md`, `docs/report-redaction.md`, `docs/mcp-report-resources.md`, this roadmap |
-| Host Compatibility Rail | `docs/host-compatibility-rail.md`, `docs/agents.md`, `docs/mcp.md`, `docs/future-rails-index.md` |
-| Spec / Design / Diagram Rail | `docs/spec-driven-workflow.md`, `docs/design-rail.md`, `docs/diagram-rail.md`, `docs/future-rails-index.md` |
-| Knowledge Graph Rail | `docs/knowledge-graph-rail.md`, `docs/code-graph.md`, `docs/project-brain.md`, `docs/reverse-specification-rail.md` |
-| Skill Rail 2.0 / Domain Skills | `docs/skill-rail.md`, `docs/skill-rail-2.md`, `docs/policy-rail.md`, `docs/security-model.md` |
-| Governance / Cost Guardrails | `docs/governance-cost-rail.md`, `docs/policy-rail.md`, `docs/report-rail.md`, `docs/observability-rail.md` |
-| External Project Audit | `docs/external-projects-audit.md`, `docs/ecosystem-influences.md`, `docs/comparisons.md` |
-| Roadmap Docs Audit | `docs/roadmap-docs-audit.md`, this roadmap |
+| Memory Rail | `docs/rails/context/memory-rail.md`, `docs/rails/context/context-packs.md`, this roadmap |
+| Context Intelligence / Router | `docs/rails/context/context-packs.md`, `docs/ecosystem/ecosystem-influences.md`, `docs/ecosystem/comparisons.md` |
+| Role Packs | `docs/rails/context/context-packs.md`, `docs/rails/harness/workflow-rail.md`, `docs/rails/hosts/deep-agents-patterns.md` |
+| Harness Rail / Evidence Pack | `docs/rails/harness/harness-rail.md`, `docs/rails/harness/workflow-rail.md`, `docs/roadmap/roadmap-harness-diagram-payload-addendum.md` |
+| Policy Rail / Approval Queue | `docs/rails/governance/policy-rail.md`, `docs/security/security-model.md`, `docs/rails/governance/rules.md` |
+| Diagram Rail / MDDD | `docs/rails/design/diagram-rail.md`, `docs/rails/design/spec-driven-workflow.md`, `docs/rails/harness/workflow-rail.md` |
+| Structured Payload Rail | `docs/rails/context/structured-payload-rail.md`, `docs/rails/context/context-packs.md`, `docs/rails/governance/rules.md` |
+| Agent Docs Hygiene | `docs/rails/hosts/agent-docs-hygiene.md`, `docs/rails/context/context-packs.md`, `docs/rails/harness/workflow-rail.md` |
+| Reports / Observability / Dashboard | `docs/reference/commands/status-command.md`, `docs/rails/evidence/report-rail.md`, `docs/architecture/dashboard-rail.md`, `docs/architecture/observability-rail.md`, `docs/rails/evidence/agent-readable-reports.md`, `docs/rails/evidence/report-redaction.md`, `docs/rails/hosts/mcp-report-resources.md`, this roadmap |
+| Host Compatibility Rail | `docs/rails/hosts/host-compatibility-rail.md`, `docs/rails/hosts/agents.md`, `docs/rails/hosts/mcp.md`, `docs/roadmap/future-rails-index.md` |
+| Spec / Design / Diagram Rail | `docs/rails/design/spec-driven-workflow.md`, `docs/rails/design/design-rail.md`, `docs/rails/design/diagram-rail.md`, `docs/roadmap/future-rails-index.md` |
+| Knowledge Graph Rail | `docs/rails/knowledge/knowledge-graph-rail.md`, `docs/rails/knowledge/code-graph.md`, `docs/rails/knowledge/project-brain.md`, `docs/rails/knowledge/reverse-specification-rail.md` |
+| Skill Rail 2.0 / Domain Skills | `docs/rails/skills/skill-rail.md`, `docs/rails/skills/skill-rail-2.md`, `docs/rails/governance/policy-rail.md`, `docs/security/security-model.md` |
+| Governance / Cost Guardrails | `docs/rails/governance/governance-cost-rail.md`, `docs/rails/governance/policy-rail.md`, `docs/rails/evidence/report-rail.md`, `docs/architecture/observability-rail.md` |
+| External Project Audit | `docs/ecosystem/external-projects-audit.md`, `docs/ecosystem/ecosystem-influences.md`, `docs/ecosystem/comparisons.md` |
+| Roadmap Docs Audit | `docs/roadmap/roadmap-docs-audit.md`, this roadmap |
 
 ## Historical Planned Milestones Kept From Earlier Roadmap
 

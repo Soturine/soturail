@@ -71,8 +71,8 @@ export async function harnessDoctor(root = process.cwd()): Promise<string> {
     ["ROADMAP", "ROADMAP.md"],
     ["tests", "tests"],
     ["context_pack_support", "src/commands/context.ts"],
-    ["agent_docs", "docs/agents.md"],
-    ["policy_docs", "docs/policy-rail.md"],
+    ["agent_docs", "docs/rails/hosts/agents.md"],
+    ["policy_docs", "docs/rails/governance/policy-rail.md"],
     ["workflow_state", ".soturail/workflows"]
   ] as const;
   const lines = ["SotuRail Harness Rail doctor"];

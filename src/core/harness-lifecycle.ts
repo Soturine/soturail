@@ -137,7 +137,7 @@ export async function auditHarnessLifecycle(root = process.cwd()): Promise<Harne
     ], "Record verification evidence before marking a feature done"),
     await auditFiles(root, "security-boundaries", "Security Boundaries", [
       path.join(paths.harnessDir, "scope.md")
-    ], "Review docs/security-boundaries.md and keep local safe defaults")
+    ], "Review docs/security/security-boundaries.md and keep local safe defaults")
   ];
   const passed = checks.filter((check) => check.status === "passed").length;
   const score = Math.round((passed / checks.length) * 100);
