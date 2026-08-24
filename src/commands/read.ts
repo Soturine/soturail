@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
-import path from "node:path";
 import type { Command } from "commander";
+import { WorkspaceGuard } from "../core/workspace-guard.js";
 
 export interface ReadOptions {
   query?: string;
@@ -93,7 +93,7 @@ export function formatProgressiveRead(filePath: string, content: string, options
 }
 
 export async function readCommand(file: string, options: ReadOptions, root = process.cwd()): Promise<string> {
-  const absolute = path.resolve(root, file);
+  const absolute = await new WorkspaceGuard(root).assertAllowedRead(file);
   const content = await fs.readFile(absolute, "utf8");
   return formatProgressiveRead(file, content, options);
 }

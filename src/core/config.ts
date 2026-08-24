@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { z } from "zod";
+import { artifactStore } from "./artifact-store.js";
 
 export const WORKSPACE_DIR = ".soturail";
 
@@ -151,6 +152,13 @@ export interface WorkspacePaths {
   brainConsolidationReportMd: string;
   brainRepairPlanJson: string;
   brainRepairPlanMd: string;
+  artifactsDir: string;
+  capabilitiesDir: string;
+  contractsDir: string;
+  localIndexDir: string;
+  migrationsDir: string;
+  outcomesDir: string;
+  receiptsDir: string;
 }
 
 export interface EnsureResult {
@@ -247,7 +255,14 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     brainConsolidationReportJson: path.resolve(workspace, "brain", "consolidation-report.json"),
     brainConsolidationReportMd: path.resolve(workspace, "brain", "consolidation-report.md"),
     brainRepairPlanJson: path.resolve(workspace, "brain", "stale-repair-plan.json"),
-    brainRepairPlanMd: path.resolve(workspace, "brain", "stale-repair-plan.md")
+    brainRepairPlanMd: path.resolve(workspace, "brain", "stale-repair-plan.md"),
+    artifactsDir: path.resolve(workspace, "artifacts"),
+    capabilitiesDir: path.resolve(workspace, "capabilities"),
+    contractsDir: path.resolve(workspace, "contracts"),
+    localIndexDir: path.resolve(workspace, "index"),
+    migrationsDir: path.resolve(workspace, "migrations"),
+    outcomesDir: path.resolve(workspace, "outcomes"),
+    receiptsDir: path.resolve(workspace, "receipts")
   };
 }
 
@@ -338,7 +353,14 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.diagramsDir,
     paths.brainDir,
     paths.brainExportsDir,
-    paths.brainSpecsDir
+    paths.brainSpecsDir,
+    paths.artifactsDir,
+    paths.capabilitiesDir,
+    paths.contractsDir,
+    paths.localIndexDir,
+    paths.migrationsDir,
+    paths.outcomesDir,
+    paths.receiptsDir
   ];
 
   for (const dir of dirs) {
@@ -392,17 +414,14 @@ export async function validateConfigFile(root = process.cwd()): Promise<{ ok: bo
 }
 
 export async function appendJsonl(filePath: string, value: unknown): Promise<void> {
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.appendFile(filePath, `${JSON.stringify(value)}\n`, "utf8");
+  await artifactStore.appendJsonl(filePath, value);
 }
 
 export async function readJsonl<T>(filePath: string): Promise<T[]> {
   try {
-    const raw = await fs.readFile(filePath, "utf8");
-    return raw
-      .split(/\r?\n/)
-      .filter((line) => line.trim().length > 0)
-      .map((line) => JSON.parse(line) as T);
+    const result = await artifactStore.readJsonl<T>(filePath);
+    if (result.corruptLine !== undefined) throw new Error(`Corrupt JSONL at ${filePath}:${result.corruptLine}`);
+    return result.records;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
       return [];
@@ -412,6 +431,5 @@ export async function readJsonl<T>(filePath: string): Promise<T[]> {
 }
 
 export async function writeJson(filePath: string, value: unknown): Promise<void> {
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  await artifactStore.writeJson(filePath, value);
 }
