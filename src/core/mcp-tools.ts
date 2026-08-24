@@ -10,6 +10,7 @@ import { MetricsStore } from "./metrics-store.js";
 import { redactText } from "./report-redaction.js";
 import { readSkills, renderSkillList } from "./skill-store.js";
 import { WorkspaceGuard } from "./workspace-guard.js";
+import { getCapabilityDefinition } from "./capability-registry.js";
 
 const EmptyInput = z.strictObject({});
 const ReadInput = z.strictObject({
@@ -31,6 +32,7 @@ const ExpandInput = z.strictObject({
 
 export interface McpToolInfo {
   name: string;
+  capabilityId: string;
   description: string;
   inputSchema: z.ZodObject;
   annotations: {
@@ -42,13 +44,13 @@ export interface McpToolInfo {
 }
 
 export const mcpTools: McpToolInfo[] = [
-  { name: "soturail.index", description: "Build the local heuristic repository index.", inputSchema: EmptyInput, annotations: hints(false, false, true) },
-  { name: "soturail.read", description: "Read a non-sensitive project file progressively within WorkspaceGuard.", inputSchema: ReadInput, annotations: hints(true, false, true) },
-  { name: "soturail.format", description: "Compress text or a guarded project file deterministically.", inputSchema: FormatInput, annotations: hints(true, false, true) },
-  { name: "soturail.rules.check", description: "Run deterministic local rule validators.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
-  { name: "soturail.skills.list", description: "List local Skill Rail skills without executing them.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
-  { name: "soturail.context.pack", description: "Build a local cache-friendly context artifact.", inputSchema: ContextPackInput, annotations: hints(false, false, true) },
-  { name: "soturail.expand", description: "Read a raw log through mandatory secret redaction. MCP callers cannot authorize raw disclosure.", inputSchema: ExpandInput, annotations: hints(true, false, true) }
+  tool("repo.index", "soturail.index", EmptyInput, hints(false, false, true)),
+  tool("project.read", "soturail.read", ReadInput, hints(true, false, true)),
+  { capabilityId: "project.read", name: "soturail.format", description: "Compress text or a guarded project file deterministically.", inputSchema: FormatInput, annotations: hints(true, false, true) },
+  { capabilityId: "project.read", name: "soturail.rules.check", description: "Run deterministic local rule validators.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
+  { capabilityId: "project.read", name: "soturail.skills.list", description: "List local Skill Rail skills without executing them.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
+  tool("context.pack", "soturail.context.pack", ContextPackInput, hints(false, false, true)),
+  tool("raw.inspect.redacted", "soturail.expand", ExpandInput, hints(true, false, true))
 ];
 
 export async function callMcpTool(name: string, args: Record<string, unknown> = {}, root = process.cwd()): Promise<string> {
@@ -100,4 +102,10 @@ export function listMcpTools(): McpToolInfo[] {
 
 function hints(readOnlyHint: boolean, destructiveHint: boolean, idempotentHint: boolean): McpToolInfo["annotations"] {
   return { readOnlyHint, destructiveHint, idempotentHint, openWorldHint: false };
+}
+
+function tool(capabilityId: string, name: string, inputSchema: z.ZodObject, annotations: McpToolInfo["annotations"]): McpToolInfo {
+  const definition = getCapabilityDefinition(capabilityId);
+  if (!definition) throw new Error(`MCP capability is missing from registry: ${capabilityId}`);
+  return { capabilityId, name, description: definition.description, inputSchema, annotations };
 }

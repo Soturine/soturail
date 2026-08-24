@@ -119,6 +119,54 @@ export async function runCodeHealth(root = process.cwd(), options: QualityOption
   };
 }
 
+async function checkVerifiedControlPlaneInvariants(root: string): Promise<QualityFinding[]> {
+  const findings: QualityFinding[] = [];
+  // Older/minimal fixtures do not model the verified-control-plane surface. Keep
+  // the generic architecture checks compatible while enforcing these invariants
+  // whenever the canonical capability registry is present.
+  if (!existsSync(path.join(root, "src", "core", "capability-registry.ts"))) return findings;
+  const packageText = await fs.readFile(path.join(root, "package.json"), "utf8").catch(() => "{}");
+  const packageJson = JSON.parse(packageText) as { version?: string; engines?: { node?: string }; dependencies?: Record<string, string> };
+  const cargo = await fs.readFile(path.join(root, "native", "soturail-native", "Cargo.toml"), "utf8").catch(() => "");
+  const ci = await fs.readFile(path.join(root, ".github", "workflows", "ci.yml"), "utf8").catch(() => "");
+  const mcpServer = await fs.readFile(path.join(root, "src", "core", "mcp-server.ts"), "utf8").catch(() => "");
+  const mcpTools = await fs.readFile(path.join(root, "src", "core", "mcp-tools.ts"), "utf8").catch(() => "");
+  const config = await fs.readFile(path.join(root, "src", "core", "config.ts"), "utf8").catch(() => "");
+  const guardedModules = ["src/commands/read.ts", "src/core/mcp-tools.ts", "src/core/knowledge-rail.ts", "src/core/raw-store.ts"];
+  const criticalStores = ["src/core/context-pack.ts", "src/core/evidence-provenance.ts", "src/core/knowledge-rail.ts", "src/core/run-workspace.ts"];
+
+  if (!packageJson.dependencies?.["@modelcontextprotocol/server"]?.startsWith("^2") && packageJson.dependencies?.["@modelcontextprotocol/server"] !== "2.0.0") {
+    findings.push(finding("mcp_official_sdk", "control_plane_invariant", "blocking", "package.json", undefined, "Official MCP server SDK v2 is required."));
+  }
+  if (!mcpServer.includes("@modelcontextprotocol/server") || !mcpServer.includes("2026-07-28")) {
+    findings.push(finding("mcp_modern_protocol", "control_plane_invariant", "blocking", "src/core/mcp-server.ts", undefined, "MCP must use the official SDK and declare the stable modern protocol revision."));
+  }
+  if (/allow_raw|allowRaw/.test(mcpTools)) {
+    findings.push(finding("mcp_raw_self_authorization", "control_plane_invariant", "blocking", "src/core/mcp-tools.ts", undefined, "MCP must not accept caller-controlled raw disclosure authorization."));
+  }
+  if (!mcpTools.includes("capabilityId") || !mcpTools.includes("getCapabilityDefinition")) {
+    findings.push(finding("mcp_capability_registry", "control_plane_invariant", "blocking", "src/core/mcp-tools.ts", undefined, "MCP tools must map to the canonical capability registry."));
+  }
+  if (!config.includes('evalsDir: path.resolve(workspace, "evals")')) {
+    findings.push(finding("evals_canonical_path", "control_plane_invariant", "blocking", "src/core/config.ts", undefined, "The canonical evaluation artifact directory must remain evals/."));
+  }
+  const nodeRange = packageJson.engines?.node ?? "";
+  if (!/>=22/.test(nodeRange)) findings.push(finding("node_eol_baseline", "control_plane_invariant", "blocking", "package.json", undefined, "Node baseline must exclude EOL Node 20 and require Node 22 or newer."));
+  if (!/node:\s*\[22, 24\]/.test(ci) || /node:\s*\[[^\]]*20/.test(ci)) findings.push(finding("ci_node_lts", "control_plane_invariant", "blocking", ".github/workflows/ci.yml", undefined, "CI must test maintained Node 22 and 24 LTS baselines without Node 20."));
+  const cargoVersion = /^version\s*=\s*"([^"]+)"/m.exec(cargo)?.[1];
+  const cargoLicense = /^license\s*=\s*"([^"]+)"/m.exec(cargo)?.[1];
+  if (cargoVersion !== packageJson.version || cargoLicense !== "Apache-2.0") findings.push(finding("native_metadata_sync", "control_plane_invariant", "blocking", "native/soturail-native/Cargo.toml", undefined, "Native version/license must match the package release and Apache-2.0 repository license."));
+  for (const relative of guardedModules) {
+    const text = await fs.readFile(path.join(root, relative), "utf8").catch(() => "");
+    if (!text.includes("WorkspaceGuard")) findings.push(finding("workspace_guard_missing", "control_plane_invariant", "blocking", relative, undefined, "Caller-controlled filesystem paths must pass through WorkspaceGuard."));
+  }
+  for (const relative of criticalStores) {
+    const text = await fs.readFile(path.join(root, relative), "utf8").catch(() => "");
+    if (!text.includes("artifactStore") && !text.includes("writeJson")) findings.push(finding("artifact_store_missing", "control_plane_invariant", "blocking", relative, undefined, "Critical artifacts must use the atomic ArtifactStore path."));
+  }
+  return findings;
+}
+
 export async function runArchitectureCheck(root = process.cwd(), options: QualityOptions = {}): Promise<{ report: ArchitectureCheckReport; jsonPath: string; markdownPath: string; output: string }> {
   const resolvedRoot = path.resolve(root);
   const files = await listFiles(resolvedRoot, ["src"], [".ts"]);
@@ -135,6 +183,8 @@ export async function runArchitectureCheck(root = process.cwd(), options: Qualit
       findings.push(finding("command_business_logic", "architecture_boundary", "warning", relative, 1, "Command file is large; keep CLI parsing in commands/ and move domain logic to core/."));
     }
   }
+
+  findings.push(...await checkVerifiedControlPlaneInvariants(resolvedRoot));
 
   const report = makeArchitectureReport(files.length, findings, options.strict === true);
   const dir = path.join(getWorkspacePaths(resolvedRoot).workspace, "architecture");
