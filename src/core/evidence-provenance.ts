@@ -5,15 +5,21 @@ import { promisify } from "node:util";
 import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import type { RawRunRecord } from "./raw-store.js";
 import { makeRailId, redactProbableSecrets } from "./rail-utils.js";
+import { createWorkspaceFingerprint, type WorkspaceFingerprint } from "./workspace-fingerprint.js";
+import { createArtifactEnvelope } from "./artifact-envelope.js";
+import { artifactStore } from "./artifact-store.js";
+import { SOTURAIL_VERSION } from "./version.js";
 
 const execFileAsync = promisify(execFile);
-export type EvidenceStatus = "verified" | "unverified" | "blocked" | "inferred";
+export type EvidenceStatus = "verified" | "unverified" | "blocked" | "inferred" | "stale";
 
 export interface ProvenanceEvidence {
   schemaVersion: "soturail.evidence.provenance.v1";
   id: string;
   createdAt: string;
   status: EvidenceStatus;
+  freshness: "current" | "stale" | "unknown";
+  workspace: WorkspaceFingerprint;
   filesRead: Array<{ path: string; status: EvidenceStatus; source: string }>;
   filesChanged: Array<{ path: string; status: EvidenceStatus; source: string }>;
   checks: Array<{ command: string; exitCode: number; status: EvidenceStatus; rawId: string }>;
@@ -27,6 +33,7 @@ export interface ProvenanceEvidence {
 export async function collectEvidence(root = process.cwd()): Promise<{ dir: string; evidence: ProvenanceEvidence }> {
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
+  const workspace = await createWorkspaceFingerprint(root);
   const id = makeRailId("evidence", root);
   const dir = path.join(paths.evidenceDir, id);
   await fs.mkdir(dir, { recursive: true });
@@ -46,6 +53,8 @@ export async function collectEvidence(root = process.cwd()): Promise<{ dir: stri
     id,
     createdAt: new Date().toISOString(),
     status: blockers.length > 0 ? "blocked" : checks.length > 0 ? "verified" : "unverified",
+    freshness: "current",
+    workspace,
     filesRead: knowledgeSources.map((source) => ({ path: source, status: "inferred", source: "knowledge source-map" })),
     filesChanged: changed.map((file) => ({ path: file, status: "verified", source: "git status --short" })),
     checks,
@@ -63,11 +72,21 @@ export async function verifyEvidence(root = process.cwd()): Promise<{ dir: strin
   const latest = await latestEvidence(root);
   if (!latest) throw new Error("No evidence run found. Run: soturail evidence collect");
   const missing: string[] = [];
+  const currentWorkspace = await createWorkspaceFingerprint(root);
   for (const source of latest.evidence.sourcePaths) if (!await exists(path.resolve(root, source))) missing.push(source);
-  latest.evidence.blockers = [...new Set([...latest.evidence.blockers, ...missing.map((source) => `Missing source: ${source}`)])];
+  const persistentBlockers = latest.evidence.blockers.filter((blocker) => !blocker.startsWith("Workspace fingerprint changed:"));
+  const workspaceChanged = !latest.evidence.workspace?.fingerprint || latest.evidence.workspace.fingerprint !== currentWorkspace.fingerprint;
+  latest.evidence.blockers = [...new Set([
+    ...persistentBlockers,
+    ...missing.map((source) => `Missing source: ${source}`),
+    ...(workspaceChanged ? [`Workspace fingerprint changed: ${latest.evidence.workspace?.fingerprint ?? "UNAVAILABLE"} -> ${currentWorkspace.fingerprint}`] : [])
+  ])];
+  latest.evidence.freshness = workspaceChanged ? "stale" : "current";
   latest.evidence.warnings = latest.evidence.warnings.filter((warning) => !warning.startsWith("Evidence verification"));
   latest.evidence.warnings.push(`Evidence verification inspected ${latest.evidence.sourcePaths.length} local source paths without running commands.`);
-  latest.evidence.status = latest.evidence.blockers.length > 0
+  latest.evidence.status = workspaceChanged
+    ? "stale"
+    : latest.evidence.blockers.length > 0
     ? "blocked"
     : latest.evidence.checks.some((check) => check.status === "verified")
       ? "verified"
@@ -80,13 +99,13 @@ export async function reportEvidence(root = process.cwd()): Promise<{ dir: strin
   const latest = await latestEvidence(root);
   if (!latest) throw new Error("No evidence run found. Run: soturail evidence collect");
   const report = renderEvidenceReport(latest.evidence);
-  await fs.writeFile(path.join(latest.dir, "report.md"), report, "utf8");
-  await fs.writeFile(path.join(latest.dir, "provenance.md"), renderProvenance(latest.evidence), "utf8");
+  await artifactStore.writeText(path.join(latest.dir, "report.md"), report);
+  await artifactStore.writeText(path.join(latest.dir, "provenance.md"), renderProvenance(latest.evidence));
   return { ...latest, report };
 }
 
 export function renderEvidenceReport(evidence: ProvenanceEvidence): string {
-  return [`# Evidence Report ${evidence.id}`, "", `Status: **${evidence.status}**`, "", "## Files Read", ...(evidence.filesRead.length ? evidence.filesRead.map((item) => `- [${item.status}] \`${item.path}\` (${item.source})`) : ["- none recorded"]), "", "## Files Changed", ...(evidence.filesChanged.length ? evidence.filesChanged.map((item) => `- [${item.status}] \`${item.path}\` (${item.source})`) : ["- none detected"]), "", "## Checks Referenced", ...(evidence.checks.length ? evidence.checks.map((item) => `- [${item.status}] \`${item.command}\` exit=${item.exitCode} raw=${item.rawId}`) : ["- none recorded"]), "", "## Known Blockers", ...(evidence.blockers.length ? evidence.blockers.map((item) => `- ${item}`) : ["- none"]), "", "## Warnings", ...(evidence.warnings.length ? evidence.warnings.map((item) => `- ${item}`) : ["- none"]), "", "No unsupported verification is claimed. Missing proof remains unverified, inferred or blocked.", ""].join("\n");
+  return [`# Evidence Report ${evidence.id}`, "", `Status: **${evidence.status}**`, `Freshness: **${evidence.freshness}**`, `Workspace fingerprint: \`${evidence.workspace?.fingerprint ?? "UNAVAILABLE"}\``, "", "## Files Read", ...(evidence.filesRead.length ? evidence.filesRead.map((item) => `- [${item.status}] \`${item.path}\` (${item.source})`) : ["- none recorded"]), "", "## Files Changed", ...(evidence.filesChanged.length ? evidence.filesChanged.map((item) => `- [${item.status}] \`${item.path}\` (${item.source})`) : ["- none detected"]), "", "## Checks Referenced", ...(evidence.checks.length ? evidence.checks.map((item) => `- [${item.status}] \`${item.command}\` exit=${item.exitCode} raw=${item.rawId}`) : ["- none recorded"]), "", "## Known Blockers", ...(evidence.blockers.length ? evidence.blockers.map((item) => `- ${item}`) : ["- none"]), "", "## Warnings", ...(evidence.warnings.length ? evidence.warnings.map((item) => `- ${item}`) : ["- none"]), "", "No unsupported verification is claimed. Missing proof remains unverified, inferred, stale or blocked.", ""].join("\n");
 }
 
 async function latestEvidence(root: string): Promise<{ dir: string; evidence: ProvenanceEvidence } | null> {
@@ -100,12 +119,23 @@ async function latestEvidence(root: string): Promise<{ dir: string; evidence: Pr
 
 async function writeEvidenceArtifacts(dir: string, evidence: ProvenanceEvidence): Promise<void> {
   await writeJson(path.join(dir, "evidence.json"), evidence);
-  await fs.writeFile(path.join(dir, "report.md"), renderEvidenceReport(evidence), "utf8");
-  await fs.writeFile(path.join(dir, "provenance.md"), renderProvenance(evidence), "utf8");
+  await artifactStore.writeText(path.join(dir, "report.md"), renderEvidenceReport(evidence));
+  await artifactStore.writeText(path.join(dir, "provenance.md"), renderProvenance(evidence));
+  const envelope = await createArtifactEnvelope({
+    artifactType: "evidence",
+    artifactId: evidence.id,
+    producer: "soturail.evidence",
+    producerVersion: SOTURAIL_VERSION,
+    payload: evidence,
+    workspace: evidence.workspace,
+    status: evidence.status === "verified" ? "verified" : evidence.status === "blocked" ? "blocked" : "unverified"
+  });
+  envelope.freshness = evidence.freshness;
+  await writeJson(path.join(dir, "envelope.json"), envelope);
 }
 
 function renderProvenance(evidence: ProvenanceEvidence): string {
-  return [`# Provenance ${evidence.id}`, "", `- schemaVersion: ${evidence.schemaVersion}`, `- createdAt: ${evidence.createdAt}`, `- status: ${evidence.status}`, "- collection: local artifacts and read-only git status only", "- commands executed by evidence verification: none", "", "## Source Paths", ...(evidence.sourcePaths.length ? evidence.sourcePaths.map((source) => `- \`${source}\``) : ["- none"]), ""].join("\n");
+  return [`# Provenance ${evidence.id}`, "", `- schemaVersion: ${evidence.schemaVersion}`, `- createdAt: ${evidence.createdAt}`, `- status: ${evidence.status}`, `- freshness: ${evidence.freshness}`, `- workspaceFingerprint: ${evidence.workspace?.fingerprint ?? "UNAVAILABLE"}`, "- collection: local artifacts and read-only git status only", "- commands executed by evidence verification: none", "", "## Source Paths", ...(evidence.sourcePaths.length ? evidence.sourcePaths.map((source) => `- \`${source}\``) : ["- none"]), ""].join("\n");
 }
 
 async function gitChangedFiles(root: string): Promise<string[]> {

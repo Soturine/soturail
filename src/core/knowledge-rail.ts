@@ -3,6 +3,9 @@ import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
 import { hashFile } from "./git.js";
 import { normalizeWords, sha256Text, summarizeText } from "./rail-utils.js";
+import { WorkspaceGuard } from "./workspace-guard.js";
+import { artifactStore } from "./artifact-store.js";
+import { createWorkspaceFingerprint } from "./workspace-fingerprint.js";
 
 const supportedExtensions = new Set([".md", ".mdx", ".txt", ".json", ".yml", ".yaml", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".java", ".py"]);
 const ignoredDirectories = new Set([".git", ".soturail", "node_modules", "dist", "build", "coverage"]);
@@ -39,6 +42,7 @@ export interface KnowledgeMetadata {
   estimatedTokens: number;
   sourceDigest: string;
   sources: string[];
+  workspaceFingerprint?: string;
 }
 
 export interface KnowledgeVerifyReport {
@@ -77,6 +81,7 @@ export async function compileKnowledge(name: string, inputs: string[], root = pr
   const topicsDir = path.join(dir, "topics");
   await fs.mkdir(topicsDir, { recursive: true });
   const createdAt = new Date().toISOString();
+  const workspace = await createWorkspaceFingerprint(root);
   const metadata: KnowledgeMetadata = {
     schemaVersion: "soturail.knowledge.v1",
     name: safeName,
@@ -87,13 +92,18 @@ export async function compileKnowledge(name: string, inputs: string[], root = pr
     topicCount: sources.length,
     estimatedTokens: Math.ceil(sources.reduce((sum, source) => sum + source.bytes, 0) / 4),
     sourceDigest: sha256Text(sources.map((source) => `${source.path}:${source.hash}`).join("\n")),
-    sources: sources.map((source) => source.path)
+    sources: sources.map((source) => source.path),
+    workspaceFingerprint: workspace.fingerprint
   };
-  await fs.writeFile(path.join(dir, "SKILL.md"), renderKnowledgeSkill(metadata, sources), "utf8");
-  await fs.writeFile(path.join(dir, "glossary.md"), renderGlossary(collectTerms(sources)), "utf8");
-  await fs.writeFile(path.join(dir, "patterns.md"), renderPatterns(sources), "utf8");
-  await fs.writeFile(path.join(dir, "cheatsheet.md"), renderCheatsheet(sources), "utf8");
-  for (const source of sources) await fs.writeFile(path.join(topicsDir, `${topicSlug(source.path)}.md`), renderTopic(source), "utf8");
+  await artifactStore.writeText(path.join(dir, "SKILL.md"), renderKnowledgeSkill(metadata, sources));
+  await artifactStore.writeText(path.join(dir, "glossary.md"), renderGlossary(collectTerms(sources)));
+  await artifactStore.writeText(path.join(dir, "patterns.md"), renderPatterns(sources));
+  await artifactStore.writeText(path.join(dir, "cheatsheet.md"), renderCheatsheet(sources));
+  const expectedTopics = new Set(sources.map((source) => `${topicSlug(source.path)}.md`));
+  for (const source of sources) await artifactStore.writeText(path.join(topicsDir, `${topicSlug(source.path)}.md`), renderTopic(source));
+  for (const entry of await fs.readdir(topicsDir, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith(".md") && !expectedTopics.has(entry.name)) await fs.unlink(path.join(topicsDir, entry.name));
+  }
   await writeJson(path.join(dir, "metadata.json"), metadata);
   await writeJson(path.join(dir, "source-map.json"), { schemaVersion: "soturail.knowledge.source-map.v1", createdAt, sources });
   return { dir, metadata };
@@ -121,11 +131,14 @@ export async function verifyKnowledge(name: string, root = process.cwd()): Promi
   }
   const missingSources: string[] = [];
   const changedSources: string[] = [];
+  const workspace = await createWorkspaceFingerprint(root);
   for (const source of sourceMap?.sources ?? []) {
     const current = await hashFile(path.resolve(root, source.path));
     if (!current) missingSources.push(source.path);
     else if (current !== source.hash) changedSources.push(source.path);
   }
+  const workspaceChanged = Boolean(metadata?.workspaceFingerprint && metadata.workspaceFingerprint !== workspace.fingerprint);
+  if (workspaceChanged) changedSources.push("<workspace-fingerprint>");
   const status = !metadata || missingArtifacts.length > 0 ? "unverified" : missingSources.length > 0 || changedSources.length > 0 ? "stale" : "verified";
   const report: KnowledgeVerifyReport = {
     schemaVersion: "soturail.knowledge.verify.v1",
@@ -184,23 +197,30 @@ async function readSources(inputs: string[], root: string): Promise<KnowledgeSou
 
 async function collectFiles(inputs: string[], root: string): Promise<string[]> {
   const result = new Set<string>();
+  const guard = new WorkspaceGuard(root);
   for (const input of inputs) {
-    const absolute = path.resolve(root, input);
-    if (!insideRoot(root, absolute)) throw new Error(`Source path escapes project root: ${input}`);
-    await walk(absolute, result);
+    let absolute: string;
+    try {
+      absolute = await guard.resolveProjectPath(input);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") continue;
+      throw error;
+    }
+    await walk(absolute, result, guard);
   }
   return [...result].sort();
 }
 
-async function walk(absolute: string, result: Set<string>): Promise<void> {
-  const stat = await fs.stat(absolute).catch(() => null);
+async function walk(absolute: string, result: Set<string>, guard: WorkspaceGuard): Promise<void> {
+  const canonical = await guard.realpathAndVerify(absolute);
+  const stat = await fs.stat(canonical).catch(() => null);
   if (!stat) return;
   if (stat.isFile()) {
-    if (supportedExtensions.has(path.extname(absolute).toLowerCase()) && stat.size <= 1024 * 1024) result.add(absolute);
+    if (supportedExtensions.has(path.extname(canonical).toLowerCase()) && stat.size <= 1024 * 1024) result.add(canonical);
     return;
   }
-  if (!stat.isDirectory() || ignoredDirectories.has(path.basename(absolute))) return;
-  for (const entry of await fs.readdir(absolute)) await walk(path.join(absolute, entry), result);
+  if (!stat.isDirectory() || ignoredDirectories.has(path.basename(canonical))) return;
+  for (const entry of await fs.readdir(canonical)) await walk(path.join(canonical, entry), result, guard);
 }
 
 function extractCommands(text: string): string[] {
@@ -247,16 +267,12 @@ function firstMeaningfulText(text: string): string {
 }
 
 function topicSlug(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80) || "topic";
+  const base = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 68) || "topic";
+  return `${base}-${sha256Text(value).slice(0, 10)}`;
 }
 
 function slug(value: string): string {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "knowledge";
-}
-
-function insideRoot(root: string, target: string): boolean {
-  const relative = path.relative(path.resolve(root), target);
-  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
 async function exists(file: string): Promise<boolean> {
