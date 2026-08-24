@@ -30,6 +30,17 @@ describe("workspace-bound evidence", () => {
 });
 
 describe("knowledge source integrity", () => {
+  it("keeps source paths project-relative through a canonical root alias", async () => {
+    const root = await temporaryGitProject();
+    const aliasParent = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-knowledge-alias-"));
+    temporaryDirectories.push(aliasParent);
+    const alias = path.join(aliasParent, "project");
+    await fs.symlink(root, alias, process.platform === "win32" ? "junction" : "dir");
+
+    const compiled = await compileKnowledge("alias", ["source.md"], alias);
+    expect(compiled.metadata.sources).toEqual(["source.md"]);
+  });
+
   it("avoids normalized slug collisions and removes topics for deleted sources", async () => {
     const root = await temporaryGitProject();
     await fs.mkdir(path.join(root, "a"), { recursive: true });

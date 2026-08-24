@@ -179,12 +179,13 @@ export function renderKnowledgeList(items: Awaited<ReturnType<typeof listKnowled
 
 async function readSources(inputs: string[], root: string): Promise<KnowledgeSource[]> {
   const files = await collectFiles(inputs, root);
+  const canonicalRoot = await fs.realpath(root);
   const sources: KnowledgeSource[] = [];
   for (const file of files) {
     const text = await fs.readFile(file, "utf8").catch(() => "");
     if (!text.trim()) continue;
     sources.push({
-      path: relativeToRoot(root, file).replace(/\\/g, "/"),
+      path: path.normalize(path.relative(canonicalRoot, file)).replace(/\\/g, "/"),
       hash: sha256Text(text),
       bytes: Buffer.byteLength(text),
       headings: [...text.matchAll(/^#{1,6}\s+(.+)$/gm)].map((match) => match[1]?.trim() ?? "").filter(Boolean).slice(0, 30),
