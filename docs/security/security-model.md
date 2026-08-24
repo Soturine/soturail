@@ -1,110 +1,42 @@
 # Security Model
 
-SotuRail reduces accidental damage from AI-assisted terminal use. It is not a sandbox and does not make untrusted commands safe.
+SotuRail reduces accidental damage and makes engineering decisions inspectable. It is not a sandbox and does not make untrusted commands safe.
 
-## Blocked by Default
+## Filesystem and artifacts
 
-- `rm -rf`
-- `sudo`
-- `format`
-- `dd if=`
-- `curl | sh`
-- `wget | sh`
-- `del /s`
-- `git push`
+Caller-controlled paths are resolved by `WorkspaceGuard`, including canonical and real-path containment checks for traversal, absolute paths, symlinks, Windows path edges, raw state, secrets, and VCS internals. Critical artifacts use the canonical `ArtifactRegistry` and atomic `ArtifactStore` path. Workspace fingerprints make stale evidence visible.
 
-## Unsafe Confirmation
+## Commands and side effects
 
-Dangerous commands can only run when the exact phrase is supplied:
+Destructive commands remain denied or confirmation-gated by the local runner. External side effects also require the Dual Gate: the actor must have authority and the engineering state must be ready. An Execution Envelope binds approval to the exact payload digest; changed input requires a new decision.
 
-```text
-I_UNDERSTAND_THIS_CAN_DESTROY_DATA
-```
+Governance metadata is not OS enforcement. The host/executor remains responsible for invoking these checks and for process isolation, credentials, network controls, and service permissions.
 
-This is intentionally verbose so accidental bypasses are unlikely.
+## Raw logs
 
-## Raw Logs
+Raw command output is recoverable under `.soturail/raw/` and may contain secrets. `soturail expand <raw_id>` redacts probable secrets. Exact local disclosure requires explicit CLI confirmation; MCP never accepts a caller-controlled raw-disclosure override.
 
-Raw command logs remain on disk so compressed summaries can always be audited.
-
-Raw logs may contain secrets. Do not commit `.soturail/raw/`. CLI expansion redacts probable secrets by default:
+Use these lifecycle commands to inspect metadata without exposing content:
 
 ```bash
-soturail expand <raw_id>
+soturail raw status
+soturail raw inspect <raw_id> --redacted
+soturail raw doctor
+soturail raw purge --ttl 30d --dry-run
 ```
 
-Exact raw output requires an explicit opt-in:
+Raw records include sensitivity, fingerprint, and retention metadata. Never commit `.soturail/raw/`.
 
-```bash
-soturail expand <raw_id> --allow-raw --yes
-```
+## MCP, hooks, and skills
 
-MCP raw-log expansion also redacts probable secrets by default unless `allow_raw=true` is explicitly passed.
+The MCP server uses typed schemas, exposes a small capability-registry-mapped surface, and does not expose arbitrary shell execution. Modern protocol support coexists with explicitly tested legacy negotiation. Hooks, skills, and host exports are local artifacts for review; SotuRail does not auto-trust or auto-execute third-party instructions.
 
-## MCP, Skills, Agents And Workflows
+## Providers
 
-The MCP server does not expose arbitrary shell execution. Skill Rail exports are local files for human review; SotuRail does not auto-install unreviewed third-party skills.
+External provider output is attributed evidence, not ground truth. Provider health and fallback must be explicit. An unavailable governance provider fails closed, and no fallback may weaken an existing deny. Provider credentials must stay outside generated artifacts and logs.
 
-Agent installs are dry-run-first and backup-first. Unknown global host config locations are not modified automatically.
+## Supply chain
 
-Workflow Rail does not push, merge or delete worktrees automatically. Worktree support is local and review-oriented.
+CI runs full dependency audit, CodeQL, build, typecheck, tests, docs checks, MCP smoke, architecture drift checks, and native tests. Tagged builds generate a CycloneDX SBOM, SHA-256 checksums, a release manifest, and GitHub provenance/SBOM attestations.
 
-## Planned Policy Rail
-
-Policy Rail turns safety defaults into explicit, inspectable local rules and approval decisions.
-
-Possible future commands:
-
-```bash
-soturail policy rules
-soturail policy doctor
-soturail policy validate
-soturail policy explain <id>
-soturail policy queue
-soturail policy approve <id>
-soturail policy reject <id>
-soturail policy auth-check
-```
-
-Planned example rules:
-
-```txt
-R01 deny sudo
-R02 deny writing .env or secret files
-R03 ask before rm -rf
-R04 deny git push --force
-R05 ask before npm publish
-R06 deny --no-verify unless explicitly approved
-R07 warn before direct push to main/master
-R08 require evidence before release
-R09 deny arbitrary shell exposure through MCP by default
-R10 require explicit confirmation for raw log expansion
-R11 backup before agent host config writes
-R12 warn when agent docs contain probable secrets
-R13 warn when JSON payloads have duplicate keys or unsafe ambiguity
-```
-
-Policy decisions should eventually be attached to workflow evidence, release evidence and MCP exposure reports.
-
-See [policy-rail.md](../rails/governance/policy-rail.md).
-
-## Planned MCP Exposure Report
-
-A future report should show:
-
-- resources exposed;
-- tools exposed;
-- whether arbitrary shell is exposed;
-- whether raw logs are redacted by default;
-- which actions require approval;
-- host-specific caveats.
-
-## Planned Auth Rail Notes
-
-Some projects need agent-readable authentication docs. A future optional Auth Rail can scaffold `AUTH.md` or `docs/auth.md` and validate that secrets, tokens and raw logs are not exposed to agents accidentally.
-
-This is planned as documentation and policy support, not as a secret manager.
-
-## Limitations
-
-SotuRail does not isolate processes, prevent all shell tricks or replace OS permissions. Treat it as a policy and evidence layer.
+See the complete [Threat Model](threat-model.md) and [Security Boundaries](security-boundaries.md).

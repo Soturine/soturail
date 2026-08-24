@@ -1,47 +1,58 @@
 # Architecture
 
-SotuRail v0.2.1 is a TypeScript/Node.js local-first CLI. It stores all runtime state in `.soturail/` inside the repository. An optional Rust reducer and runner binary can be used when present, but TypeScript remains the orchestration and fallback layer.
+SotuRail v1.5 is a TypeScript/Node.js local-first engineering control plane. It stores runtime state under `.soturail/`, keeps the TypeScript implementation portable, and uses Rust only for optional benchmark-justified hot paths.
 
-## Runtime Areas
+## Layers
 
-- `.soturail/config/config.json` - validated Zod config.
-- `.soturail/indexes/` - Heuristic Repo Map artifacts.
-- `.soturail/raw/` - raw command logs and manifest.
-- `.soturail/metrics/events.jsonl` - append-only local events.
-- `.soturail/specs/` - Spec-Driven Development artifacts.
-- `.soturail/memory/memory.jsonl` - Git-linked local memory.
-- `.soturail/memory/pending.jsonl` and `approved.jsonl` - memory approval workflow.
-- `.soturail/cache/blocks.jsonl` - stable prompt block manifest.
-- `.soturail/rules/` - extracted rules, checklists and citations.
-- `.soturail/hooks/hosts.json` - installed hook registry.
+```text
+CLI / CI / IDE / host
+        |
+typed MCP or command adapter
+        |
+capability registry + contracts + dual gate
+        |
+workspace guard + artifact registry/store/fingerprint
+        |
+context / knowledge / evidence / run artifacts
+        |
+optional replaceable providers and executor
+```
 
-## Flow
+The [Verified Control Plane Architecture](verified-control-plane.md) defines the current product boundary. The [Artifact Model](artifact-model-and-lineage.md), [Governance Model](governance-model.md), [Context Architecture](context-architecture.md), and [Contracts](contracts-and-verification.md) define the current contracts.
+
+## Runtime state
+
+- `.soturail/config/` — validated configuration.
+- `.soturail/indexes/` — heuristic repository maps.
+- `.soturail/raw/` — sensitive recoverable command output and lifecycle metadata.
+- `.soturail/artifacts/`, `contracts/`, `runs/`, `evidence/`, and `knowledge/` — canonical registry-managed artifacts.
+- `.soturail/metrics/`, `memory/`, `rules/`, and `cache/` — local event, approved-memory, rule, and prompt-cache state.
+- `evals/` — canonical repository evaluation artifacts.
+
+Critical caller-controlled filesystem access passes through `WorkspaceGuard`. Critical artifacts use atomic persistence and carry schemas/fingerprints sufficient to detect staleness and drift.
+
+## Command flow
 
 ```mermaid
 sequenceDiagram
   participant User
-  participant CLI as soturail
-  participant Policy as safety-policy
-  participant Runner as NativeRunnerAdapter
-  participant Raw as raw-store
-  participant Reducer as compressors
-  User->>CLI: soturail run npm test
-  CLI->>Policy: validate command
-  Policy-->>CLI: ok
-  CLI->>Raw: create log file
-  CLI->>Runner: spawn shell command with pipes
-  Runner-->>User: live stdout/stderr
-  Runner-->>Raw: same chunks
-  Runner-->>CLI: exit code and captured text
-  CLI->>Reducer: compress summary
-  CLI->>Raw: append manifest
-  CLI-->>User: summary + raw_id
+  participant CLI
+  participant Contract
+  participant Gates as Authority + Readiness
+  participant Guard as WorkspaceGuard
+  participant Store as ArtifactStore
+  participant Exec as External executor
+  User->>CLI: request
+  CLI->>Contract: bind scope/evidence
+  CLI->>Gates: evaluate capability and readiness
+  Gates-->>CLI: allow only if both pass
+  CLI->>Guard: validate paths
+  CLI->>Store: persist manifest/envelope atomically
+  CLI->>Exec: exact evaluated payload
+  Exec-->>CLI: observed output
+  CLI->>Store: evidence/freshness record
 ```
 
-## Native Runner Boundary
+## Boundaries
 
-`NativeRunnerAdapter` remains the TypeScript command execution seam. The optional `soturail-native` crate implements reducer paths and a native tee-stream runner hot path. Future versions can package prebuilt native binaries for npm.
-
-## Repo Map
-
-The indexer is intentionally a Heuristic Repo Map. It uses regex-based MVP extraction for TypeScript/JavaScript, Python and Java symbols. It does not claim full AST support.
+The repo map is heuristic, not a semantic AST graph. Provider output is attributed enrichment, not ground truth. Governance is a guardrail, not process isolation. The optional native implementation never replaces the tested TypeScript fallback.

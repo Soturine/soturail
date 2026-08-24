@@ -4,123 +4,74 @@
 [![CI](https://github.com/Soturine/soturail/actions/workflows/ci.yml/badge.svg)](https://github.com/Soturine/soturail/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-SotuRail is a local-first Context OS for AI coding agents. It prepares compact project knowledge, evidence, workflows, reports and agent-safe exports without becoming an autonomous agent, cloud gateway or required server.
+SotuRail is a local-first engineering control plane for AI-assisted software work. It supplies workspace-bound context, contracts, readiness decisions, evidence, provenance, and reproducible release artifacts without becoming an autonomous agent or mandatory server.
+
+> SotuRail governs engineering readiness and verified context; it does not replace the coding model/runtime.
 
 ## Install
 
 ```bash
 npm install -g soturail
 soturail --version
-npx soturail --help
 ```
 
-SotuRail requires Node.js 20 or newer. TypeScript is the portable default; native acceleration remains optional.
+SotuRail v1.5 requires Node.js 22 or newer. TypeScript is the portable default; Rust acceleration remains optional.
 
-## Quick Start
+## Five-minute workflow
 
 ```bash
-soturail status --agent
-soturail knowledge compile project-guide README.md docs
+soturail index
+soturail read README.md --query "product boundary"
+soturail contract create docs-refresh --title "Refresh docs" --intent "Keep contracts current" --criterion "docs check passes" --check "npm run docs:check"
 soturail evidence collect
-soturail report build
-soturail dashboard build
 soturail self readiness --v1 --strict
 ```
 
-All generated artifacts stay local under `.soturail/`.
+Generated state stays local under `.soturail/`. Use `soturail run -- <command...>` for recoverable logs and `soturail expand <raw_id>` for redacted recovery.
 
-## Stable Rails
+## Core architecture
 
-| Rail | Purpose |
-| --- | --- |
-| Context and Project Brain | Progressive repo reading, memory, verified claims and agent briefs |
-| Knowledge and Evidence | Source-backed knowledge packs, provenance and honest verification status |
-| Workflow and Harness | Local workflow evidence, lifecycle state, handoffs and safe task coordination |
-| Evaluation and Skills | Deterministic datasets, golden checks and source-mapped Skill Rail 2.0 packs |
-| Reports and Dashboard | Local status, static dashboard, observability and redacted agent reports |
-| Release and Contracts | Schema checks, readiness gates, baselines and release evidence |
+| Layer | Responsibility |
+|---|---|
+| Integrity | WorkspaceGuard, Artifact Registry/Store/Envelope, fingerprints, atomic recovery |
+| Context | progressive reads, source-backed knowledge, hard-budget context artifacts |
+| Contracts | Change Contract, evidence policy, readiness and fidelity inputs |
+| Governance | capability registry/epochs, NativeMinimal provider, Authority + Readiness Dual Gate |
+| Execution evidence | exact-digest Execution Envelope, Run Manifest, freshness and provenance |
+| Adapters | typed MCP and replaceable governance/structural/docs/runtime provider boundaries |
 
-## Main Commands
+The official MCP SDK serves a typed, small, capability-mapped surface. It exposes neither arbitrary shell execution nor caller-controlled raw-log authorization.
 
-```bash
-soturail knowledge estimate README.md docs
-soturail knowledge compile project-guide README.md docs
-soturail knowledge verify project-guide
-soturail evidence collect
-soturail evidence verify
-soturail eval dataset init
-soturail eval golden
-soturail eval regression
-soturail skills build project-guide README.md docs
-soturail skills lint
-soturail tasklet create review-docs
-soturail tasklet run review-docs --dry-run
-soturail report build
-soturail release check --strict
-```
+## Maturity and safety
 
-See the [documentation index](docs/README.md) and [usage guide](docs/getting-started/usage.md) for the full surface.
+The v1.5 deterministic foundation is implemented and tested. AGT/ACS integration, general schema migrations, structural graph providers, Evidence Receipts, SQLite/FTS, vectors, and Conductor remain explicitly deferred.
 
-## Safety Model
-
-- Local artifacts by default; no telemetry upload.
-- No external LLM calls, paid embeddings or mandatory database.
-- No arbitrary shell execution through MCP.
-- No autonomous code rewriting.
-- Evidence distinguishes verified, unverified, inferred and blocked states.
-- Tasklets simulate and export work; they are not an agent runtime.
-
-Read [Security Boundaries](docs/security/security-boundaries.md), [Security Model](docs/security/security-model.md) and [Evidence Provenance Rail](docs/rails/evidence/evidence-provenance-rail.md).
-
-## Agent Hosts
-
-SotuRail exports provider-agnostic context for Codex, Claude, Cursor, OpenCode-compatible hosts, Gemini-compatible hosts, Antigravity-style hosts, DeepAgents-style targets and generic consumers.
-
-```bash
-soturail agents matrix
-soturail agents export --host codex
-soturail report agent --agent codex
-```
-
-Compatibility is described conservatively in [Agent Hosts](docs/rails/hosts/agent-hosts.md).
+SotuRail is a guardrail—not a sandbox. It cannot replace OS permissions, credential controls, provider security, physical/runtime QA, or human approval. Evidence distinguishes verified, unverified, blocked, inferred, and stale states.
 
 ## Documentation
 
 - [Quickstart](docs/getting-started/quickstart.md)
-- [Documentation index](docs/README.md)
-- [v1 contract](docs/reference/contracts/v1-contract.md)
-- [Stable command surface](docs/reference/commands/stable-command-surface.md)
-- [Knowledge Rail](docs/rails/knowledge/knowledge-rail.md)
-- [Evidence Provenance Rail](docs/rails/evidence/evidence-provenance-rail.md)
-- [Agent QA Rail](docs/rails/evaluation/agent-qa-rail.md)
-- [Skill Rail 2.0](docs/rails/skills/skill-rail-2.md)
-- [Tasklet Rail](docs/rails/tasklets/tasklet-rail.md)
+- [v1.5 commands](docs/reference/commands/v1.5-commands.md)
+- [Verified control plane](docs/architecture/verified-control-plane.md)
+- [Threat model](docs/security/threat-model.md)
+- [Migration to v1.5](docs/getting-started/migration-v1.5.md)
+- [Implementation tracker](docs/roadmap/verified-control-plane-implementation-tracker.md)
 - [Roadmap](ROADMAP.md)
 
-## Roadmap
-
-v1.4.0 combines Knowledge, Evidence, Evaluation, Skills and Tasklets into one coherent local pipeline. The former v1.3.0 scope is absorbed into v1.4.0 so source-backed knowledge and provenance ship with their evaluation and reusable-work contracts.
-
-Next directions:
-
-- v1.5.0: Governance and Cost Rail
-- v1.6.0: Optional Conductor experiments behind explicit approval gates
-
-See [Future Rails](docs/roadmap/future-rails-index.md).
-
-## Development
+## Development and release gates
 
 ```bash
-npm install
-npm run typecheck
+npm ci
 npm run build
+npm run typecheck
 npm test
 npm run docs:check
-npm audit --omit=dev
+npm audit
+node dist/cli.js mcp smoke
+node dist/cli.js self architecture --check
+cargo test --manifest-path native/soturail-native/Cargo.toml
 npm run release:check
 ```
-
-Tests are local and deterministic. No network is required for normal commands or test suites.
 
 ## License
 

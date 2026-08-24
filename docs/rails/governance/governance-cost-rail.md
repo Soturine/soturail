@@ -1,6 +1,6 @@
 # Governance And Cost Rail
 
-Governance And Cost Rail is the planned v1.5.x direction for local guardrails around dynamic workflows, context budgets, repeated tool calls, always-loaded skills and MCP exposure.
+The v1.5 governance foundation provides deterministic capability metadata, hard context budgets, Authority/Readiness gates, and inspectable MCP exposure. Cost estimation and deeper workflow-budget reporting remain follow-up work.
 
 ## Goal
 
@@ -8,7 +8,7 @@ Warn humans and agents before workflows become expensive, risky or hard to audit
 
 SotuRail should not manage provider billing by default. It should provide local risk evidence and clear assumptions.
 
-## Planned Signals
+## Current and remaining signals
 
 - giant root agent docs;
 - repeated instructions across host files;
@@ -80,9 +80,9 @@ soturail brain stale --repair-plan
 | Workflow Rail | phase depth and evidence completeness |
 | Benchmark Rail | performance evidence and stale report warnings |
 
-## Resilience And Host Router Expansion
+## Resilience And Host Router Follow-up
 
-Future v1.5 planning now includes Resilience Rail and Host Router Rail:
+Later milestones include Resilience Rail and Host Router Rail:
 
 - [`resilience-rail.md`](resilience-rail.md) for retry/fallback/rate-limit documentation and risk reports;
 - [`rate-limit-and-fallback-policy.md`](rate-limit-and-fallback-policy.md) for local policy shape;

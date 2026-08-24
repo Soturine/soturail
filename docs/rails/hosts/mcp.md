@@ -1,6 +1,6 @@
 # MCP Server
 
-SotuRail includes a local MCP-compatible server over stdio using JSON-RPC 2.0 style messages. It is designed for local context access, not remote execution.
+SotuRail includes a local MCP server over stdio using the official TypeScript SDK. The stable modern path declares protocol `2026-07-28`, while an explicit compatibility path negotiates legacy `2024-11-05`. It is designed for local context access, not remote execution.
 
 ```bash
 soturail mcp doctor
@@ -23,7 +23,7 @@ Send one JSON object per line to `soturail mcp serve --transport stdio`.
 Initialize:
 
 ```json
-{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"clientInfo":{"name":"manual-smoke","version":"0.1.0"}}}
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","capabilities":{},"clientInfo":{"name":"manual-smoke","version":"1.0.0"}}}
 ```
 
 List resources:
@@ -62,7 +62,7 @@ Security defaults:
 
 - no arbitrary shell execution;
 - no `soturail.run` MCP tool by default;
-- raw log expansion redacts probable secrets unless `allow_raw=true`;
+- raw log expansion is always redacted; MCP callers cannot authorize exact disclosure;
 - provider cache hits are never invented.
 
 ## Host Config Helpers
@@ -79,7 +79,7 @@ It does not assume a global application config path. Review it before adding it 
 
 `soturail mcp resources host-manifest --host <host>` writes `.soturail/mcp/host-manifest.json` and `.soturail/mcp/host-manifests/<host>.json`. The manifest lists local status, report, brain, schema, readiness, benchmark, native, baseline, dashboard, host export and host doctor artifacts. It sets `mutationAllowed: false` and `arbitraryShellExecutionExposed: false`.
 
-For v0.6.0 agent-runtime setup, prefer host-aware dry-runs before copying MCP snippets into a host:
+For agent-runtime setup, prefer host-aware dry-runs before copying MCP snippets into a host:
 
 ```bash
 soturail agents capabilities
@@ -116,7 +116,7 @@ transport: stdio
 arbitrary_shell_tool_exposed: no
 raw_expand_default: redacted
 memory_resource: approved-only
-policy_required_for: raw_allow, config_write, publish, shell
+policy_required_for: config_write, publish, shell
 result: safe-default
 ```
 
@@ -136,7 +136,7 @@ Future resources can expose more local evidence without allowing arbitrary execu
 
 Every resource should have a clear redaction policy and recovery path.
 
-## v0.10.0 Report Resources
+## Report Resources
 
 `soturail mcp resources report` writes `.soturail/mcp/report-resources.json` as a static read-only manifest for local report artifacts.
 
@@ -157,9 +157,9 @@ visual workflow context -> Mermaid inside Markdown or dedicated resource text
 compact repeated records -> TOON/table-like output where explicitly requested
 ```
 
-## Planned Safety Tests
+## Safety Tests
 
-MCP smoke tests should continue confirming:
+MCP smoke and integrity tests confirm:
 
 - initialize passes;
 - resources/list passes;

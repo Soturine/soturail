@@ -100,6 +100,27 @@ describe("bounded context and run manifests", () => {
   });
 });
 
+describe("control-plane documentation drift", () => {
+  it("keeps current runtime, MCP, security and product-boundary claims aligned", async () => {
+    const root = process.cwd();
+    const [packageText, readme, architecture, mcp, security, release] = await Promise.all([
+      fs.readFile(path.join(root, "package.json"), "utf8"),
+      fs.readFile(path.join(root, "README.md"), "utf8"),
+      fs.readFile(path.join(root, "docs", "architecture", "architecture.md"), "utf8"),
+      fs.readFile(path.join(root, "docs", "rails", "hosts", "mcp.md"), "utf8"),
+      fs.readFile(path.join(root, "docs", "security", "security-model.md"), "utf8"),
+      fs.readFile(path.join(root, "docs", "releases", "RELEASE_NOTES_v1.5.0.md"), "utf8")
+    ]);
+    const packageJson = JSON.parse(packageText) as { version: string; engines: { node: string } };
+    expect(packageJson).toMatchObject({ version: "1.5.0", engines: { node: ">=22" } });
+    expect(readme).toContain("SotuRail governs engineering readiness and verified context; it does not replace the coding model/runtime.");
+    expect(architecture).toContain("SotuRail v1.5");
+    expect(mcp).toContain("2026-07-28");
+    expect(`${mcp}\n${security}`).not.toMatch(/allow_raw=true/);
+    expect(release).toContain("SotuRail v1.5.0");
+  });
+});
+
 async function temporaryGitProject(): Promise<string> {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-governance-"));
   temporaryDirectories.push(root);

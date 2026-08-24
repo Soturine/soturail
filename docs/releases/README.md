@@ -1,5 +1,7 @@
 # Release Notes
 
+- [v1.5.0](RELEASE_NOTES_v1.5.0.md)
+
 This folder is the repository source of truth for SotuRail release notes.
 
 GitHub Releases copy the relevant file contents at release time. Keep edited release notes here so package checks, release scripts and docs all use the same path:

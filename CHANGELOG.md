@@ -6,6 +6,48 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-08-24
+
+### Added
+
+- Added WorkspaceGuard, Artifact Registry/Store/Envelope, Workspace Fingerprint, atomic JSON and recoverable JSONL storage foundations.
+- Added Run Manifest, canonical Capability Registry and phase-scoped Capability Epochs.
+- Added `GovernanceProvider` with deterministic `NativeMinimal`, a fail-closed AGT/ACS boundary, Dual Gate evaluation and exact-digest Execution Envelopes.
+- Added workspace-bound Change Contracts/readiness, hard-budget shared context artifacts, raw lifecycle commands and control-plane drift checks.
+- Added current architecture, provider, threat-model, benchmark, migration and implementation-tracker documentation.
+- Added CycloneDX SBOM, checksums, release manifest, CodeQL, and GitHub build/SBOM attestations.
+
+### Changed
+
+- Replaced the manual MCP path with the official typed SDK, modern `2026-07-28` protocol support and tested legacy negotiation.
+- Bound evidence and knowledge artifacts to workspace freshness and cleaned renamed/deleted compiled knowledge topics.
+- Changed the supported runtime/CI baseline from Node.js 20/22 to maintained Node.js 22/24.
+- Synchronized the optional Rust crate version/license with npm `1.5.0` and Apache-2.0.
+- Replaced the feature-dump roadmap with dependency-ordered milestones.
+
+### Fixed
+
+- Prevented path traversal, absolute path and symlink escapes from caller-controlled read surfaces.
+- Prevented slug collisions and stale generated knowledge residue.
+- Prevented stale verified evidence after workspace changes and partial critical artifact writes.
+- Removed the competing `eval/` artifact path in favor of canonical `evals/`.
+
+### Security
+
+- Removed caller-controlled raw disclosure from MCP; MCP raw expansion is always redacted.
+- Added raw sensitivity, fingerprint, retention, doctor, inspection and purge metadata.
+- Added fail-closed governance behavior and payload-digest binding between evaluation and execution.
+- Full dependency audit reports zero known vulnerabilities at release preparation.
+
+### Deprecated
+
+- Node.js 20 is unsupported because it is end-of-life.
+- MCP clients must stop sending `allow_raw`; exact disclosure is a local CLI-only decision.
+
+### Migration
+
+- Upgrade to Node.js 22 or 24, refresh MCP tool schemas/configuration, and regenerate artifacts reported stale. See `docs/getting-started/migration-v1.5.md`.
+
 ## [1.4.0] - 2026-06-13
 
 ### Added

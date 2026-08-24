@@ -10,6 +10,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [First Real Workflow](getting-started/first-real-workflow.md)
 - [Windows](getting-started/windows.md)
 - [Migration To v1](getting-started/migration-v1.md)
+- [Migration To v1.5](getting-started/migration-v1.5.md)
 
 ## Stable Rails
 
@@ -29,10 +30,22 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [All Reference Docs](reference/)
 - [Stable Command Surface](reference/commands/stable-command-surface.md)
 - [v1.4 Commands](reference/commands/v1.4-commands.md)
+- [v1.5 Commands](reference/commands/v1.5-commands.md)
 - [Schema Contracts](reference/schemas/schema-contracts.md)
 - [v1 Contract](reference/contracts/v1-contract.md)
 - [Architecture](architecture/)
 - [Security](security/)
+
+## Verified Control Plane
+
+- [Verified Control Plane Architecture](architecture/verified-control-plane.md)
+- [Artifact Model And Lineage](architecture/artifact-model-and-lineage.md)
+- [Governance Model](architecture/governance-model.md)
+- [Context Architecture](architecture/context-architecture.md)
+- [Contracts And Verification](architecture/contracts-and-verification.md)
+- [Provider Architecture](architecture/provider-architecture.md)
+- [Threat Model](security/threat-model.md)
+- [Implementation Tracker](roadmap/verified-control-plane-implementation-tracker.md)
 
 ## Planning And Ecosystem
 
@@ -41,6 +54,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [Ecosystem Influences](ecosystem/ecosystem-influences.md)
 - [Agent And Harness Synthesis](ecosystem/agent-harness-synthesis-2026.md)
 - [Release Notes](releases/)
+- [v1.5 Preimplementation Audit](audits/v1.5.0-preimplementation-audit.md)
 
 ## Additional Material
 
