@@ -3,6 +3,7 @@ tests/
 coverage/
 .github/
 .soturail/
+release-artifacts/
 native/soturail-native/target/
 benchmarks/results/*.json
 benchmarks/reports/*.md

@@ -118,8 +118,8 @@ export async function runReleasePreflight(
       gates,
       "npm_pack_no_raw_logs",
       "npm pack excludes raw logs",
-      !combined.includes(".soturail/raw") && !combined.includes("benchmarks/results/latest.json"),
-      "pack output must not include .soturail/raw or generated benchmark JSON"
+      !combined.includes(".soturail/raw") && !combined.includes("benchmarks/results/latest.json") && !combined.includes("dist/release/") && !combined.includes("release-artifacts/"),
+      "pack output must not include raw logs, generated benchmark JSON, or nested release artifacts"
     );
     const packageVerification = packageName && version
       ? await verifyPackedPackage(resolvedRoot, packageName, version)

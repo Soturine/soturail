@@ -8,7 +8,10 @@ import { promisify } from "node:util";
 const exec = promisify(execFile);
 const root = process.cwd();
 const packageJson = JSON.parse(await fs.readFile(path.join(root, "package.json"), "utf8"));
-const releaseDir = path.join(root, "dist", "release", `v${packageJson.version}`);
+const legacyReleaseDir = path.join(root, "dist", "release");
+const releaseDir = path.join(root, "release-artifacts", `v${packageJson.version}`);
+await fs.rm(legacyReleaseDir, { recursive: true, force: true });
+await fs.rm(releaseDir, { recursive: true, force: true });
 await fs.mkdir(releaseDir, { recursive: true });
 
 const npmCommand = process.platform === "win32" && process.env.npm_execpath

@@ -28,13 +28,13 @@ jobs:
       - run: npm run release:artifacts
       - uses: actions/attest-build-provenance@v2
         with:
-          subject-path: "dist/release/${{ github.ref_name }}/*.tgz"
+          subject-path: "release-artifacts/${{ github.ref_name }}/*.tgz"
       - uses: actions/attest-sbom@v2
         with:
-          subject-path: "dist/release/${{ github.ref_name }}/*.tgz"
-          sbom-path: "dist/release/${{ github.ref_name }}/sbom.cdx.json"
+          subject-path: "release-artifacts/${{ github.ref_name }}/*.tgz"
+          sbom-path: "release-artifacts/${{ github.ref_name }}/sbom.cdx.json"
       - uses: actions/upload-artifact@v4
         with:
           name: soturail-${{ github.ref_name }}-release-artifacts
-          path: dist/release/**
+          path: release-artifacts/**
           if-no-files-found: error

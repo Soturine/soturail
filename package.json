@@ -20,7 +20,7 @@
     "sync:version": "node scripts/sync-version.mjs",
     "build": "npm run sync:version && tsc -p tsconfig.json",
     "prepack": "npm run build",
-    "test": "vitest run",
+    "test": "vitest run --maxWorkers=4",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "docs:check": "node scripts/check-doc-links.mjs",
     "build:native": "cargo build --manifest-path native/soturail-native/Cargo.toml --release",

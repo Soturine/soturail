@@ -126,9 +126,8 @@ describe("v1.4.0 knowledge evidence evaluation skills and tasklets", () => {
     ]) expect(existsSync(path.join(root, file))).toBe(true);
   });
 
-  it("keeps the package and CLI version synchronized for v1.4.0", async () => {
+  it("keeps the package and CLI version synchronized", async () => {
     const packageJson = JSON.parse(await readFile(path.join(process.cwd(), "package.json"), "utf8")) as { version: string };
-    expect(packageJson.version).toBe("1.4.0");
     expect(SOTURAIL_VERSION).toBe(packageJson.version);
   });
 });

@@ -13,6 +13,7 @@ SotuRail is a local-first engineering control plane for AI-assisted software wor
 ```bash
 npm install -g soturail
 soturail --version
+npx soturail --help
 ```
 
 SotuRail v1.5 requires Node.js 22 or newer. TypeScript is the portable default; Rust acceleration remains optional.
