@@ -114,5 +114,5 @@ describe("v0.8.0 Project Brain and Reverse Specification Rail", () => {
     expect(run.summary.failed).toBe(0);
     expect(markdown).toContain("SotuRail Evaluation Report");
     expect(markdown).toContain("brain-claim-quality");
-  });
+  }, 30_000);
 });

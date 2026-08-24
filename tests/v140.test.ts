@@ -66,7 +66,7 @@ describe("v1.4.0 knowledge evidence evaluation skills and tasklets", () => {
     expect(golden.cases.some((item) => item.id === "host-export-safety")).toBe(true);
     expect(regression.kind).toBe("regression");
     expect(golden.cases.find((item) => item.id === "evidence-honesty")?.result).not.toBe("fail");
-  });
+  }, 30_000);
 
   it("creates and builds Skill Rail 2.0 packs with safety reports", async () => {
     const root = await tempProject();

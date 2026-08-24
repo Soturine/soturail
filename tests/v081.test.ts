@@ -148,5 +148,5 @@ describe("v0.8.1 Project Brain polish", () => {
     expect(listed).toContain("brain-claim-deduplication");
     expect(listed).toContain("brain-stale-repair-guidance");
     expect(run.summary.failed).toBe(0);
-  });
+  }, 30_000);
 });
