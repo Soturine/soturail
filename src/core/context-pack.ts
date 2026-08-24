@@ -5,11 +5,16 @@ import { getCurrentGitCommit } from "./git.js";
 import { listMcpResources } from "./mcp-resources.js";
 import { readSkills } from "./skill-store.js";
 import { listWorkflows } from "./workflow-store.js";
+import { createSharedContextArtifact, type SharedContextArtifact } from "./context-artifact.js";
+import { createWorkspaceFingerprint } from "./workspace-fingerprint.js";
+import { artifactStore } from "./artifact-store.js";
 
 export type ContextTarget = "claude" | "codex" | "gemini" | "cursor" | "antigravity" | "generic";
 
 export interface ContextPackOptions {
   now?: string;
+  maxBytes?: number;
+  maxTokens?: number;
 }
 
 export interface ContextPackResult {
@@ -17,6 +22,7 @@ export interface ContextPackResult {
   path: string;
   payload: string;
   stablePrefix: string;
+  artifact: SharedContextArtifact;
 }
 
 export const contextTargets: ContextTarget[] = ["claude", "codex", "gemini", "cursor", "antigravity", "generic"];
@@ -37,10 +43,11 @@ export async function buildContextPack(
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
   const now = options.now ?? new Date().toISOString();
+  const config = await loadConfig(root);
   const sections = [
     ["Static SotuRail Header", staticHeader(target)],
     ["Governance Files Summary", await governanceSummary(root)],
-    ["Project Config", JSON.stringify(await loadConfig(root), null, 2)],
+    ["Project Config", JSON.stringify(config, null, 2)],
     ["Repo Map Summary", await readOptional(path.join(paths.indexesDir, "repo-map.json"), "No repo map found. Run soturail index.")],
     ["Approved Rules", await readOptional(paths.rulesFile, "No approved rules found.")],
     ["Approved Specs", await approvedSpecs(root)],
@@ -49,7 +56,12 @@ export async function buildContextPack(
     ["Workflow Summary", await workflowSummary(root)],
     ["MCP Resource List", await mcpResourceSummary()]
   ] as const;
-  const stable = sections.map(([title, content]) => `## ${title}\n\n${content.trim()}\n`).join("\n");
+  const stableItems = sections.map(([title, content], index) => ({
+    id: title.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    content: `## ${title}\n\n${content.trim()}\n`,
+    priority: 900 - index * 50,
+    classification: index <= 2 || title === "Approved Rules" ? "LOSSLESS_ONLY" as const : "COMPRESSIBLE" as const
+  }));
   const dynamic = [
     "<!-- soturail:dynamic-footer -->",
     "## Dynamic Footer",
@@ -60,11 +72,18 @@ export async function buildContextPack(
     "last_commands: dynamic local session state is intentionally kept after stable blocks",
     ""
   ].join("\n");
-  const payload = `${stable}\n${dynamic}`;
+  const workspace = await createWorkspaceFingerprint(root);
+  const artifact = createSharedContextArtifact(
+    [...stableItems, { id: "dynamic-footer", content: dynamic, priority: 1000, classification: "LOSSLESS_ONLY" }],
+    workspace,
+    { maxBytes: options.maxBytes ?? config.context.max_bytes, maxTokens: options.maxTokens ?? config.context.max_tokens }
+  );
+  const payload = artifact.payload;
+  const stable = payload.split("<!-- soturail:dynamic-footer -->")[0]?.trimEnd() ?? payload;
   const filePath = path.join(paths.contextDir, `${target}-context.md`);
-  await fs.mkdir(paths.contextDir, { recursive: true });
-  await fs.writeFile(filePath, payload, "utf8");
-  return { target, path: filePath, payload, stablePrefix: stable };
+  await artifactStore.writeText(filePath, payload);
+  await artifactStore.writeJson(path.join(paths.contextDir, `${target}-context.artifact.json`), artifact);
+  return { target, path: filePath, payload, stablePrefix: stable, artifact };
 }
 
 export async function contextDoctor(root = process.cwd()): Promise<string> {
@@ -75,7 +94,8 @@ export async function contextDoctor(root = process.cwd()): Promise<string> {
     "SotuRail context doctor",
     "stable_order: header, governance, config, repo_map, approved_rules, approved_specs, approved_memory, skills, dynamic_footer",
     `context_dir: ${path.normalize(path.relative(root, paths.contextDir))}`,
-    `existing_packs: ${existing.length}`
+    `existing_packs: ${existing.length}`,
+    "hard_budget: enabled"
   ].join("\n") + "\n";
 }
 

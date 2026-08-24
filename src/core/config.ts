@@ -42,6 +42,12 @@ export const ConfigSchema = z.object({
       dynamic_footer_token_budget: z.number().int().positive().max(10000).default(800)
     })
     .default({ dynamic_footer_token_budget: 800 }),
+  context: z
+    .object({
+      max_tokens: z.number().int().positive().max(1_000_000).default(12000),
+      max_bytes: z.number().int().positive().max(10_000_000).default(48000)
+    })
+    .default({ max_tokens: 12000, max_bytes: 48000 }),
   dedupe: z
     .object({
       enabled: z.boolean().default(true),

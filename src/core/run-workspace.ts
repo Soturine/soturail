@@ -3,6 +3,8 @@ import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import type { PolicyDecision } from "./policy-rail.js";
 import { makeRailId } from "./rail-utils.js";
+import { createRunManifest } from "./run-manifest.js";
+import { artifactStore } from "./artifact-store.js";
 
 export interface RunWorkspaceRecord {
   schemaVersion: "soturail.run.v1";
@@ -66,8 +68,9 @@ export async function createRunWorkspace(
     evidencePack: options.evidencePack ?? null
   };
   await writeJson(path.join(dir, "workspace.json"), record);
-  await fs.writeFile(path.join(dir, "summary.md"), `# Run Workspace: ${title}\n\nAdd run summary here.\n`, "utf8");
-  await fs.writeFile(path.join(dir, "handoff.md"), `# Handoff: ${title}\n\n- Run id: ${runId}\n- Safe default: no commands were run by workspace creation.\n`, "utf8");
+  await writeJson(path.join(dir, "manifest.json"), await createRunManifest({ runId, hostType: record.targetAgent, skills: record.skills, contextPack: record.contextPack }, root));
+  await artifactStore.writeText(path.join(dir, "summary.md"), `# Run Workspace: ${title}\n\nAdd run summary here.\n`);
+  await artifactStore.writeText(path.join(dir, "handoff.md"), `# Handoff: ${title}\n\n- Run id: ${runId}\n- Safe default: no commands were run by workspace creation.\n`);
   return { record, path: dir };
 }
 
@@ -101,7 +104,8 @@ export async function showRunWorkspace(runId: string, root = process.cwd()): Pro
     `handoff_present: ${await exists(handoffPath)}`,
     `summary: ${relativeToRoot(root, summaryPath)}`,
     `handoff: ${relativeToRoot(root, handoffPath)}`,
-    `evidence_dir: ${relativeToRoot(root, evidenceDir)}`
+    `evidence_dir: ${relativeToRoot(root, evidenceDir)}`,
+    `manifest: ${relativeToRoot(root, path.join(dir, "manifest.json"))}`
   ].join("\n") + "\n";
 }
 
