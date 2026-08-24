@@ -56,7 +56,7 @@ export function registerMcpCommand(program: Command): void {
       process.stdout.write("Review this snippet before adding it to a host application.\n");
     });
 
-  mcp.command("smoke").description("Run a non-hanging local JSON-RPC smoke test.").action(async () => {
+  mcp.command("smoke").description("Run modern SDK and legacy-negotiation smoke checks.").action(async () => {
     const result = await mcpSmoke(process.cwd(), SOTURAIL_VERSION);
     process.stdout.write(result.output);
     if (!result.ok) process.exitCode = 1;
@@ -64,7 +64,7 @@ export function registerMcpCommand(program: Command): void {
 
   mcp
     .command("serve")
-    .description("Serve JSON-RPC 2.0 style MCP messages over stdio.")
+    .description("Serve official MCP 2026-07-28 with legacy negotiation over stdio.")
     .option("--transport <transport>", "stdio", "stdio")
     .action(async (options: { transport: string }) => {
       if (options.transport !== "stdio") throw new Error("Only --transport stdio is currently supported.");

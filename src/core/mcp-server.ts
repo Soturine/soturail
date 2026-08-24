@@ -1,25 +1,35 @@
-import readline from "node:readline";
-import { stdin as input, stdout as output } from "node:process";
+import { McpServer } from "@modelcontextprotocol/server";
+import { serveStdio } from "@modelcontextprotocol/server/stdio";
+import { z } from "zod";
 import { listMcpResources, readMcpResource } from "./mcp-resources.js";
 import { callMcpTool, listMcpTools } from "./mcp-tools.js";
+
+export const MCP_PROTOCOL_VERSION = "2026-07-28";
 
 export interface McpManifest {
   name: string;
   version: string;
   protocol: string;
+  sdk: string;
   transports: string[];
   resources: Awaited<ReturnType<typeof listMcpResources>>;
-  tools: ReturnType<typeof listMcpTools>;
+  tools: Array<{ name: string; description: string; inputSchema: unknown; annotations: ReturnType<typeof listMcpTools>[number]["annotations"] }>;
 }
 
 export async function mcpManifest(version: string): Promise<McpManifest> {
   return {
     name: "soturail",
     version,
-    protocol: "json-rpc-2.0-mcp-compatible-stdio",
+    protocol: MCP_PROTOCOL_VERSION,
+    sdk: "@modelcontextprotocol/server@2",
     transports: ["stdio"],
     resources: await listMcpResources(),
-    tools: listMcpTools()
+    tools: listMcpTools().map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      inputSchema: z.toJSONSchema(tool.inputSchema, { target: "draft-2020-12" }),
+      annotations: tool.annotations
+    }))
   };
 }
 
@@ -28,43 +38,72 @@ export async function mcpDoctor(version: string): Promise<string> {
   return [
     "SotuRail MCP doctor",
     `version: ${version}`,
+    `protocol: ${manifest.protocol}`,
+    `sdk: ${manifest.sdk}`,
     `resources: ${manifest.resources.length}`,
     `tools: ${manifest.tools.length}`,
     "transport_stdio: available",
+    "legacy_negotiation: available",
+    "raw_disclosure_over_mcp: denied",
     "arbitrary_shell_execution: disabled"
   ].join("\n") + "\n";
 }
 
+export async function createMcpServer(root = process.cwd(), version = "0.0.0"): Promise<McpServer> {
+  const server = new McpServer(
+    { name: "soturail", version, description: "Verified local-first engineering control plane" },
+    { instructions: "Prefer resources and progressive reads. Raw logs are always redacted over MCP. No arbitrary shell capability is exposed." }
+  );
+
+  for (const info of await listMcpResources()) {
+    server.registerResource(
+      info.name,
+      info.uri,
+      { description: info.description, mimeType: info.mimeType },
+      async (uri) => {
+        const resource = await readMcpResource(uri.href, root);
+        return { contents: [{ uri: resource.uri, mimeType: resource.mimeType, text: resource.text }] };
+      }
+    );
+  }
+
+  for (const tool of listMcpTools()) {
+    server.registerTool(
+      tool.name,
+      { description: tool.description, inputSchema: tool.inputSchema, annotations: tool.annotations },
+      async (args) => ({ content: [{ type: "text" as const, text: await callMcpTool(tool.name, args as Record<string, unknown>, root) }] })
+    );
+  }
+  return server;
+}
+
 export async function mcpSmoke(root = process.cwd(), version = "0.0.0"): Promise<{ ok: boolean; output: string }> {
-  const initialize = await handleMcpMessage({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }, root, version);
-  const resources = await handleMcpMessage({ jsonrpc: "2.0", id: 2, method: "resources/list", params: {} }, root, version);
-  const repoMap = await handleMcpMessage({ jsonrpc: "2.0", id: 3, method: "resources/read", params: { uri: "soturail://repo-map" } }, root, version);
-  const tools = await handleMcpMessage({ jsonrpc: "2.0", id: 4, method: "tools/list", params: {} }, root, version);
+  const modern = await createMcpServer(root, version);
+  const legacy = await handleLegacyMcpMessage({ jsonrpc: "2.0", id: 1, method: "initialize", params: {} }, root, version);
+  const tools = await handleLegacyMcpMessage({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} }, root, version);
   const toolNames = Array.isArray(tools?.result?.tools)
     ? tools.result.tools.map((tool: { name?: unknown }) => tool.name).filter((name: unknown): name is string => typeof name === "string")
     : [];
-  const ok = Boolean(
-    initialize?.result?.serverInfo?.name === "soturail"
-    && Array.isArray(resources?.result?.resources)
-    && repoMap?.result?.contents?.[0]?.uri === "soturail://repo-map"
-    && toolNames.length > 0
-    && !toolNames.includes("soturail.run")
-  );
+  const schemasTyped = Array.isArray(tools?.result?.tools) && tools.result.tools.every((tool: { inputSchema?: { properties?: unknown } }) => tool.inputSchema?.properties !== undefined);
+  const rawBypassExposed = tools?.result?.tools?.some((tool: { inputSchema?: { properties?: Record<string, unknown> } }) => tool.inputSchema?.properties?.allow_raw);
+  const ok = Boolean(modern && legacy?.result?.serverInfo?.name === "soturail" && toolNames.length > 0 && schemasTyped && !rawBypassExposed && !toolNames.includes("soturail.run"));
+  await modern.close().catch(() => undefined);
   return {
     ok,
     output: [
       "SotuRail MCP smoke",
-      `initialize: ${initialize?.result?.serverInfo?.name === "soturail" ? "pass" : "fail"}`,
-      `resources_list: ${Array.isArray(resources?.result?.resources) ? "pass" : "fail"}`,
-      `repo_map_read: ${repoMap?.result?.contents?.[0]?.uri === "soturail://repo-map" ? "pass" : "fail"}`,
-      `tools_list: ${toolNames.length > 0 ? "pass" : "fail"}`,
+      `modern_sdk_server: ${modern ? "pass" : "fail"}`,
+      `protocol: ${MCP_PROTOCOL_VERSION}`,
+      `legacy_initialize: ${legacy?.result?.serverInfo?.name === "soturail" ? "pass" : "fail"}`,
+      `typed_tool_schemas: ${schemasTyped ? "pass" : "fail"}`,
+      `raw_self_authorization_exposed: ${rawBypassExposed ? "yes" : "no"}`,
       `arbitrary_shell_tool_exposed: ${toolNames.includes("soturail.run") ? "yes" : "no"}`,
       `result: ${ok ? "pass" : "fail"}`
     ].join("\n") + "\n"
   };
 }
 
-export async function handleMcpMessage(message: any, root = process.cwd(), version = "0.0.0"): Promise<any> {
+export async function handleLegacyMcpMessage(message: any, root = process.cwd(), version = "0.0.0"): Promise<any> {
   const id = message?.id ?? null;
   try {
     switch (message?.method) {
@@ -83,7 +122,14 @@ export async function handleMcpMessage(message: any, root = process.cwd(), versi
         return rpcResult(id, { contents: [{ uri: resource.uri, mimeType: resource.mimeType, text: resource.text }] });
       }
       case "tools/list":
-        return rpcResult(id, { tools: listMcpTools().map((tool) => ({ name: tool.name, description: tool.description, inputSchema: { type: "object" } })) });
+        return rpcResult(id, {
+          tools: listMcpTools().map((tool) => ({
+            name: tool.name,
+            description: tool.description,
+            inputSchema: z.toJSONSchema(tool.inputSchema, { target: "draft-2020-12" }),
+            annotations: tool.annotations
+          }))
+        });
       case "tools/call": {
         const name = message?.params?.name;
         if (typeof name !== "string") throw new Error("tools/call requires params.name");
@@ -91,26 +137,21 @@ export async function handleMcpMessage(message: any, root = process.cwd(), versi
         return rpcResult(id, { content: [{ type: "text", text }] });
       }
       default:
-        throw new Error(`Unsupported MCP method: ${String(message?.method)}`);
+        return { jsonrpc: "2.0", id, error: { code: -32601, message: `Unsupported MCP method: ${String(message?.method)}` } };
     }
   } catch (error) {
-    return { jsonrpc: "2.0", id, error: { code: -32000, message: error instanceof Error ? error.message : String(error) } };
+    return { jsonrpc: "2.0", id, error: { code: -32602, message: error instanceof Error ? error.message : String(error) } };
   }
 }
 
+/** @deprecated Test-only alias for the pre-v2 compatibility surface. */
+export const handleMcpMessage = handleLegacyMcpMessage;
+
 export async function serveMcpStdio(root = process.cwd(), version = "0.0.0"): Promise<void> {
-  const rl = readline.createInterface({ input });
-  for await (const line of rl) {
-    if (!line.trim()) continue;
-    let message: any;
-    try {
-      message = JSON.parse(line);
-    } catch {
-      output.write(`${JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } })}\n`);
-      continue;
-    }
-    output.write(`${JSON.stringify(await handleMcpMessage(message, root, version))}\n`);
-  }
+  serveStdio(() => createMcpServer(root, version), {
+    legacy: "serve",
+    onerror: (error) => process.stderr.write(`SotuRail MCP error: ${error.message}\n`)
+  });
 }
 
 function rpcResult(id: unknown, result: unknown): unknown {

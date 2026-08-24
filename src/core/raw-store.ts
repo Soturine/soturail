@@ -3,6 +3,7 @@ import path from "node:path";
 import { randomBytes } from "node:crypto";
 import type { WriteStream } from "node:fs";
 import { appendJsonl, getWorkspacePaths, readJsonl, relativeToRoot } from "./config.js";
+import { WorkspaceGuard } from "./workspace-guard.js";
 
 export interface RawRunRecord {
   raw_id: string;
@@ -13,6 +14,12 @@ export interface RawRunRecord {
   compressor: string;
   raw_tokens_estimated: number;
   compressed_tokens_estimated: number;
+  sensitivity?: "unknown" | "normal" | "sensitive";
+  redaction_version?: string;
+  contains_probable_secrets?: boolean;
+  workspace_fingerprint?: string;
+  retention_policy?: string;
+  expires_at?: string;
 }
 
 export interface RawLogHandle {
@@ -71,7 +78,9 @@ export class RawStore {
       return null;
     }
     const paths = getWorkspacePaths(this.root);
-    const absolutePath = path.resolve(paths.root, record.path);
+    const guard = new WorkspaceGuard(paths.root);
+    const candidate = path.resolve(paths.root, record.path);
+    const absolutePath = await guard.realpathAndVerify(candidate, paths.rawDir, true);
     return fs.readFile(absolutePath);
   }
 

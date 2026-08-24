@@ -30,6 +30,7 @@ import { registerContextCommand } from "./commands/context.js";
 import { registerDashboardCommand } from "./commands/dashboard.js";
 import { registerReadCommand } from "./commands/read.js";
 import { registerPolicyCommand } from "./commands/policy.js";
+import { registerRawCommand } from "./commands/raw.js";
 import { registerRunCommand } from "./commands/run.js";
 import { registerReportCommand } from "./commands/report.js";
 import { registerReverseCommand } from "./commands/reverse.js";
@@ -83,6 +84,7 @@ export function buildProgram(): Command {
   registerNativeCommand(program);
   registerObsCommand(program);
   registerPolicyCommand(program);
+  registerRawCommand(program);
   registerReportCommand(program);
   registerRulesCommand(program);
   registerReverseCommand(program);

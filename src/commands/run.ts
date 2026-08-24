@@ -12,6 +12,8 @@ import { estimateTokens } from "../core/token-estimator.js";
 import { detectNativeEngine, runWithNative, type ReducerEngine } from "../core/native-engine.js";
 import { compressOutputWithEngine } from "../compressors/index.js";
 import { cleanRunWorkspaces, createRunWorkspace, showRunWorkspace } from "../core/run-workspace.js";
+import { createWorkspaceFingerprint } from "../core/workspace-fingerprint.js";
+import { redactText } from "../core/report-redaction.js";
 
 export interface RunCliOptions {
   interactive?: boolean;
@@ -123,6 +125,9 @@ export async function executeRunCommand(
         engine: "ts" as const
       }
     : await compressOutputWithEngine(command, reducibleText, log.rawId, nativeInfo.available ? requestedEngine : "ts", root);
+  const fingerprint = await createWorkspaceFingerprint(root);
+  const probableSecrets = redactText(result.rawText).redactions.length > 0;
+  const expiresAt = new Date(new Date(log.createdAt).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
   const record: RawRunRecord = {
     raw_id: log.rawId,
     path: log.relativePath,
@@ -131,7 +136,13 @@ export async function executeRunCommand(
     created_at: log.createdAt,
     compressor: compression.compressor,
     raw_tokens_estimated: estimateTokens(result.rawText),
-    compressed_tokens_estimated: compression.compressed_tokens_estimated
+    compressed_tokens_estimated: compression.compressed_tokens_estimated,
+    sensitivity: probableSecrets ? "sensitive" : "normal",
+    redaction_version: "soturail-redaction.v1",
+    contains_probable_secrets: probableSecrets,
+    workspace_fingerprint: fingerprint.fingerprint,
+    retention_policy: "local-30d-review-before-purge",
+    expires_at: expiresAt
   };
   const metadataTokens = estimateTokens([
     "SotuRail run complete.",
