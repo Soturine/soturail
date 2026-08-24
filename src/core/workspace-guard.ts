@@ -35,8 +35,10 @@ export class WorkspaceGuard {
 
   async realpathAndVerify(inputPath: string, boundary = this.projectRoot, mustExist = true): Promise<string> {
     const resolved = path.resolve(inputPath);
-    this.assertInside(boundary, resolved);
     const canonicalBoundary = await this.canonicalBoundary(boundary);
+    if (!isInside(boundary, resolved) && !isInside(canonicalBoundary, resolved)) {
+      throw new Error(`Path escapes allowed boundary: ${resolved}`);
+    }
     const canonicalTarget = await canonicalizeTarget(resolved, mustExist);
     this.assertInside(canonicalBoundary, canonicalTarget);
     return canonicalTarget;
@@ -69,7 +71,11 @@ export class WorkspaceGuard {
   }
 
   classifySensitivePath(target: string): SensitivePathKind {
-    const relative = normalizeForComparison(path.relative(this.projectRoot, path.resolve(target)));
+    const resolved = path.resolve(target);
+    const comparisonRoot = this.canonicalProjectRoot && isInside(this.canonicalProjectRoot, resolved)
+      ? this.canonicalProjectRoot
+      : this.projectRoot;
+    const relative = normalizeForComparison(path.relative(comparisonRoot, resolved));
     const segments = relative.split("/").filter(Boolean);
     const basename = (segments.at(-1) ?? "").toLowerCase();
     if (segments[0]?.toLowerCase() === ".git") return "vcs-internal";

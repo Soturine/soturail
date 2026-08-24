@@ -24,7 +24,21 @@ describe("WorkspaceGuard", () => {
 
     await expect(guard.resolveProjectPath("../outside.txt")).rejects.toThrow(/escapes allowed boundary/i);
     await expect(guard.resolveProjectPath(outside)).rejects.toThrow(/escapes allowed boundary/i);
-    await expect(guard.resolveProjectPath("inside.txt")).resolves.toBe(path.join(root, "inside.txt"));
+    await expect(guard.resolveProjectPath("inside.txt")).resolves.toBe(await fs.realpath(path.join(root, "inside.txt")));
+  });
+
+  it("accepts a canonical target under a symlinked project-root alias", async () => {
+    const root = await temporaryProject();
+    const aliasParent = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-root-alias-"));
+    temporaryDirectories.push(aliasParent);
+    const alias = path.join(aliasParent, "project");
+    await fs.symlink(root, alias, process.platform === "win32" ? "junction" : "dir");
+    const guard = new WorkspaceGuard(alias);
+
+    await expect(guard.resolveProjectPath("inside.txt")).resolves.toBe(await fs.realpath(path.join(root, "inside.txt")));
+    await fs.mkdir(path.join(root, ".soturail", "raw"), { recursive: true });
+    await fs.writeFile(path.join(root, ".soturail", "raw", "aliased.log"), "raw", "utf8");
+    await expect(guard.assertAllowedRead(".soturail/raw/aliased.log")).rejects.toThrow(/trusted policy/i);
   });
 
   it("rejects a symlink or junction that resolves outside the project", async () => {
