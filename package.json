@@ -1,6 +1,6 @@
 {
   "name": "soturail",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
   "type": "module",
   "bin": {
@@ -32,6 +32,7 @@
     "bench:report": "node dist/cli.js bench report",
     "bench:native": "node dist/cli.js bench run --engine native",
     "bench:compare": "node dist/cli.js bench compare-engines",
+    "release:artifacts": "npm run build && node scripts/build-release-artifacts.mjs",
     "release:check": "npm run build && node dist/cli.js release check",
     "release:notes": "npm run build && node dist/cli.js release notes",
     "release:publish": "npm run build && node dist/cli.js release publish",
@@ -66,7 +67,7 @@
   },
   "homepage": "https://github.com/Soturine/soturail#readme",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "^2.0.0",
@@ -74,6 +75,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@cyclonedx/cyclonedx-npm": "^6.0.1",
     "@types/node": "^20.19.25",
     "typescript": "^5.9.3",
     "vitest": "^4.1.8"

@@ -1,0 +1,40 @@
+name: Release Provenance
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  release-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm audit
+      - run: npm run docs:check
+      - run: npm run release:artifacts
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "dist/release/${{ github.ref_name }}/*.tgz"
+      - uses: actions/attest-sbom@v2
+        with:
+          subject-path: "dist/release/${{ github.ref_name }}/*.tgz"
+          sbom-path: "dist/release/${{ github.ref_name }}/sbom.cdx.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: soturail-${{ github.ref_name }}-release-artifacts
+          path: dist/release/**
+          if-no-files-found: error

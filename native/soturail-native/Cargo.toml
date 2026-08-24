@@ -1,8 +1,8 @@
 [package]
 name = "soturail-native"
-version = "0.2.1"
+version = "1.5.0"
 edition = "2021"
-license = "MIT"
+license = "Apache-2.0"
 authors = ["Rafael Ryan Ramos de Souza"]
 description = "Optional native reducers for SotuRail."
 
