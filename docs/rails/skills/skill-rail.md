@@ -1,11 +1,15 @@
 # Skill Rail
 
-Skill Rail exports safe local agent skills without depending on external skill ecosystems.
+Skill Rail packages SotuRail operating procedures for AI agents. v1.6 changes the design goal from "export a prompt file for a host" to **make SotuRail discoverable and usable by agents through portable Skills backed by canonical capabilities**.
+
+Current v1.5 commands remain supported:
 
 ```bash
 soturail skills init demo-skill
 soturail skills list
 soturail skills validate
+soturail skills suggest --query "publish npm release"
+soturail skills route --task "fix failing test"
 soturail skills export --target claude
 soturail skills export --target codex
 soturail skills export --target gemini
@@ -15,78 +19,154 @@ soturail skills pack --format json
 soturail skills pack --format markdown
 ```
 
-Skills live in `.soturail/skills/<skill-id>/` with `skill.yml`, `SKILL.md`, examples and validators.
+## v1.6 direction
 
-Validation checks required metadata, target names, duplicate IDs, deterministic content hashes, destructive shell patterns, prompt-injection style instructions and probable embedded secrets.
+The preferred agent workflow becomes:
 
-Exports are written to `.soturail/exports/skills/<target>/`. Review every generated file before enabling it in Claude, Codex, Gemini, Cursor or another host.
-
-`soturail skills list` prints each skill ID, risk level, name, description, version, targets and local path. If there are no local skills, it prints the command to create one.
-
-The generated starter skill includes safe workflow steps, a verification checklist, example input/output, target metadata and human approval requirements for destructive commands, remote writes and dependency installation.
-
-## Future Skill Routing
-
-Deep Agents-style systems validate skills loaded by task, but SotuRail should stay the local rail layer and not become the runtime.
-
-Planned commands:
-
-```bash
-soturail skills suggest --query "publish npm release"
-soturail skills route --task "fix failing test"
-soturail skills export --role reviewer
-soturail skills export --role release-manager
+```text
+task in natural language
+        |
+agent discovers SotuRail skill metadata
+        |
+agent loads only relevant SKILL.md
+        |
+skill references canonical capabilities
+        |
+agent chooses/uses capabilities
+        |
+structured candidate artifacts
+        |
+SotuRail evidence/freshness/readiness
 ```
 
-A skill route should explain:
+The CLI is not removed. It remains a human/CI/debug/fallback surface.
 
-- which skill was selected;
-- why it was selected;
-- which context expert should accompany it;
-- which role pack should accompany it;
-- which policy checks apply;
-- which workflow phase should use it.
+## Portable skill model
 
-Example mapping:
+SotuRail should align with the common Agent Skills model:
 
-| Task | Likely skill | Role pack | Policy checks |
-| --- | --- | --- | --- |
-| Fix failing test | bug-triage / code-review | executor, reviewer | safe command execution |
-| Publish npm release | release-manager | release-manager | npm publish, GitHub release, audit/pack evidence |
-| Review external ecosystem docs | research-summary | researcher | citations, comparison claims |
-| Improve agent docs | agent-docs-lint | planner, reviewer | secret/redaction checks |
-
-## Future Role-Aware Skill Exports
-
-Role-aware exports should not paste every skill into every context window. They should export only skills useful for the current phase.
-
-Possible future outputs:
-
-```txt
-.soturail/exports/skills/claude/planner-skills.md
-.soturail/exports/skills/claude/executor-skills.md
-.soturail/exports/skills/claude/reviewer-skills.md
-.soturail/exports/skills/claude/release-manager-skills.md
-.soturail/exports/skills/deepagents/role-packs/reviewer-skills.md
+```text
+<skill>/
+  SKILL.md
+  references/     optional
+  scripts/        optional
+  assets/         optional
+  ...SotuRail sidecars when needed
 ```
 
-## Safety Rule
+`SKILL.md` contains concise discovery metadata plus the workflow. SotuRail-specific metadata should remain compatible sidecar state rather than forcing agents to understand a private skill format.
 
-Skill Rail should keep human approval requirements explicit for:
+Host adapters may project the same canonical skill into host-specific directories or metadata. Generic fallback remains mandatory when host-native behavior has not been verified.
+
+## Progressive disclosure
+
+A skill catalog should not flood the prompt.
+
+1. **Discovery** — name + concise description (+ scope/path metadata when supported).
+2. **Selected skill** — full `SKILL.md`.
+3. **On demand** — references, schemas, examples, scripts and assets.
+
+The Core Skill should teach only:
+
+```text
+discover -> select -> act -> verify
+```
+
+Detailed domain procedures belong in task skills.
+
+## Initial SotuRail skills
+
+Keep the core catalog small:
+
+- `soturail-core`;
+- `soturail-change`;
+- `soturail-debug`;
+- `soturail-review`;
+- `soturail-security`;
+- `soturail-research`;
+- `soturail-knowledge`;
+- `soturail-release`.
+
+More skills require measured need and eval coverage.
+
+## Capability binding
+
+A Skill teaches **when and how** to use a capability. It does not duplicate the capability implementation.
+
+Example:
+
+```text
+soturail-change
+  uses:
+    context.select
+    dependency.docs
+    structural.impact
+    contract.verify
+    evidence.verify
+```
+
+Those capability IDs remain stable even if providers change.
+
+## Routing
+
+v1.5 `skills suggest/route` uses local keyword scoring. It is useful as an offline fallback and benchmark baseline, but it is not language-neutral semantic authority.
+
+v1.6 primary routing:
+
+1. surface compact skill metadata to the host;
+2. let the capable agent choose relevant skills from task semantics;
+3. load selected skills progressively;
+4. require structured outputs and SotuRail evidence rules;
+5. record which skills/capabilities were used for evaluation.
+
+Do not replace one large keyword router with dozens of stack/language-specific routers.
+
+## Language-neutral behavior
+
+Skill machine identity is locale-independent.
+
+A Portuguese, Japanese, Spanish or mixed-language task must be able to select the same canonical capability IDs as an English task.
+
+Rules:
+
+- descriptions may be localized;
+- source text is preserved;
+- code symbols/paths/commands are never translated silently;
+- enums/status IDs remain stable;
+- translations are derived views;
+- Unicode paths are valid;
+- semantic agent output remains `candidate` until proven.
+
+## Safety
+
+Skills may instruct agents, but they do not grant authority.
+
+Keep explicit approval/policy requirements for:
 
 - destructive commands;
 - dependency installation;
-- npm publish;
-- GitHub release creation;
+- external writes;
+- npm publish / release creation;
 - global configuration writes;
-- raw log expansion without redaction;
-- MCP exposure changes.
+- raw-log disclosure;
+- MCP exposure changes;
+- secret/credential access.
 
-## Skill Rail 2.0 Planning
+SotuRail must not assume the host obeyed an exported instruction. Runtime evidence and side-effect verification remain separate.
 
-Skill Rail 2.0 is tracked separately in [`skill-rail-2.md`](skill-rail-2.md). The short version:
+## Evaluation
 
-- domain skill templates should include metadata, fixtures, safety notes and report formats;
-- skill exports should be host-aware and role-aware;
-- skill reports should separate finding, severity, confidence, evidence path and safe next command;
-- security-oriented skills must stay defensive, scoped, redacted and authorization-aware.
+Skill evals should test:
+
+- correct trigger/selection;
+- correct non-trigger behavior;
+- capability choice;
+- required evidence;
+- multilingual tasks;
+- mixed-language projects;
+- unsupported assumptions;
+- context overhead;
+- task correctness;
+- recovery from unavailable providers.
+
+See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Native Semantic Architecture](../../architecture/agent-native-semantic-architecture.md) for the v1.6 target.

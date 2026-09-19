@@ -39,6 +39,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 ## Verified Control Plane
 
 - [Verified Control Plane Architecture](architecture/verified-control-plane.md)
+- [Agent-Native Semantic Architecture — v1.6 direction](architecture/agent-native-semantic-architecture.md)
 - [Artifact Model And Lineage](architecture/artifact-model-and-lineage.md)
 - [Governance Model](architecture/governance-model.md)
 - [Context Architecture](architecture/context-architecture.md)
@@ -51,8 +52,11 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 
 - [All Roadmap Docs](roadmap/)
 - [Roadmap Index](roadmap/future-rails-index.md)
+- [v1.6 Agent-Native Semantic Control Plane Master Prompt](roadmap/v1.6.0-agent-native-semantic-control-plane-master-prompt.md)
+- [2026 External Research Master Index](ecosystem/2026-external-research-master-index.md)
 - [Ecosystem Influences](ecosystem/ecosystem-influences.md)
 - [Agent And Harness Synthesis](ecosystem/agent-harness-synthesis-2026.md)
+- [External Projects Audit](ecosystem/external-projects-audit.md)
 - [Release Notes](releases/)
 - [v1.5 Preimplementation Audit](audits/v1.5.0-preimplementation-audit.md)
 

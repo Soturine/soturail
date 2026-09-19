@@ -7,7 +7,7 @@ It does not replace `ROADMAP.md`. It exists so planned features are not scattere
 ## Core Direction
 
 ```txt
-SotuRail = local-first Context OS for AI coding agents.
+SotuRail = local-first, self-describing engineering control plane for AI-assisted software work.
 ```
 
 SotuRail should remain:
@@ -27,7 +27,7 @@ v1.2.0  Spec, Design, Diagram and Harness Lifecycle Rail
 v1.3.0  Absorbed into v1.4.0
 v1.4.0  Knowledge, Evidence, Evaluation, Skills and Tasklets
 v1.5.0  Governance, Cost, Resilience and Host Router Rail
-v1.6.0  Agent Governance / Evolution Rail
+v1.6.0  Agent-Native Skill & Semantic Surface + Verified Change Lifecycle
 ```
 
 v1.2.0 also delivers a focused Harness Lifecycle slice: safe scaffold initialization, lifecycle audit, feature state, sessions and handoffs. Spec/design/diagram expansion remains staged and must be documented honestly when not implemented.
@@ -40,7 +40,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 
 - Claude/Codex/Gemini/Cursor/Antigravity-style host-aware exports;
 - MCP as an external capability boundary;
-- Agent Skills as local reusable operating procedures;
+- Agent Skills as the primary agent-facing operating-procedure surface with progressive disclosure;\n- agent-led semantic routing instead of English keyword heuristics as authority;\n- language-neutral capability IDs and preserve-source artifacts;
 - per-run local workspaces inspired by Leoflow-style staging, without Kubernetes/PVC complexity;
 - context budgeting and compaction/offload guidance;
 - acceptance harness contracts that prevent premature "done" states;
@@ -57,7 +57,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Role Packs | Generate planner/executor/reviewer/release-manager/researcher packs | v0.5.0+ | `docs/rails/context/context-packs.md`, `docs/rails/harness/workflow-rail.md` |
 | Run Workspace Rail | Store per-run input, output, raw logs, offloads, artifacts, summaries and evidence | v0.5.0 seed | `docs/roadmap/roadmap-agent-runtime-addendum.md`, `docs/rails/harness/workflow-rail.md` |
 | MCP Exposure Rail | Report exposed MCP tools/resources/prompts/roots and local risk notes | v0.5.0 seed | `docs/roadmap/roadmap-agent-runtime-addendum.md`, `docs/rails/hosts/mcp.md`, `docs/rails/governance/policy-rail.md` |
-| Skill Boundary Rail | Route skills by task, role, evidence and host capability instead of always loading them | v0.5.0 seed | `docs/roadmap/roadmap-agent-runtime-addendum.md`, `docs/rails/skills/skill-rail.md` |
+| Skill Boundary Rail | Route skills by task, role, evidence and host capability instead of always loading them; v1.6 promotes portable Skills + agent-led selection | v0.5.0 seed, v1.6 agent-native | `docs/roadmap/roadmap-agent-runtime-addendum.md`, `docs/rails/skills/skill-rail.md` |
 | Harness Rail | setup/plan/work/review/release discipline, evidence packs and failure ledger | v0.5.0 seeds, v0.7.0 expansion | `docs/rails/harness/harness-rail.md`, `docs/rails/harness/workflow-rail.md` |
 | Harness Lifecycle Rail | Safe local instructions, state, sessions, features, audits and handoffs | v1.2.0 implemented | `docs/rails/harness/harness-lifecycle-rail.md`, `docs/security/security-boundaries.md` |
 | Acceptance Harness Contracts | Require build/typecheck/lint/test/coverage/docs/policy gates before accepting work | v0.5.0 seed, v0.7.0 expansion | `docs/roadmap/roadmap-agent-runtime-addendum.md`, `docs/rails/harness/harness-rail.md` |
@@ -77,7 +77,7 @@ It tightens how the future rails connect around current agent-runtime patterns:
 | Resilience Rail | Rate-limit, fallback and provider-risk documentation/reporting without proxying traffic | v1.5.0 | `docs/rails/governance/resilience-rail.md`, `docs/rails/governance/rate-limit-and-fallback-policy.md`, `docs/rails/governance/governance-cost-rail.md` |
 | Host Router Rail | Route one local context source into host-specific export formats with safe fallback | v1.5.0 | `docs/rails/hosts/host-router-rail.md`, `docs/rails/hosts/host-compatibility-rail.md`, `docs/rails/context/context-packs.md` |
 | Tasklet Rail | Small local reusable task templates for agents | v1.4.0 exploration | `docs/rails/tasklets/tasklet-rail.md`, `docs/rails/skills/skill-rail-2.md`, `docs/rails/harness/workflow-rail.md` |
-| Agent Governance/Evolution Rail | Trace, ledger, experiments, approval gates and improve/eval/apply loop | v1.6.0 | `docs/rails/governance/agent-governance-rail.md`, `docs/rails/evaluation/evaluation-suite.md`, `docs/rails/governance/policy-rail.md` |
+| Agent Governance/Evolution Rail | Trace, ledger, experiments, approval gates and improve/eval/apply loop | v1.7+ after the v1.6 agent-native surface | `docs/rails/governance/agent-governance-rail.md`, `docs/rails/evaluation/evaluation-suite.md`, `docs/rails/governance/policy-rail.md` |
 | Spec Rail | PRD, requirements, design, tasks and acceptance criteria as workflow inputs | v1.2.0 | `docs/rails/design/spec-driven-workflow.md`, `docs/rails/design/design-rail.md`, `docs/rails/design/diagram-rail.md` |
 | Design Rail | Local `DESIGN.md`, design token lint/diff/export and agent-readable visual guidance | v1.2.0 | `docs/rails/design/design-rail.md`, `docs/architecture/dashboard-rail.md` |
 | Knowledge Graph Rail | Local graph of files, claims, decisions, tests, workflows, diagrams and releases | v1.3.0 | `docs/rails/knowledge/knowledge-graph-rail.md`, `docs/rails/knowledge/code-graph.md`, `docs/rails/knowledge/project-brain.md` |
@@ -282,12 +282,18 @@ Focus:
 
 Focus:
 
-- Agent Governance / Evolution Rail;
-- trace and ledger artifacts;
-- agent boundary policy;
-- experiments/candidates/results;
-- propose -> eval -> approve -> apply loop;
-- approval gates before any patch application.
+- Agent-Native Skill & Semantic Surface;
+- portable Core Skill and small task-skill catalog;
+- progressive disclosure;
+- Capability Descriptor v2 and capability-to-skill binding;
+- Semantic Worker candidate-artifact contract;
+- language-neutral machine semantics and preserve-source policy;
+- host adapters with generic fallback;
+- agent-led skill/capability selection with keyword routing demoted to fallback;
+- multilingual and mixed-project skill evals;
+- Verified Change Lifecycle follow-ups such as Evidence Receipts / knowledge re-attestation when scope remains controlled.
+
+See [Agent-Native Semantic Architecture](../architecture/agent-native-semantic-architecture.md) and the [v1.6 Master Prompt](v1.6.0-agent-native-semantic-control-plane-master-prompt.md).
 
 
 ## What Should Not Happen

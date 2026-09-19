@@ -1,5 +1,7 @@
 # External Projects Audit For Future SotuRail Rails
 
+> Historical/detail trail. The current cumulative classification and v1.6 architectural consequence live in [2026 External Research Master Index](2026-external-research-master-index.md).
+
 This audit records external projects and patterns reviewed for the post-v0.10.1 roadmap. It is not a claim that SotuRail depends on, vendors, wraps or outperforms any of them.
 
 SotuRail's product position remains:
