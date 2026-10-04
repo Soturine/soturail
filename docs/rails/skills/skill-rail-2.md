@@ -1,4 +1,6 @@
-# Skill Rail 2.0
+# Skill Rail 2.0 (historical pack format)
+
+> **History.** This page documents the v1.4/v1.5 `.soturail/skills/<id>/` pack format. Current guidance is simply **Skills** — the portable Skill model, capability bindings, host projections and evals in [Skill Rail](skill-rail.md). Existing packs keep working; `soturail skills migrate <id>` copies one to `.agents/skills/<name>/`. Authoring new v1.5 packs is deprecated (removal target v2.0.0).
 
 Skill Rail 2.0 is the implemented v1.4/v1.5 source-mapped local skill-pack foundation. Skills are operating procedures for agent hosts, not self-modifying behavior.
 

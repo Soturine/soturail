@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { createSkill, readSkills, renderSkillList } from "../core/skill-store.js";
 import { describeSkill, skillCatalogSummary } from "../core/skill-model.js";
-import { exportPortableSkills, exportSkills, packSkills } from "../core/skill-exporter.js";
+import { exportPortableSkills, exportSkills, migrateLegacySkill, packSkills } from "../core/skill-exporter.js";
 import { formatSkillValidation, validateSkills } from "../core/skill-validator.js";
 import { SkillTargetSchema } from "../core/skill-schema.js";
 import { routeSkill, suggestSkills } from "../core/skill-routing.js";
@@ -85,6 +85,12 @@ export function registerSkillsCommand(program: Command): void {
       process.stderr.write("Deprecated: --layout flat writes v1.5 single-file exports; use --layout portable. Removal target: v2.0.\n");
       process.stdout.write(await exportSkills(SkillTargetSchema.parse(options.target)));
     });
+
+  skills.command("migrate").description("Copy a v1.5 skill pack into a portable .agents/skills/<name>/ skill without modifying the pack.").argument("<name>", "v1.5 skill id").option("--json", "Print JSON").action(async (name: string, options: { json?: boolean }) => {
+    const result = await migrateLegacySkill(name);
+    if (options.json) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    else process.stdout.write([`Migrated ${result.name} -> ${result.target}`, ...result.files.map((file) => `- ${file}`), "The v1.5 pack is unchanged and now reported as legacy_superseded; remove it after review.", ""].join("\n"));
+  });
 
   skills
     .command("pack")

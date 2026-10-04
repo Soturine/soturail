@@ -1,3 +1,4 @@
+import { readApprovedMemory } from "./approved-memory.js";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, loadConfig, readJsonl } from "./config.js";
@@ -129,13 +130,12 @@ async function approvedSpecs(root: string): Promise<string> {
 }
 
 async function approvedMemory(root: string): Promise<string> {
-  const paths = getWorkspacePaths(root);
-  const approved = await readJsonl<{ id?: string; text?: string; content?: string; approved?: boolean }>(paths.memoryApprovedFile);
-  const legacy = (await readJsonl<{ id?: string; text?: string; content?: string; approved?: boolean }>(paths.memoryFile)).filter((item) => item.approved);
-  const records = [...approved, ...legacy];
-  return records.length > 0
-    ? records.map((item) => `- ${item.id ?? "legacy"}: ${item.text ?? item.content ?? ""}`).join("\n")
-    : "No approved memory found.";
+  const all = await readApprovedMemory(root, { includeStale: true });
+  const current = all.filter((item) => item.stale !== true);
+  const staleNote = all.length > current.length ? `\n- ${all.length - current.length} stale approved memory entr${all.length - current.length === 1 ? "y" : "ies"} omitted; review with soturail memory review.` : "";
+  return current.length > 0
+    ? `${current.map((item) => `- ${item.id}: ${item.text}`).join("\n")}${staleNote}`
+    : `No approved memory found.${staleNote}`;
 }
 
 async function skillsSummary(root: string): Promise<string> {

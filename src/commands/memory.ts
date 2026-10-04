@@ -1,3 +1,4 @@
+import { readApprovedMemory } from "../core/approved-memory.js";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Command } from "commander";
@@ -125,8 +126,8 @@ export async function approveMemory(id: string, root = process.cwd()): Promise<A
   if (record.file_hashes) {
     approved.file_hashes = record.file_hashes;
   }
+  // approved.jsonl is the only approved-memory store; no mirror into the free-form log.
   await appendJsonl(paths.memoryApprovedFile, approved);
-  await appendJsonl(paths.memoryFile, { ...approved, content: `[approved] ${approved.text}`, approved: true });
   return approved;
 }
 
@@ -185,17 +186,24 @@ export async function pruneStaleMemory(root = process.cwd()): Promise<string> {
 
 export async function searchMemory(term: string, root = process.cwd()): Promise<string[]> {
   const paths = getWorkspacePaths(root);
+  const needle = term.toLowerCase();
+  let raw = "";
   try {
-    const raw = await fs.readFile(paths.memoryFile, "utf8");
-    const needle = term.toLowerCase();
-    return raw
-      .split(/\r?\n/)
-      .filter((line) => line.trim().length > 0 && line.toLowerCase().includes(needle));
+    raw = await fs.readFile(paths.memoryFile, "utf8");
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      return [];
-    }
-    throw error;
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+  }
+  // Pre-v1.6 approval mirror lines are superseded by the canonical approved store.
+  const logLines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0 && !isApprovalMirror(line));
+  const approvedLines = (await readApprovedMemory(root, { includeStale: true })).map((record) => JSON.stringify({ ...record, content: `[approved] ${record.text}`, approved: true }));
+  return [...logLines, ...approvedLines].filter((line) => line.toLowerCase().includes(needle));
+}
+
+function isApprovalMirror(line: string): boolean {
+  try {
+    return (JSON.parse(line) as { approved?: unknown }).approved === true;
+  } catch {
+    return false;
   }
 }
 

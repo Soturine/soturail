@@ -1,3 +1,4 @@
+import { readApprovedMemory } from "./approved-memory.js";
 import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -149,13 +150,7 @@ async function collectStableSources(root: string): Promise<StableSource[]> {
     }
   }
 
-  const legacyMemoryRecords = await readJsonl<Record<string, unknown>>(paths.memoryFile);
-  const approvedMemoryRecords = await readJsonl<Record<string, unknown>>(paths.memoryApprovedFile);
-  const memoryRecords = [...legacyMemoryRecords, ...approvedMemoryRecords];
-  const approvedMemory = memoryRecords.filter((record) => {
-    const content = typeof record.content === "string" ? record.content : "";
-    return record.approved === true || /\[approved\]/i.test(content);
-  });
+  const approvedMemory = await readApprovedMemory(root);
   if (approvedMemory.length > 0) {
     sources.push({
       type: "approved_memory",

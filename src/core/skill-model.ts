@@ -139,7 +139,7 @@ export async function loadSkillDir(dir: string, source: SkillSource): Promise<Sk
 }
 
 /** Load bundled skills, project portable skills and adapted v1.5 packs into one catalog. */
-export async function loadSkillCatalog(root = process.cwd(), options: { bundledDir?: string } = {}): Promise<{ skills: SkillModel[]; issues: SkillIssue[] }> {
+export async function loadSkillCatalog(root = process.cwd(), options: { bundledDir?: string } = {}): Promise<{ skills: SkillModel[]; issues: SkillIssue[]; shadowed: SkillModel[] }> {
   const skills: SkillModel[] = [];
   const issues: SkillIssue[] = [];
   const sources: Array<[string, SkillSource]> = [[options.bundledDir ?? bundledSkillsDir(), "bundled"], [path.join(root, ".agents", "skills"), "project"]];
@@ -159,15 +159,23 @@ export async function loadSkillCatalog(root = process.cwd(), options: { bundledD
     const frontmatter = parsed.frontmatter ?? { name: legacy.metadata.id, description: legacy.metadata.description, metadata: {} };
     skills.push(makeModel(frontmatter, parsed.body, legacy.dir, "legacy-pack", await listResources(legacy.dir), legacy.markdown));
   }
+  // Precedence: bundled, then project (.agents/skills), then v1.5 packs. Only the winner is validated.
   const seen = new Map<string, SkillModel>();
+  const shadowed: SkillModel[] = [];
   for (const skill of skills) {
-    const previous = seen.get(skill.name);
-    // Byte-identical host projections of the same skill are not conflicts.
-    if (previous && previous.digest !== skill.digest) issues.push({ skill: skill.name, severity: "warning", code: "name_shadowed", message: `${skill.source} skill shadows ${previous.source} skill with the same name; the first one wins.` });
-    if (!previous) seen.set(skill.name, skill);
-    issues.push(...validateSkillModel(skill));
+    const winner = seen.get(skill.name);
+    if (!winner) {
+      seen.set(skill.name, skill);
+      issues.push(...validateSkillModel(skill));
+      continue;
+    }
+    shadowed.push(skill);
+    if (winner.digest === skill.digest) continue;
+    issues.push(skill.source === "legacy-pack" && winner.source === "project"
+      ? { skill: skill.name, severity: "warning", code: "legacy_superseded", message: `v1.5 pack at ${skill.dir} is superseded by .agents/skills/${skill.name}; it can be removed.` }
+      : { skill: skill.name, severity: "warning", code: "name_shadowed", message: `${winner.source} skill takes precedence over the ${skill.source} skill with the same name.` });
   }
-  return { skills: [...seen.values()].sort((left, right) => left.name.localeCompare(right.name)), issues };
+  return { skills: [...seen.values()].sort((left, right) => left.name.localeCompare(right.name)), issues, shadowed };
 }
 
 export function skillLevel1(skill: SkillModel): SkillLevel1 {

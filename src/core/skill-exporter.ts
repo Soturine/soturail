@@ -199,3 +199,27 @@ async function listFilesRecursive(dir: string, prefix = ""): Promise<string[]> {
   }
   return files.sort();
 }
+
+/**
+ * Migrate one v1.5 pack into a user-owned portable skill at .agents/skills/<name>/.
+ * The source pack is not modified; afterwards the catalog reports it as superseded.
+ */
+export async function migrateLegacySkill(name: string, root = process.cwd()): Promise<{ name: string; target: string; files: string[]; sourceDigest: string }> {
+  const catalog = await loadSkillCatalog(root);
+  const legacy = [...catalog.skills, ...catalog.shadowed].find((skill) => skill.name === name && skill.source === "legacy-pack");
+  if (!legacy) throw new Error(`No v1.5 skill pack named ${name}. List packs with soturail skills discover.`);
+  if (catalog.skills.some((skill) => skill.name === name && skill.source === "project")) throw new Error(`.agents/skills/${name} already exists; nothing migrated.`);
+  const guard = new WorkspaceGuard(root);
+  const targetDir = await guard.resolveProjectPath(path.join(".agents", "skills", name), { mustExist: false });
+  const files = await portableFiles(legacy);
+  const leaked = files.find((file) => redactText(file.content).redactions.length > 0);
+  if (leaked) throw new Error(`Refusing to migrate secret-like content in ${leaked.path}.`);
+  for (const file of files) {
+    const target = path.join(targetDir, file.path);
+    guard.assertInside(targetDir, path.resolve(target));
+    await fs.mkdir(path.dirname(target), { recursive: true });
+    await fs.writeFile(target, file.content, { encoding: "utf8", flag: "wx" });
+  }
+  return { name, target: await guard.projectRelative(targetDir), files: files.map((file) => file.path), sourceDigest: legacy.digest };
+}
+

@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { hostAdapterIds, isHostId } from "../core/host-adapters.js";
+import { warnDeprecatedHost } from "./agents.js";
 import {
   buildReport,
   exportReport,
@@ -16,6 +17,7 @@ import {
 
 export function registerReportCommand(program: Command): void {
   const report = program.command("report").description("Build local SotuRail reports for humans, CI and agents.");
+  report.hook("preAction", (_command, action) => warnDeprecatedHost(action.opts()));
 
   report.command("build").description("Aggregate local evidence into JSON, Markdown and HTML reports.").action(async () => {
     process.stdout.write((await buildReport()).output);

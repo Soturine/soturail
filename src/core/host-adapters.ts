@@ -31,6 +31,8 @@ export interface HostAdapter {
   setup: "install-dry-run" | "export";
   matrix: { label?: string; status?: HostMatrixStatus; priority: "high" | "normal" | "low"; reportSupport: "supported" | "prompt-only" };
   instructionFiles: string[];
+  /** Compatibility-only host ID kept for SemVer; scheduled for removal. */
+  deprecated?: { replacement: AgentId; removal: string; reason: string };
   contextFormats?: string[];
   reportFormats?: string[];
   notes: {
@@ -90,6 +92,7 @@ export const HOST_ADAPTERS: readonly HostAdapter[] = Object.freeze([
   }),
   adapter({
     id: "gemini-legacy", family: "gemini", contextTarget: "gemini", setup: "export",
+    deprecated: { replacement: "gemini", removal: "2.0.0", reason: "Same Gemini context target; Gemini CLI now loads portable .agents/skills." },
     matrix: { label: "Gemini legacy/compatible hosts", status: "legacy", priority: "normal", reportSupport: "supported" },
     instructionFiles: ["AGENTS.md", "GEMINI.md", "context-pack.md"],
     notes: { export: GEMINI_EXPORT_NOTE, report: GEMINI_REPORT_NOTE, reportSection: GEMINI_SECTION, exportCheck: { pattern: /legacy|compatible/i, warning: "Gemini legacy export should include compatibility notes." } }
@@ -160,6 +163,11 @@ export function getHostAdapter(id: string): HostAdapter {
   const found = HOST_ADAPTERS.find((item) => item.id === id) ?? HOST_ADAPTERS.find((item) => item.id === "generic");
   if (!found) throw new Error("Generic host adapter is missing.");
   return found;
+}
+
+export function hostDeprecationNotice(id: string): string | null {
+  const deprecated = HOST_ADAPTERS.find((item) => item.id === id)?.deprecated;
+  return deprecated ? `Deprecated host "${id}": use "${deprecated.replacement}" (removal target v${deprecated.removal}). ${deprecated.reason}` : null;
 }
 
 export function hostContextFormats(host: HostAdapter): string[] {

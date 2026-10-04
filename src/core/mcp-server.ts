@@ -144,9 +144,6 @@ export async function handleLegacyMcpMessage(message: any, root = process.cwd(),
   }
 }
 
-/** @deprecated Test-only alias for the pre-v2 compatibility surface. */
-export const handleMcpMessage = handleLegacyMcpMessage;
-
 export async function serveMcpStdio(root = process.cwd(), version = "0.0.0"): Promise<void> {
   serveStdio(() => createMcpServer(root, version), {
     legacy: "serve",

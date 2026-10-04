@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { hostDeprecationNotice } from "../core/host-adapters.js";
 import { explainAgents, lintAgentDocs, splitContextPlan } from "../core/agent-docs-hygiene.js";
 import {
   agentDoctor,
@@ -32,6 +33,7 @@ interface AgentOptions {
 
 export function registerAgentsCommand(program: Command): void {
   const agents = program.command("agents").description("Export and install safe agent integration profiles.");
+  agents.hook("preAction", (_command, action) => warnDeprecatedHost(action.opts()));
 
   agents.command("list").description("List supported agent integration profiles.").action(() => {
     process.stdout.write(formatAgentList());
@@ -152,4 +154,11 @@ export function registerAgentsCommand(program: Command): void {
     .action(async (options: AgentOptions) => {
       process.stdout.write(await uninstallAgent(options.agent ?? "all", options.dryRun === undefined ? {} : { dryRun: options.dryRun }));
     });
+}
+
+export function warnDeprecatedHost(options: { agent?: unknown; host?: unknown }): void {
+  for (const value of [options.agent, options.host]) {
+    const notice = typeof value === "string" ? hostDeprecationNotice(value) : null;
+    if (notice) process.stderr.write(`${notice}\n`);
+  }
 }

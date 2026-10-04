@@ -7,7 +7,7 @@ import { buildCachePayload, readCacheBlocks } from "../src/core/cache-normalizer
 import { buildAllContextPacks, buildContextPack } from "../src/core/context-pack.js";
 import { appendJsonl, defaultConfig, ensureWorkspace, getWorkspacePaths } from "../src/core/config.js";
 import { isAlwaysIgnored, normalizeForIgnore, scanRepository } from "../src/core/file-scanner.js";
-import { handleMcpMessage, mcpDoctor, mcpManifest, mcpSmoke } from "../src/core/mcp-server.js";
+import { handleLegacyMcpMessage as handleMcpMessage, mcpDoctor, mcpManifest, mcpSmoke } from "../src/core/mcp-server.js";
 import { readMcpResource } from "../src/core/mcp-resources.js";
 import { MetricsStore } from "../src/core/metrics-store.js";
 import { RawStore } from "../src/core/raw-store.js";
