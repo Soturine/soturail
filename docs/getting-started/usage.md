@@ -1,106 +1,111 @@
 # Usage
 
-## Initialize
+This page is the practical CLI companion to the agent-first workflow in the [Quickstart](quickstart.md). Agents should prefer Skills + capability discovery; humans and CI can use the same underlying functions through the CLI.
+
+## Initialize and inspect
 
 ```bash
 soturail init
-```
-
-Creates `.soturail/` and starter docs without overwriting existing files.
-
-The scaffold includes docs and examples for agents, MCP, context packs, hooks, skills and workflows.
-
-## Index
-
-```bash
+soturail doctor
 soturail index
+soturail status --json
 ```
 
-Writes `.soturail/indexes/repo-map.json` and `.soturail/indexes/tree.txt`.
+SotuRail stores generated state under `.soturail/` and does not require a hosted service for normal local operation.
 
-## Read
+## Progressive repository reads
 
 ```bash
 soturail read src/core/file-scanner.ts --query "ignore rules"
 soturail read src/core/file-scanner.ts --full
 ```
 
-Files under 150 lines are printed fully. Larger files include the first 15 lines, query matches with margin, the last 10 lines and reversible collapsed markers.
+Use progressive reads instead of dumping an unfamiliar repository into an agent context.
 
-## Run and Expand
+## Skills and capability discovery
 
 ```bash
-soturail run npm test
+soturail skills discover
+soturail skills describe soturail-change
+soturail capabilities list
+soturail capabilities describe contract.verify
+```
+
+Project portable Skills live under `.agents/skills/<name>/SKILL.md`; verified host projections can be installed with `skills export --layout portable --install`.
+
+## Run commands and keep evidence
+
+```bash
+soturail run -- npm test
 soturail expand <raw_id>
+soturail evidence report
 ```
 
-The runner streams output live, writes the same output to a raw log and prints a compressed summary.
+The runner keeps a recoverable raw record while exposing a safer summarized surface. Evidence used for readiness must be current for the workspace being verified.
 
-## Specs and Memory
+## Change Contracts
 
 ```bash
-soturail spec new "safe command profiles"
-soturail memory add "We block git push by default"
-soturail memory search "git push"
+soturail contract create login-fix \
+  --title "Fix login regression" \
+  --intent "Restore login behavior" \
+  --criterion "tests pass" \
+  --check "npm test" \
+  --criterion-check "npm test"
+
+soturail run -- npm test
+soturail contract verify .soturail/contracts/login-fix.json
 ```
 
-## Doctor and Stats
+If the contract foundation changes, use `contract revise` instead of rewriting the original contract.
+
+## Human/manual attestations
+
+Human approval, independent review and manual criteria use interactive `contract attest` receipts. Caller assertion flags do not satisfy readiness by themselves.
+
+## MCP
+
+```bash
+soturail mcp doctor
+soturail mcp manifest
+soturail mcp smoke
+soturail mcp exposure
+soturail mcp serve --transport stdio
+```
+
+The default MCP surface is typed and bounded. It does not expose arbitrary shell execution.
+
+## Context, knowledge and memory
+
+```bash
+soturail context select --query "release risk"
+soturail context budget --explain
+soturail knowledge list
+soturail memory recall "release"
+```
+
+Context remains budgeted and provenance-aware. Semantic interpretation belongs to the active agent; lexical ranking is only a fallback where documented.
+
+## Diagnostics
 
 ```bash
 soturail doctor
-soturail doctor cache
-soturail stats
-```
-
-## v0.2.x Workflows
-
-```bash
-soturail bench prepare
-soturail bench run --engine ts
-soturail hooks install codex --dry-run
-soturail format README.md --mode concise
-soturail ingest README.md --type docs
-soturail rules check
-soturail native doctor
-soturail bench compare-engines
-```
-
-## Skill, MCP And Context Workflows
-
-```bash
-soturail skills init demo-skill
-soturail skills list
-soturail skills validate
-soturail skills export --target claude
-soturail context pack --target claude
-soturail context pack --target codex
-soturail context pack --target gemini
-soturail context pack --target cursor
-soturail context pack --target generic
-soturail mcp doctor
-soturail mcp manifest
-soturail mcp serve --transport stdio
-soturail hooks install --agent claude --mode safe-hooks --dry-run
+soturail self architecture --check
+soturail self code-health
 soturail release check
 ```
 
-MCP is local stdio JSON-RPC style transport and does not expose arbitrary shell execution.
-
-For a first clean-folder walkthrough, see [first-real-workflow.md](first-real-workflow.md).
-
-## Agent And Workflow Rail Commands
+## Release qualification
 
 ```bash
-soturail agents list
-soturail agents doctor
-soturail agents export --agent all
-soturail agents install --agent claude --mode mcp --dry-run
-soturail mcp config --agent generic
-soturail mcp smoke
-soturail context pack --target all
-soturail workflow new "Implement feature"
-soturail workflow list
-soturail workflow start <id> --worktree --dry-run
+npm run build
+npm run typecheck
+npm test
+npm run docs:check
+npm audit
+node dist/cli.js mcp smoke
+node dist/cli.js self architecture --check
+npm run release:check
 ```
 
-Agent exports are written to `.soturail/exports/agents/`. Workflow Rail stores local task state under `.soturail/workflows/`.
+For the full command additions shipped in v1.6, see [v1.6 Commands](../reference/commands/v1.6-commands.md).

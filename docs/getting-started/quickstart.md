@@ -1,6 +1,8 @@
 # Quickstart
 
-SotuRail is a local-first Context OS for AI coding agents. v1.0.0 froze the first stable command surface for local status, reports, dashboard artifacts, Project Brain checks, benchmarks, release readiness and agent handoff. v1.1.0 adds host-compatible exports, host doctors and read-only MCP host manifests.
+SotuRail v1.6 is a local-first, agent-native engineering control plane for AI-assisted software work. The preferred workflow is agent-first: install SotuRail, project its portable Skills into your host, then let the agent discover capabilities while SotuRail records evidence and readiness.
+
+Requires Node.js 22 or newer.
 
 ## Install
 
@@ -9,45 +11,87 @@ npm install -g soturail
 soturail --version
 ```
 
-Run without a global install:
+Or:
 
 ```bash
 npx soturail@latest --help
 ```
 
-## First Local Checks
+## Initialize a project
+
+From the repository root:
 
 ```bash
-soturail status --json
-soturail report build
-soturail dashboard build
-soturail self readiness --v1
-soturail release check
+soturail init
+soturail doctor
+soturail index
 ```
 
-Artifacts are written under `.soturail/`. They are local files, not uploaded telemetry.
+Generated runtime state stays under `.soturail/`.
 
-## Use With Agents
+## Install Skills for your host
+
+Claude Code:
 
 ```bash
-soturail agents matrix
-soturail report agent --agent codex
-soturail brain export --agent codex --limit 20
-soturail mcp resources report
+soturail skills export --target claude --layout portable --install
 ```
 
-Review generated files before giving them to an agent. SotuRail does not expose destructive MCP tools or arbitrary shell execution by default.
-
-## Before Release
+Codex, Cursor or Gemini CLI:
 
 ```bash
-npm run typecheck
+soturail skills export --target codex --layout portable --install
+soturail skills export --target cursor --layout portable --install
+soturail skills export --target gemini --layout portable --install
+```
+
+Unknown/unverified host:
+
+```bash
+soturail skills export --target generic --layout portable --install
+```
+
+Then talk to the agent normally. You do not need to translate the task into a long SotuRail command sequence.
+
+Examples:
+
+```text
+"Corrija o bug de login e verifique o impacto."
+"Revise essa mudança e só considere pronta se a evidência estiver atual."
+"Prepare a release, mas não publique nada sem aprovação."
+```
+
+## Inspect discovery manually
+
+```bash
+soturail skills discover
+soturail capabilities list
+soturail capabilities describe context.select
+soturail mcp smoke
+```
+
+MCP-capable agents can discover the same catalog through `soturail.skills.list` and `soturail.capabilities`.
+
+## Record objective evidence
+
+```bash
+soturail run -- npm test
+soturail evidence report
+```
+
+For material work, use a Change Contract so scope, criteria and checks stay explicit. See [Usage](usage.md), [First Real Workflow](first-real-workflow.md) and [Contracts and Verification](../architecture/contracts-and-verification.md).
+
+## Before a release
+
+```bash
 npm run build
+npm run typecheck
 npm test
-soturail self schemas --check --strict
-soturail self readiness --v1 --strict
-soturail self code-health
-soturail release check --strict
+npm run docs:check
+npm audit
+node dist/cli.js mcp smoke
+node dist/cli.js self architecture --check
+npm run release:check
 ```
 
-Native acceleration is optional. TypeScript remains the portable fallback for normal npm installs.
+Native Rust validation is optional for normal npm usage but is included in the project's release CI.
