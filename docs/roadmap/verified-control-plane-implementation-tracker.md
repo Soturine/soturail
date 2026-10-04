@@ -2,6 +2,8 @@
 
 Operational source of truth for work after `v1.4.0`. Update code, tests and docs before changing an item to implemented.
 
+The v1.6 starting state, heuristic/parser classification and checkpoint plan are recorded in the [v1.6.0 Semantic Migration Baseline](../audits/v1.6.0-semantic-migration-baseline.md).
+
 ## Legend
 
 - `[ ]` not started
@@ -37,6 +39,10 @@ Operational source of truth for work after `v1.4.0`. Update code, tests and docs
 | CON-002 | Decision Graph | 1.6.x | [>] | pending | fact/decision/unknown fixtures | roadmap | Separate discovered facts from human decisions and unresolved questions. |
 | CTX-001 | Context Artifact / hard budget | 1.5.0 | [x] | `context-artifact.ts`; `context-pack.ts` | governance/context suites | context architecture | Byte/token budget, fingerprint, truncation and degradation are explicit and enforced. |
 | CTX-002 | Context Spine / agent escalation | 1.6.x | [>] | pending | task/context quality fixtures | context architecture | Stable compact prefix plus agent-led escalation; source/provenance remain explicit. |
+| AUD-160 | v1.6 semantic migration baseline | 1.6.0 | [x] | audit only | probes recorded | v1.6 baseline audit | Heuristic/parser inventory classified; English dependencies, host hardcodes, CLI-only agent needs and Skill gaps documented. |
+| DSC-001 | Capability/skill discovery surface | 1.6.0 | [>] | CLI `capabilities list` only | MCP integrity + CLI JSON | agent-native architecture | List/describe capabilities and skills, trust/evidence requirements and provider availability as thin descriptor projections. |
+| HST-001 | Host adapter registry | 1.6.0 | [>] | fixed host unions in 12+ modules | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
+| EVL-001 | Agent-skill eval fixtures | 1.6.0 | [>] | v1.5 skill lint/eval only | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [>] | pending | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [>] | pending | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [>] | pending | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
@@ -51,6 +57,13 @@ Operational source of truth for work after `v1.4.0`. Update code, tests and docs
 | VER-001 | Evidence Receipts | 1.6.x | [>] | evidence foundation in 1.5.0 | pending | roadmap | Receipt links contract, envelope, verdict, checks and outcome. |
 | OUT-001 | Outcome Ledger | 1.7+ | [>] | pending | pending | roadmap | Append-only accepted/rejected outcome tracking with provenance. |
 | RUN-002 | RuntimeProvider / Conductor | Later | [>] | pending | pending | roadmap | Optional approval-gated coordination; never required for the agent-native Skill surface. |
+
+## Checkpoint log (v1.6)
+
+| Checkpoint | Commit | CI | Last-known-green |
+|---|---|---|---|
+| CI repair — vitest GHSA-82fw-gwwq-j7x9 | `0608744` | pending | `0ae5a51` |
+| 0 — semantic migration baseline | see git log | pending | `0ae5a51` |
 
 ## Foundation
 

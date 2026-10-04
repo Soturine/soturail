@@ -59,6 +59,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [External Projects Audit](ecosystem/external-projects-audit.md)
 - [Release Notes](releases/)
 - [v1.5 Preimplementation Audit](audits/v1.5.0-preimplementation-audit.md)
+- [v1.6 Semantic Migration Baseline](audits/v1.6.0-semantic-migration-baseline.md)
 
 ## Additional Material
 
