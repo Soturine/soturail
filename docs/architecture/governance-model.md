@@ -12,7 +12,7 @@ Governance answers two independent questions. Authority asks whether an actor ma
 The provider contract exposes `evaluate`, `validate`, `health`, and `capabilities`.
 
 - `NativeMinimal` is the default deterministic offline provider. It denies unknown capabilities and capabilities whose required approval is absent.
-- `AGT/ACS` is an adapter boundary only in v1.5. It returns unavailable and therefore cannot authorize an action. No mandatory Microsoft runtime dependency is installed.
+- `AGT/ACS` remains an optional fail-closed adapter boundary. Until a pinned, licensed and conformance-tested integration exists, it reports unavailable and cannot authorize an action. No mandatory Microsoft runtime dependency is installed.
 
 Provider health must distinguish healthy, degraded, and unavailable. Fallback may reduce enrichment, but never weaken a deny or silently grant authority.
 

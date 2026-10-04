@@ -1,6 +1,6 @@
 # Artifact Model and Lineage
 
-SotuRail artifacts are workspace-bound records, not anonymous cache files. The v1.5 storage foundation centralizes locations, atomic persistence, fingerprints, and lineage metadata while retaining readable local files as the source of truth.
+SotuRail artifacts are workspace-bound records, not anonymous cache files. The current storage foundation centralizes locations, atomic persistence, fingerprints, and lineage metadata while retaining readable local files as the source of truth.
 
 ## Components
 
@@ -25,6 +25,6 @@ Knowledge topic IDs include a source-derived hash so colliding slugs do not over
 
 ## Recovery and migration
 
-Atomic replacement prevents partially written JSON from becoming canonical. JSONL tail recovery makes an interrupted append diagnosable. A general N-1 migration engine is deliberately deferred to v1.6: it must support dry run, backup, schema validation, atomic replacement, and rollback before it can be marked implemented.
+Atomic replacement prevents partially written JSON from becoming canonical. JSONL tail recovery makes an interrupted append diagnosable. A general N-1 migration engine remains future work. It must support dry run, backup, schema validation, atomic replacement and rollback before it can be marked implemented.
 
 The schemas are versioned. Producers must reject incompatible envelopes instead of guessing, and migrations must preserve the previous artifact until validation succeeds.

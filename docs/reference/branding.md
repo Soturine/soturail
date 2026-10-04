@@ -1,10 +1,19 @@
 # Branding
 
-SotuRail means local context rails for AI coding agents. The name points to the idea of guiding repository, terminal and memory context along safe rails instead of flooding a model with unstable noise.
+SotuRail is the **engineering rail around AI-assisted software development**.
 
-The fox mascot is friendly and alert: a small signal that SotuRail is meant to help developers move quickly while still watching for safety and evidence.
+The name still reflects the original "rails" idea, but the product scope is broader than context routing: SotuRail now organizes portable Skills and capabilities, preserves evidence/provenance/freshness, and governs whether software work is ready to advance.
 
-The rail/circuit line under the fox represents context flow: source files, command output, specs, memory and rules are routed into stable, recoverable payloads.
+The product statement is:
+
+```text
+AI understands.
+SotuRail organizes, constrains and proves.
+```
+
+The fox mascot is friendly and alert: a visual signal that SotuRail helps developers move quickly while keeping an eye on evidence, safety and readiness.
+
+The rail/circuit motif represents engineering flow across sources, context, Skills, capabilities, artifacts and verification.
 
 Logo files:
 
