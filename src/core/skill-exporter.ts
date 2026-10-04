@@ -1,6 +1,10 @@
+import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths } from "./config.js";
+import { redactText } from "./report-redaction.js";
+import { loadSkillCatalog, renderSkillMarkdown, type SkillModel } from "./skill-model.js";
+import { WorkspaceGuard } from "./workspace-guard.js";
 import { type SkillTarget } from "./skill-schema.js";
 import { readSkills } from "./skill-store.js";
 import { validateSkills } from "./skill-validator.js";
@@ -75,4 +79,89 @@ function renderExportIndex(target: SkillTarget, ids: string[]): string {
     ...ids.map((id) => `- [${id}](./${id}.md)`),
     ""
   ].join("\n");
+}
+
+export interface PortableSkillExport {
+  schemaVersion: "soturail.skill-export.v2";
+  layout: "agent-skills";
+  outDir: string;
+  skills: Array<{ name: string; source: SkillModel["source"]; files: Array<{ path: string; sha256: string }> }>;
+  skipped: Array<{ name: string; reason: string }>;
+}
+
+// Legacy v1.5 pack artifacts that become on-demand references in a portable export.
+const LEGACY_REFERENCE_FILES = ["safety.md", "glossary.md", "patterns.md", "cheatsheet.md"];
+const LEGACY_REFERENCE_DIRS = ["topics", "examples"];
+
+/**
+ * Write every valid skill as a portable Agent Skills directory
+ * (<name>/SKILL.md + references/scripts/assets). Sources are never rewritten;
+ * v1.5 packs are rendered side by side with generated frontmatter.
+ */
+export async function exportPortableSkills(root = process.cwd(), options: { outDir?: string; bundledDir?: string } = {}): Promise<PortableSkillExport> {
+  await ensureWorkspace(root);
+  const guard = new WorkspaceGuard(root);
+  const outDir = options.outDir
+    ? await guard.resolveProjectPath(options.outDir, { mustExist: false })
+    : path.join(getWorkspacePaths(root).skillExportsDir, "portable");
+  const catalog = await loadSkillCatalog(root, options.bundledDir ? { bundledDir: options.bundledDir } : {});
+  const result: PortableSkillExport = { schemaVersion: "soturail.skill-export.v2", layout: "agent-skills", outDir: path.relative(root, outDir).split(path.sep).join("/") || ".", skills: [], skipped: [] };
+  for (const skill of catalog.skills) {
+    const errors = catalog.issues.filter((issue) => issue.skill === skill.name && issue.severity === "error");
+    if (errors.length) {
+      result.skipped.push({ name: skill.name, reason: errors.map((issue) => issue.code).join(",") });
+      continue;
+    }
+    const files = await portableFiles(skill);
+    const leaked = files.find((file) => redactText(file.content).redactions.length > 0);
+    if (leaked) {
+      result.skipped.push({ name: skill.name, reason: `secret_like_content:${leaked.path}` });
+      continue;
+    }
+    const skillDir = path.join(outDir, skill.name);
+    await fs.rm(skillDir, { recursive: true, force: true });
+    const written: Array<{ path: string; sha256: string }> = [];
+    for (const file of files) {
+      const target = path.join(skillDir, file.path);
+      guard.assertInside(skillDir, path.resolve(target));
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.writeFile(target, file.content, "utf8");
+      written.push({ path: file.path, sha256: createHash("sha256").update(file.content).digest("hex") });
+    }
+    result.skills.push({ name: skill.name, source: skill.source, files: written });
+  }
+  await fs.mkdir(outDir, { recursive: true });
+  await fs.writeFile(path.join(outDir, "soturail-export.json"), `${JSON.stringify(result, null, 2)}\n`, "utf8");
+  return result;
+}
+
+async function portableFiles(skill: SkillModel): Promise<Array<{ path: string; content: string }>> {
+  if (skill.source !== "legacy-pack") {
+    const files = [{ path: "SKILL.md", content: await fs.readFile(path.join(skill.dir, "SKILL.md"), "utf8") }];
+    for (const resource of skill.resources) files.push({ path: resource, content: await fs.readFile(path.join(skill.dir, resource), "utf8") });
+    return files;
+  }
+  const references: Array<{ path: string; content: string }> = [];
+  for (const name of LEGACY_REFERENCE_FILES) {
+    const content = await fs.readFile(path.join(skill.dir, name), "utf8").catch(() => null);
+    if (content !== null) references.push({ path: `references/${name}`, content });
+  }
+  for (const dir of LEGACY_REFERENCE_DIRS) {
+    for (const file of await listFilesRecursive(path.join(skill.dir, dir))) {
+      references.push({ path: `references/${dir}/${file}`, content: await fs.readFile(path.join(skill.dir, dir, file), "utf8") });
+    }
+  }
+  const frontmatter = { ...skill.frontmatter, metadata: { ...skill.frontmatter.metadata, "soturail-source": "legacy-pack", "soturail-source-digest": skill.digest } };
+  const note = references.length ? "\n\n## References\n\nMigrated v1.5 pack material is under `references/`; load it only when needed.\n" : "";
+  return [{ path: "SKILL.md", content: renderSkillMarkdown(frontmatter, `${skill.body.trim()}${note}`) }, ...references];
+}
+
+async function listFilesRecursive(dir: string, prefix = ""): Promise<string[]> {
+  const files: string[] = [];
+  for (const entry of await fs.readdir(dir, { withFileTypes: true }).catch(() => [])) {
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) files.push(...await listFilesRecursive(path.join(dir, entry.name), relative));
+    else if (entry.isFile()) files.push(relative);
+  }
+  return files.sort();
 }

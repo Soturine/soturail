@@ -170,3 +170,18 @@ Skill evals should test:
 - recovery from unavailable providers.
 
 See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Native Semantic Architecture](../../architecture/agent-native-semantic-architecture.md) for the v1.6 target.
+
+## Implementation status (v1.6 in progress)
+
+| Piece | Status | Where |
+|---|---|---|
+| Portable Skill model (`SKILL.md` frontmatter per the Agent Skills specification) | implemented | `src/core/skill-model.ts` |
+| Bundled `soturail-core` skill with on-demand `references/` | implemented | `skills/soturail-core/` (shipped in the npm package) |
+| Capability bindings (`metadata.soturail-uses`) validated against Capability Descriptor v2 | implemented | `validateSkillModel`, `skillRequirements` |
+| v1.5 packs adapted into the same model (no rewrite) | implemented | `loadSkillCatalog` source `legacy-pack` |
+| Generic portable export | implemented | `soturail skills export --target generic --layout portable` |
+| Task skills, discovery surfaces, host projections, agent-led routing | planned | later v1.6 checkpoints |
+
+Approval, side-effect and evidence requirements are **derived** from the capabilities a skill uses; a skill does not restate them. Project skills placed in `.agents/skills/<name>/SKILL.md` are loaded into the same catalog.
+
+`--layout flat` (the v1.5 single-file export) remains for compatibility and is scheduled for deprecation once host projections land.

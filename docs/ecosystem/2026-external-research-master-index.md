@@ -198,6 +198,19 @@ SotuRail provenance/evidence/readiness
 
 This keeps SotuRail usable by many agents, projects, stacks and human languages without replacing those agents with an ever-growing hardcoded semantic engine.
 
+## v1.6 implementation research log
+
+Verdicts: `OBSERVED` (read primary docs/code), `BENCHMARKED`, `ADOPT`, `ADAPT`, `PROVIDER`, `REFERENCE_ONLY`, `REJECT`. README/marketing claims alone never count as observed behavior.
+
+| Date | Source | Observation | Verdict | Applied in |
+|---|---|---|---|---|
+| 2026-10-04 | [Agent Skills specification](https://agentskills.io/specification) | `name` 1–64 chars `a-z0-9` + single hyphens, must match directory; `description` ≤ 1024; optional `license`, `compatibility` (≤ 500), `metadata` (string→string), experimental `allowed-tools`; metadata ~100 tokens, body < 5000 tokens / < 500 lines; references one level deep | OBSERVED, ADOPT | `skill-model.ts` validation; capability bindings in `metadata.soturail-uses` instead of a private sidecar |
+| 2026-10-04 | [Claude Code skills docs](https://code.claude.com/docs/en/skills) | project skills at `.claude/skills/<name>/SKILL.md`; `.agents/skills` is not read | OBSERVED | host adapter projection (CP5) |
+| 2026-10-04 | [Codex skills docs](https://learn.chatgpt.com/docs/build-skills) | repository skills at `.agents/skills` (cwd, parents, repo root); optional `agents/openai.yaml` UI/invocation metadata | OBSERVED | host adapter projection (CP5); `openai.yaml` not generated |
+| 2026-10-04 | [Cursor skills docs](https://cursor.com/docs/context/skills) | loads `.agents/skills`, `.cursor/skills`, and for compatibility `.claude/skills`, `.codex/skills` | OBSERVED | host adapter projection (CP5) |
+| 2026-10-04 | [Gemini CLI skills docs](https://geminicli.com/docs/cli/skills/) | workspace skills at `.gemini/skills` or `.agents/skills` alias (alias takes precedence) | OBSERVED | host adapter projection (CP5) |
+| 2026-10-04 | Kimi and other hosts | no primary documentation of native Agent Skills loading was verified | — | generic portable fallback only |
+
 ## Traceability
 
 For current architectural decisions see:

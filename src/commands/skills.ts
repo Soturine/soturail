@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { createSkill, readSkills, renderSkillList } from "../core/skill-store.js";
-import { exportSkills, packSkills } from "../core/skill-exporter.js";
+import { exportPortableSkills, exportSkills, packSkills } from "../core/skill-exporter.js";
 import { formatSkillValidation, validateSkills } from "../core/skill-validator.js";
 import { SkillTargetSchema } from "../core/skill-schema.js";
 import { routeSkill, suggestSkills } from "../core/skill-routing.js";
@@ -48,8 +48,19 @@ export function registerSkillsCommand(program: Command): void {
     .command("export")
     .description("Export reviewed skills for a target agent.")
     .requiredOption("--target <target>", "claude, codex, gemini, cursor, or generic")
-    .action(async (options: { target: string }) => {
+    .option("--layout <layout>", "flat (v1.5 files) or portable (Agent Skills directories)", "flat")
+    .option("--out <dir>", "Project-relative output directory for --layout portable")
+    .option("--json", "Print JSON for --layout portable")
+    .action(async (options: { target: string; layout: string; out?: string; json?: boolean }) => {
       const target = SkillTargetSchema.parse(options.target);
+      if (options.layout === "portable") {
+        const result = await exportPortableSkills(process.cwd(), options.out ? { outDir: options.out } : {});
+        if (options.json) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+        else process.stdout.write([`Exported ${result.skills.length} portable skill(s) to ${result.outDir}`, ...result.skills.map((item) => `- ${item.name} (${item.source}, ${item.files.length} files)`), ...result.skipped.map((item) => `- skipped ${item.name}: ${item.reason}`), ""].join("\n"));
+        if (result.skipped.length) process.exitCode = 1;
+        return;
+      }
+      if (options.layout !== "flat") throw new Error("Skill export layout must be flat or portable.");
       process.stdout.write(await exportSkills(target));
     });
 

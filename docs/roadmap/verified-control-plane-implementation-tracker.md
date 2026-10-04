@@ -43,7 +43,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | DSC-001 | Capability/skill discovery surface | 1.6.0 | [>] | CLI `capabilities list` only | MCP integrity + CLI JSON | agent-native architecture | List/describe capabilities and skills, trust/evidence requirements and provider availability as thin descriptor projections. |
 | HST-001 | Host adapter registry | 1.6.0 | [>] | fixed host unions in 12+ modules | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [>] | v1.5 skill lint/eval only | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
-| SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [>] | pending | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
+| SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [~] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [>] | pending | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [>] | pending | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
 | SKL-004 | Agent-led routing | 1.6.0 | [>] | v1.5 keyword fallback exists | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
@@ -66,7 +66,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | 0 — semantic migration baseline | `4a4f7dd` | red (Windows lock/timeouts, fixed in `76828dc`) | `0ae5a51` |
 | CI repair — Windows lock contention/test budget | `76828dc` | green | `76828dc` |
 | 1 — canonical contracts | `a1fabc2` | green | `a1fabc2` |
-| Refactor map / simplification | see git log | pending | `a1fabc2` |
+| Refactor map / simplification | `b2a3192` | green | `b2a3192` |
+| 2 — portable core skill | see git log | pending | `b2a3192` |
 
 ## Foundation
 
