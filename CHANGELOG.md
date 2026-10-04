@@ -6,6 +6,38 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+
+- Added portable Agent Skills: `soturail-core` plus change, debug, review, security, research, knowledge and release task skills, with progressive disclosure and capability bindings.
+- Added Capability Descriptor v2, MCP `soturail.capabilities` / extended `soturail.skills.list`, and CLI `capabilities describe`, `skills discover|describe|migrate`.
+- Added Semantic Worker candidate artifacts (`soturail.semantic.candidate.v1`) with MCP `soturail.candidates.record` and CLI `candidates record|list`, workspace binding and per-source digests.
+- Added the host adapter registry and verified skill projections (`skills export --layout portable --install`) with a generic fallback for unverified hosts.
+- Added stable readiness reason codes and multilingual/Unicode fixtures.
+
+### Changed
+
+- `contract verify` now builds readiness from recorded runs at the current workspace fingerprint; `--check-passed` is an assertion that must be corroborated.
+- Keyword skill/context routing is labeled `heuristic-fallback`; agents can declare context expert/role.
+- Approved memory uses one canonical store with a one-time receipted migration; context packs omit stale approved memory.
+- Slugs, fallback tokens and symbol extraction are Unicode-safe; ASCII results are unchanged.
+- Consolidated duplicated helpers and host branches (121 literal host branches to 7).
+
+### Fixed
+
+- Approved memory appeared twice in context packs and stale approvals reappeared through the legacy mirror.
+- Exported host docs recommended the unsupported `brain export --agent antigravity`.
+- Portable skill export paths were wrong when the project root is reached through an alias (macOS `/private/var`, Windows short names).
+- ArtifactStore lock acquisition failed with EPERM on Windows under contention.
+
+### Deprecated
+
+- `skills export --layout flat`, host ID `gemini-legacy`, authoring new v1.5 skill packs, and legacy MCP negotiation — removal target v2.0.0.
+
+### Security
+
+- Agents and providers cannot self-assign `verified`, `current`, `approved` or `ready`, including by editing stored candidate files.
+- Upgraded vitest past GHSA-82fw-gwwq-j7x9.
+
 ## [1.5.0] - 2026-08-24
 
 ### Added

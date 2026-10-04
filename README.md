@@ -30,6 +30,16 @@ soturail self readiness --v1 --strict
 
 Generated state stays local under `.soturail/`. Use `soturail run -- <command...>` for recoverable logs and `soturail expand <raw_id>` for redacted recovery.
 
+## For AI agents
+
+SotuRail ships portable [Agent Skills](skills/) and self-describing capabilities, so a coding agent does not need to memorize CLI commands:
+
+```bash
+soturail skills export --target claude --layout portable --install   # or codex, cursor, gemini, generic
+```
+
+Agents load `soturail-core`, discover capabilities through MCP `soturail.capabilities` / `soturail.skills.list`, record findings as candidates, and finish only with recorded evidence. The agent understands; SotuRail organizes, constrains and proves. See [Skills](docs/rails/skills/skill-rail.md) and [Agent-Native Semantic Architecture](docs/architecture/agent-native-semantic-architecture.md).
+
 ## Core architecture
 
 | Layer | Responsibility |
@@ -52,10 +62,10 @@ SotuRail is a guardrail—not a sandbox. It cannot replace OS permissions, crede
 ## Documentation
 
 - [Quickstart](docs/getting-started/quickstart.md)
-- [v1.5 commands](docs/reference/commands/v1.5-commands.md)
+- [v1.5 commands](docs/reference/commands/v1.5-commands.md) · [v1.6 commands](docs/reference/commands/v1.6-commands.md)
 - [Verified control plane](docs/architecture/verified-control-plane.md)
 - [Threat model](docs/security/threat-model.md)
-- [Migration to v1.5](docs/getting-started/migration-v1.5.md)
+- [Migration to v1.5](docs/getting-started/migration-v1.5.md) · [Migration to v1.6](docs/getting-started/migration-v1.6.md)
 - [Implementation tracker](docs/roadmap/verified-control-plane-implementation-tracker.md)
 - [Roadmap](ROADMAP.md)
 

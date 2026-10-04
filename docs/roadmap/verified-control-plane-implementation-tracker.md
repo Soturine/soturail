@@ -28,8 +28,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | INT-004 | Knowledge collision/cleanup | 1.5.0 | [x] | guarded hashed topic IDs and cleanup | evidence/knowledge integrity | artifact model | Slug collisions remain unique; renamed/deleted source residue is removed. |
 | RUN-001 | Run Manifest | 1.5.0 | [x] | `run-manifest.ts`; `run-workspace.ts` | governance contracts | control-plane | Manifest records workspace, epoch, inputs and explicit UNKNOWN/UNAVAILABLE states. |
 | CAP-001 | Capability Registry v1 | 1.5.0 | [x] | `capability-registry.ts`; CLI + MCP mapping | governance + MCP contracts | control-plane | Canonical maturity, CLI/MCP, permission, side-effect and output metadata. |
-| CAP-003 | Capability Descriptor v2 | 1.6.0 | [~] | `capability-descriptor.ts` projection over v1 + v2 extensions | descriptor schema + compatibility fixtures | agent-native architecture | Adds stable semantic keys, Skill surface, provider class, trust/freshness and locale-neutral metadata without breaking v1 consumers. |
-| CAP-004 | Capability-to-Skill binding | 1.6.0 | [>] | pending | skill/capability conformance fixtures | skill + agent-native architecture | One canonical capability may project to Skill/MCP/CLI/artifact surfaces without duplicate business logic. |
+| CAP-003 | Capability Descriptor v2 | 1.6.0 | [x] | `capability-descriptor.ts` projection over v1 + v2 extensions | descriptor schema + compatibility fixtures | agent-native architecture | Adds stable semantic keys, Skill surface, provider class, trust/freshness and locale-neutral metadata without breaking v1 consumers. |
+| CAP-004 | Capability-to-Skill binding | 1.6.0 | [x] | `metadata.soturail-uses` validated; MCP tools derived from descriptor surfaces | skill/capability conformance fixtures | skill + agent-native architecture | One canonical capability may project to Skill/MCP/CLI/artifact surfaces without duplicate business logic. |
 | CAP-002 | Capability security / epochs | 1.5.0 | [x] | phase-scoped registry digest/epoch | governance contracts | control-plane; governance | Side-effect/approval/security metadata is real and explicitly not a sandbox. |
 | GOV-001 | GovernanceProvider / NativeMinimal | 1.5.0 | [x] | `governance.ts`; governance CLI | governance contracts | governance model | Offline provider evaluates/validates/health/capabilities and fails closed. |
 | GOV-002 | AGT/ACS provider | 1.7+ | [>] | fail-closed boundary only | unavailable verdict contract | provider + governance docs | Optional integration after pinned API/license and conformance fixtures; not required for v1.6. |
@@ -44,7 +44,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | HST-001 | Host adapter registry | 1.6.0 | [x] | `host-adapters.ts`; 121 → 7 literal host branches | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | LEG-001 | Legacy removal / migration | 1.6.0 | [~] | approved-memory migration, alias/dead code removal, deprecations with v2.0 targets | legacy cleanup suite | legacy removal report | Remove obsolete implementation, migrate persisted state, deprecate public contracts with a removal target. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [~] | selection fixtures + satisfiability tests; agent-run scoring pending | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
-| SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [~] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
+| SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [x] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [x] | `skills/soturail-{change,debug,review,security,research,knowledge,release}` | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [x] | `skills export --layout portable --install`, projection markers | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
 | SKL-004 | Agent-led routing | 1.6.0 | [x] | keyword ranking labeled `heuristic-fallback`; agent-declared context routing | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
@@ -75,7 +75,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | Legacy cleanup | `fd6cfc0` (CI fix), `4ff9283` | `fd6cfc0` green | `fd6cfc0` |
 | 6 — semantic routing transition | `f390510` | green | `f390510` |
 | 7 — multilingual / preserve-source | `7869bda` | green | `7869bda` |
-| 8 — trust/evidence integration | see git log | pending | `7869bda` |
+| 8 — trust/evidence integration | `9b0925a` | pending | `7869bda` |
+| 9 — docs / migration polish | see git log | pending | `7869bda` |
 
 ## Foundation
 

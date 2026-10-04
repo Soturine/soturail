@@ -32,6 +32,8 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [v1.4 Commands](reference/commands/v1.4-commands.md)
 - [v1.5 Commands](reference/commands/v1.5-commands.md)
 - [v1.6 Commands (in progress)](reference/commands/v1.6-commands.md)
+- [Migration to v1.6](getting-started/migration-v1.6.md)
+- [v1.6.0 Release Notes (draft)](releases/RELEASE_NOTES_v1.6.0.md)
 - [Schema Contracts](reference/schemas/schema-contracts.md)
 - [v1 Contract](reference/contracts/v1-contract.md)
 - [Architecture](architecture/)

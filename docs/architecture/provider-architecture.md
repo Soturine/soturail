@@ -43,6 +43,10 @@ The cumulative research inventory lives in [2026 External Research Master Index]
 
 Structural, dependency-doc, context-transform, runtime, registry, integration and vector interfaces remain independent so choosing one provider cannot redefine another trust boundary.
 
+## Shared provider metadata (v1.6)
+
+Provider facts live in Capability Descriptor v2 (`providers.class`, `candidates[].status`, `fallback`, `availability`, `localization.limitations`), so a Skill or agent sees availability and degradation without provider-specific code. Only `GovernanceProvider` has a runtime interface today (`health`, `validate`, `capabilities`, fail-closed verdicts). A shared runtime base for health, provenance, timeout and error classification is deferred until a second provider interface (structural or dependency docs) is implemented, to avoid an abstraction with a single consumer.
+
 ## Semantic routing rule
 
 Do not add a provider merely to replace agent reasoning with another hardcoded classifier.

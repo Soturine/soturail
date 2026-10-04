@@ -1,6 +1,17 @@
 # Agent-Native Semantic Architecture
 
-Status: **planned for v1.6**. The v1.5 deterministic control-plane contracts remain the current stable implementation.
+Status: **implemented on `main` for v1.6.0 (in release qualification)**. Implementation map:
+
+| Concept | Module |
+|---|---|
+| Capability Descriptor v2 / discovery | `src/core/capability-descriptor.ts`, MCP `soturail.capabilities` |
+| Portable Skill model, catalog, projections | `src/core/skill-model.ts`, `src/core/skill-exporter.ts`, `skills/` |
+| Host adapters | `src/core/host-adapters.ts` |
+| Semantic Worker candidates | `src/core/semantic-candidate.ts`, `src/core/candidate-store.ts` |
+| Evidence-backed readiness, reason codes | `src/core/change-contract.ts`, `src/core/trust-decision.ts` |
+| Labeled lexical fallback | `src/core/skill-routing.ts`, `routeContext` |
+
+Planned beyond v1.6: StructuralProvider and DependencyDocsProvider implementations (declared `unavailable`), agent-run selection scoring, contract re-binding rules.
 
 ## Decision
 

@@ -1,5 +1,7 @@
 # Context Architecture
 
+> v1.6: context selection can be **agent-declared** (`context select --expert/--role`, recorded as `routing.authority: agent-declared`); the lexical ranker and English keyword router are a labeled `heuristic-fallback`. Budgets, fingerprints and truncation remain deterministic.
+
 SotuRail selects the smallest sufficient, workspace-bound context before escalating. Context is an artifact with a budget and provenance, not an unbounded prompt dump.
 
 ## Context escalation ladder
