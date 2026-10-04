@@ -1,19 +1,30 @@
 # SotuRail
 
-SotuRail is a local-first Context OS for AI coding agents. It prepares evidence, context, memory, workflow records, reports and safe agent handoffs without cloud telemetry.
+SotuRail is a local-first, agent-native engineering control plane for AI-assisted software development.
 
-Useful entry points:
+The AI agent is the semantic worker: it understands intent, requirements, ambiguity and project meaning. SotuRail supplies portable Skills and self-describing capabilities, then owns deterministic engineering state such as workspace identity, provenance, freshness, recorded evidence, policy and readiness.
+
+Core rule:
+
+```text
+AI understands.
+SotuRail organizes, constrains and proves.
+```
+
+SotuRail is not a coding agent, model gateway, cloud backend or autonomous shell runtime.
+
+Recommended entry points:
 
 - README.md
-- ROADMAP.md
-- docs/rails/hosts/agents.md
 - docs/getting-started/quickstart.md
-- docs/reference/contracts/v1-contract.md
-- docs/reference/schemas/schema-contracts.md
-- docs/rails/knowledge/project-brain.md
-- docs/rails/evaluation/benchmarking.md
-- docs/rails/evidence/report-rail.md
-- docs/architecture/dashboard-rail.md
-- docs/architecture/observability-rail.md
-- docs/rails/hosts/mcp-report-resources.md
-- docs/releases/
+- docs/getting-started/usage.md
+- docs/architecture/agent-native-semantic-architecture.md
+- docs/architecture/verified-control-plane.md
+- docs/architecture/contracts-and-verification.md
+- docs/architecture/provider-architecture.md
+- docs/rails/skills/skill-rail.md
+- docs/rails/hosts/mcp.md
+- docs/security/threat-model.md
+- docs/reference/commands/v1.6-commands.md
+- ROADMAP.md
+- docs/releases/RELEASE_NOTES_v1.6.0.md

@@ -1,7 +1,7 @@
 {
   "name": "soturail",
   "version": "1.6.0",
-  "description": "Local-first context rails for AI coding agents: reversible terminal compression, progressive repo reading, SDD workflows, hooks, benchmarks, memory and cache-friendly payloads.",
+  "description": "Local-first agent-native engineering control plane for AI-assisted software development: portable Skills, self-describing capabilities, verified context, evidence, change contracts, provenance and readiness.",
   "type": "module",
   "bin": {
     "soturail": "dist/cli.js"
@@ -43,18 +43,18 @@
   "keywords": [
     "ai-agents",
     "coding-agents",
+    "agent-skills",
+    "mcp",
+    "engineering-control-plane",
+    "software-engineering",
+    "evidence",
+    "provenance",
+    "readiness",
+    "change-contracts",
     "context-engineering",
-    "prompt-caching",
-    "token-optimization",
-    "terminal-compression",
-    "cli",
-    "typescript",
-    "rust",
     "local-first",
-    "spec-driven-development",
-    "llm-tools",
-    "agent-hooks",
     "developer-tools",
+    "typescript",
     "soturail"
   ],
   "author": "Rafael Ryan Ramos de Souza",
