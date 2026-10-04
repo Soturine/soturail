@@ -113,7 +113,8 @@ describe("control-plane documentation drift", () => {
     ]);
     const packageJson = JSON.parse(packageText) as { version: string; engines: { node: string } };
     expect(packageJson).toMatchObject({ version: "1.6.0", engines: { node: ">=22" } });
-    expect(readme).toContain("SotuRail governs engineering readiness and verified context; it does not replace the coding model/runtime.");
+    expect(readme).toContain("agent-native engineering control plane");
+    expect(readme).toContain("AI understands.");
     expect(architecture).toContain("SotuRail v1.6");
     expect(mcp).toContain("2026-07-28");
     expect(`${mcp}\n${security}`).not.toMatch(/allow_raw=true/);
