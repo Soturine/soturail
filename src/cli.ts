@@ -56,7 +56,7 @@ export function buildProgram(): Command {
   program.enablePositionalOptions();
   program
     .name("soturail")
-    .description("Local-first Context OS rails for AI coding agents.")
+    .description("Local-first agent-native engineering control plane for AI-assisted software development.")
     .version(SOTURAIL_VERSION)
     .showHelpAfterError();
 

@@ -32,8 +32,8 @@ function checkNodeVersion(): Check {
   const major = Number(process.versions.node.split(".")[0] ?? 0);
   return {
     name: "Node.js",
-    ok: major >= 20,
-    message: `current version is ${process.version}; SotuRail requires Node.js >=20`
+    ok: major >= 22,
+    message: `current version is ${process.version}; SotuRail requires Node.js >=22`
   };
 }
 
