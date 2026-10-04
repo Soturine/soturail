@@ -5,6 +5,7 @@ import { listAgentProfiles } from "./agent-registry.js";
 import type { AgentId } from "./agent-profile.js";
 import { SOTURAIL_VERSION } from "./version.js";
 import { pathExists } from "./rail-utils.js";
+import { getHostAdapter, hostContextFormats, hostReportFormats, hostSetupCommand } from "./host-adapters.js";
 
 export type CapabilityStatus =
   | "supported"
@@ -505,69 +506,39 @@ export function renderAgentStatus(status: AgentRuntimeStatus): string {
 }
 
 function setupCommandFor(id: AgentId): string {
-  if (id === "antigravity" || id === "opencode" || id === "amp" || id === "kiro" || id === "gemini-legacy") return `soturail agents export --agent ${id}`;
-  if (id === "deepagents" || id === "deepagents-js") return `soturail agents export --agent ${id}`;
-  return `soturail agents install --agent ${id} --dry-run`;
+  return hostSetupCommand(getHostAdapter(id));
 }
 
 function displayHostName(capability: AgentCapability): string {
-  if (capability.id === "antigravity") return "Antigravity-style hosts";
-  if (capability.id === "gemini") return "Gemini";
-  if (capability.id === "gemini-legacy") return "Gemini legacy/compatible hosts";
-  if (capability.id === "deepagents" || capability.id === "deepagents-js") return "DeepAgents-style targets";
-  if (capability.id === "opencode") return "OpenCode";
-  return capability.displayName;
+  return getHostAdapter(capability.id).matrix.label ?? capability.displayName;
 }
 
 function stableHostStatus(capability: AgentCapability): AgentHostMatrixRow["status"] {
-  if (capability.id === "generic") return "stable";
-  if (capability.id === "claude" || capability.id === "codex" || capability.id === "cursor") return "stable";
-  if (capability.id === "gemini" || capability.id === "gemini-legacy") return "legacy";
-  if (capability.id === "opencode") return "generic-compatible";
+  const status = getHostAdapter(capability.id).matrix.status;
+  if (status) return status;
   if (capability.maturity === "experimental") return "experimental";
   if (capability.maturity === "planned") return "planned";
   return capability.maturity === "prompt-only" ? "experimental" : "unknown";
 }
 
 function reportAgentSupport(id: AgentId): CapabilityStatus {
-  if (id === "claude" || id === "codex" || id === "gemini" || id === "gemini-legacy" || id === "cursor" || id === "generic") return "supported";
-  return "prompt-only";
+  return getHostAdapter(id).matrix.reportSupport;
 }
 
 function hostPriority(id: AgentId): AgentHostMatrixRow["priority"] {
-  if (id === "antigravity") return "high";
-  if (id === "opencode" || id === "gemini-legacy" || id === "deepagents" || id === "deepagents-js") return "normal";
-  return "low";
+  return getHostAdapter(id).matrix.priority;
 }
 
 function instructionFilesFor(id: AgentId): string[] {
-  const files: Record<AgentId, string[]> = {
-    claude: ["CLAUDE.md", "context-pack.md"],
-    codex: ["AGENTS.md", "context-pack.md"],
-    gemini: ["GEMINI.md", "AGENTS.md", "context-pack.md"],
-    "gemini-legacy": ["AGENTS.md", "GEMINI.md", "context-pack.md"],
-    cursor: ["rules.md", "cursor-rules.md", "context-pack.md"],
-    antigravity: ["AGENTS.md", "prompt-only.md", "context-pack.md"],
-    generic: ["AGENT_CONTEXT.md", "prompt-only.md", "context-pack.md"],
-    opencode: ["AGENTS.md", "prompt-only.md", "context-pack.md"],
-    amp: ["prompt-only.md", "context-pack.md"],
-    kiro: ["prompt-only.md", "context-pack.md"],
-    deepagents: ["role-pack.md", "subagents.md", "deepagents.md"],
-    "deepagents-js": ["role-pack.md", "subagents.md", "deepagents-js.md"]
-  };
-  return files[id];
+  return [...getHostAdapter(id).instructionFiles];
 }
 
 function contextFormatsFor(id: AgentId): string[] {
-  if (id === "deepagents" || id === "deepagents-js") return ["Markdown role pack", "JSON runtime note", "context-pack.md"];
-  return ["Markdown", "context-pack.md", "agent report references"];
+  return [...hostContextFormats(getHostAdapter(id))];
 }
 
 function reportFormatsFor(id: AgentId): string[] {
-  if (id === "claude") return ["Markdown", "tagged sections"];
-  if (id === "cursor") return ["short Markdown rules"];
-  if (id === "deepagents" || id === "deepagents-js") return ["role-pack Markdown", "agent report Markdown"];
-  return ["Markdown", "JSON evidence paths"];
+  return [...hostReportFormats(getHostAdapter(id))];
 }
 
 function mcpSupportFor(capability: AgentCapability): AgentHostMatrixRow["mcpSupport"] {

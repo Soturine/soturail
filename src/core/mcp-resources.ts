@@ -4,6 +4,7 @@ import { parseAgentId } from "./agent-registry.js";
 import { getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { getHostAdapter } from "./host-adapters.js";
 import { pathExists } from "./rail-utils.js";
 
 export interface McpResourceInfo {
@@ -234,13 +235,11 @@ function hostResource(root: string, id: string, uri: string, filePath: string, m
 }
 
 function reportAgentName(host: string): string {
-  if (host === "amp" || host === "kiro") return "generic";
-  return host;
+  return getHostAdapter(host).reportTarget;
 }
 
 function brainExportName(host: string): string {
-  if (host === "claude" || host === "codex" || host === "gemini" || host === "cursor" || host === "generic") return host;
-  return "generic";
+  return getHostAdapter(host).brainTarget;
 }
 
 

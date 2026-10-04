@@ -62,21 +62,28 @@ export function registerSkillsCommand(program: Command): void {
   skills
     .command("export")
     .description("Export reviewed skills for a target agent.")
-    .requiredOption("--target <target>", "claude, codex, gemini, cursor, or generic")
-    .option("--layout <layout>", "flat (v1.5 files) or portable (Agent Skills directories)", "flat")
+    .requiredOption("--target <target>", "host adapter id (claude, codex, cursor, gemini, generic, ...); unknown hosts use generic")
+    .option("--layout <layout>", "flat (v1.5 files, deprecated) or portable (Agent Skills directories)", "flat")
+    .option("--install", "With --layout portable: write into the host's native project skills directory")
     .option("--out <dir>", "Project-relative output directory for --layout portable")
     .option("--json", "Print JSON for --layout portable")
-    .action(async (options: { target: string; layout: string; out?: string; json?: boolean }) => {
-      const target = SkillTargetSchema.parse(options.target);
+    .action(async (options: { target: string; layout: string; install?: boolean; out?: string; json?: boolean }) => {
       if (options.layout === "portable") {
-        const result = await exportPortableSkills(process.cwd(), options.out ? { outDir: options.out } : {});
+        const result = await exportPortableSkills(process.cwd(), { host: options.target, install: options.install === true, ...(options.out ? { outDir: options.out } : {}) });
         if (options.json) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
-        else process.stdout.write([`Exported ${result.skills.length} portable skill(s) to ${result.outDir}`, ...result.skills.map((item) => `- ${item.name} (${item.source}, ${item.files.length} files)`), ...result.skipped.map((item) => `- skipped ${item.name}: ${item.reason}`), ""].join("\n"));
+        else process.stdout.write([
+          `Exported ${result.skills.length} portable skill(s) for ${result.host.id} (${result.host.verification}) to ${result.outDir}`,
+          ...result.host.limitations.map((item) => `note: ${item}`),
+          ...result.skills.map((item) => `- ${item.name} (${item.source}, ${item.files.length} files)`),
+          ...result.skipped.map((item) => `- skipped ${item.name}: ${item.reason}`),
+          ""
+        ].join("\n"));
         if (result.skipped.length) process.exitCode = 1;
         return;
       }
       if (options.layout !== "flat") throw new Error("Skill export layout must be flat or portable.");
-      process.stdout.write(await exportSkills(target));
+      process.stderr.write("Deprecated: --layout flat writes v1.5 single-file exports; use --layout portable. Removal target: v2.0.\n");
+      process.stdout.write(await exportSkills(SkillTargetSchema.parse(options.target)));
     });
 
   skills

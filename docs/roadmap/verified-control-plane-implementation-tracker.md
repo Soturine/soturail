@@ -41,11 +41,11 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | CTX-002 | Context Spine / agent escalation | 1.6.x | [>] | pending | task/context quality fixtures | context architecture | Stable compact prefix plus agent-led escalation; source/provenance remain explicit. |
 | AUD-160 | v1.6 semantic migration baseline | 1.6.0 | [x] | audit only | probes recorded | v1.6 baseline audit | Heuristic/parser inventory classified; English dependencies, host hardcodes, CLI-only agent needs and Skill gaps documented. |
 | DSC-001 | Capability/skill discovery surface | 1.6.0 | [x] | MCP `soturail.capabilities`, `soturail.skills.list` levels 1–3; CLI `capabilities describe`, `skills discover/describe` | MCP integrity + CLI JSON | agent-native architecture | List/describe capabilities and skills, trust/evidence requirements and provider availability as thin descriptor projections. |
-| HST-001 | Host adapter registry | 1.6.0 | [>] | fixed host unions in 12+ modules | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
+| HST-001 | Host adapter registry | 1.6.0 | [x] | `host-adapters.ts`; 121 → 7 literal host branches | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [~] | selection fixtures + satisfiability tests; agent-run scoring pending | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [~] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [x] | `skills/soturail-{change,debug,review,security,research,knowledge,release}` | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
-| SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [>] | pending | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
+| SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [x] | `skills export --layout portable --install`, projection markers | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
 | SKL-004 | Agent-led routing | 1.6.0 | [>] | v1.5 keyword fallback exists | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
 | SEM-001 | Semantic Worker contract | 1.6.0 | [~] | `semantic-candidate.ts` candidate schemas | structured candidate fixtures | agent-native architecture | Agent receives task/capabilities/constraints/schemas and returns candidate claims/impact/decisions/questions. |
 | SEM-002 | Candidate/verified boundary | 1.6.0 | [~] | `SelfPromotionError` on producer input; evidence promotion pending | adversarial/self-award fixtures | contracts/evidence | Model/provider output cannot self-promote to verified/current/approved/ready. |
@@ -67,9 +67,10 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | CI repair — Windows lock contention/test budget | `76828dc` | green | `76828dc` |
 | 1 — canonical contracts | `a1fabc2` | green | `a1fabc2` |
 | Refactor map / simplification | `b2a3192` | green | `b2a3192` |
-| 2 — portable core skill | `1949f39` | see CI | `b2a3192` |
-| 3 — task skill catalog | `848e686` | see CI | `b2a3192` |
-| 4 — self-discovery | see git log | pending | — |
+| 2 — portable core skill | `1949f39` | green | `1949f39` |
+| 3 — task skill catalog | `848e686` | green | `848e686` |
+| 4 — self-discovery | `deecbcc` | green | `deecbcc` |
+| 5 — host adapter registry | see git log | pending | `deecbcc` |
 
 ## Foundation
 

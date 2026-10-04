@@ -2,8 +2,10 @@ import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths } from "./config.js";
+import { getHostAdapter, isHostId, type SkillProjection } from "./host-adapters.js";
+import { pathExists } from "./rail-utils.js";
 import { redactText } from "./report-redaction.js";
-import { loadSkillCatalog, renderSkillMarkdown, type SkillModel } from "./skill-model.js";
+import { loadSkillCatalog, PROJECTION_MARKER, renderSkillMarkdown, type SkillModel } from "./skill-model.js";
 import { WorkspaceGuard } from "./workspace-guard.js";
 import { type SkillTarget } from "./skill-schema.js";
 import { readSkills } from "./skill-store.js";
@@ -85,8 +87,18 @@ export interface PortableSkillExport {
   schemaVersion: "soturail.skill-export.v2";
   layout: "agent-skills";
   outDir: string;
+  host: { id: string; requested: string; verification: SkillProjection["verification"]; projectDir: string | null; limitations: string[] };
   skills: Array<{ name: string; source: SkillModel["source"]; files: Array<{ path: string; sha256: string }> }>;
   skipped: Array<{ name: string; reason: string }>;
+}
+
+export interface PortableExportOptions {
+  /** Host adapter to project for; unknown hosts use the generic adapter. */
+  host?: string;
+  /** Write into the host's native project skills directory instead of .soturail/exports. */
+  install?: boolean;
+  outDir?: string;
+  bundledDir?: string;
 }
 
 // Legacy v1.5 pack artifacts that become on-demand references in a portable export.
@@ -98,14 +110,28 @@ const LEGACY_REFERENCE_DIRS = ["topics", "examples"];
  * (<name>/SKILL.md + references/scripts/assets). Sources are never rewritten;
  * v1.5 packs are rendered side by side with generated frontmatter.
  */
-export async function exportPortableSkills(root = process.cwd(), options: { outDir?: string; bundledDir?: string } = {}): Promise<PortableSkillExport> {
+export async function exportPortableSkills(root = process.cwd(), options: PortableExportOptions = {}): Promise<PortableSkillExport> {
   await ensureWorkspace(root);
   const guard = new WorkspaceGuard(root);
-  const outDir = options.outDir
-    ? await guard.resolveProjectPath(options.outDir, { mustExist: false })
-    : path.join(getWorkspacePaths(root).skillExportsDir, "portable");
+  const requested = options.host ?? "generic";
+  const adapter = getHostAdapter(requested);
+  const projectDir = adapter.skills.projectDir ?? ".agents/skills";
+  const outDir = options.install
+    ? await guard.resolveProjectPath(projectDir, { mustExist: false })
+    : options.outDir
+      ? await guard.resolveProjectPath(options.outDir, { mustExist: false })
+      : path.join(getWorkspacePaths(root).skillExportsDir, "portable", ...(options.host ? [adapter.id] : []));
+  // Outside .soturail/ only directories carrying our marker may be replaced.
+  const managedOnly = !isInsideDir(getWorkspacePaths(root).workspace, outDir);
   const catalog = await loadSkillCatalog(root, options.bundledDir ? { bundledDir: options.bundledDir } : {});
-  const result: PortableSkillExport = { schemaVersion: "soturail.skill-export.v2", layout: "agent-skills", outDir: path.relative(root, outDir).split(path.sep).join("/") || ".", skills: [], skipped: [] };
+  const result: PortableSkillExport = {
+    schemaVersion: "soturail.skill-export.v2",
+    layout: "agent-skills",
+    outDir: path.relative(root, outDir).split(path.sep).join("/") || ".",
+    host: { id: adapter.id, requested, verification: isHostId(requested) ? adapter.skills.verification : "generic-fallback", projectDir: adapter.skills.projectDir, limitations: [...adapter.skills.limitations] },
+    skills: [],
+    skipped: []
+  };
   for (const skill of catalog.skills) {
     const errors = catalog.issues.filter((issue) => issue.skill === skill.name && issue.severity === "error");
     if (errors.length) {
@@ -119,6 +145,10 @@ export async function exportPortableSkills(root = process.cwd(), options: { outD
       continue;
     }
     const skillDir = path.join(outDir, skill.name);
+    if (managedOnly && await pathExists(skillDir) && !await pathExists(path.join(skillDir, PROJECTION_MARKER))) {
+      result.skipped.push({ name: skill.name, reason: "unmanaged_existing_dir" });
+      continue;
+    }
     await fs.rm(skillDir, { recursive: true, force: true });
     const written: Array<{ path: string; sha256: string }> = [];
     for (const file of files) {
@@ -128,11 +158,19 @@ export async function exportPortableSkills(root = process.cwd(), options: { outD
       await fs.writeFile(target, file.content, "utf8");
       written.push({ path: file.path, sha256: createHash("sha256").update(file.content).digest("hex") });
     }
+    await fs.mkdir(skillDir, { recursive: true });
+    await fs.writeFile(path.join(skillDir, PROJECTION_MARKER), `${JSON.stringify({ schemaVersion: "soturail.skill-projection.v1", host: adapter.id, source: skill.source, sourceDigest: skill.digest, files: written }, null, 2)}\n`, "utf8");
     result.skills.push({ name: skill.name, source: skill.source, files: written });
   }
   await fs.mkdir(outDir, { recursive: true });
-  await fs.writeFile(path.join(outDir, "soturail-export.json"), `${JSON.stringify(result, null, 2)}\n`, "utf8");
+  // Host skill directories hold only skill folders; the manifest stays in SotuRail exports.
+  if (!options.install) await fs.writeFile(path.join(outDir, "soturail-export.json"), `${JSON.stringify(result, null, 2)}\n`, "utf8");
   return result;
+}
+
+function isInsideDir(parent: string, child: string): boolean {
+  const relative = path.relative(path.resolve(parent), path.resolve(child));
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
 async function portableFiles(skill: SkillModel): Promise<Array<{ path: string; content: string }>> {

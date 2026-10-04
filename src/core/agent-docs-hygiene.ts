@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { listAgentProfiles } from "./agent-registry.js";
 import { AGENT_POLICY_NOTES, getAgentCapability } from "./agent-runtime.js";
+import { getHostAdapter, hostSetupCommand } from "./host-adapters.js";
 
 const agentDocs = ["CLAUDE.md", "AGENTS.md", "GEMINI.md", ".cursor/rules/soturail.md", ".cursor/rules"];
 
@@ -72,7 +73,5 @@ export function explainAgents(agent: string): string {
 }
 
 function setupCommandFor(agent: string): string {
-  if (agent === "antigravity" || agent === "opencode" || agent === "amp" || agent === "kiro") return `soturail agents export --agent ${agent}`;
-  if (agent === "deepagents" || agent === "deepagents-js") return `soturail agents export --agent ${agent}`;
-  return `soturail agents install --agent ${agent} --dry-run`;
+  return hostSetupCommand(getHostAdapter(agent));
 }

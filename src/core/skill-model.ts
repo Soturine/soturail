@@ -14,6 +14,8 @@ export const SKILL_MODEL_SCHEMA = "soturail.skill.v2" as const;
 export const USES_METADATA_KEY = "soturail-uses";
 const NAME_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const RESOURCE_DIRS = ["references", "scripts", "assets"] as const;
+/** Marker written into directories SotuRail projected for a host; such copies are not separate skills. */
+export const PROJECTION_MARKER = ".soturail-projection.json";
 
 export type SkillSource = "bundled" | "project" | "legacy-pack";
 
@@ -144,6 +146,7 @@ export async function loadSkillCatalog(root = process.cwd(), options: { bundledD
   for (const [base, source] of sources) {
     for (const entry of await fs.readdir(base, { withFileTypes: true }).catch(() => [])) {
       if (!entry.isDirectory()) continue;
+      if (source === "project" && await fs.access(path.join(base, entry.name, PROJECTION_MARKER)).then(() => true, () => false)) continue;
       try {
         skills.push(await loadSkillDir(path.join(base, entry.name), source));
       } catch (error) {

@@ -1,4 +1,5 @@
 import { promises as fs } from "node:fs";
+import { getHostAdapter } from "../core/host-adapters.js";
 import path from "node:path";
 import type { Command } from "commander";
 import { ensureWorkspace, getWorkspacePaths, writeJson } from "../core/config.js";
@@ -229,11 +230,11 @@ export async function installHooks(hostValue: string, options: HookInstallOption
   const parsed = parseHost(hostValue);
   const selected = parsed === "all" ? hosts : [parsed];
   const dryRun = options.dryRun === true;
-  const mode = options.mode ?? (hostValue === "claude" ? "safe-hooks" : "prompt-only");
+  const mode = options.mode ?? (getHostAdapter(hostValue).hooks ? "safe-hooks" : "prompt-only");
   const lines = [`SotuRail hooks install ${hostValue} --mode ${mode}${dryRun ? " --dry-run" : ""}`];
   const installed: Record<string, unknown>[] = [];
   for (const host of selected) {
-    if (host === "claude" && mode !== "prompt-only") {
+    if (getHostAdapter(host).hooks === "claude-code-settings" && mode !== "prompt-only") {
       lines.push(...(await installClaude(root, dryRun)));
       installed.push({ host, target: ".claude/settings.json", mode, installed_at: new Date().toISOString() });
       if (mode === "mcp") {
@@ -285,7 +286,7 @@ export async function exportHook(hostValue: string, root = process.cwd()): Promi
   await fs.mkdir(paths.hookExportsDir, { recursive: true });
   const written: string[] = [];
   for (const host of selected) {
-    const content = host === "claude"
+    const content = getHostAdapter(host).hooks === "claude-code-settings"
       ? `# SotuRail Claude Hook Export\n\nReview before enabling.\n\n## Prompt Rules\n\n${rules(host)}\n## Pre Tool Hook\n\n\`\`\`js\n${claudePreToolHook}\n\`\`\`\n`
       : `# SotuRail ${host} Prompt-Only Export\n\n${rules(host)}\n`;
     const filePath = path.join(paths.hookExportsDir, `${host}.md`);

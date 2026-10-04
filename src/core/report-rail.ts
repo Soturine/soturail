@@ -6,21 +6,11 @@ import { buildStatus, type SotuRailStatus, type StatusLevel } from "./status-mod
 import { redactText, scanReportSafety, writeRedactedReports, type ReportRedaction, type ReportSafetyResult } from "./report-redaction.js";
 import { makeRailId } from "./rail-utils.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import type { AgentId } from "./agent-profile.js";
+import { decorateForHost, getHostAdapter, hostAdapterIds } from "./host-adapters.js";
 
 export type ReportSeverity = "ok" | "warning" | "failed" | "unknown";
-export type ReportAgent =
-  | "codex"
-  | "claude"
-  | "gemini"
-  | "gemini-legacy"
-  | "cursor"
-  | "opencode"
-  | "antigravity"
-  | "deepagents"
-  | "deepagents-js"
-  | "generic"
-  | "amp"
-  | "kiro";
+export type ReportAgent = AgentId;
 export type ReportFormat = "html" | "md" | "json";
 
 export interface ReportSection {
@@ -381,27 +371,15 @@ export function renderAgentReport(report: SotuRailReport, agent: ReportAgent): s
     ...report.nextCommands.slice(0, 8).map((command) => `- ${command}`),
     ""
   ].join("\n");
-  if (agent === "claude") return `<soturail_report>\n${body}\n</soturail_report>\n`;
-  if (agent === "codex") return `${body}\n## Codex Notes\n\nKeep edits local, use evidence paths, and run checks before release.\n`;
-  if (agent === "gemini" || agent === "gemini-legacy") return `${body}\n## Gemini Context\n\nLarge-context readers can inspect the evidence paths above before acting. Legacy-compatible hosts remain prompt-only unless a host contract is verified.\n`;
-  if (agent === "cursor") return `${body}\n## Cursor Notes\n\nKeep rules compact, source-linked and project-local.\n`;
-  if (agent === "opencode") return `${body}\n## OpenCode Notes\n\nUse AGENTS.md/context artifacts as a generic-compatible handoff. Do not assume full host-native support.\n`;
-  if (agent === "antigravity") return `${body}\n## Antigravity Notes\n\nAntigravity is high-priority but experimental; prefer reviewed prompt/context handoff until stable Google-local config is documented.\n`;
-  if (agent === "deepagents" || agent === "deepagents-js") return `${body}\n## DeepAgents Notes\n\nUse this as role-pack/context evidence only. SotuRail does not run a Deep Agents runtime.\n`;
-  return body;
+  return decorateForHost(getHostAdapter(agent), body, "soturail_report");
 }
 
 function reportAgents(): ReportAgent[] {
-  return ["codex", "claude", "gemini", "gemini-legacy", "cursor", "opencode", "antigravity", "deepagents", "deepagents-js", "generic", "amp", "kiro"];
+  return hostAdapterIds() as ReportAgent[];
 }
 
 function hostReportNote(agent: ReportAgent): string {
-  if (agent === "claude" || agent === "codex" || agent === "cursor" || agent === "generic") return "This host has stable or generic-stable local report handoff support in SotuRail v1.1.";
-  if (agent === "gemini" || agent === "gemini-legacy") return "Gemini-compatible support uses prompt/context artifacts and legacy-compatible Markdown handoff.";
-  if (agent === "opencode") return "OpenCode is generic-compatible: AGENTS.md and context-pack exports are supported, while host-native configuration remains unclaimed.";
-  if (agent === "antigravity") return "Antigravity is experimental and high-priority: use safe prompt/context exports until stable local config is verified.";
-  if (agent === "deepagents" || agent === "deepagents-js") return "DeepAgents targets receive role-pack/context artifacts only; runtime execution is outside SotuRail.";
-  return "This target uses a generic prompt/context handoff.";
+  return getHostAdapter(agent).notes.report;
 }
 
 async function writeAgentReport(root: string, report: SotuRailReport, agent: ReportAgent): Promise<string> {

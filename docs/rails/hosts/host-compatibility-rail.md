@@ -94,3 +94,27 @@ one SotuRail context source -> Claude/Codex/Cursor/OpenCode/Gemini/generic expor
 ```
 
 SotuRail must not intercept IDE traffic, proxy provider requests, manage browser tokens or bypass quotas.
+
+## v1.6 Host Adapter Registry
+
+Every per-host fact — skill projection directory, context/brain/report targets, MCP config family, setup command, matrix status/priority/label, instruction files, report decoration and host notes — lives in one data record in `src/core/host-adapters.ts`. Core modules call `getHostAdapter(id)` instead of branching on host names; an unknown host resolves to the generic adapter. Adding a host means adding one adapter record plus fixtures.
+
+Literal host branches in `src/`: **121 before, 7 after** (the registry's own generic fallback, three mode-specific install generators and the generic brain alias).
+
+### Skill projection
+
+| Host | Project skills directory | Verification |
+|---|---|---|
+| Claude Code | `.claude/skills/<name>/SKILL.md` (does not read `.agents/skills`) | verified docs, 2026-10-04 |
+| Codex | `.agents/skills/` | verified docs, 2026-10-04 |
+| Cursor | `.agents/skills/` (also `.cursor/skills`, `.claude/skills`, `.codex/skills`) | verified docs, 2026-10-04 |
+| Gemini CLI | `.agents/skills/` alias (also `.gemini/skills`) | verified docs, 2026-10-04 |
+| Kimi, OpenCode, Amp, Kiro, Antigravity, Deep Agents, gemini-legacy and unknown hosts | portable `.agents/skills/` | generic fallback — native support not claimed |
+
+```bash
+soturail skills export --target claude --layout portable --install   # writes .claude/skills/
+soturail skills export --target codex --layout portable --install    # writes .agents/skills/
+soturail skills export --target kimi --layout portable               # generic fallback under .soturail/exports
+```
+
+Installed directories carry `.soturail-projection.json`. SotuRail only replaces directories with that marker; a user-authored skill with the same name is skipped (`unmanaged_existing_dir`). Projections are not reloaded as separate project skills.

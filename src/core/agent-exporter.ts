@@ -9,6 +9,7 @@ import type { AgentExportFile, AgentId, AgentInstallOptions, AgentMode } from ".
 import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
 import { pathExists } from "./rail-utils.js";
+import { getHostAdapter } from "./host-adapters.js";
 import {
   AGENT_POLICY_NOTES,
   agentStatus,
@@ -243,9 +244,8 @@ export async function agentHostDoctor(agentValue: string, root = process.cwd()):
   if (rawPathLeak) blockingIssues.push("Export text references raw evidence paths; agent handoffs should use redacted summaries.");
   if (contamination) blockingIssues.push("Export text contains non-SotuRail scope contamination terms.");
   if (generatedFiles.length === 0) warnings.push("No v1.1 .soturail/agents mirror files were generated.");
-  if (parsed === "antigravity" && !/experimental|high-priority|Google-local/i.test(joined)) warnings.push("Antigravity export should describe the experimental Google-local transition boundary.");
-  if (parsed === "gemini-legacy" && !/legacy|compatible/i.test(joined)) warnings.push("Gemini legacy export should include compatibility notes.");
-  if ((parsed === "deepagents" || parsed === "deepagents-js") && !/role pack|runtime boundary|does not run/i.test(joined)) warnings.push("DeepAgents export should make the role-pack-only boundary explicit.");
+  const exportCheck = getHostAdapter(parsed).notes.exportCheck;
+  if (exportCheck && !exportCheck.pattern.test(joined)) warnings.push(exportCheck.warning);
   const checks: AgentHostDoctorReport["checks"] = [
     { id: "matrix-row", status: row ? "passed" : "failed", summary: row ? `${row.status} host matrix row present.` : "Host missing from matrix." },
     { id: "export-generated", status: exportResult.written.length > 0 ? "passed" : "failed", summary: `${exportResult.written.length} export artifact(s) generated.` },
@@ -590,9 +590,7 @@ function allAgentIds(): AgentId[] {
 }
 
 function contextTargetFor(agent: AgentId): ContextTarget {
-  if (agent === "gemini-legacy") return "gemini";
-  if (agent === "claude" || agent === "codex" || agent === "gemini" || agent === "cursor" || agent === "antigravity") return agent;
-  return "generic";
+  return getHostAdapter(agent).contextTarget;
 }
 
 function installReferencesFor(agent: AgentId): string[] {
@@ -623,26 +621,19 @@ async function writeAgentHostDoctorArtifacts(root: string, host: AgentId, report
 }
 
 function reportAgentName(agent: AgentId): string {
-  if (agent === "amp" || agent === "kiro") return "generic";
-  return agent;
+  return getHostAdapter(agent).reportTarget;
 }
 
 function brainExportName(agent: AgentId): string {
-  if (agent === "opencode" || agent === "amp" || agent === "kiro" || agent === "deepagents" || agent === "deepagents-js" || agent === "gemini-legacy") return "generic";
-  return agent;
+  return getHostAdapter(agent).brainTarget;
 }
 
 function mcpConfigName(agent: AgentId): "claude" | "cursor" | "generic" {
-  if (agent === "claude" || agent === "cursor") return agent;
-  return "generic";
+  return getHostAdapter(agent).mcpConfig;
 }
 
 function hostSpecificWarning(agent: AgentId): string {
-  if (agent === "antigravity") return "- Antigravity is high-priority but experimental; use AGENTS.md/context-pack handoffs until stable Google-local project config is documented.";
-  if (agent === "gemini" || agent === "gemini-legacy") return "- Gemini-compatible exports are prompt/context artifacts. Treat legacy/compatible hosts as prompt-only unless a host contract is verified.";
-  if (agent === "opencode") return "- OpenCode support is generic-compatible AGENTS.md/context export, not a claim of full host-native integration.";
-  if (agent === "deepagents" || agent === "deepagents-js") return "- DeepAgents exports are role-pack/context artifacts only. SotuRail does not run a Deep Agents runtime.";
-  return "- Review generated files before copying them into a host-specific project location.";
+  return getHostAdapter(agent).notes.export;
 }
 
 function deepAgentFiles(agent: "deepagents" | "deepagents-js", contextPayload: string, prompt: string): AgentExportFile[] {

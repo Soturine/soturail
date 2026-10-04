@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { hostAdapterIds, isHostId } from "../core/host-adapters.js";
 import {
   buildReport,
   exportReport,
@@ -60,19 +61,6 @@ function parseFormat(value: string): ReportFormat {
 }
 
 function parseAgent(value: string): ReportAgent {
-  if (
-    value === "codex"
-    || value === "claude"
-    || value === "gemini"
-    || value === "gemini-legacy"
-    || value === "cursor"
-    || value === "opencode"
-    || value === "antigravity"
-    || value === "deepagents"
-    || value === "deepagents-js"
-    || value === "generic"
-    || value === "amp"
-    || value === "kiro"
-  ) return value;
-  throw new Error("Supported report agents: codex, claude, gemini, gemini-legacy, cursor, opencode, antigravity, deepagents, deepagents-js, amp, kiro, generic.");
+  if (isHostId(value)) return value as ReportAgent;
+  throw new Error(`Supported report agents: ${hostAdapterIds().join(", ")}.`);
 }

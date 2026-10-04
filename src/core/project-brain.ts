@@ -9,6 +9,7 @@ import { getAgentCapability, listAgentCapabilities } from "./agent-runtime.js";
 import type { AgentId } from "./agent-profile.js";
 import { keywordScore, makeRailId, pathExists, sha256Text, summarizeText } from "./rail-utils.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { getHostAdapter } from "./host-adapters.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -648,7 +649,7 @@ export async function exportBrain(agent: BrainAgentTarget, root = process.cwd(),
   const freshness = await readJson<BrainFreshnessView>(paths.brainFreshnessFile).catch(() => null);
   const approvedMemory = await readJsonl<MemoryRailRecord>(paths.memoryApprovedFile).catch(() => []);
   const base = renderBrainBrief(agent, profile, claims, decisions, gaps, bugs, rules, freshness, approvedMemory, options);
-  const content = agent === "claude" ? `<project_brain>\n${base}\n</project_brain>\n` : base;
+  const content = getHostAdapter(agent).xmlSections ? `<project_brain>\n${base}\n</project_brain>\n` : base;
   const outputPath = path.join(paths.brainExportsDir, `${agent}.md`);
   await fs.writeFile(outputPath, content, "utf8");
   if (agent === "generic") await fs.writeFile(path.join(paths.brainExportsDir, "agent-brief.md"), content, "utf8");
@@ -1354,11 +1355,7 @@ function hasUnsafeEvent(event: BrainStaleEventRecord | undefined): boolean {
 }
 
 function hostBrainBriefNote(agent: BrainAgentTarget): string {
-  if (agent === "claude") return "Host formatting: Markdown wrapped in XML-like tags for Claude Code prompt boundaries.";
-  if (agent === "codex") return "Host formatting: AGENTS.md-friendly Markdown with source references and safe commands.";
-  if (agent === "gemini") return "Host formatting: Markdown sections suitable for larger-context review.";
-  if (agent === "cursor") return "Host formatting: short rules-friendly sections for project rules/context handoff.";
-  return "Host formatting: clean Markdown for generic agents.";
+  return getHostAdapter(agent).notes.brain ?? "Host formatting: clean Markdown for generic agents.";
 }
 
 function ruleFromClaim(claim: string): string | null {
