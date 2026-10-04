@@ -1,8 +1,8 @@
 # Stable Command Surface
 
-SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 added Host Compatibility Rail, v1.2.0 added Harness Lifecycle Rail and v1.4.0 adds compatible Knowledge, Evidence, Agent QA, Skill Rail 2.0 and Tasklet command families.
+SotuRail v1.0.0 froze the first stable local command surface. v1.1–v1.5 added compatible host, harness, knowledge, evidence, evaluation and governance families. v1.6 adds agent-native Skills/capability discovery, Semantic Worker candidates and the verified Change Contract lifecycle.
 
-## Stable Surface For v1.0
+## Stable v1 surface
 
 - `soturail status`
 - `soturail report`
@@ -39,6 +39,12 @@ SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0
 - `soturail eval golden|regression`
 - `soturail skills template|lint|eval|report|build|fold-in`
 - `soturail tasklet create|list|run --dry-run|export`
+- `soturail capabilities list|describe`
+- `soturail candidates record|list`
+- `soturail contract create|verify|revise|attest`
+- `soturail skills discover|describe|migrate`
+- `soturail skills export --layout portable`
+- `soturail mcp smoke`
 
 Stable means the command should remain local, documented, covered by smoke or contract tests, and changed compatibly where possible.
 
@@ -52,7 +58,6 @@ Stable means the command should remain local, documented, covered by smoke or co
 - Full Knowledge Graph runtime.
 - Full Design Rail runtime.
 - Autonomous skill or tasklet execution.
-- Governance and cost runtime.
 - SotuRail Conductor commands and autonomous/runtime behavior.
 
 Experimental surfaces may change before promotion. They must stay local, optional and honest about limitations.
@@ -69,9 +74,7 @@ Advanced commands remain useful for diagnostics, but v1.0 compatibility focuses 
 
 ## Deprecated
 
-No public commands are deprecated in v1.0.0.
-
-Future deprecations must name a replacement command, state the release that introduced the warning and include removal timing in release notes. See [deprecation policy](../contracts/deprecation-policy.md).
+v1.6 deprecates legacy flat Skill export, new authoring of v1.5 Skill packs and the `gemini-legacy` host alias, with removal targeted for v2.0. Existing compatibility paths remain available in the v1 line. Every deprecation must name a replacement and removal timing in release notes. See [deprecation policy](../contracts/deprecation-policy.md).
 
 ## Related Contracts
 
@@ -86,3 +89,5 @@ Future deprecations must name a replacement command, state the release that intr
 - [Security Boundaries](../../security/security-boundaries.md)
 - [Conductor Mode](../../ecosystem/conductor-mode.md)
 - [v1.4 commands](v1.4-commands.md)
+- [v1.5 commands](v1.5-commands.md)
+- [v1.6 commands](v1.6-commands.md)

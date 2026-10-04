@@ -1,6 +1,6 @@
 # v1 Contract
 
-SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0 extends that surface with host-compatible exports and read-only host manifests. SotuRail v1.2.0 adds compatible local harness lifecycle state. SotuRail v1.4.0 adds deterministic Knowledge, Evidence, Agent QA, Skill Rail 2.0 and dry-run Tasklet contracts while keeping experimental host runtimes and Conductor outside the stable contract.
+SotuRail v1.0.0 froze the first stable local surface. Later v1 releases added host compatibility, harness lifecycle, knowledge/evidence/evaluation, governance and the verified control plane. v1.6 adds the agent-native semantic surface: portable Skills, Capability Descriptor v2, candidate artifacts, host adapters, language-neutral semantics and the hardened Change Contract lifecycle while keeping Conductor and a general autonomous runtime outside the stable contract.
 
 ## Stable Promise
 
@@ -16,11 +16,11 @@ SotuRail v1.0.0 froze the first stable local Context OS surface. SotuRail v1.1.0
 
 ## Stable Commands
 
-The stable command surface is listed in [stable-command-surface.md](../commands/stable-command-surface.md). It includes status, reports, dashboard, observability, Project Brain, evaluation, benchmarks, native candidate reporting, baseline snapshots, release checks, workflow, harness lifecycle, diagrams, agent exports, host doctors and read-only MCP report/host resources.
+The stable command surface is listed in [stable-command-surface.md](../commands/stable-command-surface.md). v1.6 also documents capability discovery, portable Skill discovery/export, candidate recording, Change Contract lifecycle and typed MCP discovery.
 
 ## Non-Goals
 
-SotuRail does not add a cloud dashboard, hosted analytics, telemetry upload, login system, database, vector DB, autonomous editing agent, destructive MCP tool provider, native-only package or host-specific runtime engine.
+SotuRail does not require a cloud dashboard, hosted analytics, telemetry upload, login system, vector DB, graph DB, autonomous editing agent, destructive MCP tool provider, native-only package or host-specific runtime engine.
 
 ## Compatibility
 
