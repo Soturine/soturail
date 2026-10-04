@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-10-04
+
+Agent-Native Semantic Control Plane. See `docs/releases/RELEASE_NOTES_v1.6.0.md` and `docs/getting-started/migration-v1.6.md`.
+
 ### Added
 
 - Added portable Agent Skills: `soturail-core` plus change, debug, review, security, research, knowledge and release task skills, with progressive disclosure and capability bindings.

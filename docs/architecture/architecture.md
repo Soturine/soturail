@@ -1,6 +1,6 @@
 # Architecture
 
-SotuRail v1.5 is a TypeScript/Node.js local-first engineering control plane. It stores runtime state under `.soturail/`, keeps the TypeScript implementation portable, and uses Rust only for optional benchmark-justified hot paths.
+SotuRail v1.6 is a TypeScript/Node.js local-first engineering control plane. It stores runtime state under `.soturail/`, keeps the TypeScript implementation portable, and uses Rust only for optional benchmark-justified hot paths.
 
 ## Layers
 

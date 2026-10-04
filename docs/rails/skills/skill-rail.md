@@ -171,7 +171,7 @@ Skill evals should test:
 
 See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Native Semantic Architecture](../../architecture/agent-native-semantic-architecture.md) for the v1.6 target.
 
-## Implementation status (v1.6 in progress)
+## Implementation status (v1.6.0)
 
 | Piece | Status | Where |
 |---|---|---|
@@ -191,7 +191,7 @@ Selection fixtures are scored by agent evaluations; deterministic tests only pro
 
 Approval, side-effect and evidence requirements are **derived** from the capabilities a skill uses; a skill does not restate them. Project skills placed in `.agents/skills/<name>/SKILL.md` are loaded into the same catalog.
 
-`--layout flat` (the v1.5 single-file export) remains for compatibility and is scheduled for deprecation once host projections land.
+`--layout flat` (the v1.5 single-file export) remains for compatibility and is deprecated (removal target v2.0.0).
 
 ## Agent bootstrap
 

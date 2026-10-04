@@ -16,7 +16,7 @@ soturail --version
 npx soturail --help
 ```
 
-SotuRail v1.5 requires Node.js 22 or newer. TypeScript is the portable default; Rust acceleration remains optional.
+SotuRail v1.6 requires Node.js 22 or newer. TypeScript is the portable default; Rust acceleration remains optional.
 
 ## Five-minute workflow
 
@@ -55,7 +55,7 @@ The official MCP SDK serves a typed, small, capability-mapped surface. It expose
 
 ## Maturity and safety
 
-The v1.5 deterministic foundation is implemented and tested. AGT/ACS integration, general schema migrations, structural graph providers, Evidence Receipts, SQLite/FTS, vectors, and Conductor remain explicitly deferred.
+The v1.5 deterministic foundation and the v1.6 agent-native surface (portable Skills, capability discovery, candidate artifacts, evidence-backed contract readiness) are implemented and tested. AGT/ACS integration, general schema migrations, structural graph providers, Evidence Receipts, SQLite/FTS, vectors, and Conductor remain explicitly deferred.
 
 SotuRail is a guardrail—not a sandbox. It cannot replace OS permissions, credential controls, provider security, physical/runtime QA, or human approval. Evidence distinguishes verified, unverified, blocked, inferred, and stale states.
 

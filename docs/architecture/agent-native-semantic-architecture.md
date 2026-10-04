@@ -1,6 +1,6 @@
 # Agent-Native Semantic Architecture
 
-Status: **implemented on `main` for v1.6.0 (in release qualification)**. Implementation map:
+Status: **implemented in v1.6.0**. Implementation map:
 
 | Concept | Module |
 |---|---|
@@ -8,10 +8,10 @@ Status: **implemented on `main` for v1.6.0 (in release qualification)**. Impleme
 | Portable Skill model, catalog, projections | `src/core/skill-model.ts`, `src/core/skill-exporter.ts`, `skills/` |
 | Host adapters | `src/core/host-adapters.ts` |
 | Semantic Worker candidates | `src/core/semantic-candidate.ts`, `src/core/candidate-store.ts` |
-| Evidence-backed readiness, reason codes | `src/core/change-contract.ts`, `src/core/trust-decision.ts` |
+| Evidence-backed readiness, contract lifecycle, reason codes | `src/core/change-contract.ts`, `src/core/contract-lifecycle.ts`, `src/core/trust-decision.ts` |
 | Labeled lexical fallback | `src/core/skill-routing.ts`, `routeContext` |
 
-Planned beyond v1.6: StructuralProvider and DependencyDocsProvider implementations (declared `unavailable`), agent-run selection scoring, contract re-binding rules.
+Planned beyond v1.6: StructuralProvider and DependencyDocsProvider implementations (declared `unavailable`), agent-run selection scoring.
 
 ## Decision
 

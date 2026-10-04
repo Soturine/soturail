@@ -1,6 +1,6 @@
-# SotuRail v1.6.0 — Agent-Native Semantic Control Plane (draft)
+# SotuRail v1.6.0 — Agent-Native Semantic Control Plane
 
-Status: **draft** — finalized at release qualification. Nothing here is released until the `v1.6.0` tag exists.
+Released: 2026-10-04. Requires Node.js 22 or 24.
 
 ```text
 AI understands.

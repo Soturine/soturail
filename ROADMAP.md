@@ -54,7 +54,7 @@ The agent may propose candidates, interpretations and decisions. Only source-bac
 
 ## Milestone D — Agent Skill & Semantic Surface (v1.6 primary)
 
-Status: **implemented on `main`, in release qualification** — see the [tracker](docs/roadmap/verified-control-plane-implementation-tracker.md). `structural.impact` and `dependency.docs` remain declared `unavailable` until providers exist.
+Status: **delivered in v1.6.0** — see the [tracker](docs/roadmap/verified-control-plane-implementation-tracker.md). `structural.impact` and `dependency.docs` remain declared `unavailable` until providers exist.
 
 v1.6 makes SotuRail self-describing and directly usable by coding agents.
 
@@ -74,7 +74,7 @@ The current v1.5 keyword-based skill routing may remain temporarily as a determi
 
 ## Milestone E — Language-Neutral Semantics (v1.6 primary)
 
-Status: **implemented on `main`, in release qualification**. Optional multilingual semantic retrieval remains future work.
+Status: **delivered in v1.6.0**. Optional multilingual semantic retrieval remains future work.
 
 Core machine semantics must not depend on English or any other human language.
 
