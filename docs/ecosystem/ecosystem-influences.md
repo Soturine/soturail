@@ -2,12 +2,12 @@
 
 This document records outside ideas that can influence SotuRail without turning SotuRail into a clone, wrapper, vendor fork or unsupported benchmark claim.
 
-SotuRail's identity remains:
+SotuRail's current identity is:
 
 ```txt
-SotuRail is the local Context OS layer for AI coding agents.
-It prepares, filters, compresses, remembers, governs and reports context.
-It is not the model, not the agent brain and not a heavy production gateway.
+SotuRail is the local-first, agent-native engineering control plane around coding agents.
+The agent understands semantics; SotuRail organizes capabilities, provenance, evidence and readiness.
+It is not the model, not the coding agent and not a production model gateway.
 ```
 
 ## Ground Rules

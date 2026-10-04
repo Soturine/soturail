@@ -19,7 +19,7 @@ SotuRail should remain:
 - independent from any single agent host;
 - small enough to use in normal developer projects.
 
-v1.0.0 froze the first stable local Context OS surface. v1.1.0 delivered Host Compatibility Rail 1.0. The remaining post-v1 sequence is now staged with the 2026 agent-harness synthesis:
+v1.0.0 froze the first stable local surface; v1.6.0 is the current released agent-native control-plane baseline. Historical milestones remain below for provenance:
 
 ```txt
 v1.1.1  Host Compatibility Polish, ecosystem docs and golden export checks
@@ -40,7 +40,9 @@ It tightens how the future rails connect around current agent-runtime patterns:
 
 - Claude/Codex/Gemini/Cursor/Antigravity-style host-aware exports;
 - MCP as an external capability boundary;
-- Agent Skills as the primary agent-facing operating-procedure surface with progressive disclosure;\n- agent-led semantic routing instead of English keyword heuristics as authority;\n- language-neutral capability IDs and preserve-source artifacts;
+- Agent Skills as the primary agent-facing operating-procedure surface with progressive disclosure;
+- agent-led semantic routing instead of English keyword heuristics as authority;
+- language-neutral capability IDs and preserve-source artifacts;
 - per-run local workspaces inspired by Leoflow-style staging, without Kubernetes/PVC complexity;
 - context budgeting and compaction/offload guidance;
 - acceptance harness contracts that prevent premature "done" states;
@@ -278,9 +280,9 @@ Focus:
 - dynamic workflow guardrails;
 - MCP/skill exposure risk summaries.
 
-### v1.6.0
+### v1.6.0 — released
 
-Focus:
+Implemented focus:
 
 - Agent-Native Skill & Semantic Surface;
 - portable Core Skill and small task-skill catalog;
@@ -291,7 +293,8 @@ Focus:
 - host adapters with generic fallback;
 - agent-led skill/capability selection with keyword routing demoted to fallback;
 - multilingual and mixed-project skill evals;
-- Verified Change Lifecycle follow-ups such as Evidence Receipts / knowledge re-attestation when scope remains controlled.
+- hardened Change Contract lifecycle, current recorded evidence, contract revisions and interactive attestations;
+- StructuralProvider, DependencyDocsProvider, richer Evidence Receipts and knowledge re-attestation remain follow-up work.
 
 See [Agent-Native Semantic Architecture](../architecture/agent-native-semantic-architecture.md) and the [v1.6 Master Prompt](v1.6.0-agent-native-semantic-control-plane-master-prompt.md).
 

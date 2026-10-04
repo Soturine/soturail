@@ -2,12 +2,12 @@
 
 This document merges the latest external-repository review into one SotuRail planning note. It distinguishes agent runtimes from harness/context infrastructure so SotuRail can absorb useful ecosystem patterns without losing its product boundary. It is not a dependency list and it is not a claim that SotuRail vendors, wraps or outperforms those projects.
 
-SotuRail remains:
+SotuRail's current boundary is:
 
 ```txt
-Local-first Context OS for AI coding agents.
-It prepares context, memory, policies, skills, workflows, evidence, reports and host exports.
-It is not the model, not the coding agent, not a proxy, not a cloud gateway and not a trading/finance agent.
+Local-first, agent-native engineering control plane for AI-assisted software development.
+It exposes portable Skills/capabilities and keeps provenance, freshness, evidence, policy and readiness explicit.
+It is not the model, not the coding agent, not a proxy and not a cloud gateway.
 ```
 
 ## Classification
@@ -26,7 +26,7 @@ SotuRail is different:
 ```txt
 Hermes = self-improving personal agent runtime
 Odysseus = workspace + runtime + agent + UI + local services
-SotuRail = local-first context/harness OS for preparing and governing agents
+SotuRail = local-first engineering control plane for preparing, constraining and verifying agent-assisted work
 ```
 
 Toolkits, compressors and routers should not be described as agents unless they own a model-plus-tool execution loop.
@@ -95,7 +95,7 @@ v1.2.0  Harness Lifecycle Rail plus staged Spec, Design and Diagram work
 v1.3.0  Absorbed into v1.4.0
 v1.4.0  Knowledge, Evidence, Evaluation, Skills and Tasklets
 v1.5.0  Governance, Cost, Resilience and Host Router Rail
-v1.6.0  Agent Governance / Evolution Rail
+v1.6.0  Agent-Native Semantic Control Plane (released)
 ```
 
 v1.4.0 implements the local Knowledge, Evidence, Agent QA, Skill Rail 2.0 and dry-run Tasklet surfaces. The exact command names for later governance and Conductor work are not frozen. Related: [Ecosystem Influences](ecosystem-influences.md), [External Projects Audit](external-projects-audit.md), [Harness Lifecycle Rail](../rails/harness/harness-lifecycle-rail.md), [Security Boundaries](../security/security-boundaries.md).
