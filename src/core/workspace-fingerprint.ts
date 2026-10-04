@@ -86,7 +86,9 @@ async function digestFiles(root: string, files: string[]): Promise<string> {
 async function git(root: string, args: string[], fallback: string): Promise<string> {
   try {
     const { stdout } = await execFileAsync("git", args, { cwd: root, timeout: 5000, windowsHide: true, encoding: "utf8" });
-    return stdout.trim();
+    // Porcelain status is positional (" M path"): trimming would drop the first
+    // entry's leading status column and hide that file's content from the digest.
+    return args[0] === "status" ? stdout : stdout.trim();
   } catch {
     return fallback;
   }
