@@ -3,6 +3,7 @@ import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
 import { validateMermaidDiagram, type DiagramValidationReport } from "./diagram-validator.js";
 import { readWorkflow } from "./workflow-store.js";
+import { pathExists, stableSlug } from "./rail-utils.js";
 
 export interface DiagramAuditReport {
   schemaVersion: "soturail.diagram.audit.v1";
@@ -21,7 +22,7 @@ export async function initDiagramRail(root = process.cwd()): Promise<string> {
   const docsDir = path.join(root, "docs", "diagrams");
   await fs.mkdir(paths.diagramsDir, { recursive: true });
   await fs.mkdir(docsDir, { recursive: true });
-  if (!(await exists(paths.diagramsIndexFile))) {
+  if (!(await pathExists(paths.diagramsIndexFile))) {
     await writeJson(paths.diagramsIndexFile, { schemaVersion: "soturail.diagram.index.v1", diagrams: [] });
   }
   await writeFileIfMissing(path.join(docsDir, "README.md"), [
@@ -65,7 +66,7 @@ export async function createDiagram(feature: string, root = process.cwd()): Prom
 
 export async function auditDiagram(file: string, root = process.cwd()): Promise<{ report: DiagramAuditReport; output: string }> {
   const filePath = path.resolve(root, file);
-  const existsFile = await exists(filePath);
+  const existsFile = await pathExists(filePath);
   const raw = existsFile ? await fs.readFile(filePath, "utf8") : "";
   const specPath = matchingSpecPath(filePath);
   const report: DiagramAuditReport = {
@@ -74,7 +75,7 @@ export async function auditDiagram(file: string, root = process.cwd()): Promise<
     exists: existsFile,
     containsMermaid: /```mermaid/i.test(raw),
     fenceOk: countMatches(raw, /```/g) % 2 === 0,
-    hasSpec: await exists(specPath),
+    hasSpec: await pathExists(specPath),
     workflowStateReferenced: /\b(draft|planned|active|verifying|ready_for_review|closed|blocked)\b/i.test(raw),
     validation: validateMermaidDiagram(raw)
   };
@@ -244,15 +245,12 @@ function countMatches(value: string, pattern: RegExp): number {
 
 async function writeFileIfMissing(filePath: string, content: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  if (!(await exists(filePath))) await fs.writeFile(filePath, content, "utf8");
+  if (!(await pathExists(filePath))) await fs.writeFile(filePath, content, "utf8");
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}
 
 function slugify(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "diagram";
+  return stableSlug(input, { fallback: "diagram" });
 }
 
 function titleCase(input: string): string {

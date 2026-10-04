@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import type { IngestedDocument } from "./document-ingest.js";
+import { stableSlug } from "./rail-utils.js";
 
 export type RuleSeverity = "low" | "medium" | "high";
 export type ValidationType =
@@ -97,8 +98,7 @@ function inferValidationType(line: string): ValidationType {
 }
 
 function validatorName(type: ValidationType, title: string): string {
-  const safe = title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40);
-  return `${type}_${safe || "rule"}`;
+  return `${type}_${stableSlug(title, { fallback: "rule", maxLength: 40, separator: "_" })}`;
 }
 
 function dedupeRules(rules: ExtractedRule[]): ExtractedRule[] {

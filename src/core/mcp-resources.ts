@@ -4,6 +4,7 @@ import { parseAgentId } from "./agent-registry.js";
 import { getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { pathExists } from "./rail-utils.js";
 
 export interface McpResourceInfo {
   uri: string;
@@ -216,7 +217,7 @@ async function buildHostManifestResources(root: string, host: string): Promise<M
   ];
   return Promise.all(items.map(async (item) => {
     const { fullPath, ...publicItem } = item;
-    return { ...publicItem, exists: await exists(fullPath) };
+    return { ...publicItem, exists: await pathExists(fullPath) };
   }));
 }
 
@@ -242,9 +243,6 @@ function brainExportName(host: string): string {
   return "generic";
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}
 
 async function readOptional(filePath: string, fallback: string): Promise<string> {
   return fs.readFile(filePath, "utf8").catch(() => fallback);

@@ -4,6 +4,7 @@ import { getWorkspacePaths, readJsonl, relativeToRoot } from "./config.js";
 import { listAgentProfiles } from "./agent-registry.js";
 import type { AgentId } from "./agent-profile.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { pathExists } from "./rail-utils.js";
 
 export type CapabilityStatus =
   | "supported"
@@ -460,9 +461,9 @@ export async function agentStatus(root = process.cwd()): Promise<AgentRuntimeSta
       manifestPresent: mcpExports.length > 0
     },
     policy: {
-      queuePresent: await exists(paths.policyQueueFile),
+      queuePresent: await pathExists(paths.policyQueueFile),
       queueItems: queueItems.length,
-      decisionsPresent: await exists(paths.policyDecisionsFile),
+      decisionsPresent: await pathExists(paths.policyDecisionsFile),
       decisions: decisions.length
     },
     runs,
@@ -593,7 +594,7 @@ function reportAgentIdFor(id: AgentId): AgentId {
 async function detect(root: string, relativePath: string, kind: string): Promise<{ path: string; present: boolean; kind: string }> {
   return {
     path: relativePath.replace(/\\/g, "/"),
-    present: await exists(path.resolve(root, relativePath)),
+    present: await pathExists(path.resolve(root, relativePath)),
     kind
   };
 }
@@ -607,9 +608,6 @@ async function listFiles(dir: string): Promise<string[]> {
   }
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}
 
 function promptOnlyHost(
   id: AgentId,

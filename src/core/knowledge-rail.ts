@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
 import { hashFile } from "./git.js";
-import { normalizeWords, sha256Text, summarizeText } from "./rail-utils.js";
+import { normalizeWords, pathExists, sha256Text, stableSlug, summarizeText } from "./rail-utils.js";
 import { WorkspaceGuard } from "./workspace-guard.js";
 import { artifactStore } from "./artifact-store.js";
 import { createWorkspaceFingerprint } from "./workspace-fingerprint.js";
@@ -127,7 +127,7 @@ export async function verifyKnowledge(name: string, root = process.cwd()): Promi
   const sourceMap = await readJson<{ sources?: KnowledgeSource[] }>(path.join(dir, "source-map.json"));
   const missingArtifacts: string[] = [];
   for (const artifact of ["SKILL.md", "glossary.md", "patterns.md", "cheatsheet.md", "metadata.json", "source-map.json"]) {
-    if (!await exists(path.join(dir, artifact))) missingArtifacts.push(artifact);
+    if (!await pathExists(path.join(dir, artifact))) missingArtifacts.push(artifact);
   }
   const missingSources: string[] = [];
   const changedSources: string[] = [];
@@ -156,7 +156,7 @@ export async function verifyKnowledge(name: string, root = process.cwd()): Promi
     metadata.updatedAt = report.createdAt;
     await writeJson(path.join(dir, "metadata.json"), metadata);
   }
-  if (await exists(dir)) await writeJson(path.join(dir, "verify.json"), report);
+  if (await pathExists(dir)) await writeJson(path.join(dir, "verify.json"), report);
   return report;
 }
 
@@ -268,17 +268,13 @@ function firstMeaningfulText(text: string): string {
 }
 
 function topicSlug(value: string): string {
-  const base = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 68) || "topic";
-  return `${base}-${sha256Text(value).slice(0, 10)}`;
+  return `${stableSlug(value, { fallback: "topic", maxLength: 68, hashOnLoss: false })}-${sha256Text(value).slice(0, 10)}`;
 }
 
 function slug(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "knowledge";
+  return stableSlug(value, { fallback: "knowledge" });
 }
 
-async function exists(file: string): Promise<boolean> {
-  return fs.access(file).then(() => true).catch(() => false);
-}
 
 async function readJson<T>(file: string): Promise<T | null> {
   try {

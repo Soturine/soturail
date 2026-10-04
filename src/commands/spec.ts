@@ -2,14 +2,10 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Command } from "commander";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeFileIfMissing } from "../core/config.js";
+import { stableSlug } from "../core/rail-utils.js";
 
 function slugify(input: string): string {
-  const slug = input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 50);
-  return slug || "feature";
+  return stableSlug(input, { fallback: "feature", maxLength: 50 });
 }
 
 async function nextSpecNumber(specsDir: string): Promise<number> {

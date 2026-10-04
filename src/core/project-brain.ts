@@ -7,7 +7,7 @@ import type { HarnessFailureRecord } from "./harness-rail.js";
 import type { MemoryRailRecord } from "./memory-rail.js";
 import { getAgentCapability, listAgentCapabilities } from "./agent-runtime.js";
 import type { AgentId } from "./agent-profile.js";
-import { keywordScore, makeRailId, sha256Text, summarizeText } from "./rail-utils.js";
+import { keywordScore, makeRailId, pathExists, sha256Text, summarizeText } from "./rail-utils.js";
 import { SOTURAIL_VERSION } from "./version.js";
 
 const execFileAsync = promisify(execFile);
@@ -322,10 +322,10 @@ export async function scanBrain(root = process.cwd()): Promise<{ profile: BrainP
     commands,
     tests,
     workflowHarnessDiagramEval: {
-      workflow: await exists(paths.workflowsDir) ? "present" : "missing",
-      harness: await exists(paths.harnessDir) ? "present" : "missing",
-      diagram: await exists(paths.diagramsDir) ? "present" : "missing",
-      eval: await exists(path.join(paths.workspace, "eval", "latest.json")) ? "latest report present" : "no latest report"
+      workflow: await pathExists(paths.workflowsDir) ? "present" : "missing",
+      harness: await pathExists(paths.harnessDir) ? "present" : "missing",
+      diagram: await pathExists(paths.diagramsDir) ? "present" : "missing",
+      eval: await pathExists(path.join(paths.workspace, "eval", "latest.json")) ? "latest report present" : "no latest report"
     },
     agentHosts: listAgentCapabilities().map((capability) => capability.id),
     knownReleaseProcess: ["npm run typecheck", "npm run build", "npm test", "npm run release:check", "tag/release after checks", "npm publish only after release gates"],
@@ -431,7 +431,7 @@ export async function staleBrain(root = process.cwd(), options: BrainStaleOption
   const events: BrainStaleEventRecord[] = [];
   for (const claim of claims) {
     const absolute = path.resolve(root, claim.sourcePath);
-    if (!(await exists(absolute))) {
+    if (!(await pathExists(absolute))) {
       events.push(staleEvent(claim.id, "source file missing", claim.rangeHash, "missing", "stale", { previousRange: claim.sourceRange }));
       continue;
     }
@@ -459,7 +459,7 @@ export async function staleBrain(root = process.cwd(), options: BrainStaleOption
       warnings.push(`${claim.id}: fileHash changed but rangeHash is unchanged`);
     }
     for (const validationPath of claim.validatedBy) {
-      if (!(await exists(path.resolve(root, validationPath)))) {
+      if (!(await pathExists(path.resolve(root, validationPath)))) {
         events.push(staleEvent(claim.id, `validatedBy missing: ${validationPath}`, claim.rangeHash, "missing-validation", "suspect", { previousRange: claim.sourceRange }));
       }
     }
@@ -556,10 +556,10 @@ export async function brainDoctor(root = process.cwd(), options: BrainDoctorOpti
   ];
   const files: BrainDoctorReport["files"] = [];
   for (const filePath of jsonlFiles) {
-    files.push({ path: relativeToRoot(root, filePath), present: await exists(filePath), validJsonl: await validJsonl(filePath) });
+    files.push({ path: relativeToRoot(root, filePath), present: await pathExists(filePath), validJsonl: await validJsonl(filePath) });
   }
   for (const filePath of [paths.brainProjectProfileFile, paths.brainIndexFile, paths.brainFreshnessFile]) {
-    files.push({ path: relativeToRoot(root, filePath), present: await exists(filePath) });
+    files.push({ path: relativeToRoot(root, filePath), present: await pathExists(filePath) });
   }
   const claims = await readJsonl<BrainClaimRecord>(paths.brainClaimsFile);
   const rules = await readJsonl<BrainRuleRecord>(paths.brainRulesFile);
@@ -567,13 +567,13 @@ export async function brainDoctor(root = process.cwd(), options: BrainDoctorOpti
   const activeSourceIds = new Set([...claims.map((claim) => claim.id), ...(await readJsonl<BrainDecisionRecord>(paths.brainDecisionsFile)).map((decision) => decision.id)]);
   const rulesWithoutSources = rules.filter((rule) => [...rule.sourceClaimIds, ...(rule.sourceDecisionIds ?? [])].every((id) => !activeSourceIds.has(id))).length;
   const integrationStatus = {
-    projectProfile: await exists(paths.brainProjectProfileFile) ? "present" : "missing",
-    workflow: await exists(paths.workflowsDir) ? "present" : "missing",
-    harness: await exists(paths.harnessDir) ? "present" : "missing",
-    diagram: await exists(paths.diagramsDir) ? "present" : "missing",
-    eval: await exists(path.join(paths.workspace, "eval", "latest.json")) ? "latest report present" : "no latest report",
-    agentExports: await exists(path.join(paths.brainExportsDir, "agent-brief.md")) ? "present" : "missing",
-    releaseProcess: await exists(path.join(root, "docs", "releases")) ? "docs/releases present" : "unknown"
+    projectProfile: await pathExists(paths.brainProjectProfileFile) ? "present" : "missing",
+    workflow: await pathExists(paths.workflowsDir) ? "present" : "missing",
+    harness: await pathExists(paths.harnessDir) ? "present" : "missing",
+    diagram: await pathExists(paths.diagramsDir) ? "present" : "missing",
+    eval: await pathExists(path.join(paths.workspace, "eval", "latest.json")) ? "latest report present" : "no latest report",
+    agentExports: await pathExists(path.join(paths.brainExportsDir, "agent-brief.md")) ? "present" : "missing",
+    releaseProcess: await pathExists(path.join(root, "docs", "releases")) ? "docs/releases present" : "unknown"
   };
   const findings = [
     ...(claims.some((claim) => !claim.sourcePath) ? ["Some claims are missing source paths."] : []),
@@ -582,7 +582,7 @@ export async function brainDoctor(root = process.cwd(), options: BrainDoctorOpti
     ...(counts.gaps > 0 ? [`Open gaps recorded: ${counts.gaps}`] : []),
     ...(counts.suspectOrStale > 0 ? [`Suspect or stale records/events: ${counts.suspectOrStale}`] : []),
     ...(rulesWithoutSources > 0 ? [`Rules without live brain sources: ${rulesWithoutSources}`] : []),
-    ...(await exists(path.join(paths.brainExportsDir, "agent-brief.md")) ? [] : ["Agent brief export is missing."])
+    ...(await pathExists(path.join(paths.brainExportsDir, "agent-brief.md")) ? [] : ["Agent brief export is missing."])
   ];
   const repairPlan = options.repairPlan ? (await staleBrain(root, { repairPlan: true })).repairPlan : undefined;
   const report: BrainDoctorReport = {
@@ -735,9 +735,6 @@ export async function readBrainCounts(root = process.cwd()): Promise<BrainCounts
   return brainCounts(root);
 }
 
-export async function brainExportExists(root = process.cwd()): Promise<boolean> {
-  return exists(path.join(getWorkspacePaths(root).brainExportsDir, "agent-brief.md"));
-}
 
 async function scanClaims(root: string, now: string): Promise<BrainClaimRecord[]> {
   const commit = await currentCommit(root);
@@ -1421,7 +1418,7 @@ async function detectRails(root: string): Promise<string[]> {
   ] as const;
   const present: string[] = [];
   for (const [name, file] of candidates) {
-    if (await exists(path.join(root, file))) present.push(name);
+    if (await pathExists(path.join(root, file))) present.push(name);
   }
   return present;
 }
@@ -1472,7 +1469,7 @@ async function appendRecordsIfNew<T extends { id: string }>(filePath: string, re
 
 async function ensureProfile(root: string): Promise<void> {
   const paths = getWorkspacePaths(root);
-  if (!(await exists(paths.brainProjectProfileFile))) await scanBrain(root);
+  if (!(await pathExists(paths.brainProjectProfileFile))) await scanBrain(root);
 }
 
 async function readJson<T>(filePath: string): Promise<T> {
@@ -1490,13 +1487,10 @@ async function validJsonl(filePath: string): Promise<boolean> {
 
 async function writeFileIfMissing(filePath: string, content: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  if (!(await exists(filePath))) await fs.writeFile(filePath, content, "utf8");
+  if (!(await pathExists(filePath))) await fs.writeFile(filePath, content, "utf8");
 }
 
 async function writeJsonIfMissing(filePath: string, value: unknown): Promise<void> {
-  if (!(await exists(filePath))) await writeJson(filePath, value);
+  if (!(await pathExists(filePath))) await writeJson(filePath, value);
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}

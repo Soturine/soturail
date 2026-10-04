@@ -4,7 +4,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import type { RawRunRecord } from "./raw-store.js";
-import { makeRailId, redactProbableSecrets } from "./rail-utils.js";
+import { makeRailId, pathExists, redactProbableSecrets } from "./rail-utils.js";
 import { createWorkspaceFingerprint, type WorkspaceFingerprint } from "./workspace-fingerprint.js";
 import { createArtifactEnvelope } from "./artifact-envelope.js";
 import { artifactStore } from "./artifact-store.js";
@@ -73,7 +73,7 @@ export async function verifyEvidence(root = process.cwd()): Promise<{ dir: strin
   if (!latest) throw new Error("No evidence run found. Run: soturail evidence collect");
   const missing: string[] = [];
   const currentWorkspace = await createWorkspaceFingerprint(root);
-  for (const source of latest.evidence.sourcePaths) if (!await exists(path.resolve(root, source))) missing.push(source);
+  for (const source of latest.evidence.sourcePaths) if (!await pathExists(path.resolve(root, source))) missing.push(source);
   const persistentBlockers = latest.evidence.blockers.filter((blocker) => !blocker.startsWith("Workspace fingerprint changed:"));
   const workspaceChanged = !latest.evidence.workspace?.fingerprint || latest.evidence.workspace.fingerprint !== currentWorkspace.fingerprint;
   latest.evidence.blockers = [...new Set([
@@ -167,6 +167,3 @@ function looksLikeCheck(command: string): boolean {
   return /\b(test|typecheck|build|lint|audit|check|verify|vitest|tsc)\b/i.test(command);
 }
 
-async function exists(file: string): Promise<boolean> {
-  return fs.access(file).then(() => true).catch(() => false);
-}

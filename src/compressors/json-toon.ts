@@ -19,9 +19,6 @@ export interface JsonToonResult {
   metrics: JsonToonMetrics;
 }
 
-export function compactJsonToon(input: string, maxPrimitiveLines = 160): string | null {
-  return compactJsonToonWithMetrics(input, maxPrimitiveLines)?.text ?? null;
-}
 
 export function compactJsonToonWithMetrics(input: string, maxPrimitiveLines = 160): JsonToonResult | null {
   const trimmed = input.trim();

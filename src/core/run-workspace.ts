@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import type { PolicyDecision } from "./policy-rail.js";
-import { makeRailId } from "./rail-utils.js";
+import { makeRailId, pathExists } from "./rail-utils.js";
 import { createRunManifest } from "./run-manifest.js";
 import { artifactStore } from "./artifact-store.js";
 
@@ -100,8 +100,8 @@ export async function showRunWorkspace(runId: string, root = process.cwd()): Pro
     `offload_ids: ${record.offloadIds.length}`,
     `policy_decisions: ${record.policyDecisions.length}`,
     `evidence_pack: ${record.evidencePack ?? "none"}`,
-    `summary_present: ${await exists(summaryPath)}`,
-    `handoff_present: ${await exists(handoffPath)}`,
+    `summary_present: ${await pathExists(summaryPath)}`,
+    `handoff_present: ${await pathExists(handoffPath)}`,
     `summary: ${relativeToRoot(root, summaryPath)}`,
     `handoff: ${relativeToRoot(root, handoffPath)}`,
     `evidence_dir: ${relativeToRoot(root, evidenceDir)}`,
@@ -138,11 +138,3 @@ function parseTtlDays(ttl: string): number {
   return match?.[1] ? Number.parseInt(match[1], 10) : 7;
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}

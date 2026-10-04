@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { z } from "zod";
 import { artifactStore } from "./artifact-store.js";
+import { pathExists } from "./rail-utils.js";
 
 export const WORKSPACE_DIR = ".soturail";
 
@@ -276,17 +277,9 @@ export function relativeToRoot(root: string, absolutePath: string): string {
   return path.normalize(path.relative(path.resolve(root), path.resolve(absolutePath)));
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export async function ensureDir(dirPath: string, result?: EnsureResult, root?: string): Promise<void> {
-  const alreadyExists = await exists(dirPath);
+  const alreadyExists = await pathExists(dirPath);
   await fs.mkdir(dirPath, { recursive: true });
   if (result && root) {
     const display = relativeToRoot(root, dirPath);
@@ -306,7 +299,7 @@ export async function writeFileIfMissing(
 ): Promise<"created" | "skipped"> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
   const display = root ? relativeToRoot(root, filePath) : filePath;
-  if (await exists(filePath)) {
+  if (await pathExists(filePath)) {
     result?.skipped.push(display);
     return "skipped";
   }

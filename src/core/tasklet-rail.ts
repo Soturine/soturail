@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot } from "./config.js";
+import { pathExists, stableSlug } from "./rail-utils.js";
 
 const requiredSections = ["Objective", "Allowed context", "Allowed files", "Disallowed actions", "Verification commands", "Definition of done", "Expected handoff"];
 
@@ -19,7 +20,7 @@ export interface TaskletSimulation {
 export async function createTasklet(name: string, root = process.cwd()): Promise<{ path: string; created: boolean }> {
   await ensureWorkspace(root);
   const file = path.join(getWorkspacePaths(root).taskletsDir, `${slug(name)}.md`);
-  if (await exists(file)) return { path: file, created: false };
+  if (await pathExists(file)) return { path: file, created: false };
   await fs.writeFile(file, renderTasklet(name), "utf8");
   return { path: file, created: true };
 }
@@ -75,13 +76,10 @@ function renderTasklet(name: string): string {
 }
 
 function slug(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "tasklet";
+  return stableSlug(value, { fallback: "tasklet" });
 }
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-async function exists(file: string): Promise<boolean> {
-  return fs.access(file).then(() => true).catch(() => false);
-}

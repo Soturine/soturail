@@ -2,7 +2,7 @@
 
 Operational source of truth for work after `v1.4.0`. Update code, tests and docs before changing an item to implemented.
 
-The v1.6 starting state, heuristic/parser classification and checkpoint plan are recorded in the [v1.6.0 Semantic Migration Baseline](../audits/v1.6.0-semantic-migration-baseline.md).
+The v1.6 starting state, heuristic/parser classification and checkpoint plan are recorded in the [v1.6.0 Semantic Migration Baseline](../audits/v1.6.0-semantic-migration-baseline.md); the module/gate/registry consolidation plan is the [v1.6.0 Refactor Map](../audits/v1.6.0-refactor-map.md).
 
 ## Legend
 
@@ -62,8 +62,11 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 
 | Checkpoint | Commit | CI | Last-known-green |
 |---|---|---|---|
-| CI repair — vitest GHSA-82fw-gwwq-j7x9 | `0608744` | pending | `0ae5a51` |
-| 0 — semantic migration baseline | see git log | pending | `0ae5a51` |
+| CI repair — vitest GHSA-82fw-gwwq-j7x9 | `0608744` | audit fixed; Windows red | `0ae5a51` |
+| 0 — semantic migration baseline | `4a4f7dd` | red (Windows lock/timeouts, fixed in `76828dc`) | `0ae5a51` |
+| CI repair — Windows lock contention/test budget | `76828dc` | green | `76828dc` |
+| 1 — canonical contracts | `a1fabc2` | green | `a1fabc2` |
+| Refactor map / simplification | see git log | pending | `a1fabc2` |
 
 ## Foundation
 

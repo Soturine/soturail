@@ -9,7 +9,7 @@ import {
   writeFileIfMissing,
   writeJson
 } from "./config.js";
-import { makeRailId } from "./rail-utils.js";
+import { makeRailId, pathExists } from "./rail-utils.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -352,7 +352,7 @@ async function auditFiles(
 ): Promise<HarnessAuditCheck> {
   const evidence: string[] = [];
   for (const file of files) {
-    if (await exists(file)) evidence.push(relativeToRoot(root, file));
+    if (await pathExists(file)) evidence.push(relativeToRoot(root, file));
   }
   const complete = evidence.length === files.length;
   return {
@@ -387,14 +387,6 @@ async function gitChangedFiles(root: string): Promise<string[]> {
   }
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 function emptyFeatureList(): FeatureList {
   return { schemaVersion: "soturail.feature-list.v1", active: null, features: [] };

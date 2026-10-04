@@ -3,7 +3,7 @@ import path from "node:path";
 import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
 import type { BrainClaimKind, BrainClaimRecord, BrainGapRecord } from "./project-brain.js";
 import { initBrain } from "./project-brain.js";
-import { makeRailId, sha256Text, summarizeText } from "./rail-utils.js";
+import { makeRailId, pathExists, sha256Text, summarizeText } from "./rail-utils.js";
 
 export interface ReverseScanReport {
   schemaVersion: "soturail.reverse.scan.v1";
@@ -146,7 +146,7 @@ export async function reverseGaps(root = process.cwd()): Promise<{ gaps: BrainGa
       createdAt: now
     });
   }
-  if (!(await exists(path.join(root, "docs", "project-brain.md")))) {
+  if (!(await pathExists(path.join(root, "docs", "project-brain.md")))) {
     gaps.push({
       schemaVersion: "soturail.brain.gap.v1",
       id: makeRailId("gap", "project-brain-doc-missing"),
@@ -158,7 +158,7 @@ export async function reverseGaps(root = process.cwd()): Promise<{ gaps: BrainGa
       createdAt: now
     });
   }
-  if (!(await exists(path.join(root, "src", "commands", "diagram.ts"))) && await exists(path.join(root, "docs", "diagram-rail.md"))) {
+  if (!(await pathExists(path.join(root, "src", "commands", "diagram.ts"))) && await pathExists(path.join(root, "docs", "diagram-rail.md"))) {
     gaps.push({
       schemaVersion: "soturail.brain.gap.v1",
       id: makeRailId("gap", "diagram-doc-without-command"),
@@ -375,6 +375,3 @@ async function appendRecordsIfNew<T extends { id: string }>(filePath: string, re
   return added;
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}

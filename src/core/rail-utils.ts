@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { promises as fs } from "node:fs";
 
 export function makeRailId(prefix: string, seed = ""): string {
   const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 14);
@@ -7,6 +8,35 @@ export function makeRailId(prefix: string, seed = ""): string {
 
 export function sha256Text(text: string): string {
   return createHash("sha256").update(text).digest("hex");
+}
+
+export async function pathExists(filePath: string): Promise<boolean> {
+  return fs.access(filePath).then(() => true).catch(() => false);
+}
+
+export interface StableSlugOptions {
+  fallback: string;
+  maxLength?: number;
+  separator?: "-" | "_";
+  /** Append a short digest when non-ASCII letters/digits could not be represented. */
+  hashOnLoss?: boolean;
+}
+
+/**
+ * Locale-neutral machine slug. ASCII input yields the historical slug unchanged;
+ * Latin diacritics are folded (NFD); any remaining non-ASCII letters or digits
+ * (CJK, Cyrillic, ...) add a digest of the exact input so distinct names never
+ * collapse onto the same identifier.
+ */
+export function stableSlug(value: string, options: StableSlugOptions): string {
+  const separator = options.separator ?? "-";
+  const maxLength = options.maxLength ?? 64;
+  const folded = value.normalize("NFD").replace(/\p{M}+/gu, "");
+  const lossy = /[^\x00-\x7f]/u.test(folded.replace(/[^\p{L}\p{N}]+/gu, ""));
+  const suffix = lossy && options.hashOnLoss !== false ? `${separator}${sha256Text(value).slice(0, 8)}` : "";
+  const edge = separator === "-" ? /^-+|-+$/g : /^_+|_+$/g;
+  const base = folded.toLowerCase().replace(/[^a-z0-9]+/g, separator).replace(edge, "").slice(0, Math.max(1, maxLength - suffix.length)).replace(edge, "");
+  return `${base || options.fallback}${suffix}`;
 }
 
 export function normalizeWords(value: string): string[] {
@@ -51,12 +81,4 @@ export function redactProbableSecrets(text: string): string {
     .replace(/\b(sk-[A-Za-z0-9]{20,})\b/g, "[REDACTED_API_KEY]")
     .replace(/\b((?:OPENAI|ANTHROPIC|GEMINI|GOOGLE|AWS|NPM|GITHUB)?_?(?:API_)?(?:KEY|TOKEN|SECRET|PASSWORD))\s*=\s*([^\s#]+)/gi, "$1=[REDACTED]")
     .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, "[REDACTED_PRIVATE_KEY]");
-}
-
-export function safeJsonParse<T>(raw: string, fallback: T): T {
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
 }

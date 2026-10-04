@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl } from "./config.js";
 import { getCurrentGitCommit, hashFile } from "./git.js";
-import { keywordScore, makeRailId, normalizeWords, redactProbableSecrets, sha256Text, summarizeText } from "./rail-utils.js";
+import { keywordScore, makeRailId, normalizeWords, pathExists, redactProbableSecrets, sha256Text, summarizeText } from "./rail-utils.js";
 
 export interface MemoryRailRecord {
   schemaVersion: "soturail.memory.v1";
@@ -119,7 +119,7 @@ export async function memoryRailDoctor(root = process.cwd()): Promise<string> {
   const records = await allMemoryRecords(root);
   const consolidated = await readJsonl<MemoryRailRecord>(paths.memoryConsolidatedFile);
   const sensitive = records.filter((record) => record.privacy === "sensitive").length;
-  const storageExists = await exists(paths.memoryDir);
+  const storageExists = await pathExists(paths.memoryDir);
   const likelySecrets = records.filter((record) => /\[REDACTED|secret|token|api[_-]?key/i.test(record.text)).length;
   return [
     "SotuRail Memory Rail doctor",
@@ -182,11 +182,3 @@ function uniqueTags(tags: string[]): string[] {
   return [...new Set(tags.map((tag) => tag.trim().toLowerCase()).filter(Boolean))];
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}

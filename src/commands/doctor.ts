@@ -5,6 +5,7 @@ import { buildCachePayload } from "../core/cache-normalizer.js";
 import { getWorkspacePaths, validateConfigFile } from "../core/config.js";
 import { MetricsStore } from "../core/metrics-store.js";
 import { agentDoctor } from "../core/agent-exporter.js";
+import { pathExists } from "../core/rail-utils.js";
 
 interface Check {
   name: string;
@@ -12,17 +13,9 @@ interface Check {
   message: string;
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 async function checkWritePermission(workspace: string): Promise<Check> {
-  if (!(await exists(workspace))) {
+  if (!(await pathExists(workspace))) {
     return { name: "write permissions", ok: false, message: "workspace does not exist" };
   }
   const probe = path.resolve(workspace, `.write-probe-${process.pid}-${Date.now()}`);
@@ -50,8 +43,8 @@ export async function runDoctor(root = process.cwd()): Promise<Check[]> {
   return [
     {
       name: "workspace",
-      ok: await exists(paths.workspace),
-      message: (await exists(paths.workspace)) ? ".soturail workspace exists" : ".soturail workspace is missing; run soturail init"
+      ok: await pathExists(paths.workspace),
+      message: (await pathExists(paths.workspace)) ? ".soturail workspace exists" : ".soturail workspace is missing; run soturail init"
     },
     await checkWritePermission(paths.workspace),
     checkNodeVersion(),

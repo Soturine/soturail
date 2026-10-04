@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl, relativeToRoot, writeJson } from "./config.js";
-import { makeRailId } from "./rail-utils.js";
+import { makeRailId, pathExists } from "./rail-utils.js";
 
 export interface HarnessFailureRecord {
   schemaVersion: "soturail.harness.failure.v1";
@@ -77,12 +77,12 @@ export async function harnessDoctor(root = process.cwd()): Promise<string> {
   ] as const;
   const lines = ["SotuRail Harness Rail doctor"];
   for (const [name, file] of checks) {
-    lines.push(`${name}: ${(await exists(path.resolve(root, file))) ? "present" : "missing"}`);
+    lines.push(`${name}: ${(await pathExists(path.resolve(root, file))) ? "present" : "missing"}`);
   }
   lines.push(`active_workflow: ${currentWorkflow ?? "none"}`);
-  lines.push(`contract_present: ${await exists(contractPath)}`);
+  lines.push(`contract_present: ${await pathExists(contractPath)}`);
   lines.push(`failure_count: ${failures.length}`);
-  lines.push(`latest_verify_status: ${verifyPath && await exists(verifyPath) ? "present" : "missing"}`);
+  lines.push(`latest_verify_status: ${verifyPath && await pathExists(verifyPath) ? "present" : "missing"}`);
   lines.push(`suggested_prevention_action: ${suggestPrevention(failures)}`);
   lines.push("acceptance_contract: soturail harness contract init");
   lines.push("safe_default: contract check validates by default; it does not run commands unless future explicit flags add that behavior.");
@@ -96,7 +96,7 @@ export async function harnessDoctor(root = process.cwd()): Promise<string> {
 export async function initHarnessContract(root = process.cwd()): Promise<{ path: string; created: boolean }> {
   await ensureWorkspace(root);
   const filePath = path.join(getWorkspacePaths(root).harnessContractsDir, "default.json");
-  if (await exists(filePath)) return { path: filePath, created: false };
+  if (await pathExists(filePath)) return { path: filePath, created: false };
   await writeJson(filePath, defaultContract());
   return { path: filePath, created: true };
 }
@@ -169,11 +169,3 @@ function suggestPrevention(failures: HarnessFailureRecord[]): string {
   return latest.preventionCandidate;
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}

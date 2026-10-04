@@ -3,8 +3,9 @@ import path from "node:path";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
 import { compileKnowledge } from "./knowledge-rail.js";
 import { createSkill, readSkills } from "./skill-store.js";
-import { stableSkillHash, stringifySkillYaml } from "./skill-schema.js";
+import { slugifySkillName, stableSkillHash, stringifySkillYaml } from "./skill-schema.js";
 import { validateSkills } from "./skill-validator.js";
+import { pathExists } from "./rail-utils.js";
 
 export interface SkillV2Issue {
   skill: string;
@@ -44,7 +45,7 @@ export async function buildSkill(name: string, inputs: string[], root = process.
 }
 
 export async function foldInSkill(name: string, inputs: string[], root = process.cwd()): Promise<string> {
-  const dir = path.join(getWorkspacePaths(root).skillsDir, slug(name));
+  const dir = path.join(getWorkspacePaths(root).skillsDir, slugifySkillName(name));
   const map = await readJson<{ sources?: Array<{ path?: string }> }>(path.join(dir, "source-map.json"));
   return buildSkill(name, [...new Set([...(map?.sources ?? []).map((source) => source.path).filter((item): item is string => Boolean(item)), ...inputs])], root);
 }
@@ -55,7 +56,7 @@ export async function lintSkillsV2(root = process.cwd()): Promise<SkillV2Report>
   const issues: SkillV2Issue[] = base.issues.map((issue) => ({ skill: issue.skill_id, severity: issue.severity, message: issue.message }));
   for (const skill of skills) {
     for (const file of ["metadata.json", "source-map.json"]) {
-      if (!await exists(path.join(skill.dir, file))) issues.push({ skill: skill.metadata.id, severity: "warning", message: `Missing Skill Rail 2.0 artifact: ${file}` });
+      if (!await pathExists(path.join(skill.dir, file))) issues.push({ skill: skill.metadata.id, severity: "warning", message: `Missing Skill Rail 2.0 artifact: ${file}` });
     }
     if (!/## Verification Checklist/i.test(skill.markdown)) issues.push({ skill: skill.metadata.id, severity: "error", message: "Missing verification checklist." });
     if (!/## Safety/i.test(skill.markdown)) issues.push({ skill: skill.metadata.id, severity: "error", message: "Missing safety section." });
@@ -91,7 +92,7 @@ async function ensureV2Artifacts(dir: string, sources: string[], domain: string)
   await fs.mkdir(path.join(dir, "topics"), { recursive: true });
   const artifacts: Array<[string, string]> = [["glossary.md", "# Glossary\n\n- Add reviewed domain terms.\n"], ["patterns.md", "# Patterns\n\n- Add reviewed local patterns.\n"], ["cheatsheet.md", "# Cheatsheet\n\n- Keep commands safe and reviewable.\n"]];
   for (const [name, content] of artifacts) {
-    if (!await exists(path.join(dir, name))) await fs.writeFile(path.join(dir, name), content, "utf8");
+    if (!await pathExists(path.join(dir, name))) await fs.writeFile(path.join(dir, name), content, "utf8");
   }
   await writeJson(path.join(dir, "metadata.json"), { schemaVersion: "soturail.skill-pack.v2", domain, supportedHosts: ["claude", "codex", "gemini", "cursor", "generic"], riskLevel: "low", verificationSteps: ["soturail skills lint", "soturail skills eval"], warnings: ["Remote writes require human approval."] });
   await writeJson(path.join(dir, "source-map.json"), { schemaVersion: "soturail.skill-source-map.v1", sources });
@@ -108,13 +109,7 @@ function reportFor(skills: number, issues: SkillV2Issue[]): SkillV2Report {
   };
 }
 
-function slug(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 64) || "skill";
-}
 
-async function exists(file: string): Promise<boolean> {
-  return fs.access(file).then(() => true).catch(() => false);
-}
 
 async function readJson<T>(file: string): Promise<T | null> {
   try {

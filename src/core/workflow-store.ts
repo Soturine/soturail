@@ -5,6 +5,7 @@ import { planWorktree } from "./worktree-manager.js";
 import type { HarnessFailureRecord } from "./harness-rail.js";
 import type { PolicyDecision, PolicyQueueItem } from "./policy-rail.js";
 import type { RawRunRecord } from "./raw-store.js";
+import { pathExists, stableSlug } from "./rail-utils.js";
 
 export type WorkflowState = "draft" | "planned" | "active" | "verifying" | "ready_for_review" | "closed" | "blocked";
 
@@ -87,8 +88,8 @@ export async function setupWorkflowRail(root = process.cwd()): Promise<string> {
   await fs.mkdir(paths.workflowTemplatesDir, { recursive: true });
   await writeFileIfMissing(path.join(paths.workflowTemplatesDir, "feature.md"), workflowTemplate("feature"));
   await writeFileIfMissing(path.join(paths.workflowTemplatesDir, "release.md"), workflowTemplate("release"));
-  if (!(await exists(paths.workflowIndexFile))) await writeJson(paths.workflowIndexFile, { schemaVersion: "soturail.workflow.index.v2", workflows: [] });
-  if (!(await exists(paths.workflowCurrentFile))) await writeJson(paths.workflowCurrentFile, { schemaVersion: "soturail.workflow.current.v1", id: null });
+  if (!(await pathExists(paths.workflowIndexFile))) await writeJson(paths.workflowIndexFile, { schemaVersion: "soturail.workflow.index.v2", workflows: [] });
+  if (!(await pathExists(paths.workflowCurrentFile))) await writeJson(paths.workflowCurrentFile, { schemaVersion: "soturail.workflow.current.v1", id: null });
   return [
     "SotuRail workflow setup",
     `workflows_dir: ${relativeToRoot(root, paths.workflowsDir)}`,
@@ -492,11 +493,11 @@ async function writeVerificationReport(id: string, root: string): Promise<Workfl
     workflowId: id,
     createdAt: new Date().toISOString(),
     summary: {
-      harnessContract: await exists(harnessContractPath) ? "present" : "missing",
+      harnessContract: await pathExists(harnessContractPath) ? "present" : "missing",
       policy: queue.length === 0 ? `clear (${decisions.length} decisions)` : `${queue.length} pending`,
-      evidence: rawRecords.length > 0 || failures.length > 0 || await exists(reviewPath) ? "partial" : "needs evidence",
-      diagram: await exists(diagramValidationPath) ? "validated" : "not validated",
-      evalReport: await exists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
+      evidence: rawRecords.length > 0 || failures.length > 0 || await pathExists(reviewPath) ? "partial" : "needs evidence",
+      diagram: await pathExists(diagramValidationPath) ? "validated" : "not validated",
+      evalReport: await pathExists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
       releasePreflight: releaseNotesPath ? `release notes: ${releaseNotesPath}` : "not release-focused"
     },
     paths: {
@@ -507,7 +508,7 @@ async function writeVerificationReport(id: string, root: string): Promise<Workfl
       policyQueue: relativeToRoot(root, paths.policyQueueFile),
       policyDecisions: relativeToRoot(root, paths.policyDecisionsFile),
       diagramValidation: relativeToRoot(root, diagramValidationPath),
-      evalReport: await exists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
+      evalReport: await pathExists(evalPath) ? relativeToRoot(root, evalPath) : "missing",
       releaseNotes: releaseNotesPath ?? "missing"
     }
   };
@@ -606,7 +607,7 @@ async function currentReleaseNotesPath(root: string): Promise<string | null> {
     const version = (JSON.parse(raw) as { version?: string }).version;
     if (!version) return null;
     const notes = path.join(root, "docs", "releases", `RELEASE_NOTES_v${version}.md`);
-    return await exists(notes) ? relativeToRoot(root, notes) : null;
+    return await pathExists(notes) ? relativeToRoot(root, notes) : null;
   } catch {
     return null;
   }
@@ -626,7 +627,7 @@ async function gitChangedFiles(root: string): Promise<string[]> {
 
 async function writeFileIfMissing(filePath: string, content: string): Promise<void> {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  if (!(await exists(filePath))) await fs.writeFile(filePath, content, "utf8");
+  if (!(await pathExists(filePath))) await fs.writeFile(filePath, content, "utf8");
 }
 
 function workflowTemplate(kind: "feature" | "release"): string {
@@ -653,12 +654,9 @@ function workflowTemplate(kind: "feature" | "release"): string {
   ].join("\n");
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}
 
 function slug(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48) || "workflow";
+  return stableSlug(value, { fallback: "workflow", maxLength: 48 });
 }
 
 async function missingWorkflowMessage(id: string, root: string): Promise<string> {

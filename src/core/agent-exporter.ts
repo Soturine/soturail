@@ -8,6 +8,7 @@ import { getAgentProfile, listAgentProfiles, parseAgentId } from "./agent-regist
 import type { AgentExportFile, AgentId, AgentInstallOptions, AgentMode } from "./agent-profile.js";
 import { redactText } from "./report-redaction.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { pathExists } from "./rail-utils.js";
 import {
   AGENT_POLICY_NOTES,
   agentStatus,
@@ -130,7 +131,7 @@ export async function uninstallAgent(agentValue: string, options: { dryRun?: boo
       const filePath = path.resolve(root, target.path);
       const backup = `${filePath}.soturail.bak`;
       const relative = relativeToRoot(root, filePath);
-      if (await exists(backup)) {
+      if (await pathExists(backup)) {
         lines.push(`${options.dryRun ? "Would restore" : "Restored"} ${relative} from ${relative}.soturail.bak`);
         if (!options.dryRun) await fs.copyFile(backup, filePath);
       } else {
@@ -160,7 +161,7 @@ export async function agentDoctor(root = process.cwd(), options: { verbose?: boo
     "SotuRail Agent Integration Doctor",
     `version: ${SOTURAIL_VERSION}`,
     "summary: local agent setup is safe-by-default, dry-run-first and project-local",
-    `workspace: ${await exists(paths.workspace) ? "ready" : "missing"}`,
+    `workspace: ${await pathExists(paths.workspace) ? "ready" : "missing"}`,
     "mcp: ready",
     `context_packs: ${contextPacks.length > 0 ? "ready" : "none yet"}`,
     `skills: ${skills.length} found`,
@@ -720,7 +721,7 @@ async function writePlannedFile(
   options: { dryRun: boolean; backup: boolean }
 ): Promise<string[]> {
   const relative = relativeToRoot(root, filePath).replace(/\\/g, "/");
-  const existsAlready = await exists(filePath);
+  const existsAlready = await pathExists(filePath);
   const lines = [`${options.dryRun ? "Would write" : "Write"} ${relative}`];
   if (existsAlready && options.backup) {
     lines.push(`${options.dryRun ? "Would create" : "Create"} backup ${relative}.soturail.bak`);
@@ -735,6 +736,3 @@ async function writePlannedFile(
   return lines;
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}

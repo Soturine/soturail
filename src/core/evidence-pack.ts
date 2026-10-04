@@ -8,7 +8,7 @@ import type { PolicyDecision } from "./policy-rail.js";
 import type { RawRunRecord } from "./raw-store.js";
 import { readBrainCounts } from "./project-brain.js";
 import { detectNativeEngine } from "./native-engine.js";
-import { makeRailId } from "./rail-utils.js";
+import { makeRailId, pathExists } from "./rail-utils.js";
 import { readWorkflow } from "./workflow-store.js";
 import { SOTURAIL_VERSION } from "./version.js";
 
@@ -24,7 +24,7 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
   const failures = await readJsonl<HarnessFailureRecord>(paths.harnessFailuresFile);
   const changedFiles = await gitChangedFiles(root);
   const harnessContractPath = path.join(paths.harnessContractsDir, "default.json");
-  const harnessContractPresent = await exists(harnessContractPath);
+  const harnessContractPresent = await pathExists(harnessContractPath);
   const reviewPath = path.join(workflowDir, "review.md");
   const reviewJsonPath = path.join(workflowDir, "review.json");
   const verifyPath = path.join(workflowDir, "verify.md");
@@ -61,10 +61,10 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     `- plan: ${relativeToRoot(root, path.join(workflowDir, "plan.md"))}`,
     `- tasks: ${relativeToRoot(root, path.join(workflowDir, "tasks.md"))}`,
     `- verification: ${relativeToRoot(root, path.join(workflowDir, "verification.md"))}`,
-    `- review_report: ${await exists(reviewPath) ? relativeToRoot(root, reviewPath) : "missing"}`,
-    `- review_json: ${await exists(reviewJsonPath) ? relativeToRoot(root, reviewJsonPath) : "missing"}`,
-    `- verify_report: ${await exists(verifyPath) ? relativeToRoot(root, verifyPath) : "missing"}`,
-    `- verify_json: ${await exists(verifyJsonPath) ? relativeToRoot(root, verifyJsonPath) : "missing"}`,
+    `- review_report: ${await pathExists(reviewPath) ? relativeToRoot(root, reviewPath) : "missing"}`,
+    `- review_json: ${await pathExists(reviewJsonPath) ? relativeToRoot(root, reviewJsonPath) : "missing"}`,
+    `- verify_report: ${await pathExists(verifyPath) ? relativeToRoot(root, verifyPath) : "missing"}`,
+    `- verify_json: ${await pathExists(verifyJsonPath) ? relativeToRoot(root, verifyJsonPath) : "missing"}`,
     "",
     "## Context And Role Packs",
     "",
@@ -103,35 +103,35 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     "",
     "## Diagram And Evaluation Evidence",
     "",
-    `- diagram_validation: ${await exists(diagramValidationPath) ? relativeToRoot(root, diagramValidationPath) : "missing"}`,
-    `- eval_report: ${await exists(evalReportPath) ? relativeToRoot(root, evalReportPath) : "missing"}`,
+    `- diagram_validation: ${await pathExists(diagramValidationPath) ? relativeToRoot(root, diagramValidationPath) : "missing"}`,
+    `- eval_report: ${await pathExists(evalReportPath) ? relativeToRoot(root, evalReportPath) : "missing"}`,
     "",
     "## Project Brain Evidence",
     "",
-    `- brain_profile: ${await exists(paths.brainProjectProfileFile) ? relativeToRoot(root, paths.brainProjectProfileFile) : "missing"}`,
+    `- brain_profile: ${await pathExists(paths.brainProjectProfileFile) ? relativeToRoot(root, paths.brainProjectProfileFile) : "missing"}`,
     `- brain_claims: ${brainCounts?.claims ?? 0}`,
     `- brain_gaps: ${brainCounts?.gaps ?? 0}`,
     `- brain_stale_events: ${brainCounts?.staleEvents ?? 0}`,
     `- brain_suspect_or_stale: ${brainCounts?.suspectOrStale ?? 0}`,
-    `- brain_doctor: ${await exists(paths.brainDoctorFile) ? relativeToRoot(root, paths.brainDoctorFile) : "missing"}`,
+    `- brain_doctor: ${await pathExists(paths.brainDoctorFile) ? relativeToRoot(root, paths.brainDoctorFile) : "missing"}`,
     "",
     "## Performance Evidence",
     "",
-    `- latest_benchmark_json: ${await exists(benchJsonPath) ? relativeToRoot(root, benchJsonPath) : "missing"}`,
-    `- latest_benchmark_report: ${await exists(benchMdPath) ? relativeToRoot(root, benchMdPath) : "missing"}`,
-    `- native_candidate_report: ${await exists(nativeCandidatePath) ? relativeToRoot(root, nativeCandidatePath) : "missing"}`,
-    `- baseline_report: ${await exists(baselinePath) ? relativeToRoot(root, baselinePath) : "missing"}`,
+    `- latest_benchmark_json: ${await pathExists(benchJsonPath) ? relativeToRoot(root, benchJsonPath) : "missing"}`,
+    `- latest_benchmark_report: ${await pathExists(benchMdPath) ? relativeToRoot(root, benchMdPath) : "missing"}`,
+    `- native_candidate_report: ${await pathExists(nativeCandidatePath) ? relativeToRoot(root, nativeCandidatePath) : "missing"}`,
+    `- baseline_report: ${await pathExists(baselinePath) ? relativeToRoot(root, baselinePath) : "missing"}`,
     `- engine_status: typescript fallback OK; native_available=${native?.available ?? false}`,
     "- performance_warnings: no native speedup claimed without a local benchmark report.",
     "",
     "## Local Report And Observability Evidence",
     "",
-    `- status_json: ${await exists(statusJsonPath) ? relativeToRoot(root, statusJsonPath) : "missing"}`,
-    `- report_json: ${await exists(reportJsonPath) ? relativeToRoot(root, reportJsonPath) : "missing"}`,
-    `- report_html: ${await exists(reportHtmlPath) ? relativeToRoot(root, reportHtmlPath) : "missing"}`,
-    `- dashboard_html: ${await exists(dashboardIndexPath) ? relativeToRoot(root, dashboardIndexPath) : "missing"}`,
-    `- observability_timeline: ${await exists(observabilityTimelinePath) ? relativeToRoot(root, observabilityTimelinePath) : "missing"}`,
-    `- mcp_report_resources: ${await exists(mcpReportResourcesPath) ? relativeToRoot(root, mcpReportResourcesPath) : "missing"}`,
+    `- status_json: ${await pathExists(statusJsonPath) ? relativeToRoot(root, statusJsonPath) : "missing"}`,
+    `- report_json: ${await pathExists(reportJsonPath) ? relativeToRoot(root, reportJsonPath) : "missing"}`,
+    `- report_html: ${await pathExists(reportHtmlPath) ? relativeToRoot(root, reportHtmlPath) : "missing"}`,
+    `- dashboard_html: ${await pathExists(dashboardIndexPath) ? relativeToRoot(root, dashboardIndexPath) : "missing"}`,
+    `- observability_timeline: ${await pathExists(observabilityTimelinePath) ? relativeToRoot(root, observabilityTimelinePath) : "missing"}`,
+    `- mcp_report_resources: ${await pathExists(mcpReportResourcesPath) ? relativeToRoot(root, mcpReportResourcesPath) : "missing"}`,
     "- report_policy: local artifacts only; no cloud telemetry upload; static dashboard by default.",
     "",
     "## Release Evidence",
@@ -139,7 +139,7 @@ export async function buildWorkflowEvidence(id: string, root = process.cwd()): P
     `- package_version: ${packageVersion ?? "unknown"}`,
     `- cli_version: ${SOTURAIL_VERSION}`,
     `- changelog_entry: ${packageVersion ? `## [${packageVersion}]` : "unknown"}`,
-    `- release_notes: ${releaseNotesPath && await exists(releaseNotesPath) ? relativeToRoot(root, releaseNotesPath) : "missing"}`,
+    `- release_notes: ${releaseNotesPath && await pathExists(releaseNotesPath) ? relativeToRoot(root, releaseNotesPath) : "missing"}`,
     "- npm_tarball_check: run `soturail release verify-package` or `npm run release:check`.",
     `- github_tag_recommendation: ${packageVersion ? `v${packageVersion}` : "unknown"}`,
     "- npm_publish_checklist: build, test, release check, GitHub release notes, npm publish.",
@@ -181,6 +181,3 @@ async function gitChangedFiles(root: string): Promise<string[]> {
   }
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}

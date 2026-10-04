@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { appendJsonl, ensureWorkspace, getWorkspacePaths, readJsonl } from "./config.js";
-import { makeRailId } from "./rail-utils.js";
+import { makeRailId, pathExists } from "./rail-utils.js";
 
 export type PolicyRiskCategory =
   | "destructive shell command"
@@ -110,7 +110,7 @@ export async function validatePolicy(root = process.cwd()): Promise<string> {
   const decisions = await readJsonl<PolicyDecision>(paths.policyDecisionsFile);
   const ok = queue.every((item) => item.schemaVersion === "soturail.policy.queue.v1" && item.status === "pending")
     && decisions.every((item) => item.schemaVersion === "soturail.policy.decision.v1");
-  const docsPresent = await exists(path.join(root, "docs", "policy-rail.md"));
+  const docsPresent = await pathExists(path.join(root, "docs", "policy-rail.md"));
   return [
     "SotuRail policy validate",
     `valid: ${ok}`,
@@ -130,11 +130,3 @@ export function renderPolicyQueue(items: PolicyQueueItem[]): string {
   ].join("\n") + "\n";
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { stableSlug } from "./rail-utils.js";
 
 export const SkillTargetSchema = z.enum(["claude", "codex", "gemini", "cursor", "generic"]);
 export type SkillTarget = z.infer<typeof SkillTargetSchema>;
@@ -38,12 +39,7 @@ export const defaultForbiddenPatterns = [
 export const defaultHumanApprovals = ["destructive_command", "remote_write", "dependency_install"];
 
 export function slugifySkillName(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 64) || "skill";
+  return stableSlug(name, { fallback: "skill" });
 }
 
 export function stableSkillHash(metadata: Omit<SkillMetadata, "content_hash">, markdown: string): string {

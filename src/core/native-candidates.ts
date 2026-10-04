@@ -3,6 +3,7 @@ import path from "node:path";
 import { detectNativeEngine } from "./native-engine.js";
 import { getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
 import { SOTURAIL_VERSION } from "./version.js";
+import { pathExists } from "./rail-utils.js";
 
 export type NativeCandidateClassification = "good-candidate" | "maybe-candidate" | "not-worth-it-yet" | "blocked";
 
@@ -126,8 +127,8 @@ export async function nativeDoctor(root = process.cwd()): Promise<string> {
   const paths = getWorkspacePaths(root);
   const candidateJson = path.join(paths.workspace, "native", "candidates.json");
   const benchJson = path.join(paths.workspace, "bench", "latest.json");
-  const candidatePresent = await exists(candidateJson);
-  const benchPresent = await exists(benchJson);
+  const candidatePresent = await pathExists(candidateJson);
+  const benchPresent = await pathExists(benchJson);
   return [
     "SotuRail native doctor",
     "typescript_fallback: OK",
@@ -245,6 +246,3 @@ function topNativeRecommendations(report: NativeCandidateReport): string[] {
   ];
 }
 
-async function exists(filePath: string): Promise<boolean> {
-  return fs.access(filePath).then(() => true).catch(() => false);
-}

@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { exportAgents } from "./agent-exporter.js";
 import { ensureWorkspace, getWorkspacePaths, relativeToRoot, writeJson } from "./config.js";
+import { pathExists } from "./rail-utils.js";
 
 export interface AgentQaCase {
   id: string;
@@ -38,7 +39,7 @@ export async function initEvalDataset(root = process.cwd()): Promise<string> {
   await ensureWorkspace(root);
   const target = path.join(getWorkspacePaths(root).evalsDir, "datasets", "default.json");
   await fs.mkdir(path.dirname(target), { recursive: true });
-  if (!await exists(target)) await writeJson(target, defaultDataset);
+  if (!await pathExists(target)) await writeJson(target, defaultDataset);
   return target;
 }
 
@@ -122,7 +123,7 @@ async function artifactCase(id: string, dir: string, required: string[], descrip
   const entries = (await fs.readdir(dir, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory());
   if (!entries.length) return makeCase(id, "warn", [], `No artifacts found. ${description}`);
   const missing: string[] = [];
-  for (const entry of entries) for (const file of required) if (!await exists(path.join(dir, entry.name, file))) missing.push(`${entry.name}/${file}`);
+  for (const entry of entries) for (const file of required) if (!await pathExists(path.join(dir, entry.name, file))) missing.push(`${entry.name}/${file}`);
   return makeCase(id, missing.length ? "fail" : "pass", entries.map((entry) => path.join(dir, entry.name)), missing.join(", ") || description);
 }
 
@@ -179,9 +180,6 @@ async function findNamed(dir: string, name: string): Promise<string[]> {
   return result;
 }
 
-async function exists(file: string): Promise<boolean> {
-  return fs.access(file).then(() => true).catch(() => false);
-}
 
 async function readJson<T>(file: string): Promise<T | null> {
   try {
