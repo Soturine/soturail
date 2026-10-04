@@ -7,35 +7,59 @@
 
 **SotuRail is a local-first, agent-native engineering control plane for AI-assisted software development.**
 
-It gives coding agents a small, portable Skill surface plus self-describing capabilities, then keeps the important engineering states grounded in workspace facts, provenance, freshness, recorded evidence, policy and readiness.
+It sits beside coding agents such as Claude Code, Codex, Cursor and Gemini CLI. The agent handles semantic work — understanding the task, project vocabulary, requirements and ambiguity — while SotuRail keeps the engineering state inspectable and verifiable: capabilities, workspace identity, contracts, provenance, freshness, evidence, policy and readiness.
 
 ```text
 AI understands.
 SotuRail organizes, constrains and proves.
 ```
 
-SotuRail is **not another coding agent**, model gateway or autonomous runtime. Claude Code, Codex, Cursor, Gemini CLI and other capable agents remain the semantic/execution workers. SotuRail gives them reusable engineering procedures and a verifiable control plane.
+SotuRail is **not another coding agent**, a model gateway, a cloud backend or an autonomous shell runtime. It is the engineering rail around the agent.
 
-## Why SotuRail
+## What problem does it solve?
 
-Coding agents are good at understanding natural language, project context and ambiguous software tasks. They are much less trustworthy when they self-assert that a check passed, evidence is current, a human approved something, or a change is safe to advance.
+AI coding agents can reason well, but an agent saying _“tests passed”_, _“this evidence is current”_ or _“the change is ready”_ should not automatically make that true.
 
-SotuRail separates those responsibilities:
+SotuRail separates semantic reasoning from verifiable engineering state:
 
-| Layer | Responsibility |
-|---|---|
-| **AI agent / Semantic Worker** | Understand intent, requirements, project/domain meaning, ambiguity and candidate impact |
-| **Skills** | Teach reusable procedures and which capabilities to compose |
-| **Capabilities** | Stable, self-describing contracts exposed through Skill/MCP/CLI surfaces |
-| **Native tools / providers** | Supply objective facts or optional specialized capabilities |
-| **SotuRail trust core** | Workspace integrity, provenance, freshness, evidence, policy, authority and readiness |
-| **Human** | Product decisions, risk acceptance and explicit approval where required |
+```text
+User request
+   ↓
+AI agent / Semantic Worker
+   ↓
+portable Skill
+   ↓
+capability discovery
+   ↓
+native facts / providers / project sources
+   ↓
+candidate artifacts
+   ↓
+provenance + freshness + policy + evidence
+   ↓
+readiness
+```
 
-The agent may infer. It cannot promote its own output to `verified`, `current`, `approved` or `ready`.
+The agent may infer, explain and propose. SotuRail decides whether the relevant evidence is current and whether the change is actually ready to advance.
+
+## Typical use cases
+
+SotuRail is useful when you want an AI coding agent to work with more discipline across a real repository, for example:
+
+- implement a feature without losing track of scope and acceptance criteria;
+- debug a regression and retain reproducible evidence;
+- review a change against recorded checks rather than model confidence;
+- keep project knowledge source-backed and freshness-aware;
+- expose a small, self-describing capability surface to an agent through MCP;
+- reuse the same engineering workflow across Claude Code, Codex, Cursor, Gemini CLI and generic Agent Skills hosts;
+- preserve a clear boundary between AI-generated candidates and verified facts;
+- prepare releases with explicit human approval and reproducible artifacts.
 
 ## Install
 
-Requires Node.js 22 or newer.
+SotuRail v1.6 requires **Node.js 22 or newer**.
+
+Install globally:
 
 ```bash
 npm install -g soturail
@@ -45,101 +69,159 @@ soturail --version
 Or run it without a global install:
 
 ```bash
-npx soturail --help
+npx soturail@latest --help
 ```
 
-TypeScript/Node.js is the portable implementation. The Rust crate remains optional and benchmark-gated.
+The portable implementation is TypeScript/Node.js. Rust is optional and used only where benchmarked native acceleration is justified.
 
-## Agent-first quickstart
+## 5-minute quickstart
 
-The preferred v1.6 experience is **not** making an agent memorize the CLI.
+### 1. Initialize SotuRail in a project
 
-Project SotuRail's portable Skills into the host:
+From the repository root:
 
 ```bash
-# Claude Code -> .claude/skills/
+soturail init
+soturail doctor
+soturail index
+```
+
+Runtime state is kept locally under:
+
+```text
+.soturail/
+```
+
+SotuRail does not require a hosted workspace, account or mandatory cloud service for its normal local workflow.
+
+### 2. Install the portable Skills for your agent
+
+Claude Code:
+
+```bash
 soturail skills export --target claude --layout portable --install
+```
 
-# Codex / Cursor / Gemini CLI -> .agents/skills/
+Codex:
+
+```bash
 soturail skills export --target codex --layout portable --install
-soturail skills export --target cursor --layout portable --install
-soturail skills export --target gemini --layout portable --install
+```
 
-# Unknown/unverified hosts -> portable generic projection
+Cursor:
+
+```bash
+soturail skills export --target cursor --layout portable --install
+```
+
+Gemini CLI:
+
+```bash
+soturail skills export --target gemini --layout portable --install
+```
+
+Unknown or unverified host:
+
+```bash
 soturail skills export --target generic --layout portable --install
 ```
 
-Then talk to the coding agent normally:
+Verified v1.6 project projections:
+
+| Host | Skill directory |
+|---|---|
+| Claude Code | `.claude/skills/` |
+| Codex | `.agents/skills/` |
+| Cursor | `.agents/skills/` |
+| Gemini CLI | `.agents/skills/` |
+| Other / unverified hosts | generic portable projection |
+
+### 3. Talk to the agent normally
+
+You do **not** need to translate your work into SotuRail CLI commands.
+
+Examples:
 
 ```text
-"Corrija a regressão de login e verifique o impacto."
+"Corrija a regressão de login e verifique o que pode ser afetado."
 
-"Review this pull request against the recorded evidence."
+"Review this change and only call it ready if the required evidence is current."
 
-"Analise os requisitos e registre o que ainda é apenas hipótese."
+"Analise esses requisitos e separe fatos, hipóteses e perguntas em aberto."
 
 "Prepare a release, mas não publique nada sem minha aprovação."
 ```
 
-The agent can discover SotuRail through the Skills and, when MCP is available, through the self-describing capability surface.
+The agent can discover the relevant SotuRail Skills and capabilities instead of memorizing the whole CLI.
 
-## What ships in v1.6
+### 4. Inspect discovery manually when needed
 
-SotuRail v1.6 ships eight portable Skills with progressive disclosure:
+For humans, CI or debugging:
+
+```bash
+soturail skills discover
+soturail capabilities list
+soturail capabilities describe context.select
+```
+
+MCP-capable agents can use the typed discovery surface:
+
+```text
+soturail.skills.list
+soturail.capabilities
+```
+
+## Core concepts
+
+### Skills
+
+Skills are portable operating procedures for agents. They explain **when and how** to use SotuRail capabilities without duplicating the implementation.
+
+SotuRail v1.6 ships eight bundled Skills:
 
 | Skill | Purpose |
 |---|---|
-| `soturail-core` | Common discover → select → act → verify loop |
-| `soturail-change` | Implement controlled software changes |
-| `soturail-debug` | Reproduce and fix failures |
+| `soturail-core` | Base discover → select → act → verify workflow |
+| `soturail-change` | Controlled software changes |
+| `soturail-debug` | Reproduce, diagnose and fix failures |
 | `soturail-review` | Review changes against contracts and evidence |
-| `soturail-security` | Apply security-sensitive engineering discipline |
+| `soturail-security` | Security-sensitive engineering work |
 | `soturail-research` | Research with provenance and source separation |
-| `soturail-knowledge` | Build and maintain source-backed project knowledge |
-| `soturail-release` | Qualify releases and preserve irreversible-action boundaries |
+| `soturail-knowledge` | Source-backed project knowledge |
+| `soturail-release` | Release qualification and irreversible-action boundaries |
 
-Skills are procedures, not duplicated engines. They bind to canonical capabilities and load only what is needed.
-
-## Progressive disclosure
-
-SotuRail avoids eagerly dumping the whole manual into the agent context.
+They use progressive disclosure:
 
 ```text
-Level 1
-name + concise description
-        ↓
+Level 1: name + description
+          ↓
 agent decides relevance
 
-Level 2
-selected SKILL.md
-        ↓
-workflow + capabilities + constraints
+Level 2: selected SKILL.md
+          ↓
+workflow + capability bindings
 
-Level 3
-references / schemas / scripts / assets
-        ↓
-loaded only when needed
+Level 3: references / scripts / assets
+          ↓
+loaded only when required
 ```
 
-The bundled Level-1 catalog is much smaller than eagerly loading every Skill and reference. See the [v1.6 release notes](docs/releases/RELEASE_NOTES_v1.6.0.md) for measured context sizes.
+### Capabilities
 
-## Self-describing capabilities
+Capabilities are stable, self-describing contracts. They describe what SotuRail can do independently of a specific host UI.
 
-Capability Descriptor v2 is the canonical description layer for agent-facing capabilities.
+A capability can describe:
 
-A capability can declare:
-
-- purpose and stable machine ID;
-- inputs and output artifact schema;
+- stable machine ID;
+- purpose;
+- typed inputs and outputs;
 - Skill / MCP / CLI surfaces;
-- permissions and side effects;
-- evidence and freshness requirements;
+- required permissions;
+- side effects;
+- evidence/freshness requirements;
 - provider class and availability;
 - fallback behavior;
-- language/localization metadata;
-- allowed trust state for agent/provider output.
-
-This lets the same capability project across multiple surfaces without maintaining a separate truth in every CLI command, MCP tool, Skill and host exporter.
+- trust rules.
 
 Examples:
 
@@ -148,124 +230,234 @@ context.select
 evidence.verify
 contract.verify
 semantic.candidate.record
-structural.impact       # declared unavailable until a provider exists
-dependency.docs         # declared unavailable until a provider exists
+structural.impact
+dependency.docs
 ```
 
-## Semantic Worker model
+A declared capability can also be explicitly `unavailable`. SotuRail prefers an honest unavailable state over pretending that an integration exists.
 
-The active coding agent is the **Semantic Worker**.
+### Semantic Worker
 
-It can:
+The active coding agent acts as the **Semantic Worker**.
 
-- understand natural-language intent;
-- interpret requirements and project vocabulary;
-- detect ambiguity and conflicts;
-- select relevant Skills/capabilities;
-- combine project/provider results;
-- propose claims, impacts, decisions and questions.
+The agent is responsible for contextual meaning:
 
-SotuRail stores those as structured **candidate artifacts**.
+- understanding natural-language intent;
+- interpreting requirements;
+- recognizing project/domain vocabulary;
+- identifying ambiguity;
+- selecting relevant Skills/capabilities;
+- combining source/provider results;
+- proposing claims, impacts, decisions and questions.
+
+SotuRail records semantic output as **candidate artifacts**. A model-generated candidate does not become a verified fact just because the model is confident.
+
+### Evidence and trust
+
+SotuRail owns objective trust transitions.
 
 ```text
 AI interpretation
       ↓
-candidate claim / impact / decision / question
+candidate / assertion
       ↓
 source + workspace binding
       ↓
-evidence / freshness / policy
+recorded evidence / human attestation
       ↓
-verified, stale, blocked, unknown...
+freshness + policy
+      ↓
+readiness
 ```
 
-Model confidence is metadata, not proof.
+Protected states such as `verified`, `current`, `approved` and `ready` cannot be self-awarded by a Semantic Worker.
 
-## Language-neutral by design
+### Change Contracts
 
-SotuRail v1.6 does not use English keyword matching as semantic authority.
+A Change Contract records the engineering intent of a change:
 
-The same machine capability IDs apply whether:
+- title and intent;
+- scope;
+- risk;
+- acceptance criteria;
+- required checks;
+- evidence requirements;
+- relevant sources.
 
-- the user asks in Portuguese;
-- the code is in English;
-- requirements are in Spanish;
-- docs are mixed-language;
-- paths contain accents or Japanese characters;
-- a provider returns content in another language.
+Example:
 
-Original source text is preserved. Translations are derived views. Paths, symbols, commands, hashes and protocol IDs are never silently translated.
+```bash
+soturail contract create docs-refresh \
+  --title "Refresh docs" \
+  --intent "Keep project documentation current" \
+  --criterion "docs check passes" \
+  --check "npm run docs:check" \
+  --criterion-check "npm run docs:check"
+```
 
-The old lexical/keyword router remains only as a labeled `heuristic-fallback` for compatibility/offline use.
+After making the change, run the required check through SotuRail:
 
-## Evidence-backed Change Contracts
+```bash
+soturail run -- npm run docs:check
+soturail contract verify .soturail/contracts/docs-refresh.json
+```
 
-A Change Contract records the engineering intent, acceptance criteria, checks, risk and evidence requirements for a change.
+The contract creation fingerprint remains immutable provenance. Readiness is evaluated against **current** recorded evidence, so normal implementation work does not make the contract permanently stale.
 
-v1.6 separates the **creation baseline** from the **workspace being verified**:
+If the contract foundation changes — for example its scope, declared sources or contract content — create a recorded revision instead of silently rewriting history.
+
+### Human attestations
+
+Caller flags do not grant trust by themselves.
+
+Assertions such as:
 
 ```text
-contract created at baseline A
-        ↓
-implementation changes workspace to B
-        ↓
-checks run and are recorded at B
-        ↓
-readiness evaluates current evidence at B
+--check-passed
+--criterion-passed
+--runtime-evidence
+--independent-review
+--human-approved
 ```
 
-The baseline remains immutable provenance; normal implementation does not make the contract permanently stale.
+do not satisfy readiness without corroboration.
 
-A new revision is required when the contract foundation changes, such as declared sources, scope or contract content. Revisions preserve lineage and supersede older revisions instead of rewriting history.
+Objective requirements use current recorded executions. Human/manual decisions use explicit interactive attestation receipts tied to the contract revision and current workspace.
 
-Caller flags do not grant trust:
+## Architecture
 
-- `--check-passed`
-- `--criterion-passed`
-- `--runtime-evidence`
-- `--independent-review`
-- `--human-approved`
+The public mental model is intentionally small:
 
-are assertions only. Required checks and objective criteria need current recorded executions. Human approval, independent review and manual criteria use interactive attestation receipts.
+```text
+                         ┌──────────────────────┐
+User / developer ───────▶│ AI agent             │
+                         │ Semantic Worker       │
+                         └──────────┬───────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │ Portable Skills      │
+                         │ progressive loading  │
+                         └──────────┬───────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │ Capability Registry  │
+                         │ self-describing API  │
+                         └───────┬───────┬──────┘
+                                 │       │
+                     ┌───────────┘       └────────────┐
+                     ▼                                ▼
+           ┌──────────────────┐             ┌──────────────────┐
+           │ Native facts     │             │ Optional         │
+           │ Git / FS / tests │             │ providers        │
+           │ schemas / hashes │             │ docs / structure │
+           └─────────┬────────┘             └─────────┬────────┘
+                     └──────────────┬──────────────────┘
+                                    ▼
+                         ┌──────────────────────┐
+                         │ Structured artifacts │
+                         │ candidates / runs    │
+                         │ contracts / evidence │
+                         └──────────┬───────────┘
+                                    ▼
+                         ┌──────────────────────┐
+                         │ SotuRail trust core  │
+                         │ provenance           │
+                         │ freshness            │
+                         │ policy               │
+                         │ authority/readiness  │
+                         └──────────────────────┘
+```
 
-## Trust model
+A useful rule of thumb:
 
-The v1.5 verified-control-plane foundation remains underneath the v1.6 agent-native surface:
-
-| Area | Implemented foundation |
+| Concern | Owner |
 |---|---|
-| Workspace integrity | WorkspaceGuard, path/symlink containment |
-| Artifact integrity | Artifact Registry, Store, Envelope, lineage |
-| Freshness | WorkspaceFingerprint and source/workspace binding |
-| Governance | Capability Registry/Epochs, NativeMinimal provider |
-| Gates | Authority + Readiness remain distinct |
-| Execution | Exact-digest Execution Envelope |
-| Context | Hard budgets and explicit truncation/degradation |
-| Evidence | Recorded runs and current-workspace verification |
-| Release | CI, security, SBOM, checksums and provenance |
+| Meaning, intent, ambiguity, semantic interpretation | AI agent |
+| Procedure | Skill |
+| Stable operation contract | Capability |
+| Specialized optional implementation | Provider |
+| Git/filesystem/hash/schema/test facts | deterministic tools |
+| Provenance/freshness/evidence/readiness | SotuRail |
+| Product decisions and explicit approval | Human |
 
-SotuRail is a **guardrail, not a sandbox**. OS permissions, credentials, provider security and host authorization remain external enforcement boundaries.
+## Main feature areas
+
+| Area | What SotuRail provides |
+|---|---|
+| **Agent Skills** | portable Skills, progressive disclosure, task-oriented procedures |
+| **Capability discovery** | self-describing capability catalog across MCP/CLI/Skills |
+| **Context** | progressive repo reading, bounded context artifacts, explicit degradation |
+| **Change Contracts** | scope, criteria, risk, evidence requirements and revision lineage |
+| **Evidence** | recorded command executions tied to the current workspace |
+| **Workspace integrity** | guarded paths, fingerprints, source/workspace binding |
+| **Artifacts** | canonical registry/store/envelopes, lineage and freshness |
+| **Governance** | capability metadata, Authority Gate, Readiness Gate, capability epochs |
+| **Execution integrity** | exact-digest Execution Envelope |
+| **Knowledge** | source-backed local knowledge and stale-state handling |
+| **MCP** | official SDK, typed bounded tools/resources, capability discovery |
+| **Host adapters** | canonical host facts plus portable projections |
+| **Evaluation** | deterministic fixtures, regressions and benchmark infrastructure |
+| **Release engineering** | release checks, package verification, SBOM/checksums/provenance workflow |
 
 ## MCP
 
-The MCP server uses the official SDK and exposes a bounded, typed, capability-mapped surface.
+SotuRail includes a local MCP server over stdio using the official TypeScript SDK.
 
-Important v1.6 discovery endpoints include:
+Start it manually:
 
-```text
-soturail.capabilities
-soturail.skills.list
+```bash
+soturail mcp serve --transport stdio
 ```
 
-Agents can discover Skills/capabilities without first learning the CLI.
+Useful diagnostics:
 
-SotuRail does not expose arbitrary shell through MCP and does not allow caller-controlled raw-log authorization.
+```bash
+soturail mcp doctor
+soturail mcp manifest
+soturail mcp smoke
+soturail mcp exposure
+```
 
-## CLI still matters
+Important agent-discovery tools:
 
-v1.6 is agent-first, not CLI-less.
+```text
+soturail.skills.list
+soturail.capabilities
+soturail.candidates.record
+```
 
-The CLI remains the primary surface for:
+Security defaults:
+
+- no arbitrary shell execution through MCP;
+- no `soturail.run` MCP tool by default;
+- raw-log expansion remains redacted for MCP callers;
+- tool exposure must come from a capability descriptor;
+- recording a semantic candidate never verifies it.
+
+## Natural-language and multilingual behavior
+
+SotuRail's core machine semantics do not depend on English keyword matching.
+
+The same capability IDs can be used when:
+
+- the user writes in Portuguese;
+- source code uses English identifiers;
+- requirements are in Spanish;
+- documentation is mixed-language;
+- paths contain accents, emoji or Japanese characters;
+- provider output uses another language.
+
+Original source text is preserved. Translation/localization is a derived presentation and never replaces the original source as evidence.
+
+The legacy lexical router remains only as a labeled `heuristic-fallback`, not the primary semantic authority.
+
+## CLI: useful, but not the agent UX
+
+v1.6 is **agent-first, not CLI-less**.
+
+The CLI is primarily useful for:
 
 - humans;
 - CI;
@@ -273,98 +465,200 @@ The CLI remains the primary surface for:
 - diagnostics;
 - administration;
 - recovery;
-- release workflows.
+- release workflows;
+- hosts without a richer Skill/MCP surface.
 
-A manual workflow can still look like:
+A few common commands:
 
 ```bash
+# repository/context
+soturail init
 soturail index
-soturail read README.md --query "product boundary"
+soturail read README.md --query "architecture"
 
-soturail contract create docs-refresh \
-  --title "Refresh docs" \
-  --intent "Keep contracts current" \
-  --criterion "docs check passes" \
-  --check "npm run docs:check" \
-  --criterion-check "npm run docs:check"
+# discovery
+soturail skills discover
+soturail capabilities list
 
-# make the change, then record objective evidence
-soturail run -- npm run docs:check
-soturail contract verify .soturail/contracts/docs-refresh.json
+# diagnostics
+soturail doctor
+soturail mcp smoke
+soturail self architecture --check
+
+# evidence
+soturail run -- npm test
+soturail evidence report
+
+# release qualification
+soturail release check
 ```
 
-Generated runtime state stays under `.soturail/`.
+See [v1.6 command reference](docs/reference/commands/v1.6-commands.md) for the current additions and the stable command docs for the wider CLI surface.
 
-## Host compatibility
+## Example workflows
 
-Verified portable Skill projections in v1.6:
+### Feature work
 
-| Host | Projection |
-|---|---|
-| Claude Code | `.claude/skills/` |
-| Codex | `.agents/skills/` |
-| Cursor | `.agents/skills/` |
-| Gemini CLI | `.agents/skills/` |
-| Other / unverified hosts | generic portable Agent Skills fallback |
+```text
+User:
+"Adicione OAuth e verifique os riscos de segurança."
 
-Host facts live behind a host-adapter registry instead of being scattered through the core.
+Agent:
+1. loads soturail-core + soturail-change + soturail-security
+2. discovers available capabilities
+3. inspects project context and sources
+4. records unresolved assumptions as candidates
+5. creates/uses a Change Contract
+6. implements the change
+7. runs required checks
+8. SotuRail evaluates current evidence/readiness
+```
 
-## What changed from v1.5
+If a future capability such as `dependency.docs` is unavailable, that state is visible instead of silently replaced with fabricated certainty.
 
-v1.6 is both a feature release and a simplification pass.
+### Debugging
 
-| Metric | v1.5 | v1.6 |
-|---|---:|---:|
-| Literal host branches in `src/` | 121 | 7 |
-| Copies of the slug algorithm | 10 | 1 |
-| Copies of `exists()` | 22 | 1 |
-| Dual readers of approved memory | 2 | 0 |
-| Dead exports / test-only aliases | 4 | 0 |
+```text
+User:
+"O login começou a falhar depois dessa mudança."
 
-Other important changes:
+Agent:
+1. loads soturail-debug
+2. reproduces the failure
+3. records evidence
+4. proposes candidate causes
+5. edits the code
+6. reruns the relevant checks
+7. only current evidence may satisfy readiness
+```
 
-- portable Agent Skills became the primary agent workflow surface;
-- agent semantic selection replaced keyword routing as the intended primary path;
-- Capability Descriptor v2 made the capability layer self-describing;
-- candidate artifacts separate AI interpretation from verified facts;
-- contract readiness now requires recorded current evidence;
-- contract baseline and verification freshness are separate;
-- human/manual attestations are explicit receipts;
-- host-specific branches were consolidated behind adapters;
-- approved-memory legacy reads were migrated/deduplicated;
-- multilingual/Unicode fixtures became part of v1.6 qualification.
+### Review
+
+```text
+User:
+"Revise esse PR e veja se pode avançar."
+
+Agent:
+1. loads soturail-review
+2. reads contract/scope/evidence
+3. compares the change with current evidence
+4. separates observations from assumptions
+5. reports blockers
+6. readiness remains a SotuRail decision, not model confidence
+```
+
+## Local project state
+
+SotuRail stores generated runtime state under `.soturail/`.
+
+Typical categories include:
+
+```text
+.soturail/
+├─ artifacts / indexes / context
+├─ contracts
+├─ evidence / runs
+├─ knowledge / memory
+├─ policy / governance
+├─ reports / evaluations
+└─ host / MCP projections
+```
+
+Exact internal paths are resolved by the canonical artifact/workspace registry. Do not build integrations by guessing private paths when a public command, artifact or capability exists.
+
+## Scope and non-goals
+
+SotuRail intentionally does **not** try to become:
+
+- another Claude/Codex-style coding agent;
+- a mandatory model provider;
+- a general LLM proxy/router;
+- a hosted developer workspace;
+- an OS/container sandbox;
+- a secret manager;
+- a mandatory vector database;
+- a mandatory graph database;
+- a giant MCP marketplace;
+- a framework-specific semantic-rule engine;
+- an autonomous publish/deploy loop.
+
+The architecture favors replaceable providers and optional integrations over mandatory infrastructure.
+
+## Current provider status
+
+The capability model can declare external/provider-backed capabilities before an implementation is installed.
+
+In v1.6:
+
+- `structural.impact` is declared **unavailable** until a StructuralProvider is implemented;
+- `dependency.docs` is declared **unavailable** until a DependencyDocsProvider is implemented.
+
+This is intentional: capability discovery should expose the real state of the system.
+
+## Security model
+
+SotuRail is a **guardrail, not a sandbox**.
+
+Implemented boundaries include:
+
+- `WorkspaceGuard` for caller-controlled filesystem paths;
+- canonical artifact storage and lineage;
+- workspace/source fingerprints;
+- explicit stale-state handling;
+- Authority and Readiness as separate gates;
+- exact-digest Execution Envelopes;
+- redacted raw-log behavior;
+- bounded MCP exposure;
+- interactive human attestation for manual approval/review;
+- dependency audit, CodeQL, SBOM and release provenance in the project release process.
+
+SotuRail still depends on the host, operating system and external services for actual process isolation, credential security and external-side-effect enforcement.
+
+See the [Threat Model](docs/security/threat-model.md).
+
+## Compatibility and legacy
+
+v1.6 keeps the v1.5 public compatibility surface where a minor release cannot safely remove it.
+
+Examples:
+
+- older Skill packs can still be adapted/migrated;
+- flat Skill export is deprecated in favor of portable Skill directories;
+- `gemini-legacy` remains a compatibility alias with a v2.0 removal target;
+- legacy MCP negotiation remains where required by the published compatibility contract.
+
+Historical docs and release notes remain in the repository as history; they are not the recommended v1.6 workflow.
 
 ## Known limitations
 
-The project deliberately does **not** pretend unfinished integrations exist.
+Current limitations are documented instead of hidden:
 
-- `structural.impact` is declared `unavailable` until a StructuralProvider is implemented.
-- `dependency.docs` is declared `unavailable` until a DependencyDocsProvider is implemented.
-- Agent-real skill-selection scoring is separate from deterministic CI satisfiability fixtures.
-- Human attestation relies on an interactive terminal; SotuRail cannot cryptographically prove a human is physically present.
-- Skill prompt-injection phrase checks are currently English-focused and non-exhaustive.
-- SotuRail is not an OS sandbox or credential broker.
-
-See the [roadmap](ROADMAP.md) for the provider and verification work that follows v1.6.
+- StructuralProvider and DependencyDocsProvider are not implemented yet;
+- deterministic CI fixtures prove the bundled Skill catalog can satisfy the tested scenarios, but agent-real selection scoring remains a separate evaluation;
+- human attestation can verify an interactive approval flow but cannot cryptographically prove a specific physical human was at the keyboard;
+- prompt-injection phrase scanning is currently English-focused and non-exhaustive;
+- SotuRail does not prove behavior in an external production system unless that observation is captured as evidence.
 
 ## Documentation
 
-Start here:
+Recommended entry points:
 
 - [Quickstart](docs/getting-started/quickstart.md)
-- [v1.6 commands](docs/reference/commands/v1.6-commands.md)
-- [Migration to v1.6](docs/getting-started/migration-v1.6.md)
-- [v1.6 release notes](docs/releases/RELEASE_NOTES_v1.6.0.md)
+- [Usage](docs/getting-started/usage.md)
+- [First Real Workflow](docs/getting-started/first-real-workflow.md)
+- [v1.6 Commands](docs/reference/commands/v1.6-commands.md)
 - [Agent-Native Semantic Architecture](docs/architecture/agent-native-semantic-architecture.md)
 - [Verified Control Plane](docs/architecture/verified-control-plane.md)
 - [Contracts and Verification](docs/architecture/contracts-and-verification.md)
 - [Provider Architecture](docs/architecture/provider-architecture.md)
-- [Skill Rail](docs/rails/skills/skill-rail.md)
+- [Skills](docs/rails/skills/skill-rail.md)
+- [MCP](docs/rails/hosts/mcp.md)
 - [Threat Model](docs/security/threat-model.md)
-- [Implementation Tracker](docs/roadmap/verified-control-plane-implementation-tracker.md)
 - [Roadmap](ROADMAP.md)
+- [v1.6 Release Notes](docs/releases/RELEASE_NOTES_v1.6.0.md)
+- [Português](docs/pt-BR/)
 
-Historical command/migration documents remain available under `docs/reference/` and `docs/getting-started/`.
+For release-by-release history, use [CHANGELOG.md](CHANGELOG.md) and [release notes](docs/releases/).
 
 ## Development
 
@@ -377,31 +671,29 @@ npm run docs:check
 npm audit
 node dist/cli.js mcp smoke
 node dist/cli.js self architecture --check
-cargo test --manifest-path native/soturail-native/Cargo.toml
 npm run release:check
 ```
 
-Release tags also produce canonical release artifacts, CycloneDX SBOM, checksums and provenance attestations.
+Optional native validation:
+
+```bash
+cargo test --manifest-path native/soturail-native/Cargo.toml
+```
 
 ## Project direction
 
-Near-term work after v1.6 focuses on capabilities that add evidence instead of duplicating agent reasoning:
+Post-v1.6 work focuses on adding **evidence-producing capabilities**, not duplicating semantic reasoning that the agent already performs well.
+
+Near-term directions include:
 
 - StructuralProvider / impact analysis;
 - DependencyDocsProvider;
-- Evidence Receipts and richer re-attestation;
-- Context Spine and escalation;
-- optional local indexes/providers where benchmarks justify them.
+- richer Evidence Receipts and re-attestation;
+- Context Spine / escalation;
+- knowledge drift propagation;
+- optional local indexes/providers when benchmarks justify them.
 
-SotuRail intentionally avoids making mandatory:
-
-- a cloud backend;
-- a model provider;
-- a vector database;
-- a graph database;
-- a general autonomous coding runtime;
-- a huge MCP catalog;
-- language/framework-specific semantic-rule engines.
+See [ROADMAP.md](ROADMAP.md).
 
 ## License
 
