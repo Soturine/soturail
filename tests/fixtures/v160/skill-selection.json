@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "soturail.eval.skill-selection.v1",
+  "note": "Expected selections are judged by an agent evaluation, not by a keyword router. Deterministic tests only check that each case is satisfiable by the shipped catalog.",
+  "cases": [
+    {
+      "id": "pt-auth-fix-impact",
+      "locale": "pt-BR",
+      "task": "Corrija a autenticação e verifique o impacto nos testes e rotas.",
+      "expectSkills": ["soturail-core", "soturail-change", "soturail-debug", "soturail-security"],
+      "requireCapabilities": ["project.read", "structural.impact", "command.run", "evidence.verify"],
+      "preserveExact": ["src/auth/session.ts", "refreshToken"]
+    },
+    {
+      "id": "en-oauth-regression",
+      "locale": "en",
+      "task": "Fix the OAuth login regression introduced last week.",
+      "expectSkills": ["soturail-core", "soturail-change", "soturail-debug", "soturail-security"],
+      "requireCapabilities": ["command.run", "raw.inspect.redacted", "governance.evaluate"]
+    },
+    {
+      "id": "es-business-rule",
+      "locale": "es",
+      "task": "Documenta las reglas de negocio de pagos a partir de docs/requisitos/pagos.md.",
+      "expectSkills": ["soturail-core", "soturail-knowledge"],
+      "requireCapabilities": ["knowledge.compile", "knowledge.verify", "project.read"]
+    },
+    {
+      "id": "ja-release",
+      "locale": "ja",
+      "task": "次のバージョンをリリースして、変更履歴を更新してください。",
+      "expectSkills": ["soturail-core", "soturail-release"],
+      "requireCapabilities": ["release.preflight", "governance.evaluate", "evidence.verify"]
+    },
+    {
+      "id": "pt-review-pr",
+      "locale": "pt-BR",
+      "task": "Revise este pull request antes do merge.",
+      "expectSkills": ["soturail-core", "soturail-review"],
+      "requireCapabilities": ["contract.verify", "evidence.verify"]
+    },
+    {
+      "id": "mixed-docs-conflict",
+      "locale": "mixed",
+      "task": "O README diz que o limite é 100 requests, mas docs/api.md says 50. Qual é o correto?",
+      "expectSkills": ["soturail-core", "soturail-knowledge", "soturail-research"],
+      "requireCapabilities": ["project.read"]
+    },
+    {
+      "id": "en-dependency-question",
+      "locale": "en",
+      "task": "Which zod v4 API should we use for strict objects here?",
+      "expectSkills": ["soturail-core", "soturail-research"],
+      "requireCapabilities": ["dependency.docs"]
+    },
+    {
+      "id": "non-trigger-general",
+      "locale": "pt-BR",
+      "task": "O que é uma mônada em programação funcional?",
+      "expectSkills": [],
+      "requireCapabilities": []
+    }
+  ]
+}

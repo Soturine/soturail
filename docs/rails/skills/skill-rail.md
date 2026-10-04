@@ -180,7 +180,11 @@ See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Nat
 | Capability bindings (`metadata.soturail-uses`) validated against Capability Descriptor v2 | implemented | `validateSkillModel`, `skillRequirements` |
 | v1.5 packs adapted into the same model (no rewrite) | implemented | `loadSkillCatalog` source `legacy-pack` |
 | Generic portable export | implemented | `soturail skills export --target generic --layout portable` |
-| Task skills, discovery surfaces, host projections, agent-led routing | planned | later v1.6 checkpoints |
+| Task skills: change, debug, review, security, research, knowledge, release | implemented | `skills/soturail-*/` |
+| Selection/composition eval fixtures (pt-BR, en, es, ja, mixed, non-trigger) | implemented (data + satisfiability tests) | `tests/fixtures/v160/skill-selection.json` |
+| Discovery surfaces, host projections, agent-led routing | planned | later v1.6 checkpoints |
+
+Selection fixtures are scored by agent evaluations; deterministic tests only prove each case is satisfiable by the shipped catalog and does not depend on keyword overlap. Portable skills use the same safety scan as v1.5 packs (`scanSkillText`).
 
 Approval, side-effect and evidence requirements are **derived** from the capabilities a skill uses; a skill does not restate them. Project skills placed in `.agents/skills/<name>/SKILL.md` are loaded into the same catalog.
 

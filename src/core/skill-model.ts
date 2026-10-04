@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getCapabilityDescriptor, type CapabilityDescriptorV2 } from "./capability-descriptor.js";
 import { readSkills } from "./skill-store.js";
+import { scanSkillText } from "./skill-validator.js";
 
 // One Skill model for every source. Portable skills follow the Agent Skills
 // specification (SKILL.md frontmatter + optional references/scripts/assets);
@@ -102,6 +103,7 @@ export function validateSkillModel(skill: SkillModel): SkillIssue[] {
   if (!frontmatter.description || frontmatter.description.length > 1024) issue("error", "description_invalid", "description must be 1-1024 characters.");
   if (frontmatter.compatibility && frontmatter.compatibility.length > 500) issue("error", "compatibility_too_long", "compatibility must be at most 500 characters.");
   if (skill.body.split(/\r?\n/).length > 500) issue("warning", "body_too_long", "Keep SKILL.md under 500 lines; move detail to references/.");
+  for (const message of scanSkillText(skill.body, `${skill.body}\n${JSON.stringify(frontmatter)}`)) issue("error", "unsafe_content", message);
   for (const id of skill.uses) {
     const descriptor = getCapabilityDescriptor(id);
     if (!descriptor) issue("error", "capability_unknown", `Skill uses unknown capability: ${id}`);

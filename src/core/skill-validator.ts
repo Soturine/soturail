@@ -37,6 +37,23 @@ const secretPatterns = [
   /(password|api[_-]?key|secret)\s*[:=]\s*["']?[A-Za-z0-9_\-]{16,}/i
 ];
 
+/**
+ * Safety scan shared by v1.5 packs and portable skills. Command and token
+ * patterns are syntax (language-neutral); prompt-injection phrases are an
+ * English-only, non-exhaustive fallback.
+ */
+export function scanSkillText(instructions: string, combined = instructions): string[] {
+  const findings: string[] = [];
+  for (const pattern of destructivePatterns) {
+    if (pattern.test(instructions)) findings.push(`Hidden destructive command pattern detected: ${pattern}`);
+  }
+  for (const pattern of promptInjectionPatterns) {
+    if (pattern.test(combined)) findings.push(`Prompt-injection style instruction detected: ${pattern}`);
+  }
+  if (secretPatterns.some((pattern) => pattern.test(combined))) findings.push("Probable embedded secret detected.");
+  return findings;
+}
+
 export async function validateSkills(root = process.cwd()): Promise<SkillValidationResult> {
   const skills = await readSkills(root);
   const issues: SkillValidationIssue[] = [];
@@ -50,20 +67,8 @@ export async function validateSkills(root = process.cwd()): Promise<SkillValidat
     seen.add(skill.metadata.id);
 
     const combined = `${skill.markdown}\n${JSON.stringify({ ...skill.metadata, forbidden_patterns: [] })}`;
-    for (const pattern of destructivePatterns) {
-      if (pattern.test(skill.markdown)) {
-        issues.push({ skill_id: skill.metadata.id, severity: "error", message: `Hidden destructive command pattern detected: ${pattern}` });
-      }
-    }
-    for (const pattern of promptInjectionPatterns) {
-      if (pattern.test(combined)) {
-        issues.push({ skill_id: skill.metadata.id, severity: "error", message: `Prompt-injection style instruction detected: ${pattern}` });
-      }
-    }
-    for (const pattern of secretPatterns) {
-      if (pattern.test(combined)) {
-        issues.push({ skill_id: skill.metadata.id, severity: "error", message: "Probable embedded secret detected." });
-      }
+    for (const message of scanSkillText(skill.markdown, combined)) {
+      issues.push({ skill_id: skill.metadata.id, severity: "error", message });
     }
 
     const { content_hash: _hash, ...withoutHash } = skill.metadata;
