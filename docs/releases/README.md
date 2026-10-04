@@ -11,7 +11,6 @@ Current release:
 - [v1.6.0](RELEASE_NOTES_v1.6.0.md)
 - [v1.5.0](RELEASE_NOTES_v1.5.0.md)
 - [v1.4.0](RELEASE_NOTES_v1.4.0.md)
-- [v1.3.0](RELEASE_NOTES_v1.3.0.md)
 - [v1.2.0](RELEASE_NOTES_v1.2.0.md)
 - [v1.1.0](RELEASE_NOTES_v1.1.0.md)
 - [v1.0.1](RELEASE_NOTES_v1.0.1.md)
