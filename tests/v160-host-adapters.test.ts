@@ -90,6 +90,17 @@ describe("host skill projection", () => {
     expect(await fs.readFile(path.join(userDir, "SKILL.md"), "utf8")).toContain("mine");
   });
 
+  it("reports project-relative paths when the project root is reached through an alias", async () => {
+    const real = await tempRoot();
+    const alias = path.join(await tempRoot(), "alias-root");
+    await fs.symlink(real, alias, process.platform === "win32" ? "junction" : "dir");
+    const installed = await exportPortableSkills(alias, { host: "claude", install: true });
+    expect(installed.outDir).toBe(".claude/skills");
+    const exported = await exportPortableSkills(alias, { host: "codex" });
+    expect(exported.outDir).toBe(".soturail/exports/skills/portable/codex");
+    expect(await fs.readFile(path.join(real, ".claude", "skills", "soturail-core", "SKILL.md"), "utf8")).toContain("name: soturail-core");
+  });
+
   it("labels unknown hosts as generic fallback in the export result", async () => {
     const root = await tempRoot();
     const result = await exportPortableSkills(root, { host: "kimi" });

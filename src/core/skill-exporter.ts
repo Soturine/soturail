@@ -122,12 +122,12 @@ export async function exportPortableSkills(root = process.cwd(), options: Portab
       ? await guard.resolveProjectPath(options.outDir, { mustExist: false })
       : path.join(getWorkspacePaths(root).skillExportsDir, "portable", ...(options.host ? [adapter.id] : []));
   // Outside .soturail/ only directories carrying our marker may be replaced.
-  const managedOnly = !isInsideDir(getWorkspacePaths(root).workspace, outDir);
+  const managedOnly = !await guard.isInsideWorkspace(outDir);
   const catalog = await loadSkillCatalog(root, options.bundledDir ? { bundledDir: options.bundledDir } : {});
   const result: PortableSkillExport = {
     schemaVersion: "soturail.skill-export.v2",
     layout: "agent-skills",
-    outDir: path.relative(root, outDir).split(path.sep).join("/") || ".",
+    outDir: await guard.projectRelative(outDir),
     host: { id: adapter.id, requested, verification: isHostId(requested) ? adapter.skills.verification : "generic-fallback", projectDir: adapter.skills.projectDir, limitations: [...adapter.skills.limitations] },
     skills: [],
     skipped: []
@@ -168,10 +168,6 @@ export async function exportPortableSkills(root = process.cwd(), options: Portab
   return result;
 }
 
-function isInsideDir(parent: string, child: string): boolean {
-  const relative = path.relative(path.resolve(parent), path.resolve(child));
-  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
-}
 
 async function portableFiles(skill: SkillModel): Promise<Array<{ path: string; content: string }>> {
   if (skill.source !== "legacy-pack") {

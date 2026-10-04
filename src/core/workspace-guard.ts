@@ -50,6 +50,23 @@ export class WorkspaceGuard {
     }
   }
 
+  /**
+   * POSIX path of a canonical target relative to the canonical project root.
+   * Guarded paths are canonical (macOS /var -> /private/var, Windows 8.3 names),
+   * so relativizing against the lexical root would produce "../../..." paths.
+   */
+  async projectRelative(target: string): Promise<string> {
+    const canonicalRoot = await this.canonicalBoundary(this.projectRoot);
+    const canonicalTarget = await canonicalizeTarget(path.resolve(target), false);
+    return path.relative(canonicalRoot, canonicalTarget).split(path.sep).join("/") || ".";
+  }
+
+  /** Whether a target (existing or not) is inside the SotuRail workspace, compared canonically. */
+  async isInsideWorkspace(target: string): Promise<boolean> {
+    const canonicalWorkspace = await this.canonicalBoundary(this.workspaceRoot);
+    return isInside(canonicalWorkspace, await canonicalizeTarget(path.resolve(target), false));
+  }
+
   assertInsideProject(target: string): void {
     this.assertInside(this.projectRoot, target);
   }
