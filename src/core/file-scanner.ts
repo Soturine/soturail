@@ -176,7 +176,7 @@ function extractSymbols(relativePath: string, text: string): { symbols: Extracte
 
     if (language === "typescript/javascript") {
       const symbolMatch = trimmed.match(
-        /^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:class|interface|type|function|const|let|var)\s+([A-Za-z_$][\w$]*)/
+        /^(?:export\s+)?(?:default\s+)?(?:async\s+)?(?:class|interface|type|function|const|let|var)\s+([\p{ID_Start}_$][\p{ID_Continue}$‌‍]*)/u
       );
       if (symbolMatch?.[1]) {
         const kind = trimmed.includes("class")
@@ -194,7 +194,7 @@ function extractSymbols(relativePath: string, text: string): { symbols: Extracte
     }
 
     if (language === "python") {
-      const symbolMatch = trimmed.match(/^(?:async\s+)?(?:def|class)\s+([A-Za-z_][\w]*)/);
+      const symbolMatch = trimmed.match(/^(?:async\s+)?(?:def|class)\s+([\p{ID_Start}_][\p{ID_Continue}]*)/u);
       if (symbolMatch?.[1]) {
         symbols.push({ name: symbolMatch[1], kind: trimmed.startsWith("class") ? "class" : "function", line: lineNumber });
       }
@@ -202,12 +202,12 @@ function extractSymbols(relativePath: string, text: string): { symbols: Extracte
     }
 
     if (language === "java") {
-      const classMatch = trimmed.match(/\b(?:class|interface|enum|record)\s+([A-Za-z_][\w]*)/);
+      const classMatch = trimmed.match(/\b(?:class|interface|enum|record)\s+([\p{ID_Start}_$][\p{ID_Continue}$]*)/u);
       if (classMatch?.[1]) {
         symbols.push({ name: classMatch[1], kind: "type", line: lineNumber });
       }
       const methodMatch = trimmed.match(
-        /^(?:public|private|protected)?\s*(?:static\s+)?(?:final\s+)?[\w<>\[\]]+\s+([A-Za-z_][\w]*)\s*\([^)]*\)\s*(?:throws\s+[\w,\s]+)?\{?$/
+        /^(?:public|private|protected)?\s*(?:static\s+)?(?:final\s+)?[\p{ID_Continue}<>[\]]+\s+([\p{ID_Start}_$][\p{ID_Continue}$]*)\s*\([^)]*\)\s*(?:throws\s+[\p{ID_Continue},\s]+)?\{?$/u
       );
       if (methodMatch?.[1] && !["if", "for", "while", "switch"].includes(methodMatch[1])) {
         symbols.push({ name: methodMatch[1], kind: "method", line: lineNumber });

@@ -39,10 +39,16 @@ export function stableSlug(value: string, options: StableSlugOptions): string {
   return `${base || options.fallback}${suffix}`;
 }
 
+/**
+ * Lexical tokens for the offline fallback ranker. Script-neutral (letters,
+ * marks and digits of any script survive); it is not a semantic analyzer and
+ * has no per-language word lists. ASCII output is unchanged from v1.5.
+ */
 export function normalizeWords(value: string): string[] {
   return value
+    .normalize("NFC")
     .toLowerCase()
-    .replace(/[^a-z0-9_./:-]+/g, " ")
+    .replace(/[^\p{L}\p{M}\p{N}_./:-]+/gu, " ")
     .split(/\s+/)
     .filter((word) => word.length > 2)
     .slice(0, 200);

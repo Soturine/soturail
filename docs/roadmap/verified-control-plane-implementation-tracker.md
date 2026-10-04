@@ -50,8 +50,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | SKL-004 | Agent-led routing | 1.6.0 | [x] | keyword ranking labeled `heuristic-fallback`; agent-declared context routing | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
 | SEM-001 | Semantic Worker contract | 1.6.0 | [x] | `semantic-candidate.ts` schemas; `candidate-store.ts` MCP/CLI recording with workspace binding | structured candidate fixtures | agent-native architecture | Agent receives task/capabilities/constraints/schemas and returns candidate claims/impact/decisions/questions. |
 | SEM-002 | Candidate/verified boundary | 1.6.0 | [~] | `SelfPromotionError` on producer input; evidence promotion pending | adversarial/self-award fixtures | contracts/evidence | Model/provider output cannot self-promote to verified/current/approved/ready. |
-| I18N-001 | Language-neutral machine semantics | 1.6.0 | [>] | partial via stable IDs | pt-BR/en/es/ja + mixed fixtures | agent-native architecture | IDs/enums/schemas are locale-independent; no English keyword authority. |
-| I18N-002 | Preserve-source locale metadata | 1.6.0 | [>] | pending | Unicode/source-preservation fixtures | artifact/context docs | Original source remains evidence; translations are derived views; Unicode paths supported. |
+| I18N-001 | Language-neutral machine semantics | 1.6.0 | [x] | locale-independent IDs/enums; Unicode slugs, tokens and identifiers; no keyword tables | pt-BR/en/es/ja + mixed fixtures | agent-native architecture | IDs/enums/schemas are locale-independent; no English keyword authority. |
+| I18N-002 | Preserve-source locale metadata | 1.6.0 | [x] | exact `*Original` text, derived translations, locale metadata, per-source digests | Unicode/source-preservation fixtures | artifact/context docs | Original source remains evidence; translations are derived views; Unicode paths supported. |
 | STR-001 | StructuralProvider NativeLite | 1.7+ | [>] | heuristic index exists | provider tests pending | roadmap | Objective symbol/freshness/impact facts; do not evolve into a stack/language-specific semantic-rule engine. |
 | INT-005 | Local SQLite/FTS index | 1.7+ | [>] | JSON index remains canonical | provider/index tests | roadmap | Rebuildable cache only; deletion never destroys truth. |
 | KNW-001 | Knowledge drift / re-attestation | 1.6.x | [~] | fingerprint/hash freshness and cleanup shipped | one-byte/rename/delete pass | artifact/context docs | Full dependency propagation and explicit re-attestation remain. |
@@ -73,7 +73,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | 4 — self-discovery | `deecbcc` | green | `deecbcc` |
 | 5 — host adapter registry | `03470a4` | see CI | `deecbcc` |
 | Legacy cleanup | `fd6cfc0` (CI fix), `4ff9283` | `fd6cfc0` green | `fd6cfc0` |
-| 6 — semantic routing transition | see git log | pending | `fd6cfc0` |
+| 6 — semantic routing transition | `f390510` | green | `f390510` |
+| 7 — multilingual / preserve-source | see git log | pending | `f390510` |
 
 ## Foundation
 

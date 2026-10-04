@@ -79,3 +79,11 @@ Status: **partial** — contracts and tests exist; discovery surfaces and write 
 - `soturail.semantic.candidate.v1` (`src/core/semantic-candidate.ts`): Semantic Worker output of kind `claim`, `impact`, `decision`, `question` or `interpretation`. Producers may only assign `candidate`, `inferred`, `assumed`, `unknown` or `unverified`; `verified`, `current`, `approved` and `ready` are rejected with `SelfPromotionError`. Original text (`statementOriginal`, `questionOriginal`, `summaryOriginal`) is stored exactly, without Unicode normalization; translations are `derived: true` views. Confidence is model metadata (`basis: model-self-report|heuristic|provider`), never proof. Rationale is a bounded summary; chain-of-thought is not stored.
 
 The v1 registry digest is pinned by `tests/v160-contracts.test.ts` so capability epochs stay comparable.
+
+### Language neutrality and provenance (v1.6)
+
+- Capability IDs, artifact types, enums, states and MCP/CLI surfaces are identical in every locale; `--locale` changes titles/summaries only.
+- Candidate text fields ending in `Original` are stored byte-for-byte (no Unicode normalization); translations are `derived: true` views.
+- `candidates record` stamps each `sourceRefs[].sha256` from the guarded file; `candidates list` reports each source as `current`, `changed`, `missing` or `unhashed`. Refs outside the workspace or to sensitive files are rejected.
+- Machine slugs (`stableSlug`), lexical fallback tokens and structural symbol extraction accept any script (`\p{L}`, `\p{ID_Start}`/`\p{ID_Continue}`); ASCII results are unchanged from v1.5.
+- Fixtures: pt-BR task over English code, Spanish requirement, Japanese project/paths/identifiers, mixed pt-BR/en conflicting docs (`tests/v160-multilingual.test.ts`).

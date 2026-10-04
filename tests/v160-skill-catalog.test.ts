@@ -5,6 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getCapabilityDescriptor } from "../src/core/capability-descriptor.js";
 import { normalizeWords } from "../src/core/rail-utils.js";
 import { loadSkillCatalog, skillLevel1, skillRequirements, type SkillModel } from "../src/core/skill-model.js";
+import { rankSkillsLexically } from "../src/core/skill-routing.js";
 
 interface SelectionCase {
   id: string;
@@ -69,13 +70,16 @@ describe("task skill catalog", () => {
     }
   });
 
-  it("covers multilingual and non-trigger cases without depending on keyword overlap", () => {
+  it("covers multilingual and non-trigger cases without depending on keyword overlap", async () => {
     const locales = new Set(cases.map((item) => item.locale));
     for (const locale of ["pt-BR", "en", "es", "ja", "mixed"]) expect(locales.has(locale), locale).toBe(true);
     expect(cases.some((item) => item.expectSkills.length === 0)).toBe(true);
-    // The Japanese case has no lexical tokens at all for the legacy router; it must still be satisfiable.
+    // The Japanese case shares no tokens with any English skill description; the lexical
+    // fallback finds nothing, yet the case is satisfiable — selection is the agent's job.
     const ja = cases.find((item) => item.locale === "ja");
-    expect(ja && normalizeWords(ja.task)).toEqual([]);
-    expect(ja?.expectSkills).toContain("soturail-release");
+    if (!ja) throw new Error("missing ja case");
+    expect(await rankSkillsLexically(ja.task, root)).toEqual([]);
+    expect(normalizeWords(ja.task).length).toBeGreaterThan(0);
+    expect(ja.expectSkills).toContain("soturail-release");
   });
 });
