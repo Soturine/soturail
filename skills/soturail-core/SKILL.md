@@ -22,7 +22,7 @@ SotuRail organizes, constrains and proves. You understand the task; SotuRail sup
    - read project files through `project.read` (WorkspaceGuard) when the host offers it;
    - keep exact paths, symbols, commands, hashes and IDs unchanged — never translate them;
    - quote source text in its original language; any translation is a derived view.
-5. **Record findings as candidates**, not facts. Use the shapes in [candidate artifacts](references/candidate-artifacts.md): claim, impact, decision, question, interpretation. Your own state may only be `candidate`, `inferred`, `assumed`, `unknown` or `unverified`.
+5. **Record findings as candidates**, not facts. Use the shapes in [candidate artifacts](references/candidate-artifacts.md): claim, impact, decision, question, interpretation. Your own state may only be `candidate`, `inferred`, `assumed`, `unknown` or `unverified`. Persist durable ones with MCP `soturail.candidates.record` (or `soturail candidates record --file <json>`); SotuRail binds them to the workspace and marks them stale when it changes.
 6. **Verify** before saying "done":
    - run checks through the host's normal approval flow (`soturail run -- <command>` keeps a recoverable log);
    - collect and re-check evidence with `evidence.collect` / `evidence.verify`;

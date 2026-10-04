@@ -18,7 +18,14 @@ export interface ContextSelection {
   limit: number;
   expert: ContextExpert;
   role: RolePack;
+  /** Who chose expert/role: the agent explicitly, or the lexical fallback. */
+  routing: { authority: "agent-declared" | "heuristic-fallback"; reason: string };
   items: ContextSelectionItem[];
+}
+
+export interface ContextRoutingInput {
+  expert?: ContextExpert;
+  role?: RolePack;
 }
 
 export interface ContextSelectionItem {
@@ -70,12 +77,14 @@ const roleDefinitions: Record<RolePack, { purpose: string; include: string[]; om
   }
 };
 
-export async function selectContext(query: string, limit = 10, root = process.cwd()): Promise<ContextSelection> {
+export async function selectContext(query: string, limit = 10, root = process.cwd(), declared: ContextRoutingInput = {}): Promise<ContextSelection> {
   await ensureWorkspace(root);
   const paths = getWorkspacePaths(root);
   const config = await loadConfig(root);
   const repo = await scanRepository(root, config);
-  const route = routeContext(query);
+  const fallback = routeContext(query);
+  const agentDeclared = declared.expert !== undefined || declared.role !== undefined;
+  const route = { expert: declared.expert ?? fallback.expert, role: declared.role ?? fallback.role, reason: agentDeclared ? "declared by the agent" : fallback.reason };
   const fileItems = await rankFiles(repo.files, query, root);
   const memoryItems = (await readJsonl<MemoryRailRecord>(paths.memoryRecordsFile)).map((record) => {
     const score = keywordScore(query, `${record.text} ${record.tags.join(" ")}`);
@@ -96,6 +105,7 @@ export async function selectContext(query: string, limit = 10, root = process.cw
     limit,
     expert: route.expert,
     role: route.role,
+    routing: { authority: agentDeclared ? "agent-declared" : "heuristic-fallback", reason: route.reason },
     items: [...fileItems, ...memoryItems]
       .filter((item) => item.score > 0)
       .sort((left, right) => right.score - left.score)
@@ -112,6 +122,7 @@ export function renderSelection(selection: ContextSelection): string {
     `selection_id: ${selection.id}`,
     `expert: ${selection.expert}`,
     `role: ${selection.role}`,
+    `routing_authority: ${selection.routing.authority} (${selection.routing.reason})`,
     `items_count: ${selection.items.length}`,
     ""
   ];
@@ -241,7 +252,12 @@ export async function contextBudget(target = "generic", explain = false, root = 
   return `${lines.join("\n")}\n`;
 }
 
-export function routeContext(query: string): { expert: ContextExpert; reason: string; role: RolePack } {
+/**
+ * English keyword router kept as an offline fallback and benchmark baseline.
+ * It is not language-neutral and never semantic authority; agents should pass
+ * an explicit expert/role instead.
+ */
+export function routeContext(query: string): { expert: ContextExpert; reason: string; role: RolePack; authority: "heuristic-fallback" } {
   const lower = query.toLowerCase();
   const candidates: Array<[ContextExpert, RolePack, RegExp, string]> = [
     ["security", "reviewer", /(secret|token|auth|vulnerab|audit|policy|permission|risk)/, "security and policy keyword"],
@@ -253,7 +269,9 @@ export function routeContext(query: string): { expert: ContextExpert; reason: st
     ["memory", "planner", /(memory|remember|recall|decision|fact)/, "memory keyword"]
   ];
   const match = candidates.find(([, , pattern]) => pattern.test(lower));
-  return match ? { expert: match[0], role: match[1], reason: match[3] } : { expert: "code", role: "executor", reason: "default local code routing" };
+  return match
+    ? { expert: match[0], role: match[1], reason: `heuristic: ${match[3]}`, authority: "heuristic-fallback" }
+    : { expert: "code", role: "executor", reason: "heuristic: default local code routing", authority: "heuristic-fallback" };
 }
 
 export async function buildRolePack(role: RolePack, root = process.cwd()): Promise<{ path: string; content: string }> {
@@ -291,6 +309,12 @@ export async function buildRolePack(role: RolePack, root = process.cwd()): Promi
   const output = path.join(getWorkspacePaths(root).contextRolePacksDir, `${role}.md`);
   await fs.writeFile(output, content, "utf8");
   return { path: output, content };
+}
+
+export function parseContextExpert(value: string): ContextExpert {
+  const experts: ContextExpert[] = ["code", "docs", "release", "security", "workflow", "memory", "research"];
+  if ((experts as string[]).includes(value)) return value as ContextExpert;
+  throw new Error(`Unknown context expert "${value}". Supported: ${experts.join(", ")}.`);
 }
 
 export function parseRolePack(value: string): RolePack {

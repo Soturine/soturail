@@ -7,6 +7,7 @@ import { registerBenchCommand } from "./commands/bench.js";
 import { registerBrainCommand } from "./commands/brain.js";
 import { registerAgentsCommand } from "./commands/agents.js";
 import { registerCapabilitiesCommand } from "./commands/capabilities.js";
+import { registerCandidatesCommand } from "./commands/candidates.js";
 import { registerContractCommand } from "./commands/contract.js";
 import { registerDedupeCommand } from "./commands/dedupe.js";
 import { registerDiagramCommand } from "./commands/diagram.js";
@@ -63,6 +64,7 @@ export function buildProgram(): Command {
   registerAgentsCommand(program);
   registerBrainCommand(program);
   registerCapabilitiesCommand(program);
+  registerCandidatesCommand(program);
   registerContractCommand(program);
   registerIndexCommand(program);
   registerReadCommand(program);

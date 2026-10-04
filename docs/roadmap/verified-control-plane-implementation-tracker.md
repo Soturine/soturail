@@ -47,8 +47,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [~] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [x] | `skills/soturail-{change,debug,review,security,research,knowledge,release}` | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [x] | `skills export --layout portable --install`, projection markers | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
-| SKL-004 | Agent-led routing | 1.6.0 | [>] | v1.5 keyword fallback exists | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
-| SEM-001 | Semantic Worker contract | 1.6.0 | [~] | `semantic-candidate.ts` candidate schemas | structured candidate fixtures | agent-native architecture | Agent receives task/capabilities/constraints/schemas and returns candidate claims/impact/decisions/questions. |
+| SKL-004 | Agent-led routing | 1.6.0 | [x] | keyword ranking labeled `heuristic-fallback`; agent-declared context routing | multilingual routing/eval | Skill Rail | Agent selection from skill metadata becomes primary; keyword scoring remains fallback/diagnostic only. |
+| SEM-001 | Semantic Worker contract | 1.6.0 | [x] | `semantic-candidate.ts` schemas; `candidate-store.ts` MCP/CLI recording with workspace binding | structured candidate fixtures | agent-native architecture | Agent receives task/capabilities/constraints/schemas and returns candidate claims/impact/decisions/questions. |
 | SEM-002 | Candidate/verified boundary | 1.6.0 | [~] | `SelfPromotionError` on producer input; evidence promotion pending | adversarial/self-award fixtures | contracts/evidence | Model/provider output cannot self-promote to verified/current/approved/ready. |
 | I18N-001 | Language-neutral machine semantics | 1.6.0 | [>] | partial via stable IDs | pt-BR/en/es/ja + mixed fixtures | agent-native architecture | IDs/enums/schemas are locale-independent; no English keyword authority. |
 | I18N-002 | Preserve-source locale metadata | 1.6.0 | [>] | pending | Unicode/source-preservation fixtures | artifact/context docs | Original source remains evidence; translations are derived views; Unicode paths supported. |
@@ -72,7 +72,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | 3 — task skill catalog | `848e686` | green | `848e686` |
 | 4 — self-discovery | `deecbcc` | green | `deecbcc` |
 | 5 — host adapter registry | `03470a4` | see CI | `deecbcc` |
-| Legacy cleanup | see git log | pending | `deecbcc` |
+| Legacy cleanup | `fd6cfc0` (CI fix), `4ff9283` | `fd6cfc0` green | `fd6cfc0` |
+| 6 — semantic routing transition | see git log | pending | `fd6cfc0` |
 
 ## Foundation
 

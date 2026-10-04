@@ -108,6 +108,7 @@ export interface WorkspacePaths {
   mcpExportsDir: string;
   contextDir: string;
   contextSelectionsDir: string;
+  candidatesDir: string;
   contextOffloadDir: string;
   contextRolePacksDir: string;
   harnessDir: string;
@@ -212,6 +213,7 @@ export function getWorkspacePaths(root = process.cwd(), workspaceDir = WORKSPACE
     mcpExportsDir: path.resolve(workspace, "exports", "mcp"),
     contextDir: path.resolve(workspace, "context"),
     contextSelectionsDir: path.resolve(workspace, "context", "selections"),
+    candidatesDir: path.resolve(workspace, "candidates"),
     contextOffloadDir: path.resolve(workspace, "context", "offload"),
     contextRolePacksDir: path.resolve(workspace, "context", "role-packs"),
     harnessDir: path.resolve(workspace, "harness"),
@@ -332,6 +334,7 @@ export async function ensureWorkspace(root = process.cwd()): Promise<EnsureResul
     paths.mcpExportsDir,
     paths.contextDir,
     paths.contextSelectionsDir,
+    paths.candidatesDir,
     paths.contextOffloadDir,
     paths.contextRolePacksDir,
     paths.harnessDir,

@@ -56,6 +56,7 @@ Default tools include:
 - `soturail.rules.check`
 - `soturail.skills.list` — skill discovery metadata; `name` loads one skill (level 2), `name` + `resource` loads one reference (level 3)
 - `soturail.capabilities` — capability catalog; `id` describes one capability (surfaces, trust, providers, availability); `locale` localizes titles only
+- `soturail.candidates.record` — record one Semantic Worker candidate (claim, impact, decision, question, interpretation); SotuRail assigns id, time and workspace binding, rejects `verified`/`current`/`approved`/`ready` and secret-like content; recording never verifies
 - `soturail.context.pack`
 - `soturail.expand`
 

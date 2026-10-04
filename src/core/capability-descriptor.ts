@@ -254,10 +254,12 @@ const V2_EXTENSIONS: Extension[] = [
     limitations: ["Until a StructuralProvider exists, impact is a Semantic Worker candidate built from repo.index and project.read."]
   },
   {
-    id: "semantic.candidate.record", maturity: "planned", cli: null, output: "soturail.semantic.candidate.v1", read: "none", write: "soturail-state", scope: "local-state", semanticKey: "semantic_candidate_record",
+    id: "semantic.candidate.record", maturity: "experimental", cli: "candidates record --file <json>", mcpTool: "soturail.candidates.record", output: "soturail.semantic.candidate.v1", read: "workspace", write: "soturail-state", scope: "local-state", semanticKey: "semantic_candidate_record",
     display: { en: { title: "Record semantic candidate", summary: "Record a structured Semantic Worker claim, impact, decision, question or interpretation." }, "pt-BR": { title: "Registrar candidato semântico", summary: "Registra afirmação, impacto, decisão, pergunta ou interpretação estruturada do agente." } },
-    providers: { class: "semantic-worker", candidates: [], fallback: "none" },
-    availability: "unavailable"
+    inputs: [{ name: "candidate", type: "soturail.semantic.candidate.v1-draft", required: true }],
+    trust: { agentResultState: "candidate" },
+    providers: { class: "semantic-worker", candidates: [{ id: "candidate-store", kind: "native", status: "implemented" }], fallback: "none" },
+    limitations: ["Recording stores and binds a candidate to the workspace; it never verifies it."]
   }
 ];
 

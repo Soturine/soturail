@@ -183,7 +183,9 @@ See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Nat
 | Task skills: change, debug, review, security, research, knowledge, release | implemented | `skills/soturail-*/` |
 | Selection/composition eval fixtures (pt-BR, en, es, ja, mixed, non-trigger) | implemented (data + satisfiability tests) | `tests/fixtures/v160/skill-selection.json` |
 | Discovery: MCP `soturail.capabilities` / `soturail.skills.list`, CLI `capabilities describe`, `skills discover/describe` | implemented | `capability-descriptor.ts`, `skill-model.ts` projections |
-| Host projections, agent-led routing | planned | later v1.6 checkpoints |
+| Host projections (`--install`, verified Claude/Codex/Cursor/Gemini directories, generic fallback) | implemented | `host-adapters.ts` |
+| Agent-led routing; keyword ranking labeled `heuristic-fallback`; agent-declared context routing | implemented | `skill-routing.ts`, `context-intelligence.ts` |
+| Candidate recording (`soturail.candidates.record`) | implemented (experimental) | `candidate-store.ts` |
 
 Selection fixtures are scored by agent evaluations; deterministic tests only prove each case is satisfiable by the shipped catalog and does not depend on keyword overlap. Portable skills use the same safety scan as v1.5 packs (`scanSkillText`).
 

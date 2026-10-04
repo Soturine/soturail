@@ -5,6 +5,7 @@ import {
   buildRolePack,
   contextBudget,
   offloadContext,
+  parseContextExpert,
   parseRolePack,
   pruneContext,
   renderSelection,
@@ -47,8 +48,11 @@ export function registerContextCommand(program: Command): void {
     .description("Select task-relevant local files and memory with reasons.")
     .requiredOption("--query <query>", "Task description")
     .option("--limit <count>", "Maximum selected items", "10")
-    .action(async (options: { query: string; limit: string }) => {
-      process.stdout.write(renderSelection(await selectContext(options.query, Number.parseInt(options.limit, 10) || 10)));
+    .option("--expert <expert>", "Agent-declared context expert (code, docs, release, security, workflow, memory, research)")
+    .option("--role <role>", "Agent-declared role pack (planner, executor, reviewer, release-manager, researcher)")
+    .action(async (options: { query: string; limit: string; expert?: string; role?: string }) => {
+      const declared = { ...(options.expert ? { expert: parseContextExpert(options.expert) } : {}), ...(options.role ? { role: parseRolePack(options.role) } : {}) };
+      process.stdout.write(renderSelection(await selectContext(options.query, Number.parseInt(options.limit, 10) || 10, process.cwd(), declared)));
     });
 
   context

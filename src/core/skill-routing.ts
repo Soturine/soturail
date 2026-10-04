@@ -1,29 +1,43 @@
 import path from "node:path";
 import { routeContext } from "./context-intelligence.js";
-import { readSkills } from "./skill-store.js";
 import { keywordScore } from "./rail-utils.js";
+import { loadSkillCatalog, skillRequirements, type SkillModel } from "./skill-model.js";
+
+// Offline, lexical skill suggestion. This is a labeled fallback, diagnostic and
+// benchmark baseline — never the semantic authority. A capable agent selects
+// skills from their name/description metadata in any language; this ranker only
+// sees shared tokens and returns nothing useful for most non-English tasks.
+
+export const ROUTING_AUTHORITY = "heuristic-fallback" as const;
+const FALLBACK_NOTE = "Lexical fallback only. Agent selection from skill metadata is primary; results are candidates, never evidence.";
+
+export interface SkillSuggestion {
+  skill: SkillModel;
+  score: number;
+  reason: string;
+}
+
+export async function rankSkillsLexically(query: string, root = process.cwd()): Promise<SkillSuggestion[]> {
+  const { skills } = await loadSkillCatalog(root);
+  return skills
+    .map((skill) => ({ skill, ...keywordScore(query, `${skill.name} ${skill.description}`) }))
+    .filter((item) => item.score > 0)
+    .sort((left, right) => right.score - left.score || left.skill.name.localeCompare(right.skill.name))
+    .slice(0, 5);
+}
 
 export async function suggestSkills(query: string, root = process.cwd()): Promise<string> {
-  const skills = await readSkills(root);
-  if (skills.length === 0) return "No local skills found.\nCreate one with: soturail skills init <name>\n";
-  const ranked = skills
-    .map((skill) => {
-      const score = keywordScore(query, `${skill.metadata.name} ${skill.metadata.description} ${skill.markdown}`);
-      return { skill, score: score.score, reason: score.reason };
-    })
-    .filter((item) => item.score > 0)
-    .sort((left, right) => right.score - left.score)
-    .slice(0, 5);
-  if (ranked.length === 0) return "No skill matched the task strongly enough.\n";
+  const ranked = await rankSkillsLexically(query, root);
+  const header = ["SotuRail skills suggest", `selection_authority: ${ROUTING_AUTHORITY}`, `note: ${FALLBACK_NOTE}`, `query: ${query}`];
+  if (ranked.length === 0) return [...header, "matches_count: 0", "No lexical match. Let the agent choose from `soturail skills discover` metadata.", ""].join("\n");
   return [
-    "SotuRail skills suggest",
-    `query: ${query}`,
+    ...header,
     `matches_count: ${ranked.length}`,
     "",
     ...ranked.flatMap((item) => [
-      `- ${item.skill.metadata.id} [${item.skill.metadata.risk_level}]`,
+      `- ${item.skill.name} [${item.skill.source}]`,
       `  Reason: ${item.reason}`,
-      `  Description: ${item.skill.metadata.description}`,
+      `  Description: ${item.skill.description}`,
       `  Path: ${path.normalize(path.relative(root, item.skill.dir))}`,
       ""
     ])
@@ -32,19 +46,19 @@ export async function suggestSkills(query: string, root = process.cwd()): Promis
 
 export async function routeSkill(task: string, root = process.cwd()): Promise<string> {
   const route = routeContext(task);
-  const suggestions = await suggestSkills(task, root);
-  const policyChecks = route.expert === "release"
-    ? "npm publish, GitHub release, raw log expansion"
-    : route.expert === "security"
-      ? "secret-like content, raw log expansion, MCP exposure change"
-      : "destructive shell command, global config write";
+  const ranked = await rankSkillsLexically(task, root);
+  // Approval checks come from the capabilities the suggested skills use, not from a keyword category.
+  const approvals = [...new Set(ranked.flatMap((item) => skillRequirements(item.skill).approvalRequired))];
+  const sideEffects = [...new Set(ranked.flatMap((item) => skillRequirements(item.skill).sideEffects))];
   return [
     "SotuRail skills route",
+    `selection_authority: ${ROUTING_AUTHORITY}`,
     `task: ${task}`,
-    `context_expert: ${route.expert}`,
+    `context_expert: ${route.expert} (${route.reason})`,
     `role_pack: ${route.role}`,
-    `policy_checks: ${policyChecks}`,
+    `approval_required_capabilities: ${approvals.join(", ") || "none"}`,
+    `side_effects: ${sideEffects.join(", ") || "none"}`,
     "",
-    suggestions
+    await suggestSkills(task, root)
   ].join("\n");
 }

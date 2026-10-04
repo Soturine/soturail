@@ -12,6 +12,7 @@ import { describeSkill, skillCatalogSummary } from "./skill-model.js";
 import { WorkspaceGuard } from "./workspace-guard.js";
 import { getCapabilityDefinition } from "./capability-registry.js";
 import { capabilityCatalog, describeCapability, getCapabilityDescriptor } from "./capability-descriptor.js";
+import { CandidateDraftSchema, recordCandidate } from "./candidate-store.js";
 
 const EmptyInput = z.strictObject({});
 const ReadInput = z.strictObject({
@@ -34,6 +35,9 @@ const LocaleInput = z.string().regex(/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/).opti
 const CapabilitiesInput = z.strictObject({
   id: z.string().regex(/^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+$/).optional().describe("Capability ID to describe; omit to list all"),
   locale: LocaleInput
+});
+const CandidateRecordInput = z.strictObject({
+  candidate: CandidateDraftSchema.describe("Semantic candidate draft (kind, original text, sourceRefs, producer, verificationState); SotuRail assigns id, time and workspace binding")
 });
 const SkillsInput = z.strictObject({
   name: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(64).optional().describe("Skill name to load (level 2); omit to list discovery metadata"),
@@ -60,6 +64,7 @@ export const mcpTools: McpToolInfo[] = [
   { capabilityId: "project.read", name: "soturail.rules.check", description: "Run deterministic local rule validators.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
   tool("skill.discover", "soturail.skills.list", SkillsInput, hints(true, false, true)),
   tool("capability.discover", "soturail.capabilities", CapabilitiesInput, hints(true, false, true)),
+  tool("semantic.candidate.record", "soturail.candidates.record", CandidateRecordInput, hints(false, false, true)),
   tool("context.pack", "soturail.context.pack", ContextPackInput, hints(false, false, true)),
   tool("raw.inspect.redacted", "soturail.expand", ExpandInput, hints(true, false, true))
 ];
@@ -88,6 +93,11 @@ export async function callMcpTool(name: string, args: Record<string, unknown> = 
       if (parsed.resource !== undefined && parsed.name === undefined) throw new Error("soturail.skills.list resource requires name.");
       const result = parsed.name === undefined ? await skillCatalogSummary(root) : await describeSkill(parsed.name, root, parsed.resource);
       return redactText(`${JSON.stringify(result, null, 2)}\n`).text;
+    }
+    case "soturail.candidates.record": {
+      const parsed = CandidateRecordInput.parse(args);
+      const stored = await recordCandidate(parsed.candidate, root);
+      return `${JSON.stringify({ id: stored.candidate.id, path: stored.path, verificationState: stored.candidate.verificationState, workspace: stored.candidate.workspace, note: "Recorded as a candidate; only SotuRail evidence can verify it." }, null, 2)}\n`;
     }
     case "soturail.capabilities": {
       const parsed = CapabilitiesInput.parse(args);
