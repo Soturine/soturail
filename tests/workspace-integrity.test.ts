@@ -119,6 +119,18 @@ describe("artifact identity", () => {
     expect(after.fingerprint).not.toBe(before.fingerprint);
     expect(after.dirty).toBe(true);
   });
+
+  it("changes the fingerprint when an already-modified tracked file changes again", async () => {
+    const root = await temporaryProject();
+    await initializeGit(root);
+    // " M inside.txt" is the first porcelain entry; its content must stay in the digest.
+    await fs.writeFile(path.join(root, "inside.txt"), "15", "utf8");
+    const first = await createWorkspaceFingerprint(root);
+    await fs.writeFile(path.join(root, "inside.txt"), "14", "utf8");
+    const second = await createWorkspaceFingerprint(root);
+    expect(second.dirtyDigest).not.toBe(first.dirtyDigest);
+    expect(second.fingerprint).not.toBe(first.fingerprint);
+  });
 });
 
 async function temporaryProject(): Promise<string> {
