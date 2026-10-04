@@ -228,3 +228,25 @@ function unquote(value: string): string {
 function quote(value: string): string {
   return /^[\w .,/()-]*$/u.test(value) && !/^\s|\s$/.test(value) ? value : JSON.stringify(value);
 }
+
+/** Level 1 catalog projection shared by CLI and MCP. */
+export async function skillCatalogSummary(root = process.cwd()): Promise<{ schemaVersion: "soturail.skill.catalog.v1"; skills: Array<SkillLevel1 & { source: SkillSource }>; issues: SkillIssue[] }> {
+  const catalog = await loadSkillCatalog(root);
+  return {
+    schemaVersion: "soturail.skill.catalog.v1",
+    skills: catalog.skills.map((skill) => ({ ...skillLevel1(skill), source: skill.source })),
+    issues: catalog.issues
+  };
+}
+
+/** Level 2 (selected SKILL.md) or Level 3 (one resource) projection shared by CLI and MCP. */
+export async function describeSkill(name: string, root = process.cwd(), resource?: string): Promise<
+  | { level: 2; name: string; description: string; source: SkillSource; uses: string[]; requirements: ReturnType<typeof skillRequirements>; resources: string[]; instructions: string }
+  | { level: 3; name: string; resource: string; content: string }
+> {
+  const { skills } = await loadSkillCatalog(root);
+  const skill = skills.find((item) => item.name === name);
+  if (!skill) throw new Error(`Unknown skill: ${name}. List skills with soturail.skills.list or "soturail skills discover".`);
+  if (resource !== undefined) return { level: 3, name, resource, content: await readSkillResource(skill, resource) };
+  return { level: 2, name, description: skill.description, source: skill.source, uses: skill.uses, requirements: skillRequirements(skill), resources: skill.resources, instructions: skill.body.trim() };
+}

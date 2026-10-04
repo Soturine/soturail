@@ -54,9 +54,12 @@ Default tools include:
 - `soturail.read`
 - `soturail.format`
 - `soturail.rules.check`
-- `soturail.skills.list`
+- `soturail.skills.list` — skill discovery metadata; `name` loads one skill (level 2), `name` + `resource` loads one reference (level 3)
+- `soturail.capabilities` — capability catalog; `id` describes one capability (surfaces, trust, providers, availability); `locale` localizes titles only
 - `soturail.context.pack`
 - `soturail.expand`
+
+Every tool is declared by its capability's MCP surface in the Capability Descriptor; a tool cannot exist without that declaration.
 
 Security defaults:
 

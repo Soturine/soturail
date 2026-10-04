@@ -15,8 +15,8 @@ SotuRail organizes, constrains and proves. You understand the task; SotuRail sup
 
 1. **Understand the task** in the user's own language. Do not translate it into keywords; reason about meaning.
 2. **Discover** what SotuRail offers instead of guessing commands:
-   - capabilities, their trust rules and availability: `soturail capabilities list --json` (or the matching SotuRail MCP tool when the host exposes one);
-   - skills: read only the `name` and `description` of the other `soturail-*` skills and load the ones the task needs. Several may apply at once (for example change + debug + security).
+   - capabilities, their trust rules and availability: MCP tool `soturail.capabilities` (pass `id` to describe one, `locale` for localized titles), or `soturail capabilities list` / `soturail capabilities describe <id> --json`;
+   - skills: read only the `name` and `description` of the other `soturail-*` skills and load the ones the task needs — several may apply at once (for example change + debug + security). Without native skill loading, use MCP `soturail.skills.list` (`name` loads a skill, `name` + `resource` loads one reference) or `soturail skills describe <name>`.
 3. **Select** the smallest set of capabilities that answers the task. Prefer capabilities marked `available`; for `degraded` or `unavailable` ones, follow the descriptor's `fallback` and say so.
 4. **Act** with guarded sources:
    - read project files through `project.read` (WorkspaceGuard) when the host offers it;

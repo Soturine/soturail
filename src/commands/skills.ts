@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { createSkill, readSkills, renderSkillList } from "../core/skill-store.js";
+import { describeSkill, skillCatalogSummary } from "../core/skill-model.js";
 import { exportPortableSkills, exportSkills, packSkills } from "../core/skill-exporter.js";
 import { formatSkillValidation, validateSkills } from "../core/skill-validator.js";
 import { SkillTargetSchema } from "../core/skill-schema.js";
@@ -20,6 +21,20 @@ export function registerSkillsCommand(program: Command): void {
 
   skills.command("list").description("List local skills.").action(async () => {
     process.stdout.write(renderSkillList(await readSkills()));
+  });
+
+  skills.command("discover").description("List bundled, project and v1.5 skills with discovery metadata (level 1).").option("--json", "Print JSON").action(async (options: { json?: boolean }) => {
+    const catalog = await skillCatalogSummary();
+    if (options.json) process.stdout.write(`${JSON.stringify(catalog, null, 2)}\n`);
+    else process.stdout.write(["SotuRail skills", ...catalog.skills.map((item) => `- ${item.name} [${item.source}]: ${item.description}`), ...catalog.issues.map((item) => `! ${item.severity} ${item.skill} ${item.code}: ${item.message}`), ""].join("\n"));
+    if (catalog.issues.some((item) => item.severity === "error")) process.exitCode = 1;
+  });
+
+  skills.command("describe").description("Load one skill (level 2) or one of its resources (level 3).").argument("<name>", "Skill name").option("--resource <path>", "references/, scripts/ or assets/ file").option("--json", "Print JSON").action(async (name: string, options: { resource?: string; json?: boolean }) => {
+    const result = await describeSkill(name, process.cwd(), options.resource);
+    if (options.json) process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
+    else if (result.level === 3) process.stdout.write(result.content);
+    else process.stdout.write([`${result.name} [${result.source}]`, `uses: ${result.uses.join(" ")}`, `approval_required: ${result.requirements.approvalRequired.join(" ") || "none"}`, `unavailable: ${result.requirements.unavailable.join(" ") || "none"}`, `resources: ${result.resources.join(" ") || "none"}`, "", result.instructions, ""].join("\n"));
   });
 
   skills.command("validate").description("Validate local skills for safety and schema correctness.").action(async () => {

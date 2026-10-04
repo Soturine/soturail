@@ -40,7 +40,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | CTX-001 | Context Artifact / hard budget | 1.5.0 | [x] | `context-artifact.ts`; `context-pack.ts` | governance/context suites | context architecture | Byte/token budget, fingerprint, truncation and degradation are explicit and enforced. |
 | CTX-002 | Context Spine / agent escalation | 1.6.x | [>] | pending | task/context quality fixtures | context architecture | Stable compact prefix plus agent-led escalation; source/provenance remain explicit. |
 | AUD-160 | v1.6 semantic migration baseline | 1.6.0 | [x] | audit only | probes recorded | v1.6 baseline audit | Heuristic/parser inventory classified; English dependencies, host hardcodes, CLI-only agent needs and Skill gaps documented. |
-| DSC-001 | Capability/skill discovery surface | 1.6.0 | [>] | CLI `capabilities list` only | MCP integrity + CLI JSON | agent-native architecture | List/describe capabilities and skills, trust/evidence requirements and provider availability as thin descriptor projections. |
+| DSC-001 | Capability/skill discovery surface | 1.6.0 | [x] | MCP `soturail.capabilities`, `soturail.skills.list` levels 1–3; CLI `capabilities describe`, `skills discover/describe` | MCP integrity + CLI JSON | agent-native architecture | List/describe capabilities and skills, trust/evidence requirements and provider availability as thin descriptor projections. |
 | HST-001 | Host adapter registry | 1.6.0 | [>] | fixed host unions in 12+ modules | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [~] | selection fixtures + satisfiability tests; agent-run scoring pending | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [~] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
@@ -68,7 +68,8 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | 1 — canonical contracts | `a1fabc2` | green | `a1fabc2` |
 | Refactor map / simplification | `b2a3192` | green | `b2a3192` |
 | 2 — portable core skill | `1949f39` | see CI | `b2a3192` |
-| 3 — task skill catalog | see git log | pending | `b2a3192` |
+| 3 — task skill catalog | `848e686` | see CI | `b2a3192` |
+| 4 — self-discovery | see git log | pending | — |
 
 ## Foundation
 

@@ -31,6 +31,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [Stable Command Surface](reference/commands/stable-command-surface.md)
 - [v1.4 Commands](reference/commands/v1.4-commands.md)
 - [v1.5 Commands](reference/commands/v1.5-commands.md)
+- [v1.6 Commands (in progress)](reference/commands/v1.6-commands.md)
 - [Schema Contracts](reference/schemas/schema-contracts.md)
 - [v1 Contract](reference/contracts/v1-contract.md)
 - [Architecture](architecture/)

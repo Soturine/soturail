@@ -144,7 +144,7 @@ async function checkVerifiedControlPlaneInvariants(root: string): Promise<Qualit
   if (/allow_raw|allowRaw/.test(mcpTools)) {
     findings.push(finding("mcp_raw_self_authorization", "control_plane_invariant", "blocking", "src/core/mcp-tools.ts", undefined, "MCP must not accept caller-controlled raw disclosure authorization."));
   }
-  if (!mcpTools.includes("capabilityId") || !mcpTools.includes("getCapabilityDefinition")) {
+  if (!mcpTools.includes("capabilityId") || (!mcpTools.includes("getCapabilityDefinition") && !mcpTools.includes("getCapabilityDescriptor"))) {
     findings.push(finding("mcp_capability_registry", "control_plane_invariant", "blocking", "src/core/mcp-tools.ts", undefined, "MCP tools must map to the canonical capability registry."));
   }
   if (!config.includes('evalsDir: path.resolve(workspace, "evals")')) {

@@ -182,12 +182,12 @@ const plannedProvider = (cls: CapabilityDescriptorV2["providers"]["class"], ids:
 // declared honestly as unavailable instead of pretending to exist.
 const V2_EXTENSIONS: Extension[] = [
   {
-    id: "capability.discover", maturity: "experimental", cli: "capabilities list", output: "soturail.capability.v2", read: "none", write: "none", scope: "none", semanticKey: "capability_discover",
+    id: "capability.discover", maturity: "experimental", cli: "capabilities describe <id>", mcpTool: "soturail.capabilities", output: "soturail.capability.v2", read: "none", write: "none", scope: "none", semanticKey: "capability_discover",
     display: { en: { title: "Capability discovery", summary: "List and describe canonical SotuRail capabilities, trust rules and provider availability." }, "pt-BR": { title: "Descoberta de capabilities", summary: "Lista e descreve capabilities canônicas, regras de confiança e disponibilidade de providers." } },
     providers: nativeFact("capability-descriptor")
   },
   {
-    id: "skill.discover", maturity: "experimental", cli: "skills list", output: "soturail.skill.catalog.v1", read: "workspace", write: "none", scope: "none", semanticKey: "skill_discover",
+    id: "skill.discover", maturity: "experimental", cli: "skills describe <name>", mcpTool: "soturail.skills.list", output: "soturail.skill.catalog.v1", read: "workspace", write: "none", scope: "none", semanticKey: "skill_discover",
     display: { en: { title: "Skill discovery", summary: "List available Skills with concise discovery metadata." }, "pt-BR": { title: "Descoberta de Skills", summary: "Lista as Skills disponíveis com metadados concisos de descoberta." } },
     providers: nativeFact("skill-catalog")
   },
@@ -366,4 +366,40 @@ export function displayCapability(descriptor: CapabilityDescriptorV2, locale = "
   const text = exact ?? byLanguage ?? descriptor.display.en;
   if (!text) throw new Error(`Capability ${descriptor.id} has no source display text.`);
   return { id: descriptor.id, locale: resolved, title: text.title, summary: text.summary };
+}
+
+export interface CapabilitySummary {
+  id: string;
+  title: string;
+  maturity: CapabilityDescriptorV2["maturity"];
+  availability: CapabilityDescriptorV2["availability"];
+  mcp: string | null;
+  cli: string | null;
+  approvalRequired: boolean;
+  sideEffects: CapabilityDescriptorV2["sideEffects"]["scope"];
+}
+
+/** Bounded catalog projection for agents: enough to choose, not the full manual. */
+export function capabilityCatalog(locale = "en"): { schemaVersion: "soturail.capability.catalog.v1"; descriptorDigest: string; locale: string; capabilities: CapabilitySummary[] } {
+  return {
+    schemaVersion: "soturail.capability.catalog.v1",
+    descriptorDigest: capabilityDescriptorDigest(),
+    locale,
+    capabilities: CAPABILITY_DESCRIPTORS.map((descriptor) => ({
+      id: descriptor.id,
+      title: displayCapability(descriptor, locale).title,
+      maturity: descriptor.maturity,
+      availability: descriptor.availability,
+      mcp: descriptor.surfaces.mcp?.tool ?? null,
+      cli: descriptor.surfaces.cli ? `soturail ${descriptor.surfaces.cli.command}` : null,
+      approvalRequired: descriptor.approvalRequired,
+      sideEffects: descriptor.sideEffects.scope
+    }))
+  };
+}
+
+export function describeCapability(id: string, locale = "en"): CapabilityDescriptorV2 & { presentation: ReturnType<typeof displayCapability> } {
+  const descriptor = getCapabilityDescriptor(id);
+  if (!descriptor) throw new Error(`Unknown capability: ${id}. List capabilities with soturail.capabilities or "soturail capabilities list".`);
+  return { ...descriptor, presentation: displayCapability(descriptor, locale) };
 }

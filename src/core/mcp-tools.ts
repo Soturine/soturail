@@ -8,9 +8,10 @@ import { runIndex } from "../commands/index.js";
 import { buildContextPack } from "./context-pack.js";
 import { MetricsStore } from "./metrics-store.js";
 import { redactText } from "./report-redaction.js";
-import { readSkills, renderSkillList } from "./skill-store.js";
+import { describeSkill, skillCatalogSummary } from "./skill-model.js";
 import { WorkspaceGuard } from "./workspace-guard.js";
 import { getCapabilityDefinition } from "./capability-registry.js";
+import { capabilityCatalog, describeCapability, getCapabilityDescriptor } from "./capability-descriptor.js";
 
 const EmptyInput = z.strictObject({});
 const ReadInput = z.strictObject({
@@ -28,6 +29,15 @@ const ContextPackInput = z.strictObject({
 });
 const ExpandInput = z.strictObject({
   raw_id: z.string().regex(/^[a-f0-9]{8}$/i).describe("Raw log identifier from soturail run")
+});
+const LocaleInput = z.string().regex(/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/).optional().describe("Presentation locale (BCP 47); machine IDs never change");
+const CapabilitiesInput = z.strictObject({
+  id: z.string().regex(/^[a-z][a-z0-9-]*(\.[a-z][a-z0-9-]*)+$/).optional().describe("Capability ID to describe; omit to list all"),
+  locale: LocaleInput
+});
+const SkillsInput = z.strictObject({
+  name: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/).max(64).optional().describe("Skill name to load (level 2); omit to list discovery metadata"),
+  resource: z.string().min(1).max(256).optional().describe("Skill-relative references/, scripts/ or assets/ file to load (level 3); requires name")
 });
 
 export interface McpToolInfo {
@@ -48,7 +58,8 @@ export const mcpTools: McpToolInfo[] = [
   tool("project.read", "soturail.read", ReadInput, hints(true, false, true)),
   { capabilityId: "project.read", name: "soturail.format", description: "Compress text or a guarded project file deterministically.", inputSchema: FormatInput, annotations: hints(true, false, true) },
   { capabilityId: "project.read", name: "soturail.rules.check", description: "Run deterministic local rule validators.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
-  { capabilityId: "project.read", name: "soturail.skills.list", description: "List local Skill Rail skills without executing them.", inputSchema: EmptyInput, annotations: hints(true, false, true) },
+  tool("skill.discover", "soturail.skills.list", SkillsInput, hints(true, false, true)),
+  tool("capability.discover", "soturail.capabilities", CapabilitiesInput, hints(true, false, true)),
   tool("context.pack", "soturail.context.pack", ContextPackInput, hints(false, false, true)),
   tool("raw.inspect.redacted", "soturail.expand", ExpandInput, hints(true, false, true))
 ];
@@ -72,9 +83,17 @@ export async function callMcpTool(name: string, args: Record<string, unknown> = 
     case "soturail.rules.check":
       EmptyInput.parse(args);
       return checkRules(root);
-    case "soturail.skills.list":
-      EmptyInput.parse(args);
-      return renderSkillList(await readSkills(root), root);
+    case "soturail.skills.list": {
+      const parsed = SkillsInput.parse(args);
+      if (parsed.resource !== undefined && parsed.name === undefined) throw new Error("soturail.skills.list resource requires name.");
+      const result = parsed.name === undefined ? await skillCatalogSummary(root) : await describeSkill(parsed.name, root, parsed.resource);
+      return redactText(`${JSON.stringify(result, null, 2)}\n`).text;
+    }
+    case "soturail.capabilities": {
+      const parsed = CapabilitiesInput.parse(args);
+      const result = parsed.id === undefined ? capabilityCatalog(parsed.locale) : describeCapability(parsed.id, parsed.locale);
+      return `${JSON.stringify(result, null, 2)}\n`;
+    }
     case "soturail.context.pack": {
       const parsed = ContextPackInput.parse(args);
       const pack = await buildContextPack(parsed.target ?? "generic", root);
@@ -104,8 +123,13 @@ function hints(readOnlyHint: boolean, destructiveHint: boolean, idempotentHint: 
   return { readOnlyHint, destructiveHint, idempotentHint, openWorldHint: false };
 }
 
+// The canonical descriptor owns the MCP surface: a tool exists only when its
+// capability declares exactly this tool name. Description text is never restated.
 function tool(capabilityId: string, name: string, inputSchema: z.ZodObject, annotations: McpToolInfo["annotations"]): McpToolInfo {
-  const definition = getCapabilityDefinition(capabilityId);
-  if (!definition) throw new Error(`MCP capability is missing from registry: ${capabilityId}`);
-  return { capabilityId, name, description: definition.description, inputSchema, annotations };
+  const descriptor = getCapabilityDescriptor(capabilityId);
+  if (!descriptor) throw new Error(`MCP capability is missing from registry: ${capabilityId}`);
+  if (descriptor.surfaces.mcp?.tool !== name) throw new Error(`Capability ${capabilityId} does not declare MCP tool ${name}.`);
+  if (descriptor.registry === "v1" && !getCapabilityDefinition(capabilityId)) throw new Error(`v1 capability missing: ${capabilityId}`);
+  const summary = descriptor.display.en?.summary ?? capabilityId;
+  return { capabilityId, name, description: summary, inputSchema, annotations };
 }

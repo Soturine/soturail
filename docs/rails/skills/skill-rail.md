@@ -182,10 +182,22 @@ See [Skill Rail 2.0](skill-rail-2.md) for the current pack format and [Agent-Nat
 | Generic portable export | implemented | `soturail skills export --target generic --layout portable` |
 | Task skills: change, debug, review, security, research, knowledge, release | implemented | `skills/soturail-*/` |
 | Selection/composition eval fixtures (pt-BR, en, es, ja, mixed, non-trigger) | implemented (data + satisfiability tests) | `tests/fixtures/v160/skill-selection.json` |
-| Discovery surfaces, host projections, agent-led routing | planned | later v1.6 checkpoints |
+| Discovery: MCP `soturail.capabilities` / `soturail.skills.list`, CLI `capabilities describe`, `skills discover/describe` | implemented | `capability-descriptor.ts`, `skill-model.ts` projections |
+| Host projections, agent-led routing | planned | later v1.6 checkpoints |
 
 Selection fixtures are scored by agent evaluations; deterministic tests only prove each case is satisfiable by the shipped catalog and does not depend on keyword overlap. Portable skills use the same safety scan as v1.5 packs (`scanSkillText`).
 
 Approval, side-effect and evidence requirements are **derived** from the capabilities a skill uses; a skill does not restate them. Project skills placed in `.agents/skills/<name>/SKILL.md` are loaded into the same catalog.
 
 `--layout flat` (the v1.5 single-file export) remains for compatibility and is scheduled for deprecation once host projections land.
+
+## Agent bootstrap
+
+An agent entering a SotuRail repository needs no CLI knowledge to start:
+
+1. its host loads the `soturail-*` skill metadata (native Agent Skills hosts) — or the agent calls MCP `soturail.skills.list`;
+2. it loads `soturail-core`, which teaches discover -> select -> act -> verify;
+3. it asks `soturail.capabilities` what exists, what is available or degraded, which side effects need approval and which evidence is required;
+4. it loads only the task skills it needs and their references on demand.
+
+The CLI equivalents (`soturail skills discover`, `soturail skills describe <name>`, `soturail capabilities describe <id>`) are thin projections of the same functions for humans, CI and hosts without MCP.
