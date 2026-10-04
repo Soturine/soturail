@@ -3,8 +3,7 @@ import path from "node:path";
 import type { Command } from "commander";
 import { ArtifactRegistry } from "../core/artifact-registry.js";
 import { artifactStore } from "../core/artifact-store.js";
-import { ChangeContractSchema, createChangeContract, evaluateReadiness } from "../core/change-contract.js";
-import { createWorkspaceFingerprint } from "../core/workspace-fingerprint.js";
+import { buildReadinessSnapshot, ChangeContractSchema, createChangeContract, evaluateReadiness } from "../core/change-contract.js";
 import { WorkspaceGuard } from "../core/workspace-guard.js";
 
 export function registerContractCommand(program: Command): void {
@@ -43,18 +42,16 @@ export function registerContractCommand(program: Command): void {
     .action(async (file: string, options: { criterionPassed?: string; checkPassed?: string; runtimeEvidence?: boolean; independentReview?: boolean; humanApproved?: boolean }) => {
       const absolute = await new WorkspaceGuard().assertAllowedRead(file);
       const parsed = ChangeContractSchema.parse(JSON.parse(await fs.readFile(absolute, "utf8")));
-      const workspace = await createWorkspaceFingerprint();
-      const verdict = evaluateReadiness(parsed, {
-        workspaceFingerprint: workspace.fingerprint,
-        acceptanceCriteriaPassed: options.criterionPassed ? [options.criterionPassed] : [],
-        checksPassed: options.checkPassed ? [options.checkPassed] : [],
-        evidenceFreshness: "current",
+      // Checks count only from recorded `soturail run` evidence; --check-passed is an assertion to corroborate.
+      const snapshot = await buildReadinessSnapshot(parsed, process.cwd(), {
+        criteria: options.criterionPassed ? [options.criterionPassed] : [],
+        checks: options.checkPassed ? [options.checkPassed] : [],
         runtimeEvidence: options.runtimeEvidence === true,
         independentReview: options.independentReview === true,
-        humanApproval: options.humanApproved === true,
-        blockers: []
+        humanApproval: options.humanApproved === true
       });
-      process.stdout.write(`${JSON.stringify(verdict, null, 2)}\n`);
+      const verdict = evaluateReadiness(parsed, snapshot);
+      process.stdout.write(`${JSON.stringify({ ...verdict, checkEvidence: snapshot.checkEvidence, assertions: snapshot.assertions }, null, 2)}\n`);
       if (verdict.verdict !== "ready") process.exitCode = 1;
     });
 }

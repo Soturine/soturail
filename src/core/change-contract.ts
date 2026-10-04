@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { getWorkspacePaths, readJsonl } from "./config.js";
 import type { GovernanceVerdict } from "./governance.js";
+import type { RawRunRecord } from "./raw-store.js";
+import { reason, type TrustReason } from "./trust-decision.js";
 import { createWorkspaceFingerprint } from "./workspace-fingerprint.js";
 
 export const ChangeContractSchema = z.object({
@@ -34,7 +37,16 @@ export interface ReadinessVerdict {
   schemaVersion: "soturail.readiness.verdict.v1";
   verdict: "ready" | "not-ready";
   reasons: string[];
+  /** Same reasons with stable codes (additive in v1.6). */
+  details: TrustReason[];
   evaluatedAt: string;
+}
+
+export interface EvidenceBackedSnapshot extends ReadinessSnapshot {
+  /** How each required check was satisfied or not, from recorded runs only. */
+  checkEvidence: Array<{ check: string; state: "current-pass" | "current-fail" | "stale" | "missing"; rawId?: string }>;
+  /** Assertions the caller made; recorded for audit, never counted as evidence. */
+  assertions: { criteria: string[]; checks: string[]; source: "caller" };
 }
 
 export interface DualGateVerdict {
@@ -51,15 +63,61 @@ export async function createChangeContract(input: Omit<ChangeContract, "schemaVe
 }
 
 export function evaluateReadiness(contract: ChangeContract, snapshot: ReadinessSnapshot): ReadinessVerdict {
-  const reasons = [...snapshot.blockers];
-  if (contract.workspaceFingerprint !== snapshot.workspaceFingerprint) reasons.push("Contract workspace fingerprint is stale.");
-  if (snapshot.evidenceFreshness !== "current") reasons.push(`Evidence freshness is ${snapshot.evidenceFreshness}.`);
-  for (const criterion of contract.acceptanceCriteria) if (!snapshot.acceptanceCriteriaPassed.includes(criterion)) reasons.push(`Acceptance criterion not satisfied: ${criterion}`);
-  for (const check of contract.requiredChecks) if (!snapshot.checksPassed.includes(check)) reasons.push(`Required check missing: ${check}`);
-  if (contract.evidencePolicy.runtimeEvidenceRequired && !snapshot.runtimeEvidence) reasons.push("Runtime evidence is required.");
-  if (contract.evidencePolicy.independentReviewRequired && !snapshot.independentReview) reasons.push("Independent review is required.");
-  if (contract.evidencePolicy.humanApprovalRequired && !snapshot.humanApproval) reasons.push("Human approval is required.");
-  return { schemaVersion: "soturail.readiness.verdict.v1", verdict: reasons.length === 0 ? "ready" : "not-ready", reasons: reasons.length ? reasons : ["All deterministic readiness requirements passed."], evaluatedAt: new Date().toISOString() };
+  const details: TrustReason[] = snapshot.blockers.map((message) => reason(message.startsWith("Asserted check") ? "check_asserted_without_evidence" : "blocker", message));
+  if (contract.workspaceFingerprint !== snapshot.workspaceFingerprint) details.push(reason("workspace_stale", "Contract workspace fingerprint is stale."));
+  if (snapshot.evidenceFreshness !== "current") details.push(reason(snapshot.evidenceFreshness === "stale" ? "evidence_stale" : "evidence_missing", `Evidence freshness is ${snapshot.evidenceFreshness}.`));
+  for (const criterion of contract.acceptanceCriteria) if (!snapshot.acceptanceCriteriaPassed.includes(criterion)) details.push(reason("criterion_unsatisfied", `Acceptance criterion not satisfied: ${criterion}`, criterion));
+  for (const check of contract.requiredChecks) if (!snapshot.checksPassed.includes(check)) details.push(reason("check_missing", `Required check missing: ${check}`, check));
+  if (contract.evidencePolicy.runtimeEvidenceRequired && !snapshot.runtimeEvidence) details.push(reason("runtime_evidence_required", "Runtime evidence is required."));
+  if (contract.evidencePolicy.independentReviewRequired && !snapshot.independentReview) details.push(reason("independent_review_required", "Independent review is required."));
+  if (contract.evidencePolicy.humanApprovalRequired && !snapshot.humanApproval) details.push(reason("human_approval_required", "Human approval is required."));
+  const passed = details.length === 0;
+  const final = passed ? [reason("passed", "All deterministic readiness requirements passed.")] : details;
+  return { schemaVersion: "soturail.readiness.verdict.v1", verdict: passed ? "ready" : "not-ready", reasons: final.map((item) => item.message), details: final, evaluatedAt: new Date().toISOString() };
+}
+
+/**
+ * Build the readiness snapshot from recorded evidence instead of caller claims.
+ * A required check counts only when the latest recorded run of exactly that
+ * command exited 0 against the current workspace fingerprint. Caller-asserted
+ * checks that recorded evidence does not corroborate become blockers.
+ */
+export async function buildReadinessSnapshot(
+  contract: ChangeContract,
+  root = process.cwd(),
+  attested: { criteria?: string[]; checks?: string[]; runtimeEvidence?: boolean; independentReview?: boolean; humanApproval?: boolean } = {}
+): Promise<EvidenceBackedSnapshot> {
+  const workspace = await createWorkspaceFingerprint(root);
+  const runs = await readJsonl<RawRunRecord>(getWorkspacePaths(root).rawIndex);
+  const latestRun = (check: string) => [...runs].reverse().find((run) => normalizeCommand(run.command) === normalizeCommand(check));
+  const checkEvidence = contract.requiredChecks.map((check) => {
+    const run = latestRun(check);
+    if (!run) return { check, state: "missing" as const };
+    if (run.workspace_fingerprint !== workspace.fingerprint) return { check, state: "stale" as const, rawId: run.raw_id };
+    return { check, state: run.exit_code === 0 ? "current-pass" as const : "current-fail" as const, rawId: run.raw_id };
+  });
+  const checksPassed = checkEvidence.filter((item) => item.state === "current-pass").map((item) => item.check);
+  const blockers = [
+    ...checkEvidence.filter((item) => item.state === "current-fail").map((item) => `Required check failed in recorded run ${item.rawId}: ${item.check}`),
+    ...(attested.checks ?? []).filter((check) => !checksPassed.some((passed) => normalizeCommand(passed) === normalizeCommand(check))).map((check) => `Asserted check has no current recorded passing run: ${check}`)
+  ];
+  const evidenceFreshness = checkEvidence.some((item) => item.state === "stale") ? "stale" : checkEvidence.every((item) => item.state.startsWith("current")) ? "current" : "unknown";
+  return {
+    workspaceFingerprint: workspace.fingerprint,
+    acceptanceCriteriaPassed: attested.criteria ?? [],
+    checksPassed,
+    evidenceFreshness,
+    runtimeEvidence: attested.runtimeEvidence === true,
+    independentReview: attested.independentReview === true,
+    humanApproval: attested.humanApproval === true,
+    blockers,
+    checkEvidence,
+    assertions: { criteria: attested.criteria ?? [], checks: attested.checks ?? [], source: "caller" }
+  };
+}
+
+function normalizeCommand(command: string): string {
+  return command.trim().replace(/\s+/g, " ");
 }
 
 export function evaluateDualGate(authority: GovernanceVerdict, readiness: ReadinessVerdict): DualGateVerdict {

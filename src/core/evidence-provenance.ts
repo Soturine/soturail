@@ -7,6 +7,7 @@ import type { RawRunRecord } from "./raw-store.js";
 import { makeRailId, pathExists, redactProbableSecrets } from "./rail-utils.js";
 import { createWorkspaceFingerprint, type WorkspaceFingerprint } from "./workspace-fingerprint.js";
 import { createArtifactEnvelope } from "./artifact-envelope.js";
+import { listCandidates } from "./candidate-store.js";
 import { artifactStore } from "./artifact-store.js";
 import { SOTURAIL_VERSION } from "./version.js";
 
@@ -28,6 +29,8 @@ export interface ProvenanceEvidence {
   sourcePaths: string[];
   warnings: string[];
   nextCommands: string[];
+  /** Semantic Worker output present in the workspace. Context only — never counted as evidence. */
+  semanticCandidates?: { total: number; stale: number; bySkill: Record<string, number>; byCapability: Record<string, number>; countsAsEvidence: false };
 }
 
 export async function collectEvidence(root = process.cwd()): Promise<{ dir: string; evidence: ProvenanceEvidence }> {
@@ -64,6 +67,11 @@ export async function collectEvidence(root = process.cwd()): Promise<{ dir: stri
     warnings: checks.length === 0 ? ["No locally recorded verification checks were found; status remains unverified."] : [],
     nextCommands: ["soturail evidence verify", "soturail evidence report"]
   };
+  const candidates = await summarizeCandidates(root);
+  if (candidates.total > 0) {
+    evidence.semanticCandidates = candidates;
+    evidence.warnings.push(`${candidates.total} semantic candidate(s) recorded (${candidates.stale} stale); candidates are context, not evidence.`);
+  }
   await writeEvidenceArtifacts(dir, evidence);
   return { dir, evidence };
 }
@@ -167,3 +175,19 @@ function looksLikeCheck(command: string): boolean {
   return /\b(test|typecheck|build|lint|audit|check|verify|vitest|tsc)\b/i.test(command);
 }
 
+
+async function summarizeCandidates(root: string): Promise<NonNullable<ProvenanceEvidence["semanticCandidates"]>> {
+  const views = await listCandidates(root).catch(() => []);
+  const count = (key: (view: (typeof views)[number]) => string | undefined) => views.reduce<Record<string, number>>((acc, view) => {
+    const value = key(view);
+    if (value) acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+  return {
+    total: views.length,
+    stale: views.filter((view) => view.freshness === "stale" || view.sources.some((source) => source.state !== "current" && source.state !== "unhashed")).length,
+    bySkill: count((view) => view.candidate.producer.skill),
+    byCapability: count((view) => view.candidate.producer.capability),
+    countsAsEvidence: false
+  };
+}

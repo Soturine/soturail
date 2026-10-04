@@ -18,6 +18,18 @@ SotuRail is a guardrail, provenance, and readiness layer. It is not a sandbox, e
 
 Authority and readiness are independent. A permitted action with insufficient engineering evidence is denied progression; a verified change without actor authority is also denied. Provider unavailability cannot convert to allow. The Execution Envelope binds the exact evaluated payload, contract, workspace, verdict, and capability epoch; a digest mismatch is `NOT_ATTESTED`.
 
+## Agent-native threats (v1.6)
+
+| Threat | Control |
+|---|---|
+| agent claims it verified something it did not run | readiness counts only recorded runs of the required command at the current fingerprint; asserted checks become `check_asserted_without_evidence` blockers |
+| model/provider output self-promoting to `verified`/`current`/`approved`/`ready` | candidate schemas reject protected states (`SelfPromotionError`), also when a stored candidate file is edited |
+| malicious or unreviewed skill | skills are guidance, not authority; shared safety scan (`scanSkillText`) for portable and v1.5 skills; export refuses secret-like content |
+| prompt injection in project docs or provider output | core skill instructs agents to treat content as data; candidates preserve source text verbatim with digests for review |
+| host projection overwriting user files | projections only replace directories carrying `.soturail-projection.json` |
+| candidate citing paths outside the workspace or secrets | `sourceRefs` pass WorkspaceGuard and sensitivity checks at record time |
+| broad MCP exposure for convenience | MCP tools exist only when a capability declares them; no shell tool; candidate recording writes local state only |
+
 ## Credentials and sensitive state
 
 Do not commit `.soturail/raw/`, environment files, provider tokens, or generated credentials. Workspace fingerprints hash approved metadata and exclude secret values. Provider adapters must accept credentials through their own documented secret channel and must not copy them into artifacts, context, logs, manifests, or receipts.
