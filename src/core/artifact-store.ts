@@ -141,7 +141,7 @@ async function withFileLock<T>(filePath: string, operation: () => Promise<T>): P
       lock = await fs.open(lockPath, "wx", 0o600);
       break;
     } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+      if (!isLockContention(error)) throw error;
       const stat = await fs.stat(lockPath).catch(() => null);
       if (stat && Date.now() - stat.mtimeMs > 30_000) await fs.unlink(lockPath).catch(() => undefined);
       await new Promise((resolve) => setTimeout(resolve, 10));
@@ -154,4 +154,12 @@ async function withFileLock<T>(filePath: string, operation: () => Promise<T>): P
     await lock.close();
     await fs.unlink(lockPath).catch(() => undefined);
   }
+}
+
+// On Windows a lock file that another writer is deleting stays "delete pending"
+// and opening it fails with EPERM/EACCES/EBUSY instead of EEXIST.
+function isLockContention(error: unknown): boolean {
+  const code = (error as NodeJS.ErrnoException).code;
+  if (code === "EEXIST") return true;
+  return process.platform === "win32" && (code === "EPERM" || code === "EACCES" || code === "EBUSY");
 }

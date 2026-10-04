@@ -10,7 +10,7 @@ import { createWorkspaceFingerprint } from "../src/core/workspace-fingerprint.js
 const temporaryDirectories: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true })));
+  await Promise.all(temporaryDirectories.splice(0).map((dir) => fs.rm(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 })));
 });
 
 describe("WorkspaceGuard", () => {
