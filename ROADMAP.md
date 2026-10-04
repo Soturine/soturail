@@ -1,6 +1,6 @@
 # SotuRail Roadmap
 
-This roadmap is dependency-ordered future work. Current v1.5 contracts live in `docs/reference/` and `docs/architecture/`; release history lives in `CHANGELOG.md` and `docs/releases/`. Operational status and acceptance criteria live in the [Verified Control Plane Implementation Tracker](docs/roadmap/verified-control-plane-implementation-tracker.md).
+This roadmap is dependency-ordered future work after the released v1.6 baseline. Current contracts live in `docs/reference/` and `docs/architecture/`; release history lives in `CHANGELOG.md` and `docs/releases/`. Operational status and acceptance criteria live in the [Verified Control Plane Implementation Tracker](docs/roadmap/verified-control-plane-implementation-tracker.md).
 
 SotuRail stays a local-first engineering control plane. The v1.6 direction makes it agent-native and language-neutral: AI agents perform natural-language interpretation and semantic work through portable skills, while SotuRail owns capability contracts, provenance, freshness, policy, evidence and readiness.
 
@@ -70,7 +70,7 @@ Deliver:
 - structured candidate outputs for claims, impact, decisions, questions and interpretations;
 - Skill eval fixtures that measure task correctness, capability selection, evidence discipline and context cost.
 
-The current v1.5 keyword-based skill routing may remain temporarily as a deterministic fallback, but it is not the future semantic authority.
+The legacy v1.5 keyword-based skill routing remains only as a labeled deterministic fallback; it is not semantic authority.
 
 ## Milestone E — Language-Neutral Semantics (v1.6 primary)
 

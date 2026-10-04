@@ -1,6 +1,6 @@
 # SotuRail Documentation
 
-SotuRail documentation is organized by task and rail. Start with the [Quickstart](getting-started/quickstart.md), then open only the sections relevant to the current work.
+SotuRail v1.6 documentation is organized by task and architecture. Start with the [Quickstart](getting-started/quickstart.md) and [Usage](getting-started/usage.md), then open only the sections relevant to the current work.
 
 ## Getting Started
 
@@ -11,8 +11,9 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 - [Windows](getting-started/windows.md)
 - [Migration To v1](getting-started/migration-v1.md)
 - [Migration To v1.5](getting-started/migration-v1.5.md)
+- [Migration To v1.6](getting-started/migration-v1.6.md)
 
-## Stable Rails
+## Product Areas
 
 - [Context And Memory](rails/context/)
 - [Harness And Workflow](rails/harness/)
@@ -42,7 +43,7 @@ SotuRail documentation is organized by task and rail. Start with the [Quickstart
 ## Verified Control Plane
 
 - [Verified Control Plane Architecture](architecture/verified-control-plane.md)
-- [Agent-Native Semantic Architecture — v1.6 direction](architecture/agent-native-semantic-architecture.md)
+- [Agent-Native Semantic Architecture — current v1.6](architecture/agent-native-semantic-architecture.md)
 - [Artifact Model And Lineage](architecture/artifact-model-and-lineage.md)
 - [Governance Model](architecture/governance-model.md)
 - [Context Architecture](architecture/context-architecture.md)
