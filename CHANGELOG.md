@@ -13,10 +13,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Added Semantic Worker candidate artifacts (`soturail.semantic.candidate.v1`) with MCP `soturail.candidates.record` and CLI `candidates record|list`, workspace binding and per-source digests.
 - Added the host adapter registry and verified skill projections (`skills export --layout portable --install`) with a generic fallback for unverified hosts.
 - Added stable readiness reason codes and multilingual/Unicode fixtures.
+- Added `contract revise` (lineage-preserving revisions) and `contract attest` (interactive human attestation receipts).
 
 ### Changed
 
-- `contract verify` now builds readiness from recorded runs at the current workspace fingerprint; `--check-passed` is an assertion that must be corroborated.
+- `contract verify` now builds readiness from recorded runs and human attestation receipts at the current workspace fingerprint; all caller flags are assertions. Contracts keep an immutable baseline, and foundation/source/scope changes require `contract revise` with lineage.
 - Keyword skill/context routing is labeled `heuristic-fallback`; agents can declare context expert/role.
 - Approved memory uses one canonical store with a one-time receipted migration; context packs omit stale approved memory.
 - Slugs, fallback tokens and symbol extraction are Unicode-safe; ASCII results are unchanged.
@@ -24,6 +25,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Fixed
 
+- The workspace fingerprint ignored further edits to an already-modified tracked file, so stale evidence could look current.
+- Change contracts created before implementation could never become ready (`workspace_stale`).
 - Approved memory appeared twice in context packs and stale approvals reappeared through the legacy mirror.
 - Exported host docs recommended the unsupported `brain export --agent antigravity`.
 - Portable skill export paths were wrong when the project root is reached through an alias (macOS `/private/var`, Windows short names).

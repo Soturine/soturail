@@ -7,7 +7,8 @@ import { promisify } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
 import { executeRunCommand } from "../src/commands/run.js";
 import { recordCandidate } from "../src/core/candidate-store.js";
-import { buildReadinessSnapshot, createChangeContract, evaluateReadiness, type ChangeContract } from "../src/core/change-contract.js";
+import { createChangeContract, evaluateReadiness, type ChangeContract } from "../src/core/change-contract.js";
+import { buildReadinessSnapshot } from "../src/core/contract-lifecycle.js";
 import { collectEvidence } from "../src/core/evidence-provenance.js";
 import { ensureWorkspace } from "../src/core/config.js";
 
@@ -47,6 +48,7 @@ async function contractFor(root: string, checks: string[]): Promise<ChangeContra
     decisions: [],
     acceptanceCriteria: ["works"],
     requiredChecks: checks,
+    criteriaEvidence: { works: checks },
     evidencePolicy: { runtimeEvidenceRequired: false, independentReviewRequired: false, humanApprovalRequired: false }
   }, root);
 }
@@ -77,14 +79,14 @@ describe("readiness comes from recorded evidence, not assertions", () => {
     await executeRunCommand([failCheck], { terminalStdout: sink(), terminalStderr: sink() }, root);
     const failed = evaluateReadiness(failing, await buildReadinessSnapshot(failing, root, { criteria: ["works"], checks: [failCheck] }));
     expect(failed.verdict).toBe("not-ready");
-    expect(failed.reasons.join("\n")).toMatch(/Required check failed in recorded run/);
+    expect(failed.reasons.join("\n")).toMatch(/Recorded run [a-f0-9]+ failed/);
 
     const passing = await contractFor(root, [passCheck]);
     await executeRunCommand([passCheck], { terminalStdout: sink(), terminalStderr: sink() }, root);
     await fs.writeFile(path.join(root, "app.ts"), "export const ok = false;\n");
     const snapshot = await buildReadinessSnapshot(passing, root, { criteria: ["works"] });
     expect(snapshot.checkEvidence[0]?.state).toBe("stale");
-    expect(evaluateReadiness(passing, snapshot).details.map((item) => item.code)).toEqual(expect.arrayContaining(["evidence_stale", "workspace_stale"]));
+    expect(evaluateReadiness(passing, snapshot).details.map((item) => item.code)).toEqual(expect.arrayContaining(["evidence_stale"]));
   });
 });
 

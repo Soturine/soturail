@@ -35,6 +35,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | GOV-002 | AGT/ACS provider | 1.7+ | [>] | fail-closed boundary only | unavailable verdict contract | provider + governance docs | Optional integration after pinned API/license and conformance fixtures; not required for v1.6. |
 | GOV-003 | Dual Gate | 1.5.0 | [x] | `evaluateDualGate` | allow/deny/not-ready combinations | governance + contracts | Only authority `allow` plus readiness `ready` permits progression. |
 | GOV-004 | Execution Envelope | 1.5.0 | [x] | `execution-envelope.ts` | exact and mismatched digest cases | governance + contracts | Executed payload must equal evaluated digest; mismatch is NOT_ATTESTED. |
+| CON-003 | Contract lifecycle (baseline vs verification, revisions, human receipts) | 1.6.0 | [x] | `contract-lifecycle.ts`; `contract revise|attest` | adversarial lifecycle suite | contracts and verification | Baseline is provenance; readiness on current evidence; foundation changes need revisions with lineage; caller flags never satisfy readiness. |
 | CON-001 | Change Contract / readiness | 1.5.0 | [x] | `change-contract.ts`; contract CLI | governance contracts | contracts and verification | Risk, fidelity, evidence policy, checks and blockers are distinct deterministic fields. |
 | CON-002 | Decision Graph | 1.6.x | [>] | pending | fact/decision/unknown fixtures | roadmap | Separate discovered facts from human decisions and unresolved questions. |
 | CTX-001 | Context Artifact / hard budget | 1.5.0 | [x] | `context-artifact.ts`; `context-pack.ts` | governance/context suites | context architecture | Byte/token budget, fingerprint, truncation and degradation are explicit and enforced. |
@@ -75,8 +76,10 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | Legacy cleanup | `fd6cfc0` (CI fix), `4ff9283` | `fd6cfc0` green | `fd6cfc0` |
 | 6 — semantic routing transition | `f390510` | green | `f390510` |
 | 7 — multilingual / preserve-source | `7869bda` | green | `7869bda` |
-| 8 — trust/evidence integration | `9b0925a` | pending | `7869bda` |
-| 9 — docs / migration polish | see git log | pending | `7869bda` |
+| 8 — trust/evidence integration | `9b0925a` | green | `9b0925a` |
+| 9 — docs / migration polish | `daca918` | green | `daca918` |
+| Fingerprint fix | `f973981` (test only), `a3a9daa` (fix) | see CI | `daca918` |
+| 10A — contract lifecycle / trust hardening | see git log | pending | `daca918` |
 
 ## Foundation
 

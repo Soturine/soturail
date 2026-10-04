@@ -13,6 +13,15 @@ export const REASON_CODES = [
   "runtime_evidence_required",
   "independent_review_required",
   "human_approval_required",
+  "human_approval_asserted_without_receipt",
+  "review_asserted_without_receipt",
+  "runtime_asserted_without_evidence",
+  "criterion_asserted_without_evidence",
+  "contract_modified",
+  "contract_source_changed",
+  "contract_scope_exceeded",
+  "contract_scope_unverifiable",
+  "contract_superseded",
   "blocker",
   "passed"
 ] as const;

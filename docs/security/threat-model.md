@@ -22,6 +22,8 @@ Authority and readiness are independent. A permitted action with insufficient en
 
 | Threat | Control |
 |---|---|
+| agent self-attests human approval, review or a manual criterion | caller flags are assertions only; receipts come from an interactive terminal with typed confirmation, bind contract revision + foundation digest + current fingerprint, and have no MCP surface |
+| contract edited to move the goalposts | foundation digest mismatch requires a recorded revision with lineage |
 | agent claims it verified something it did not run | readiness counts only recorded runs of the required command at the current fingerprint; asserted checks become `check_asserted_without_evidence` blockers |
 | model/provider output self-promoting to `verified`/`current`/`approved`/`ready` | candidate schemas reject protected states (`SelfPromotionError`), also when a stored candidate file is edited |
 | malicious or unreviewed skill | skills are guidance, not authority; shared safety scan (`scanSkillText`) for portable and v1.5 skills; export refuses secret-like content |

@@ -7,11 +7,24 @@ v1.6 is a minor release. Existing v1.5 commands, artifacts and MCP clients keep 
 `--check-passed <command>` no longer satisfies a required check by itself. A check counts only when the latest `soturail run` of exactly that command exited 0 against the current workspace:
 
 ```bash
+soturail contract create <id> --title "<t>" --intent "<i>" --criterion "<c>" --check "npm test" --criterion-check "npm test"
+# implement the change, then record the check against the current workspace
 soturail run -- npm test
-soturail contract verify .soturail/contracts/<id>.json --criterion-passed "<criterion>"
+soturail contract verify .soturail/contracts/<id>.json
 ```
 
 The verdict now includes `checkEvidence` (`current-pass`, `current-fail`, `stale`, `missing`), `assertions` and `details[]` reason codes. An uncorroborated `--check-passed` is reported as `check_asserted_without_evidence`. This closes a path where an agent could reach `ready` by asserting.
+
+## Stricter: caller flags are assertions; contracts track a baseline
+
+- `contract verify` no longer reports `workspace_stale` just because the workspace changed since the contract was created: the contract fingerprint is a baseline, and readiness evaluates the current workspace.
+- `--criterion-passed`, `--runtime-evidence`, `--independent-review` and `--human-approved` no longer satisfy readiness. Use `contract create --criterion-check <cmd>` / `--runtime-check <cmd>` for objective proof, or `soturail contract attest` from an interactive terminal for human approval, independent review and manual criteria.
+- Editing a contract file after creation, changing a declared `--source`, or changing files outside `--scope` requires `soturail contract revise <file> --reason <text>`; the original file is kept.
+- v1.5 contracts without `foundationDigest` are reported with integrity `legacy` and are evaluated against current evidence.
+
+## Fixed: fingerprint missed edits to an already-modified file
+
+Editing a tracked file that was already modified left the workspace fingerprint unchanged (the first porcelain status entry was misparsed), so evidence could look current after the edit. Evidence recorded before upgrading may now report stale; re-run the checks.
 
 ## Automatic: approved memory has one store
 

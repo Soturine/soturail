@@ -12,7 +12,7 @@ SotuRail organizes, constrains and proves.
 - **Portable Skills.** Eight small `SKILL.md` skills ship in the package, follow the Agent Skills specification and load progressively. Each declares canonical capability bindings; approval, side-effect and evidence requirements are derived from the capabilities, not restated.
 - **Self-describing capabilities.** Capability Descriptor v2 projects the unchanged v1 registry plus v2-only capabilities with surfaces, trust/freshness/evidence requirements, provider candidates, availability and localized presentation. MCP `soturail.capabilities` and `soturail.skills.list` let an agent discover everything without CLI knowledge; MCP tools exist only when a capability declares them.
 - **Semantic Worker contract.** Agents record claims, impacts, decisions, questions and interpretations as candidates (`soturail.candidates.record`). SotuRail binds them to the workspace and to source digests and rejects self-awarded `verified`/`current`/`approved`/`ready`.
-- **Evidence-backed readiness.** `contract verify` counts a required check only from a recorded passing run at the current fingerprint; caller assertions must be corroborated.
+- **Evidence-backed readiness and contract lifecycle.** A contract keeps an immutable baseline while readiness evaluates the current workspace, so the normal create → implement → verify flow can reach `ready`. Foundation, source or scope changes require a recorded revision with lineage. Checks, runtime evidence and objective criteria count only from recorded runs at the current fingerprint; human approval, independent review and manual criteria require interactive human attestation receipts. Caller flags are assertions only.
 - **Host adapter registry.** One data record per host; verified skill projections for Claude Code (`.claude/skills`), Codex, Cursor and Gemini CLI (`.agents/skills`); generic fallback for Kimi and other unverified hosts.
 - **Language-neutral.** Stable IDs/enums in every locale, original source text preserved byte-for-byte, Unicode paths/identifiers/slugs, and no per-language keyword tables. Keyword routing remains only as a labeled offline fallback.
 
@@ -26,7 +26,7 @@ SotuRail organizes, constrains and proves.
 | Dual readers of approved memory | 2 | 0 |
 | Dead exports / test-only aliases | 4 | 0 |
 
-Fixed while consolidating: approved memory was duplicated in context packs and stale approvals reappeared through a legacy mirror; exported host docs recommended an unsupported brain export command. Details: [refactor map](../audits/v1.6.0-refactor-map.md), [legacy removal report](../audits/v1.6.0-legacy-removal-report.md).
+Fixed: the workspace fingerprint ignored further edits to an already-modified tracked file (first porcelain entry misparsed), which could keep stale evidence looking current. Also fixed while consolidating: approved memory was duplicated in context packs and stale approvals reappeared through a legacy mirror; exported host docs recommended an unsupported brain export command. Details: [refactor map](../audits/v1.6.0-refactor-map.md), [legacy removal report](../audits/v1.6.0-legacy-removal-report.md).
 
 ## Context cost (measured)
 
@@ -51,5 +51,5 @@ v1.5 commands, artifacts and MCP clients keep working. See [Migration to v1.6](.
 
 - `structural.impact` and `dependency.docs` are declared `unavailable`; agents build impact candidates from `repo.index` and reads and cite upstream docs themselves.
 - Selection fixtures are scored by agent evaluations; CI checks only that each case is satisfiable and independent of keyword overlap.
-- A change contract stays bound to its creation fingerprint; re-binding rules are a pending product decision.
+- Human attestation relies on an interactive terminal; SotuRail cannot cryptographically prove a human is at that terminal.
 - Prompt-injection phrase checks in skill validation are English-only and non-exhaustive.

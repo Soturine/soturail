@@ -8,18 +8,38 @@ SotuRail separates intent, permission, engineering proof, execution, and accepta
 
 Risk and evidence are separate. A low-risk change can still lack proof; a high-risk change can be ready only with the stronger evidence its contract requires.
 
-## Evidence-backed readiness (v1.6)
+## Contract lifecycle and evidence-backed readiness (v1.6)
 
-`soturail contract verify` builds its readiness snapshot from recorded evidence (`buildReadinessSnapshot`):
+**Baseline vs verification.** A contract's `workspaceFingerprint` is its *baseline*: the workspace it was created against, kept as immutable provenance together with `baselineHead` and a `foundationDigest`. Readiness evaluates the *current* workspace. The difference between baseline and current is the change set itself and never blocks readiness. Verdicts report both `baselineWorkspaceFingerprint` and `verifiedWorkspaceFingerprint`.
 
-- a required check counts only when the latest `soturail run` of exactly that command exited 0 against the **current** workspace fingerprint (`checkEvidence[].state`: `current-pass`, `current-fail`, `stale`, `missing`);
-- `--check-passed` is recorded as a caller assertion; an assertion without a current passing run is a blocker (`check_asserted_without_evidence`). Before v1.6 the flag alone satisfied the check and freshness was hard-coded to `current` — that let an agent reach `ready` by asserting;
-- `--criterion-passed`, `--runtime-evidence`, `--independent-review` and `--human-approved` remain caller attestations and are echoed under `assertions`;
-- every verdict carries `details[]` with stable reason codes (`src/core/trust-decision.ts`) next to the existing `reasons[]`.
+**When a revision is required** (`contract_revision_required` family of codes):
 
-Semantic Worker candidates (`soturail candidates`) never enter the snapshot. `evidence collect` reports them under `semanticCandidates` with `countsAsEvidence: false`.
+| Code | Trigger |
+|---|---|
+| `contract_modified` | intent, criteria, checks, risk, policy, scope, sources or lineage edited after creation (foundation digest mismatch) |
+| `contract_source_changed` | a declared `--source` requirement file changed or disappeared |
+| `contract_scope_exceeded` | files changed since `baselineHead` outside the declared `--scope` prefixes |
+| `contract_scope_unverifiable` | scope declared but no baseline commit to diff against |
+| `contract_superseded` | a newer revision supersedes this one |
 
-Known product decision pending: a contract is bound to the fingerprint at creation, so a contract created *before* implementation reports `workspace_stale` after it. Re-binding rules (for example re-baselining scope after review) are not changed silently in v1.6.
+`soturail contract revise <file> --reason <text> [...]` writes `<id>.r<n>.json` once (never overwritten) with `revision`, `supersedes` (previous revision, path, foundation digest, baseline fingerprint), `revisionReason` and a fresh baseline. The previous file is not modified.
+
+**Evidence stays bound to the current workspace.** Recorded runs, runtime checks, criteria commands and human receipts count only at the current fingerprint; anything recorded before a later change is stale and must be re-run or re-attested.
+
+**Readiness inputs.**
+
+| Input | Class | Satisfies readiness? |
+|---|---|---|
+| `--check-passed`, `--criterion-passed`, `--runtime-evidence`, `--independent-review`, `--human-approved` | UNVERIFIED_ASSERTION | no — recorded under `assertions`; uncorroborated ones become `*_asserted_without_*` blockers |
+| latest `soturail run` of a required check / runtime check / criterion command, exit 0, current fingerprint | RECORDED_EVIDENCE | yes |
+| `soturail contract attest --kind human-approval|independent-review|criterion` | HUMAN_ATTESTATION | yes, when the receipt matches the contract revision, foundation digest and current fingerprint |
+| `soturail candidates record` | AGENT_CANDIDATE | no |
+
+Objective criteria are mapped to commands with `contract create --criterion-check <command>` (`criteriaEvidence`); semantic/manual criteria need a human `criterion` attestation. Runtime evidence requires declared `--runtime-check` commands.
+
+Attestation receipts (`soturail.contract-attestation.v1`, `.soturail/receipts/`) are created only from an interactive terminal after typing the contract id; non-interactive callers and MCP cannot create them, and no MCP tool exists for attestation. Residual risk: SotuRail cannot cryptographically distinguish a human from an agent that fully controls an interactive terminal; host permission prompts and OS controls remain the boundary. The same applies to the existing `soturail policy approve` command.
+
+Every verdict carries `details[]` with stable reason codes (`src/core/trust-decision.ts`).
 
 ## Decision and clarification
 
