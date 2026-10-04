@@ -2,10 +2,10 @@
 
 SotuRail is a guardrail, provenance, and readiness layer. It is not a sandbox, endpoint security product, secret manager, or proof that an external side effect occurred.
 
-| Surface | Threat | v1.5 control | Residual boundary |
+| Surface | Threat | Current control | Residual boundary |
 |---|---|---|---|
 | Filesystem | traversal, absolute paths, symlink escape, Windows path ambiguity | `WorkspaceGuard` canonical/real-path containment and sensitive-path classification | OS ACLs and hostile concurrent filesystem changes remain external |
-| Artifacts | partial writes, malformed JSONL tail, collision, stale reuse | canonical registry, atomic store, tail recovery, hashed topic IDs, workspace fingerprints | full N-1 migration/rollback arrives after v1.5 |
+| Artifacts | partial writes, malformed JSONL tail, collision, stale reuse | canonical registry, atomic store, tail recovery, hashed topic IDs, workspace fingerprints | general N-1 migration/rollback remains future work |
 | MCP | schema confusion, oversized surface, arbitrary shell, raw exfiltration | official typed server SDK, modern protocol with legacy negotiation, small capability-mapped surface, no shell tool, no caller raw authorization | host permissions and transport security are external |
 | Raw logs | credentials or personal data in command output | default redaction, sensitivity/fingerprint/retention metadata, inspect/status/doctor/purge, explicit local CLI disclosure | a process that can read `.soturail/raw` can bypass the CLI |
 | Hooks and skills | unreviewed instructions or unexpected mutation | local review, dry-run/backup defaults, capability metadata, no automatic third-party execution | SotuRail cannot prove a host obeyed exported instructions |

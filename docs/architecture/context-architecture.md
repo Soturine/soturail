@@ -1,6 +1,6 @@
 # Context Architecture
 
-> v1.6: context selection can be **agent-declared** (`context select --expert/--role`, recorded as `routing.authority: agent-declared`); the lexical ranker and English keyword router are a labeled `heuristic-fallback`. Budgets, fingerprints and truncation remain deterministic.
+> Current v1.6 behavior: context selection can be **agent-declared** (`context select --expert/--role`, recorded as `routing.authority: agent-declared`); the lexical ranker and English keyword router are a labeled `heuristic-fallback`. Budgets, fingerprints and truncation remain deterministic.
 
 SotuRail selects the smallest sufficient, workspace-bound context before escalating. Context is an artifact with a budget and provenance, not an unbounded prompt dump.
 
@@ -16,11 +16,11 @@ The ladder preserves discovery/trust separation: finding a source does not make 
 
 ## Shared Context Artifact
 
-The v1.5 context pack records target host, workspace fingerprint, selected files, reasons, byte/token estimates, budget, and overflow/degradation state. The hard byte budget is enforced during selection; an over-budget result is explicit rather than silently truncated. Stable content is ordered before dynamic timestamps, run IDs, and recent output to improve provider cache alignment.
+The current context artifact records target host, workspace fingerprint, selected files, reasons, byte/token estimates, budget, and overflow/degradation state. The hard byte budget is enforced during selection; an over-budget result is explicit rather than silently truncated. Stable content is ordered before dynamic timestamps, run IDs, and recent output to improve provider cache alignment.
 
 ## Provider boundaries
 
-- `StructuralProvider` will supply symbol identity, impact, freshness, and graph health. v1.5 retains the heuristic index and provider contract direction; semantic graph adapters are deferred.
+- `StructuralProvider` will supply symbol identity, impact, freshness, and graph health. v1.6 retains a bounded heuristic fallback; structural graph adapters remain provider work.
 - `DependencyDocsProvider` will retrieve version-matched official dependency documentation. It must preserve source/version provenance and cannot promote web text to project truth.
 - `ContextTransformProvider` may perform lossless or policy-approved compression. Transformations must declare `LOSSLESS_ONLY`, `COMPRESSIBLE`, or `SEMANTIC_OPTIONAL`, record savings, and preserve recovery pointers.
 

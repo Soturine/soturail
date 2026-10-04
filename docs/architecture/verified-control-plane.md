@@ -2,7 +2,7 @@
 
 SotuRail is a local-first engineering control plane. It prepares verified context, records contracts and evidence, exposes self-describing capabilities, and determines engineering readiness. It does not replace the coding model, agent host, operating-system permissions or execution runtime.
 
-## Current v1.5 boundary
+## Current v1.6 boundary
 
 ```text
 IDE / CLI / CI / UI
@@ -28,7 +28,7 @@ External executor or side effect
 
 The TypeScript core is authoritative for trust-state transitions and remains offline-capable. Hosts such as Codex, Claude, IDEs, CI and future runtimes consume the same contracts. MCP is an adapter over the canonical capability registry, not a second source of truth.
 
-## v1.6 direction — agent-native semantic surface
+## Agent-native semantic surface
 
 ```text
 User in any supported language
@@ -93,7 +93,7 @@ The agent may produce `candidate`, `inferred`, `assumed` or `unverified` outputs
 
 ## Capability epochs
 
-The capability registry is canonical for maturity, exposed surfaces, side effects, approval requirements, output schema and security notes. v1.6 extends that model with Skill/semantic metadata without making display language part of machine identity.
+The capability registry is canonical for maturity, exposed surfaces, side effects, approval requirements, output schema and security notes. v1.6 includes Skill/semantic metadata without making display language part of machine identity.
 
 An epoch snapshots the registry digest for one phase (`plan`, `implement`, `review` or `release`). Epoch metadata detects drift; it does not grant operating-system authority or replace sandboxing.
 
