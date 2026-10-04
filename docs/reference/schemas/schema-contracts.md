@@ -70,3 +70,12 @@ They must not grant mutation resources, shell execution through MCP, cloud telem
 Harness Lifecycle JSON artifacts are optional until `soturail harness init` or `soturail session start` is run. Once present, schema checks validate their shape. See [Harness Lifecycle Rail](../../rails/harness/harness-lifecycle-rail.md).
 
 v1.4 knowledge, evidence, Agent QA, Skill Rail 2.0 and tasklet artifacts are generated only when their local commands run. They remain source-backed, parseable and safe for offline use. See [v1.4 commands](../commands/v1.4-commands.md).
+
+## v1.6 agent-native contracts (in progress)
+
+Status: **partial** — contracts and tests exist; discovery surfaces and write paths land in later v1.6 checkpoints.
+
+- `soturail.capability.v2` (`src/core/capability-descriptor.ts`): a projection over the unchanged v1 Capability Registry plus additive v2-only capabilities. Adds `semanticKey`, `maturity` (`stable|experimental|planned|deprecated`), `availability` (`available|degraded|unavailable`), Skill/MCP/CLI/artifact surfaces, trust requirements (`provenanceRequired`, `freshnessRequired`, `evidenceRequired`, `producesObservedFacts`, `agentResultState`), provider class/candidates/fallback and locale-independent localization metadata. The English summary of a v1 capability is its v1 `description`; translations are display-only. Planned capabilities (`dependency.docs`, `structural.impact`, `semantic.candidate.record`) are declared `unavailable`.
+- `soturail.semantic.candidate.v1` (`src/core/semantic-candidate.ts`): Semantic Worker output of kind `claim`, `impact`, `decision`, `question` or `interpretation`. Producers may only assign `candidate`, `inferred`, `assumed`, `unknown` or `unverified`; `verified`, `current`, `approved` and `ready` are rejected with `SelfPromotionError`. Original text (`statementOriginal`, `questionOriginal`, `summaryOriginal`) is stored exactly, without Unicode normalization; translations are `derived: true` views. Confidence is model metadata (`basis: model-self-report|heuristic|provider`), never proof. Rationale is a bounded summary; chain-of-thought is not stored.
+
+The v1 registry digest is pinned by `tests/v160-contracts.test.ts` so capability epochs stay comparable.
