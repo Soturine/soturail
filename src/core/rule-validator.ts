@@ -50,7 +50,7 @@ async function validatePackageJson(rule: ExtractedRule, root: string): Promise<R
   try {
     const pkg = JSON.parse(await fs.readFile(path.resolve(root, "package.json"), "utf8")) as { engines?: { node?: string } };
     const node = pkg.engines?.node ?? "";
-    const ok = /(?:>=\s*22|\b22\b|\b24\b)/.test(node);
+    const ok = /20|>=20|22|24/.test(node);
     return result(rule, ok, `package.json engines.node is ${node || "missing"}`);
   } catch {
     return result(rule, false, "package.json missing or invalid");
