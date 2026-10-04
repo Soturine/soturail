@@ -1,20 +1,54 @@
 # Public Roadmap
 
-SotuRail is early but functional. The public roadmap prioritizes local-first evidence, safety and reproducible measurement.
+SotuRail v1.6 is a released local-first, agent-native engineering control plane. The public roadmap now focuses on adding evidence-producing capabilities and reducing remaining legacy/heuristic surface without turning SotuRail into another coding agent.
 
-## Near Term
+## Current baseline — v1.6
 
-- Polish v0.2.x native hot paths.
-- Improve reducer quality checks.
-- Harden Claude hook templates.
-- Publish clearer benchmark interpretation docs.
+Implemented:
 
-## v0.3.0 Direction
+- portable Agent Skills with progressive disclosure;
+- Capability Descriptor v2 and capability discovery;
+- agent-led semantic routing with lexical fallback explicitly demoted;
+- language-neutral machine semantics and preserve-source behavior;
+- host-adapter registry and generic fallback;
+- structured Semantic Worker candidates;
+- Change Contract lifecycle with immutable baseline and current-evidence readiness;
+- interactive human/manual attestations;
+- workspace-bound evidence, freshness and provenance;
+- typed bounded MCP surface;
+- CI/security/release provenance, SBOM and canonical release artifacts.
 
-- MCP server.
-- Tree-sitter repository map.
-- Hardened PDF extraction.
-- Semantic memory with embeddings.
-- Native runner packaging for npm prebuilds.
-- External benchmark comparison docs.
-- Real provider cache metadata import.
+## Near term
+
+Priority work:
+
+- StructuralProvider for objective symbol/impact facts;
+- DependencyDocsProvider for version-matched dependency documentation;
+- richer Evidence Receipts and re-attestation;
+- Context Spine / escalation policy;
+- knowledge drift propagation;
+- further legacy removal where v1 compatibility permits it;
+- benchmark-backed simplification and performance work.
+
+## Later / optional
+
+- rebuildable SQLite/FTS indexes;
+- multilingual semantic retrieval if benchmarks justify it;
+- optional graph/provider integrations;
+- runtime-provider interfaces and controlled orchestration;
+- optional Conductor only after stable contracts and approval boundaries.
+
+## Explicit non-goals
+
+SotuRail does not plan to become a mandatory:
+
+- cloud backend;
+- LLM/model provider;
+- vector database;
+- graph database;
+- model proxy/router;
+- autonomous coding runtime;
+- giant MCP marketplace;
+- browser automation suite.
+
+For dependency order and implementation status, use [ROADMAP.md](../../ROADMAP.md) and the [implementation tracker](verified-control-plane-implementation-tracker.md).
