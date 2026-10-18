@@ -961,7 +961,10 @@ describe("release reliability", () => {
     expect(packedGate?.ok, packedGate?.details).toBe(true);
     expect(packedGate?.details).toContain("strategy=installed_tarball_cli_no_npx_no_global");
     expect(packedGate?.details).toContain("help_exit_code=0");
-  }, 120000);
+    // Build (prepack), two npm audits and a tarball install: ~25 s locally, 63–92 s on hosted
+    // Windows runners, over 120 s on slow ones (failed e5f1c15 and 767cdab). The budget guards
+    // against hangs; it is not a performance assertion.
+  }, 240000);
 
   it("detects stale CLI metadata inside a packed tarball", async () => {
     const root = await tempRoot();

@@ -455,7 +455,9 @@ export async function verifyPackedPackage(root: string, packageName: string, ver
 
     installRoot = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-pack-verify-"));
     await fs.writeFile(path.join(installRoot, "package.json"), JSON.stringify({ name: "soturail-pack-verify", private: true }, null, 2), "utf8");
-    const install = await runProcess("npm", ["install", tarballPath, "--ignore-scripts"], installRoot, true);
+    // The audit gate runs separately; skipping npm's implicit audit/fund requests and preferring
+    // the local cache keeps this verification off the network where possible.
+    const install = await runProcess("npm", ["install", tarballPath, "--ignore-scripts", "--no-audit", "--no-fund", "--prefer-offline"], installRoot, true);
     if (install.code !== 0) {
       return failPackageVerification(tarballPath, diagnosticDetails({
         phase: "install",
