@@ -14,7 +14,7 @@ Smallest sufficient change, proven by evidence.
 ## Workflow
 
 1. **Clarify intent.** Restate the goal in your own words. If acceptance is ambiguous and the sources cannot settle it, record a `question` candidate and ask; otherwise proceed.
-2. **Contract.** For non-trivial changes create a change contract (`contract.create`) with scope, risk, acceptance criteria and the checks that will prove it.
+2. **Contract.** For material changes (several modules, security, data, public contracts, or work others will review) create a change contract (`contract.create`) with scope, risk, acceptance criteria and the checks that will prove it. A small, low-risk fix skips the contract and the impact candidate: implement, run the checks through `soturail run`, report.
 3. **Context.** Choose files from task meaning; use `context.select` only as a lexical hint. Read through `project.read`. Prefer the existing pattern and code already in the repository over new abstractions.
 4. **Impact.** List affected files, symbols and tests as an `impact` candidate. `structural.impact` is currently unavailable — build the candidate from `repo.index` and reads, and mark it `inferred`.
 5. **Dependencies.** When behavior depends on a library version, use version-matched upstream docs. `dependency.docs` is unavailable: cite the source and version you used.

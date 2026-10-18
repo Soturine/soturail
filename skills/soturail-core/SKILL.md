@@ -13,16 +13,18 @@ SotuRail organizes, constrains and proves. You understand the task; SotuRail sup
 
 ## Loop: discover -> select -> act -> verify
 
+**Scale the ceremony to the task.** A small, low-risk change (one module, no security, data, public-contract or release impact) needs only its checks run through `soturail run` and an honest report. Change contracts, impact candidates and evidence verification are for material work. Discovery is needed only when you do not already know which capability to use.
+
 1. **Understand the task** in the user's own language. Do not translate it into keywords; reason about meaning.
 2. **Discover** what SotuRail offers instead of guessing commands:
    - capabilities, their trust rules and availability: MCP tool `soturail.capabilities` (pass `id` to describe one, `locale` for localized titles), or `soturail capabilities list` / `soturail capabilities describe <id> --json`;
    - skills: read only the `name` and `description` of the other `soturail-*` skills and load the ones the task needs — several may apply at once (for example change + debug + security). Without native skill loading, use MCP `soturail.skills.list` (`name` loads a skill, `name` + `resource` loads one reference) or `soturail skills describe <name>`.
 3. **Select** the smallest set of capabilities that answers the task. Prefer capabilities marked `available`; for `degraded` or `unavailable` ones, follow the descriptor's `fallback` and say so.
 4. **Act** with guarded sources:
-   - read project files through `project.read` (WorkspaceGuard) when the host offers it;
+   - read ordinary source files with the host's own file tools; use `project.read` (WorkspaceGuard, redaction, bounded slices) for paths that come from untrusted input, files that may hold secrets, or large files where a query-focused slice saves context;
    - keep exact paths, symbols, commands, hashes and IDs unchanged — never translate them;
    - quote source text in its original language; any translation is a derived view.
-5. **Record findings as candidates**, not facts. Use the shapes in [candidate artifacts](references/candidate-artifacts.md): claim, impact, decision, question, interpretation. Your own state may only be `candidate`, `inferred`, `assumed`, `unknown` or `unverified`. Persist durable ones with MCP `soturail.candidates.record` (or `soturail candidates record --file <json>`); SotuRail binds them to the workspace and marks them stale when it changes.
+5. **Record durable findings as candidates**, not facts — those another person or session will rely on; a finding you act on immediately does not need a record. Use the shapes in [candidate artifacts](references/candidate-artifacts.md): claim, impact, decision, question, interpretation. Your own state may only be `candidate`, `inferred`, `assumed`, `unknown` or `unverified`. Persist durable ones with MCP `soturail.candidates.record` (or `soturail candidates record --file <json>`); SotuRail binds them to the workspace and marks them stale when it changes.
 6. **Verify** before saying "done":
    - run checks through the host's normal approval flow (`soturail run -- <command>` keeps a recoverable log);
    - collect and re-check evidence with `evidence.collect` / `evidence.verify`;
