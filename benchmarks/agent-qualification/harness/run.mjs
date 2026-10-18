@@ -12,7 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import {
   ARMS, PROMPT_SUFFIX, SUITE_DIR, diffStat, ensureSoturail, evaluate, findHostBinary, hostVersion,
-  loadTasks, prepareWorkspace, runClaude, runCodex, scoreRun, sha256, visibleTests
+  loadTasks, oracleDigest, prepareWorkspace, runClaude, runCodex, scoreRun, sha256, visibleTests
 } from "./lib.mjs";
 
 function parseArgs(argv) {
@@ -77,7 +77,7 @@ async function runOne(job, ctx) {
     startedAt, wallMs: agent.wallMs, timedOut: agent.timedOut, exitCode: agent.code, stderrTail: agent.stderr.slice(-800),
     visibleBefore: visibleBefore.pass, visibleAfter: visibleAfter.pass,
     changedFiles: changes.changedFiles,
-    oracle, score,
+    oracle, score, oracleDigest: oracleDigest(task),
     metrics: { ...metrics, finalMessage: undefined },
     transcriptSha256: sha256(agent.stdout)
   };

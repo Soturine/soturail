@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "f59e73ce3edddd2f9714c4bc0b35fe2f00d6d2f9",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:53:27.686Z",
+  "wallMs": 34139,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py",
+    "?? csvtool/__pycache__/__init__.cpython-312.pyc",
+    "?? csvtool/__pycache__/parse.cpython-312.pyc",
+    "?? tests/__pycache__/test_parse.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.016s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 5,
+    "toolsByName": {
+      "shell": 4,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 8828,
+      "output": 993,
+      "cacheRead": 70656,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "69819a72fda0e15ea8ca25b9b5f41c166d3e79194c7888608a4d724f167c24cb"
+}

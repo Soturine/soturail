@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-sonnet-002",
+  "task": "t10-requirements-js-shipping",
+  "category": "requirements",
+  "stack": "node",
+  "locale": "es",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "dc5ab75a030527b069ae5f531090cb5e0258e2253749ea67985ec4e4661a28c4",
+  "fixtureHead": "8a54d150d340adf542d7b96bb57ff5848db4f7e8",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:57:28.587Z",
+  "wallMs": 74356,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/shipping.js",
+    "?? OPEN_QUESTIONS.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "R4 contradiction recorded in OPEN_QUESTIONS.md",
+        "pass": true,
+        "detail": "R4 referenced"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 8,
+    "toolsByName": {
+      "Read": 4,
+      "Glob": 1,
+      "Write": 2,
+      "Bash": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 2,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": 9,
+    "tokens": {
+      "input": 1397,
+      "output": 3037,
+      "cacheRead": 102308,
+      "cacheWrite": 10276
+    },
+    "costUsd": 0.0816545,
+    "apiMs": 21628,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "a8639b5b6e281b9313f48c0aac93335bc0b9f9d33503a1e198cb1de1954f0dad"
+}

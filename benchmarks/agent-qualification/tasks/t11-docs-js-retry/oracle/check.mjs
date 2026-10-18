@@ -11,10 +11,15 @@ runChecks([
     const missing = required.filter((re) => !re.test(text)).map(String);
     return { pass: missing.length === 0, detail: missing.length ? `missing ${missing.join(", ")}` : "all present" };
   }),
-  custom("removes stale option names", () => {
+  // Old names may appear in prose (for example a migration note); they must not be
+  // presented as current options in the options table or used in code examples.
+  custom("does not present stale options as current", () => {
     const text = readme();
-    const stale = [/attempts:\s*\d/, /`attempts`/, /`delay`/, /delay:\s*100/].filter((re) => re.test(text)).map(String);
-    return { pass: stale.length === 0, detail: stale.length ? `stale ${stale.join(", ")}` : "none" };
+    const tableRows = text.split(/\r?\n/).filter((line) => /^\s*\|/.test(line));
+    const staleRows = tableRows.filter((line) => /^\s*\|\s*`?(attempts|delay)`?\s*\|/.test(line));
+    const code = [...text.matchAll(/```[a-z]*\n([\s\S]*?)```/g)].map((m) => m[1]).join("\n");
+    const staleCode = /\b(attempts|delay)\s*:/.test(code);
+    return { pass: staleRows.length === 0 && !staleCode, detail: staleRows.length || staleCode ? `table rows=${staleRows.length} code uses old option=${staleCode}` : "none" };
   }),
   custom("README js examples execute", () => {
     const blocks = [...readme().matchAll(/```(?:js|javascript|mjs)\n([\s\S]*?)```/g)].map((m) => m[1]);

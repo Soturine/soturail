@@ -1,0 +1,89 @@
+diff --git a/README.md b/README.md
+index 62d7bd3..38d5a82 100644
+--- a/README.md
++++ b/README.md
+@@ -13,3 +13,14 @@ Options:
+ - `limit` (positive integer, required) — requests allowed per key per window.
+ - `windowMs` (positive integer, required) — window length.
+ - `now` (function, optional) — clock, defaults to `Date.now`. Windows start at multiples of `windowMs`.
++- `overrides` (object or `Map`, optional) — per-key limits (key → positive integer) that replace `limit` for those keys.
++
++Methods:
++
++- `tryAcquire(key)` — consumes one request; returns `false` when the key is out of budget.
++- `remaining(key)` — how many more requests `key` can make in the current window (uses the key's override if any). Does not consume budget.
++
++```js
++const limiter = createLimiter({ limit: 100, windowMs: 60_000, overrides: { vip: 1000 } });
++limiter.remaining("vip"); // 1000
++```
+diff --git a/src/limiter.js b/src/limiter.js
+index 5e2455e..664007d 100644
+--- a/src/limiter.js
++++ b/src/limiter.js
+@@ -2,11 +2,15 @@ function assertPositiveInteger(name, value) {
+   if (!Number.isInteger(value) || value <= 0) throw new RangeError(`${name} must be a positive integer`);
+ }
+ 
+-export function createLimiter({ limit, windowMs, now = Date.now }) {
++export function createLimiter({ limit, windowMs, now = Date.now, overrides = {} }) {
+   assertPositiveInteger("limit", limit);
+   assertPositiveInteger("windowMs", windowMs);
++  const limits = new Map(overrides instanceof Map ? overrides : Object.entries(overrides ?? {}));
++  for (const [key, value] of limits) assertPositiveInteger(`overrides[${String(key)}]`, value);
+   const counters = new Map();
+ 
++  const limitFor = (key) => limits.get(key) ?? limit;
++
+   function bucket(key) {
+     const windowStart = Math.floor(now() / windowMs) * windowMs;
+     const current = counters.get(key);
+@@ -21,9 +25,12 @@ export function createLimiter({ limit, windowMs, now = Date.now }) {
+   return {
+     tryAcquire(key) {
+       const entry = bucket(key);
+-      if (entry.count >= limit) return false;
++      if (entry.count >= limitFor(key)) return false;
+       entry.count += 1;
+       return true;
++    },
++    remaining(key) {
++      return Math.max(0, limitFor(key) - bucket(key).count);
+     }
+   };
+ }
+diff --git a/test/limiter.test.js b/test/limiter.test.js
+index e3eaf9d..d7b14c6 100644
+--- a/test/limiter.test.js
++++ b/test/limiter.test.js
+@@ -15,3 +15,30 @@ test("blocks after limit within a window and resets next window", () => {
+ test("validates options", () => {
+   assert.throws(() => createLimiter({ limit: 0, windowMs: 10 }), RangeError);
+ });
++
++test("per-key overrides replace the default limit", () => {
++  const limiter = createLimiter({ limit: 1, windowMs: 1000, overrides: { vip: 3 }, now: () => 0 });
++  assert.equal(limiter.tryAcquire("a"), true);
++  assert.equal(limiter.tryAcquire("a"), false);
++  for (let i = 0; i < 3; i++) assert.equal(limiter.tryAcquire("vip"), true);
++  assert.equal(limiter.tryAcquire("vip"), false);
++  const m = createLimiter({ limit: 1, windowMs: 1000, overrides: new Map([["x", 2]]) });
++  assert.equal(m.remaining("x"), 2);
++  assert.equal(m.remaining("constructor"), 1);
++});
++
++test("remaining reports budget in the current window", () => {
++  let t = 0;
++  const limiter = createLimiter({ limit: 2, windowMs: 1000, now: () => t });
++  assert.equal(limiter.remaining("a"), 2);
++  limiter.tryAcquire("a");
++  assert.equal(limiter.remaining("a"), 1);
++  limiter.tryAcquire("a");
++  assert.equal(limiter.remaining("a"), 0);
++  t = 1000;
++  assert.equal(limiter.remaining("a"), 2);
++});
++
++test("validates overrides", () => {
++  assert.throws(() => createLimiter({ limit: 1, windowMs: 10, overrides: { a: 0 } }), RangeError);
++});

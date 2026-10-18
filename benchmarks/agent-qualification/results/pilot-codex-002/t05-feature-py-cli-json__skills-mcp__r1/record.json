@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t05-feature-py-cli-json",
+  "category": "feature",
+  "stack": "python",
+  "locale": "ja",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "b59b53597ffe3664ff68485f8fa5317c2cebd9fd00586feb54941bf55ae4184e",
+  "fixtureHead": "ae3c5712d6a8563c6fc2f72dd3f6b00ae7ffc8bb",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:57:50.149Z",
+  "wallMs": 126607,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M inventory/__main__.py",
+    " M inventory/report.py",
+    " M tests/test_report.py",
+    "?? inventory/__pycache__/__init__.cpython-312.pyc",
+    "?? inventory/__pycache__/__main__.cpython-312.pyc",
+    "?? inventory/__pycache__/report.cpython-312.pyc",
+    "?? tests/__pycache__/test_report.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 4 tests in 0.774s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 17,
+    "toolsByName": {
+      "shell": 9,
+      "mcp__soturail__soturail.read": 5,
+      "mcp__soturail__soturail.candidates.record": 2,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 3,
+    "recoveredErrors": 3,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 8,
+    "soturailMcpCalls": 7,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/indexes/tree.txt; soturail run -- git status --short; soturail contract create --help; soturail evide",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create inventory-json --title \"JSON inventory report\" --intent \"Add optional sorted JSON output while prese",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v; soturail run -- git diff --check; soturail evidence collect; soturai",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --stat'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify --help; soturail read .soturail/evidence/evidence_20261018065924_de3f7deb/verification.json'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v; soturail evidence collect; soturail evidence verify; soturail contra",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/evidence/evidence_20261018065957_15df0c55/evidence.json; soturail capabilities describe evidence.veri"
+    ],
+    "edits": 1,
+    "checksRun": 5,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 33055,
+      "output": 2339,
+      "cacheRead": 310144,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "15afd6277bd25dbc58d77889112f66cf08a43b8f897bd8d032012bb84078b7fd"
+}

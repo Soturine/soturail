@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-sonnet-002",
+  "task": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "d85cd0efb709d7bedf718d14bbf6fdaa472d413aeb5fccfd48efb64c6f1ac0c9",
+  "fixtureHead": "f4969099e249c8a355eda31ddc4f07c9a4ee71cb",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:58:25.666Z",
+  "wallMs": 34490,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "functional",
+        "name": "documents current option names and defaults",
+        "pass": true,
+        "detail": "all present"
+      },
+      {
+        "kind": "functional",
+        "name": "does not present stale options as current",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "functional",
+        "name": "README js examples execute",
+        "pass": true,
+        "detail": "1 example(s) ran"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 3,
+    "toolsByName": {
+      "Bash": 3
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 0,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": 4,
+    "tokens": {
+      "input": 1312,
+      "output": 1311,
+      "cacheRead": 75922,
+      "cacheWrite": 7914
+    },
+    "costUsd": 0.0523621,
+    "apiMs": 12871,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "5c1c3b7000f002dcd2c6635e3a3d8af7d88c7bd0c4b6e82844e8f24abd2523b9",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:12:01.356Z"
+    }
+  ],
+  "oracleDigest": "3ada1e06272a6f71e98212e5b92d6fd23f553a7276f04d0187a143bad1a3a04a"
+}

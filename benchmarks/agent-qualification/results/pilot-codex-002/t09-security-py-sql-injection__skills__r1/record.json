@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "a2bfddd9a401fc5e37ae095ab92b1f4d33ee528532cffba37003e58a007454b0",
+  "fixtureHead": "016c31cb9d5e1b15f4f091cdbb773cb1c9cdb145",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:04:25.063Z",
+  "wallMs": 108244,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M directory/users.py",
+    " M tests/test_users.py",
+    "?? directory/__pycache__/__init__.cpython-312.pyc",
+    "?? directory/__pycache__/db.cpython-312.pyc",
+    "?? directory/__pycache__/users.cpython-312.pyc",
+    "?? tests/__pycache__/test_users.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 7 tests in 0.004s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 10,
+    "toolsByName": {
+      "shell": 9,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 8,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index; git status --short'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail read .soturail/indexes/tree.txt; soturail contract create --help; soturail candidates record --help; soturail eviden",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read directory/users.py; soturail read directory/db.py; soturail read tests/test_users.py; soturail read README.md; ",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create directory-security --title \"Secure user directory queries\" --intent \"Prevent SQL injection while pre",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v; soturail contract verify .soturail/contracts/directory-security.json",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$finding = @{kind='\"'claim'; statementOriginal='Both lookup queries interpolated caller input into SQL.'; claimType='security",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$utf8 = New-Object System.Text.UTF8Encoding($false); foreach ($candidatePath in @('\"'.soturail/security-finding.json', '.sotu",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$utf8 = New-Object System.Text.UTF8Encoding($false); foreach ($candidatePath in @('\"'.soturail/security-finding.json', '.sotu"
+    ],
+    "edits": 1,
+    "checksRun": 3,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 25575,
+      "output": 2483,
+      "cacheRead": 200576,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "9ba92771430b6587892737b313902cc38dbadc67472a763d9a5b9b1639cfb35c"
+}

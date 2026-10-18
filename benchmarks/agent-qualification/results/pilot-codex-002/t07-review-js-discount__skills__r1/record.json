@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "24ec88ae0b47227cbc763c8e6f432f220f42d2cd",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:01:13.879Z",
+  "wallMs": 103203,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": true,
+        "detail": "3 findings"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": true,
+        "detail": "The bulk discount excludes quantity 10 because the comparison uses > instead of >=. docs/pricing.md requires 10 or more units: ten units at unitPrice 1 should total 9, but currently total 10."
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": true,
+        "detail": "Existing placeOrder(repo, order) calls now reject with a TypeError because audit is undefined. The save has already started, so a caller can receive an error even though its order is persisted and may create duplicates on retry. Preserve the existing call contract or migrate callers before requiring audit."
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": true,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 12,
+    "toolsByName": {
+      "shell": 11,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 3,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "soturailCliCalls": 10,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail index'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff main...HEAD'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read package.json; soturail read .soturail/indexes/tree.txt; soturail capabilities describe evidence.collect --json;",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read src/orders.js; soturail read src/pricing.js; soturail read docs/pricing.md; soturail read docs/architecture.md;",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git grep -n -e placeOrder -e audit -e contract -- src test docs .soturail; soturail run -- npm test; soturail",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-ChildItem .soturail -Name; soturail evidence verify --help; soturail contract verify --help'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-ChildItem .soturail/contracts -File -Name; $findings = Get-Content review.json -Raw | ConvertFrom-Json; $i = 0; foreach (",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- node .soturail/review-check.mjs; soturail run -- npm test; soturail run -- git diff --exit-code -- src test; ",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail governance evaluate --capability evidence.verify --actor codex'"
+    ],
+    "edits": 1,
+    "checksRun": 4,
+    "checkAfterLastEdit": false,
+    "turns": null,
+    "tokens": {
+      "input": 20662,
+      "output": 1839,
+      "cacheRead": 236544,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "1e58481f46daaf17cce71c77bb8f401b8c7559cca8bc37746b6baa3dbf459570"
+}

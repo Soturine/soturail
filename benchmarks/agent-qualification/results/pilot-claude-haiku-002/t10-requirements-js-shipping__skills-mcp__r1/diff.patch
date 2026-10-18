@@ -1,0 +1,39 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..06c24cb 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,33 @@
++const UNRESOLVED_EXPRESS_DOMESTIC_FREE =
++  "Caso sin resolver: pedido exprés nacional con subtotal >= 50 (ver OPEN_QUESTIONS.md, Q1)";
++
++function round2(value) {
++  return Math.round(value * 100) / 100;
++}
++
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  // R5: se valida siempre, con independencia del país.
++  if (typeof weightKg !== "number" || !Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg debe ser un número finito no negativo");
++  }
++
++  const domestic = country === "ES";
++
++  // Q1: R2 (gratis con subtotal >= 50) y R4 (exprés nunca es gratis) se contradicen.
++  if (domestic && express && subtotal >= 50) {
++    throw new Error(UNRESOLVED_EXPRESS_DOMESTIC_FREE);
++  }
++
++  // R4: el exprés suma 6,00 € a cualquier pedido.
++  const expressFee = express ? 6 : 0;
++
++  if (domestic) {
++    // R1 y R2.
++    const base = subtotal >= 50 ? 0 : 4.9;
++    return round2(base + expressFee);
++  }
++
++  // R3: 12,00 € más 1,50 € por cada kg completo por encima de 2 kg.
++  const extraKg = Math.max(0, Math.floor(weightKg - 2));
++  return round2(12 + extraKg * 1.5 + expressFee);
+ }

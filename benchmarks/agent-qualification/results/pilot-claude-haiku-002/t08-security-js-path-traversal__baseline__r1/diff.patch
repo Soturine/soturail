@@ -1,0 +1,57 @@
+diff --git a/src/static.js b/src/static.js
+index f2f38b9..bdaef0a 100644
+--- a/src/static.js
++++ b/src/static.js
+@@ -4,9 +4,19 @@ import path from "node:path";
+ const TYPES = { ".html": "text/html", ".css": "text/css", ".txt": "text/plain" };
+ 
+ // Resolves a request path such as "/css/site.css" against the public root.
++// Anything that resolves outside publicRoot (e.g. "/../secret.env") is treated as not found.
+ export async function serveStatic(publicRoot, requestPath) {
+-  const decoded = decodeURIComponent(requestPath.split("?")[0]);
+-  const target = path.join(publicRoot, decoded);
++  const root = path.resolve(publicRoot);
++  let decoded;
++  try {
++    decoded = decodeURIComponent(requestPath.split("?")[0]);
++  } catch {
++    return { status: 400, type: "text/plain", body: Buffer.from("bad request") };
++  }
++  const target = path.resolve(root, "." + path.posix.normalize("/" + decoded));
++  if (target !== root && !target.startsWith(root + path.sep)) {
++    return { status: 404, type: "text/plain", body: Buffer.from("not found") };
++  }
+   try {
+     const body = await fs.readFile(target);
+     return { status: 200, type: TYPES[path.extname(target)] ?? "application/octet-stream", body };
+diff --git a/test/static.test.js b/test/static.test.js
+index b9d6e6e..7177c37 100644
+--- a/test/static.test.js
++++ b/test/static.test.js
+@@ -14,3 +14,26 @@ test("serves a nested file", async () => {
+ test("missing file is 404", async () => {
+   assert.equal((await serveStatic(root, "/nope.txt")).status, 404);
+ });
++
++test("files with '..' inside the name are still served", async () => {
++  assert.equal((await serveStatic(root, "/notes..v2.txt")).status, 200);
++});
++
++test("paths escaping the public root are not served", async () => {
++  for (const p of [
++    "/../secret.env",
++    "/%2e%2e/secret.env",
++    "/..%2fsecret.env",
++    "/..%5csecret.env",
++    "/%2e%2e%2f%2e%2e%2fsecret.env",
++    "/css/../../secret.env",
++  ]) {
++    const res = await serveStatic(root, p);
++    assert.equal(res.status, 404, p);
++    assert.doesNotMatch(res.body.toString(), /API_TOKEN/, p);
++  }
++});
++
++test("malformed percent-encoding is a 400, not a crash", async () => {
++  assert.equal((await serveStatic(root, "/%E0%A4%A")).status, 400);
++});

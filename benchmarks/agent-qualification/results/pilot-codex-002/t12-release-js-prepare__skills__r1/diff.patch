@@ -1,0 +1,76 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..7e9553f 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,23 @@
++{"kind":"block","block_id":"block_c15edec9","block_sha256":"c15edec904d74688f460b0e8760b4232823e0d2beb5a113a4e00ea413de90fc6","normalized_sha256":"4285d1b33c91eb8f3c801375bf356a31514bce87db741125b4955e347435c975","raw_id":"d424ac14","line_count":8,"token_estimate":55,"has_risk":false,"preview":" | > bytefmt@1.3.0 test","created_at":"2026-10-18T07:09:46.483Z"}
++{"kind":"block","block_id":"block_7a19d427","block_sha256":"7a19d427e01e04658583adcd4edab287b75c47dd8d843279e749cf034e551cd1","normalized_sha256":"f1651dac31e17585b7b1900cc732e1e5ae6c4a9f9c199b8250fc02f7b95d844f","raw_id":"d424ac14","line_count":8,"token_estimate":24,"has_risk":false,"preview":"ℹ tests 4 | ℹ suites 0","created_at":"2026-10-18T07:09:46.483Z"}
++{"kind":"block","block_id":"block_9d163c90","block_sha256":"9d163c906ab860c9283768ebfb16c9e7faea1703223f7f0a6d7487a468ab6e28","normalized_sha256":"91325af56d8a829802883d070cf57b23fd5e2b5a039550f25630c9df9931a597","raw_id":"d424ac14","line_count":8,"token_estimate":50,"has_risk":true,"preview":" | ✖ failing tests:","created_at":"2026-10-18T07:09:46.483Z"}
++{"kind":"block","block_id":"block_e8264003","block_sha256":"e8264003eda41eec792decd52689eafcb929a3d4baa42ff6cb928df19253879c","normalized_sha256":"00d33da1bce3e61b61b5123a18e074355084eb3f581d221f78e6f552a3622096","raw_id":"d424ac14","line_count":8,"token_estimate":112,"has_risk":true,"preview":"  + '1024 B' |   - '1.0 KiB'","created_at":"2026-10-18T07:09:46.483Z"}
++{"kind":"block","block_id":"block_642b73d9","block_sha256":"642b73d9b9ad8b50a0cac5cd27ca52405eeba57689fe6507619df53083a4fd19","normalized_sha256":"ae953aba951e3465d6f734ab057e4b95b2764aa2ea0d433ae852625b12715434","raw_id":"d424ac14","line_count":8,"token_estimate":73,"has_risk":false,"preview":"      at Test.run (node:internal/test_runner/test:1163:12) |       at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {","created_at":"2026-10-18T07:09:46.483Z"}
++{"kind":"output","output_sha256":"2ba3475c7f3c661874fb1959e88dc013cb0c4fd2e81789921c1ff90911cf2b86","raw_id":"d424ac14","command":"npm test","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070945452Z-d424ac14.log","created_at":"2026-10-18T07:09:45.452Z"}
++{"kind":"block","block_id":"block_a0217970","block_sha256":"a0217970c77271bc31def56b9020304afc80c2ac1aeeb60a1d8702ecbfd72475","normalized_sha256":"7b68b501ea4a84ba2bfdd24816aa22e61f5ca0f747e03b068ea6541ada67c75d","raw_id":"1af5e386","line_count":8,"token_estimate":106,"has_risk":false,"preview":"npm notice | npm notice 📦  bytefmt@1.3.0","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_6bfb1b75","block_sha256":"6bfb1b757665fc4081540d1e104924a99554e47a778a2893eaeb740ab9794d5c","normalized_sha256":"33b136c3869a5b1b1c15d5ae8807377854a1dd8d3b2534a402391eb52ab07335","raw_id":"1af5e386","line_count":8,"token_estimate":132,"has_risk":false,"preview":"npm notice 4.0kB .agents/skills/soturail-core/SKILL.md | npm notice 321B .agents/skills/soturail-debug/.soturail-projection.json","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_1ca82444","block_sha256":"1ca8244431802cd92501f4cf0b30cccddc1a279a96763b5c0af984aba8e2c786","normalized_sha256":"a33ef002c9bda3cfda5ac7b13f7a90a77e2d1490fe61b5907d1cdc00cef73eae","raw_id":"1af5e386","line_count":8,"token_estimate":113,"has_risk":true,"preview":"npm notice 1.9kB .agents/skills/soturail-research/SKILL.md | npm notice 321B .agents/skills/soturail-review/.soturail-projection.json","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_4a054a88","block_sha256":"4a054a880bb1a70863504e5c226d5a60d420b17708181c825d510210bf81b8f1","normalized_sha256":"b87a2353a88c0bd8316c7cf93603ec9134ebd625a71f2249b2d566f31332514f","raw_id":"1af5e386","line_count":8,"token_estimate":91,"has_risk":false,"preview":"npm notice 0B .soturail/brain/gaps.jsonl | npm notice 0B .soturail/brain/rules.jsonl","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_64621547","block_sha256":"646215470eafc1cd5861100dcc6e865822ad349d3b52d37182730f238804a7a2","normalized_sha256":"7f901d995e7d99800aa7a88624c1be7fdac7622b1122edf255bde4e2c4032094","raw_id":"1af5e386","line_count":8,"token_estimate":92,"has_risk":false,"preview":"npm notice 4.2kB .soturail/indexes/tree.txt | npm notice 0B .soturail/memory/approved.jsonl","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_8e590088","block_sha256":"8e5900881d16f90d390eeb88dc9637333f8a9e94344a4506bb6cd4d70d4b67c7","normalized_sha256":"6d5d394f2ebc7857666594b090de79a627a428738bbacaeff156917421558439","raw_id":"1af5e386","line_count":8,"token_estimate":85,"has_risk":false,"preview":"npm notice 0B .soturail/policy/queue.jsonl | npm notice 1.3kB .soturail/raw/2026-10-18/20261018T070945452Z-d424ac14.log","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_4844c992","block_sha256":"4844c99222568e252284d5d5df7b4ab9144301d26e0084985cfd0102455f9a3d","normalized_sha256":"c1e6b5961033d36949c2d78d29124fd53d6035d0cf347089f4fc7fe2030e8e53","raw_id":"1af5e386","line_count":8,"token_estimate":76,"has_risk":false,"preview":"npm notice 510B docs/agents.md | npm notice 341B docs/architecture.md","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_6e49670d","block_sha256":"6e49670d9dc15362afc1a37f3fc7624fbb4da2c6478e42dd819825684a00fd9f","normalized_sha256":"2f4703117c0bd6fbb203380cb6b9ecd20184ae71e6bcbd1f2ecbd4b0d6f8adb8","raw_id":"1af5e386","line_count":8,"token_estimate":71,"has_risk":false,"preview":"npm notice 117B docs/knowledge-to-rules.md | npm notice 299B docs/mcp.md","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_f55b6790","block_sha256":"f55b6790789f7f38c1cba12ddc4a88ba09dfa40baa5322db9f562db61a525187","normalized_sha256":"7a3d9cfd67732238bd5c2fce0110c922bd202fc830a35a2be22c8c149e760ec6","raw_id":"1af5e386","line_count":8,"token_estimate":76,"has_risk":true,"preview":"npm notice 157B docs/release-checklist.md | npm notice 118B docs/response-compression.md","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_fba492c9","block_sha256":"fba492c94a874a905278dc4dca4573e7a03fe83c568a2628ac639467f22d8c8e","normalized_sha256":"b2b4b8033b3c88b573bea2005651f91c25336e5f399bf76a45a2fa310ea7ad88","raw_id":"1af5e386","line_count":8,"token_estimate":91,"has_risk":false,"preview":"npm notice 195B examples/agents/antigravity.md | npm notice 206B examples/agents/claude.md","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_cd36c095","block_sha256":"cd36c095b533e8d9864d53cd8e66b67fbe0c2ed8a0c1b5cc1e9bfc69e629b6a2","normalized_sha256":"fa95eb744b77c184abe2f54996b6e136776a5216b069971b58c59542a77e4224","raw_id":"1af5e386","line_count":8,"token_estimate":90,"has_risk":false,"preview":"npm notice 200B examples/hooks/prompt-only-codex.md | npm notice 85B examples/hooks/README.md","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_52c2e58c","block_sha256":"52c2e58c24a1f1bab19cd4e961cebdd1b2155132d984a25763d14f2f752abe47","normalized_sha256":"12ec5049ecadc25c03ef77fd58e516abce54e58c9e5d730ea72e94978eb6da04","raw_id":"1af5e386","line_count":8,"token_estimate":107,"has_risk":false,"preview":"npm notice 575B examples/skills/bug-triage-skill.yml | npm notice 587B examples/skills/code-review-skill.yml","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_61bd515e","block_sha256":"61bd515ed609983d2365db96721dff047b71b9ff9f155e95720c60f68782b847","normalized_sha256":"b801d1fe85a5186299caae485e809eaf4b8d00d88c17b039d7fefad9420df21f","raw_id":"1af5e386","line_count":8,"token_estimate":67,"has_risk":false,"preview":"npm notice 213B examples/workflows/release-workflow.md | npm notice 154B package.json","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"block","block_id":"block_c0b5af5c","block_sha256":"c0b5af5c5357044ad6564a6d782f7604165851e879fb4fb0d5939050998abc9c","normalized_sha256":"10cd33ac566e6ce3bf124d028d4a5a06947713422d318a0e4df456c3aa11f4a9","raw_id":"1af5e386","line_count":8,"token_estimate":73,"has_risk":false,"preview":"npm notice version: 1.3.0 | npm notice filename: bytefmt-1.3.0.tgz","created_at":"2026-10-18T07:09:47.755Z"}
++{"kind":"output","output_sha256":"0091f98b1408cc91b02fa017c7c224d313eedff1c899d9d8f9cc4c630800e690","raw_id":"1af5e386","command":"npm pack --dry-run","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070945454Z-1af5e386.log","created_at":"2026-10-18T07:09:45.454Z"}
++{"kind":"block","block_id":"block_9f9d7bea","block_sha256":"9f9d7beacb9cefc58ab561e68f4370e28c3b0182da3f94873b55394b246b8db6","normalized_sha256":"06c0acaeb73947e7993945143ca3e556a75abcbe3491be1c4b1c17985f4ecb04","raw_id":"0da01540","line_count":8,"token_estimate":29,"has_risk":false,"preview":"✔ VERSION matches package.json (1.8987ms) | ℹ tests 1","created_at":"2026-10-18T07:10:03.529Z"}
++{"kind":"output","output_sha256":"ab7f830fcbff2d77882a8e94e0077881cdbf7b0f21e6a76947c6f19f899ce5e8","raw_id":"0da01540","command":"node --test test/version.test.js","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071003178Z-0da01540.log","created_at":"2026-10-18T07:10:03.178Z"}
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..807b9a1 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,3 @@
++{"type":"command_run","raw_id":"d424ac14","command":"npm test","exit_code":1,"raw_tokens_estimated":315,"compressed_tokens_estimated":253,"estimated_raw_tokens":315,"estimated_reduced_payload_tokens":253,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":286,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":62,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:46.679Z"}
++{"type":"command_run","raw_id":"1af5e386","command":"npm pack --dry-run","exit_code":0,"raw_tokens_estimated":1272,"compressed_tokens_estimated":1548,"estimated_raw_tokens":1272,"estimated_reduced_payload_tokens":1548,"estimated_soturail_metadata_tokens":36,"estimated_net_tokens_sent":1584,"summary_overhead_tokens":36,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:47.979Z"}
++{"type":"command_run","raw_id":"0da01540","command":"node --test test/version.test.js","exit_code":0,"raw_tokens_estimated":35,"compressed_tokens_estimated":66,"estimated_raw_tokens":35,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":39,"estimated_net_tokens_sent":105,"summary_overhead_tokens":39,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:10:03.923Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..ed22e0b 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,3 @@
++{"raw_id":"d424ac14","path":".soturail\\raw\\2026-10-18\\20261018T070945452Z-d424ac14.log","command":"npm test","exit_code":1,"created_at":"2026-10-18T07:09:45.452Z","compressor":"test-reducer","raw_tokens_estimated":315,"compressed_tokens_estimated":253,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"a9748b60e6a1e7f6f02007e0de1d5df725ccef8663f8cf4f8b92c01ae07ffc9f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:45.452Z"}
++{"raw_id":"1af5e386","path":".soturail\\raw\\2026-10-18\\20261018T070945454Z-1af5e386.log","command":"npm pack --dry-run","exit_code":0,"created_at":"2026-10-18T07:09:45.454Z","compressor":"generic-stream","raw_tokens_estimated":1272,"compressed_tokens_estimated":1548,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"fab173776ca0fd25b39ddabe58493b093780a0c227646c5648fcbdb62aeef345","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:45.454Z"}
++{"raw_id":"0da01540","path":".soturail\\raw\\2026-10-18\\20261018T071003178Z-0da01540.log","command":"node --test test/version.test.js","exit_code":0,"created_at":"2026-10-18T07:10:03.178Z","compressor":"test-reducer","raw_tokens_estimated":35,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c3679d610c5ff70e8f24678fbcc5131b00f457291babb57fe48aa60484563e08","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:10:03.178Z"}
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 1a9101f..d62af59 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -2,6 +2,8 @@
+ 
+ ## [Unreleased]
+ 
++## [1.3.0] - 2026-10-18
++
+ ### Added
+ - `decimals` option for `formatBytes`.
+ 
+diff --git a/package.json b/package.json
+index daf89b1..abcf087 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "bytefmt",
+-  "version": "1.2.3",
++  "version": "1.3.0",
+   "type": "module",
+   "main": "src/index.js",
+   "scripts": { "test": "node --test \"test/**/*.test.js\"" }
+diff --git a/src/version.js b/src/version.js
+index e28b13d..e853866 100644
+--- a/src/version.js
++++ b/src/version.js
+@@ -1 +1 @@
+-export const VERSION = "1.2.3";
++export const VERSION = "1.3.0";

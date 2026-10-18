@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "f15fa40c3faaf44bbb9065b517630d736effb5cb",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target claude --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:04:30.382Z",
+  "wallMs": 30025,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": true,
+        "detail": "4 findings"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": true,
+        "detail": "Bulk discount uses 'quantity > 10' but docs/pricing.md specifies 10 or more units. A 10-unit line gets no discount (orderTotal of unitPrice 1 x quantity 10 returns 10, expected 9)."
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": true,
+        "detail": "repo.save is no longer awaited, so placeOrder can resolve before the order is persisted, violating docs/pricing.md ('placeOrder resolves only after the order is persisted'). A save failure also surfaces as an unhandled rejection while audit.record is awaited."
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": true,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 5,
+    "toolsByName": {
+      "Bash": 4,
+      "Write": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": false,
+    "turns": 6,
+    "tokens": {
+      "input": 1375,
+      "output": 3599,
+      "cacheRead": 141114,
+      "cacheWrite": 15290
+    },
+    "costUsd": 0.006406140000000001,
+    "apiMs": 19707,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "soturail-change",
+      "soturail-core",
+      "soturail-debug",
+      "soturail-knowledge",
+      "soturail-release",
+      "soturail-research",
+      "soturail-review",
+      "soturail-security",
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "1d029648be8d6bf112a7fe74ed7e6f5eea902b2b8e7e82eb2a484c220c029af8"
+}

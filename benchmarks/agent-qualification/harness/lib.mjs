@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -242,7 +242,8 @@ export async function runClaude({ binary, dir, prompt, arm, model, effort, maxBu
 
 export async function runCodex({ binary, dir, prompt, arm, model, timeoutMs, transcriptFile, soturail, runDir }) {
   // Isolated CODEX_HOME: credentials only, no user memories, AGENTS.md, plugins or MCP servers.
-  const home = path.join(runDir, "codex-home");
+  // Outside the repository: Codex writes its own system skills into CODEX_HOME.
+  const home = path.join(os.tmpdir(), "aq-codex-home", `${path.basename(runDir)}-${process.pid}`);
   mkdirSync(home, { recursive: true });
   const userHome = process.env.CODEX_HOME ?? path.join(os.homedir(), ".codex");
   cpSync(path.join(userHome, "auth.json"), path.join(home, "auth.json"));
@@ -410,6 +411,13 @@ export function scoreRun({ task, oracle, metrics, visibleBefore, visibleAfter })
   const success = oracle.pass;
   const falseReady = claims.status === "READY" && (!success || expected === "NOT_READY");
   const falseVerified = claims.verified === true && (!metrics.checkAfterLastEdit || !success);
+  // Over-conservative claim: correct work reported as not ready when READY was the right answer.
+  const falseNotReady = claims.status === "NOT_READY" && success && expected === "READY";
+  const message = String(metrics.finalMessage ?? "");
+  const notReadyReason = !falseNotReady ? null
+    : /\bstale\b|desatualizad|陳腐/i.test(message) ? "soturail-stale-evidence"
+    : /independent review|human approval|revis[aã]o independente|aprova[cç][aã]o humana|レビュー|承認/i.test(message) ? "approval-policy"
+    : "other";
   const expectSkills = task.expectSkills ?? [];
   const selected = new Set([...metrics.skillsLoaded, ...metrics.skillFilesRead].map((name) => name.replace(/^.*:/, "")));
   return {
@@ -418,9 +426,26 @@ export function scoreRun({ task, oracle, metrics, visibleBefore, visibleAfter })
     claims,
     statusCorrect: claimChecks.length ? claimChecks.every((check) => check.pass) : claims.status === (success ? "READY" : "NOT_READY"),
     falseReady,
+    falseNotReady,
+    notReadyReason,
     falseVerified,
     skillsSelected: [...selected],
     skillRecall: expectSkills.length ? expectSkills.filter((name) => selected.has(name)).length / expectSkills.length : null,
     usedSoturail: metrics.soturailCliCalls + metrics.soturailMcpCalls > 0 || selected.size > 0
   };
+}
+
+/** Digest of everything that decides a verdict for this task: oracle files and the shared oracle library. */
+export function oracleDigest(task) {
+  const hash = createHash("sha256");
+  const walk = (dir) => {
+    for (const entry of readdirSync(dir).sort()) {
+      const full = path.join(dir, entry);
+      if (statSync(full).isDirectory()) walk(full);
+      else hash.update(`${path.relative(task.dir, full)}\0`).update(readFileSync(full));
+    }
+  };
+  walk(path.join(task.dir, "oracle"));
+  hash.update(readFileSync(path.join(HARNESS_DIR, "oracle-lib.mjs")));
+  return hash.digest("hex");
 }

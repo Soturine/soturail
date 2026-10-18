@@ -1,0 +1,46 @@
+diff --git a/README.md b/README.md
+index c49eb46..6bbc846 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,36 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), { retries: 5, baseDelayMs: 100, factor: 2 });
+ ```
+ 
++`retry(fn, options)` calls `fn(attempt)` until it resolves. `attempt` is the 0-based call index (`0` for the first call), so `fn` can use it for logging or for varying behavior per attempt.
++
+ Options:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base wait in milliseconds before the first retry |
++| `factor` | `2` | multiplier applied to the wait for each successive retry |
++| `shouldRetry` | `() => true` | `(error) => boolean`; return `false` to stop retrying immediately |
++
++Delay before retry `n` (counting from `0`) is `baseDelayMs * factor ** n`. With the defaults that is 200 ms, then 400 ms, then 800 ms. No delay is added after the final attempt.
++
++Results:
+ 
+-Errors: after the last attempt the last error is rethrown.
++- If any call resolves, `retry` resolves with that value.
++- If `shouldRetry(error)` returns `false` for a failure that is not the final attempt, `retry` rethrows that original error right away.
++- If every attempt fails, `retry` throws an `AggregateError` with message `retry: N attempt(s) failed`. Its `errors` array holds every failure in call order.
++- A failure on the final attempt is always wrapped in an `AggregateError`, even if `shouldRetry` returns `false` for it.
++
++```js
++await retry(fn, {
++  retries: 2,
++  shouldRetry: (error) => error.code === "ETIMEDOUT",
++});
++```

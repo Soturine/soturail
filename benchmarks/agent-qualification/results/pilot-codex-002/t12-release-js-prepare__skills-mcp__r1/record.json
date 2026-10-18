@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t12-release-js-prepare",
+  "category": "release",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "d961abe503ef36bb2c282193193b93e68083f947ac32c9cdd46e28cb87cbc5bb",
+  "fixtureHead": "04299d513f0a65702329e537ecad6f5f092c15e3",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:09:52.869Z",
+  "wallMs": 60462,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "2026-10-18T07:09:57.861521Z ERROR codex_models_manager::manager: failed to load models cache: EOF while parsing a value at line 1 column 0\n",
+  "visibleBefore": false,
+  "visibleAfter": false,
+  "changedFiles": [
+    " M CHANGELOG.md",
+    " M package.json",
+    " M src/version.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "version bumped consistently",
+        "pass": true,
+        "detail": "package=1.3.0 version.js=1.3.0"
+      },
+      {
+        "kind": "functional",
+        "name": "changelog has a dated 1.3.0 section holding the Unreleased entries",
+        "pass": true,
+        "detail": "section=true moved=true unreleasedEmptied=true"
+      },
+      {
+        "kind": "functional",
+        "name": "no tag created",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-release"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 17,
+    "toolsByName": {
+      "shell": 6,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 8,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-release"
+    ],
+    "soturailCliCalls": 5,
+    "soturailMcpCalls": 10,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short; soturail run -- git rev-parse HEAD; soturail release check --help; soturail evidence --he",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail run -- rg -n --hidden -g '\"'!.git/**'\"' -g '\"'!.soturail/**'\"' -g '\"'!.agents/**'\"' '1\\\\.2\\\\.3|version|publish' .; s",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail run -- npm test; soturail release check; soturail run -- npm pack --dry-run --json; soturail run -- git grep -n -E '",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git grep -n -e 1.2.3 -e 1.3.0 -- package.json src test CHANGELOG.md docs examples; soturail run -- git diff -",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail governance evaluate --capability release.preflight --actor codex; soturail evidence report'"
+    ],
+    "edits": 1,
+    "checksRun": 4,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 31118,
+      "output": 1216,
+      "cacheRead": 225664,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "7602ff66734be9cda9da4439cfa15a82a8126913955d47aede7f128726ab83c7"
+}

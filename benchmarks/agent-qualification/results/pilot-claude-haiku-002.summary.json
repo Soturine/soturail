@@ -1,0 +1,544 @@
+{
+  "schemaVersion": "soturail.qualification.summary.v1",
+  "runIds": [
+    "pilot-claude-haiku-002"
+  ],
+  "hosts": [
+    "claude/claude-haiku-5-5"
+  ],
+  "generatedAt": "2026-10-18T07:12:11.555Z",
+  "records": 36,
+  "byArm": {
+    "baseline": {
+      "runs": 12,
+      "success": 0.8333333333333334,
+      "regressions": 0,
+      "statusCorrect": 0.8333333333333334,
+      "falseReady": 0.16666666666666666,
+      "falseVerified": 0.25,
+      "falseNotReady": 0,
+      "notReadyReasons": {},
+      "checkAfterLastEdit": 0.9166666666666666,
+      "usedSoturail": null,
+      "skillRecall": null,
+      "toolCalls": 8.5,
+      "duplicateCalls": 0,
+      "toolErrors": 0.16666666666666666,
+      "recoveredErrors": 0.08333333333333333,
+      "turns": 9.5,
+      "tokens": 164603.58333333334,
+      "outputTokens": 4659,
+      "cacheWrite": 13188.666666666666,
+      "costUsd": 0.006556142500000001,
+      "wallSec": 37.231,
+      "timeouts": 0,
+      "permissionDenials": 0
+    },
+    "skills": {
+      "runs": 12,
+      "success": 1,
+      "regressions": 0,
+      "statusCorrect": 1,
+      "falseReady": 0,
+      "falseVerified": 0.16666666666666666,
+      "falseNotReady": 0,
+      "notReadyReasons": {},
+      "checkAfterLastEdit": 0.8333333333333334,
+      "usedSoturail": 0.08333333333333333,
+      "skillRecall": 0.041666666666666664,
+      "toolCalls": 8.583333333333334,
+      "duplicateCalls": 0,
+      "toolErrors": 0.16666666666666666,
+      "recoveredErrors": 0.16666666666666666,
+      "turns": 9.583333333333334,
+      "tokens": 186569.41666666666,
+      "outputTokens": 5082.583333333333,
+      "cacheWrite": 16375.166666666666,
+      "costUsd": 0.007588821666666668,
+      "wallSec": 40.071416666666664,
+      "timeouts": 0,
+      "permissionDenials": 0
+    },
+    "skills-mcp": {
+      "runs": 12,
+      "success": 0.8333333333333334,
+      "regressions": 0,
+      "statusCorrect": 0.9166666666666666,
+      "falseReady": 0.08333333333333333,
+      "falseVerified": 0.25,
+      "falseNotReady": 0,
+      "notReadyReasons": {},
+      "checkAfterLastEdit": 0.8333333333333334,
+      "usedSoturail": 0,
+      "skillRecall": 0,
+      "toolCalls": 8.083333333333334,
+      "duplicateCalls": 0,
+      "toolErrors": 0.08333333333333333,
+      "recoveredErrors": 0.08333333333333333,
+      "turns": 9.083333333333334,
+      "tokens": 175896.58333333334,
+      "outputTokens": 4727.583333333333,
+      "cacheWrite": 15977.333333333334,
+      "costUsd": 0.007232495000000001,
+      "wallSec": 37.983333333333334,
+      "timeouts": 0,
+      "permissionDenials": 0
+    }
+  },
+  "perTask": [
+    {
+      "task": "t01-bug-js-pagination",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0037443300000000006,
+        "tokens": 92415,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00470623,
+        "tokens": 125115,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00492937,
+        "tokens": 148688,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t02-bug-py-csv-quoting",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0051434900000000006,
+        "tokens": 122244,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00675501,
+        "tokens": 161525,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00896269,
+        "tokens": 206248,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t03-debug-js-config-leak",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0067700799999999995,
+        "tokens": 174346,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008469800000000001,
+        "tokens": 201883,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.006487980000000002,
+        "tokens": 135266,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t04-feature-js-rate-limit",
+      "category": "feature",
+      "baseline": {
+        "runs": 1,
+        "success": 0,
+        "falseReady": 1,
+        "statusCorrect": 0,
+        "costUsd": 0.00576165,
+        "tokens": 146233,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": [
+          "hidden node tests"
+        ]
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.005483180000000001,
+        "tokens": 107954,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.007247380000000001,
+        "tokens": 194214,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t05-feature-py-cli-json",
+      "category": "feature",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00530221,
+        "tokens": 121355,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0063590700000000005,
+        "tokens": 136755,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0062045,
+        "tokens": 135394,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t06-refactor-js-validation",
+      "category": "refactor",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008705780000000002,
+        "tokens": 215493,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00928789,
+        "tokens": 230303,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00866586,
+        "tokens": 201624,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t07-review-js-discount",
+      "category": "review",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.007883870000000001,
+        "tokens": 239374,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.006406140000000001,
+        "tokens": 161378,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 0,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00530159,
+        "tokens": 132338,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": [
+          "finds bulk-threshold-off-by-one"
+        ]
+      }
+    },
+    {
+      "task": "t08-security-js-path-traversal",
+      "category": "security",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.006086240000000001,
+        "tokens": 146660,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00742501,
+        "tokens": 219404,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.006871740000000001,
+        "tokens": 163952,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t09-security-py-sql-injection",
+      "category": "security",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0072833,
+        "tokens": 225390,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.010525950000000001,
+        "tokens": 347600,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008271080000000002,
+        "tokens": 251071,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t10-requirements-js-shipping",
+      "category": "requirements",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008879100000000001,
+        "tokens": 165719,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008498110000000001,
+        "tokens": 140737,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008704060000000001,
+        "tokens": 174222,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t11-docs-js-retry",
+      "category": "documentation",
+      "baseline": {
+        "runs": 1,
+        "success": 0,
+        "falseReady": 1,
+        "statusCorrect": 0,
+        "costUsd": 0.00767635,
+        "tokens": 179772,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": [
+          "README js examples execute"
+        ]
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.00886255,
+        "tokens": 200629,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 0,
+        "falseReady": 1,
+        "statusCorrect": 0,
+        "costUsd": 0.00736599,
+        "tokens": 165563,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": [
+          "README js examples execute"
+        ]
+      }
+    },
+    {
+      "task": "t12-release-js-prepare",
+      "category": "release",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.005437310000000001,
+        "tokens": 146242,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.008286920000000001,
+        "tokens": 205550,
+        "skills": [
+          "soturail-release"
+        ],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0077777,
+        "tokens": 202179,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    }
+  ]
+}

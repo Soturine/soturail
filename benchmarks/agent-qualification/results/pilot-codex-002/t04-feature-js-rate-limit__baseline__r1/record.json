@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t04-feature-js-rate-limit",
+  "category": "feature",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "76964fb12f754ec7abb53f0d15b7a767e37b05f96b84faf86a279ee5dda06b56",
+  "fixtureHead": "56377a44e2668c89738ecdf2918ee36e0e10a064",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:56:49.547Z",
+  "wallMs": 55318,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M src/limiter.js",
+    " M test/limiter.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "README documents overrides and remaining()",
+        "pass": true,
+        "detail": "ok"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 6,
+    "toolsByName": {
+      "shell": 5,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 2,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 10173,
+      "output": 1973,
+      "cacheRead": 104576,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "b12bbf8dc3f7e0aa4a83536664c1454c6bd2b83a88ab2a34ca3491b559e347c0"
+}

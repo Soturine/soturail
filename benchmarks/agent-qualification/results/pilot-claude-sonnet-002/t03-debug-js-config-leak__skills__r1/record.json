@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-sonnet-002",
+  "task": "t03-debug-js-config-leak",
+  "category": "bug",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "48ae4f0460fc1ed3e705923251810c8d3da3a1500adeae54de7e24d223a0f05b",
+  "fixtureHead": "042fa6aeee81b4988e649ca5679d36b5e6653690",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target claude --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:52:42.331Z",
+  "wallMs": 18830,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/merge.js",
+    " M test/merge.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 3,
+    "toolsByName": {
+      "Grep": 1,
+      "Bash": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 0,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": 4,
+    "tokens": {
+      "input": 1332,
+      "output": 1088,
+      "cacheRead": 79886,
+      "cacheWrite": 8920
+    },
+    "costUsd": 0.0532055,
+    "apiMs": 10940,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "soturail-change",
+      "soturail-core",
+      "soturail-debug",
+      "soturail-knowledge",
+      "soturail-release",
+      "soturail-research",
+      "soturail-review",
+      "soturail-security",
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "a63d934bb9d14052ceca960667a0c1f8854f4192afafac569764a2986f19411a"
+}

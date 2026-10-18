@@ -1,0 +1,56 @@
+diff --git a/README.md b/README.md
+index c49eb46..33a7f47 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,45 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+-import { retry } from "./src/retry.js";
++import { retry } from "patient-retry";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), { retries: 5, baseDelayMs: 100 });
+ ```
+ 
++## API
++
++### `retry(fn, options?)`
++
++Calls `fn` until it resolves, and returns a promise for its first resolved value.
++
++`fn` is called with the 0-based attempt number, so the first call receives `0`.
++
+ Options:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | retries after the first call; at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base wait in milliseconds before a retry |
++| `factor` | `2` | multiplier applied to the wait for each successive retry |
++| `shouldRetry` | `() => true` | `(error) => boolean`; return `false` to stop retrying that error |
++
++### Backoff
++
++Before retry `n` (starting at `0`), `retry` waits `baseDelayMs * factor ** n` milliseconds. With the defaults the waits are 200, 400 and 800 ms. There is no wait after the final failed attempt.
++
++### Results and errors
++
++- **Success:** the first value that `fn` resolves with is returned, and no further calls are made.
++- **Non-retryable error:** if `shouldRetry(error)` returns `false` for a failure that is not on the last attempt, that same error is rethrown immediately.
++- **All attempts failed:** an `AggregateError` is thrown with the message `retry: N attempt(s) failed`. Its `errors` array holds every failure, in order.
++- **Last attempt with `shouldRetry` returning `false`:** the `AggregateError` is still thrown, not the raw error. `shouldRetry` is also called once more with the last error after the final attempt, so keep it free of side effects.
++
++## Development
++
++```sh
++npm test
++```
+ 
+-Errors: after the last attempt the last error is rethrown.
++The test script runs `node --test "test/**/*.test.js"`. The code uses `AggregateError` and `Array.prototype.at`, which require Node.js 16.6 or later.

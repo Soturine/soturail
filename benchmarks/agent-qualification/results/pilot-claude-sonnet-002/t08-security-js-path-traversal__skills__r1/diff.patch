@@ -1,0 +1,44 @@
+diff --git a/src/static.js b/src/static.js
+index f2f38b9..d0122b7 100644
+--- a/src/static.js
++++ b/src/static.js
+@@ -5,9 +5,20 @@ const TYPES = { ".html": "text/html", ".css": "text/css", ".txt": "text/plain" }
+ 
+ // Resolves a request path such as "/css/site.css" against the public root.
+ export async function serveStatic(publicRoot, requestPath) {
+-  const decoded = decodeURIComponent(requestPath.split("?")[0]);
+-  const target = path.join(publicRoot, decoded);
++  const notFound = { status: 404, type: "text/plain", body: Buffer.from("not found") };
++  let decoded;
+   try {
++    decoded = decodeURIComponent(requestPath.split("?")[0]);
++  } catch {
++    return notFound;
++  }
++  if (decoded.includes("\0")) return notFound;
++  try {
++    // Resolve symlinks on both sides so links can't escape the root either.
++    const root = await fs.realpath(publicRoot);
++    const target = await fs.realpath(path.resolve(root, "." + path.sep + decoded.replace(/^[/\\]+/, "")));
++    const rel = path.relative(root, target);
++    if (rel === "" || rel.startsWith("..") || path.isAbsolute(rel)) return notFound;
+     const body = await fs.readFile(target);
+     return { status: 200, type: TYPES[path.extname(target)] ?? "application/octet-stream", body };
+   } catch {
+diff --git a/test/static.test.js b/test/static.test.js
+index b9d6e6e..3fc548d 100644
+--- a/test/static.test.js
++++ b/test/static.test.js
+@@ -11,6 +11,12 @@ test("serves a nested file", async () => {
+   assert.equal(res.type, "text/css");
+ });
+ 
++test("blocks traversal attempts", async () => {
++  for (const p of ["/../package.json", "/%2e%2e/package.json", "/..%2fpackage.json", "/css/../../package.json", "/%5c..%5cpackage.json", "/a%00.css", "/%E0%A4%A"]) {
++    assert.equal((await serveStatic(root, p)).status, 404, p);
++  }
++});
++
+ test("missing file is 404", async () => {
+   assert.equal((await serveStatic(root, "/nope.txt")).status, 404);
+ });

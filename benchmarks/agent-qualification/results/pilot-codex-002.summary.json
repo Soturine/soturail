@@ -1,0 +1,628 @@
+{
+  "schemaVersion": "soturail.qualification.summary.v1",
+  "runIds": [
+    "pilot-codex-002"
+  ],
+  "hosts": [
+    "codex/null"
+  ],
+  "generatedAt": "2026-10-18T07:12:11.157Z",
+  "records": 36,
+  "byArm": {
+    "baseline": {
+      "runs": 12,
+      "success": 0.9166666666666666,
+      "regressions": 0,
+      "statusCorrect": 1,
+      "falseReady": 0,
+      "falseVerified": 0.08333333333333333,
+      "falseNotReady": 0,
+      "notReadyReasons": {},
+      "checkAfterLastEdit": 1,
+      "usedSoturail": null,
+      "skillRecall": null,
+      "toolCalls": 5.5,
+      "duplicateCalls": 0,
+      "toolErrors": 1.25,
+      "recoveredErrors": 1.25,
+      "turns": 0,
+      "tokens": 94461.25,
+      "outputTokens": 1466.75,
+      "cacheWrite": 0,
+      "costUsd": null,
+      "wallSec": 44.185583333333334,
+      "timeouts": 0,
+      "permissionDenials": 0
+    },
+    "skills": {
+      "runs": 12,
+      "success": 1,
+      "regressions": 0,
+      "statusCorrect": 0.5833333333333334,
+      "falseReady": 0,
+      "falseVerified": 0.16666666666666666,
+      "falseNotReady": 0.4166666666666667,
+      "notReadyReasons": {
+        "soturail-stale-evidence": 5
+      },
+      "checkAfterLastEdit": 0.8333333333333334,
+      "usedSoturail": 1,
+      "skillRecall": 0.9722222222222222,
+      "toolCalls": 11.25,
+      "duplicateCalls": 0,
+      "toolErrors": 1.9166666666666667,
+      "recoveredErrors": 1.0833333333333333,
+      "turns": 0,
+      "tokens": 240615.66666666666,
+      "outputTokens": 2223.25,
+      "cacheWrite": 0,
+      "costUsd": null,
+      "wallSec": 110.12633333333333,
+      "timeouts": 0,
+      "permissionDenials": 0
+    },
+    "skills-mcp": {
+      "runs": 12,
+      "success": 1,
+      "regressions": 0,
+      "statusCorrect": 0.5833333333333334,
+      "falseReady": 0,
+      "falseVerified": 0.08333333333333333,
+      "falseNotReady": 0.4166666666666667,
+      "notReadyReasons": {
+        "soturail-stale-evidence": 5
+      },
+      "checkAfterLastEdit": 0.9166666666666666,
+      "usedSoturail": 1,
+      "skillRecall": 0.9722222222222222,
+      "toolCalls": 23.75,
+      "duplicateCalls": 1.1666666666666667,
+      "toolErrors": 1.6666666666666667,
+      "recoveredErrors": 2.25,
+      "turns": 0,
+      "tokens": 290535.5833333333,
+      "outputTokens": 2465.75,
+      "cacheWrite": 0,
+      "costUsd": null,
+      "wallSec": 102.2383333333333,
+      "timeouts": 0,
+      "permissionDenials": 0
+    }
+  },
+  "perTask": [
+    {
+      "task": "t01-bug-js-pagination",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 98484,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 243078,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug"
+        ],
+        "soturailCalls": 9,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 291815,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug"
+        ],
+        "soturailCalls": 22,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t02-bug-py-csv-quoting",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 80477,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 231755,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug"
+        ],
+        "soturailCalls": 8,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 316434,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug"
+        ],
+        "soturailCalls": 22,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t03-debug-js-config-leak",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 80556,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 392365,
+        "skills": [
+          "soturail-core",
+          "soturail-debug",
+          "soturail-change",
+          "soturail-security"
+        ],
+        "soturailCalls": 14,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 292242,
+        "skills": [
+          "soturail-core",
+          "soturail-debug",
+          "soturail-change",
+          "soturail-security"
+        ],
+        "soturailCalls": 30,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t04-feature-js-rate-limit",
+      "category": "feature",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 116722,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 199772,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 7,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 305127,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 18,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t05-feature-py-cli-json",
+      "category": "feature",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 80357,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 282882,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 9,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 345538,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 15,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t06-refactor-js-validation",
+      "category": "refactor",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 118410,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 275989,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 8,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 317660,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 23,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t07-review-js-discount",
+      "category": "review",
+      "baseline": {
+        "runs": 1,
+        "success": 0,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 101288,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": [
+          "review.json is a JSON array",
+          "finds bulk-threshold-off-by-one",
+          "finds unawaited-save"
+        ]
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 259045,
+        "skills": [
+          "soturail-core",
+          "soturail-review"
+        ],
+        "soturailCalls": 10,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 400767,
+        "skills": [
+          "soturail-core",
+          "soturail-review"
+        ],
+        "soturailCalls": 24,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t08-security-js-path-traversal",
+      "category": "security",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 98962,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 206764,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug",
+          "soturail-security"
+        ],
+        "soturailCalls": 7,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 250645,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-debug",
+          "soturail-security"
+        ],
+        "soturailCalls": 9,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t09-security-py-sql-injection",
+      "category": "security",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 80660,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 228634,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-security"
+        ],
+        "soturailCalls": 8,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 0,
+        "costUsd": null,
+        "tokens": 284544,
+        "skills": [
+          "soturail-core",
+          "soturail-change",
+          "soturail-security"
+        ],
+        "soturailCalls": 23,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t10-requirements-js-shipping",
+      "category": "requirements",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 80689,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 195103,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 7,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 204180,
+        "skills": [
+          "soturail-core",
+          "soturail-change"
+        ],
+        "soturailCalls": 18,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t11-docs-js-retry",
+      "category": "documentation",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 99366,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 173525,
+        "skills": [
+          "soturail-core",
+          "soturail-knowledge"
+        ],
+        "soturailCalls": 7,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 219477,
+        "skills": [
+          "soturail-core",
+          "soturail-knowledge"
+        ],
+        "soturailCalls": 26,
+        "failedChecks": []
+      }
+    },
+    {
+      "task": "t12-release-js-prepare",
+      "category": "release",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 97564,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 198476,
+        "skills": [
+          "soturail-core",
+          "soturail-release"
+        ],
+        "soturailCalls": 9,
+        "failedChecks": []
+      },
+      "skills-mcp": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": null,
+        "tokens": 257998,
+        "skills": [
+          "soturail-core",
+          "soturail-release"
+        ],
+        "soturailCalls": 15,
+        "failedChecks": []
+      }
+    }
+  ]
+}

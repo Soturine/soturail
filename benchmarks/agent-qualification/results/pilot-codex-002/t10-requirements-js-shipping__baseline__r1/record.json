@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t10-requirements-js-shipping",
+  "category": "requirements",
+  "stack": "node",
+  "locale": "es",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "dc5ab75a030527b069ae5f531090cb5e0258e2253749ea67985ec4e4661a28c4",
+  "fixtureHead": "abff0d470aa724c017bfdbfdb0529c76837310ac",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:06:46.793Z",
+  "wallMs": 41230,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/shipping.js",
+    " M test/shipping.test.js",
+    "?? OPEN_QUESTIONS.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "R4 contradiction recorded in OPEN_QUESTIONS.md",
+        "pass": true,
+        "detail": "R4 referenced"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 5,
+    "toolsByName": {
+      "shell": 4,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 5719,
+      "output": 1626,
+      "cacheRead": 73344,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "7bb424c49a45a2a2f1d33ec737240ddda6254cd20352c6a0c065496b86a5ca5c"
+}

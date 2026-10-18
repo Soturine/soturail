@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t05-feature-py-cli-json",
+  "category": "feature",
+  "stack": "python",
+  "locale": "ja",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "b59b53597ffe3664ff68485f8fa5317c2cebd9fd00586feb54941bf55ae4184e",
+  "fixtureHead": "722bac4e0452419e86350aef56663a362b9fc6e1",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:58:11.805Z",
+  "wallMs": 53197,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M inventory/__main__.py",
+    " M inventory/report.py",
+    " M tests/test_report.py",
+    "?? inventory/__pycache__/__init__.cpython-312.pyc",
+    "?? inventory/__pycache__/__main__.cpython-312.pyc",
+    "?? inventory/__pycache__/report.cpython-312.pyc",
+    "?? tests/__pycache__/test_report.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 4 tests in 2.129s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 5,
+    "toolsByName": {
+      "shell": 4,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 7307,
+      "output": 1370,
+      "cacheRead": 71680,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "33140a6365a98f459865a57fdf277ee18001ec3d11bfc83c02283eae12102ac2"
+}

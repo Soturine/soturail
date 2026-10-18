@@ -1,0 +1,30 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..9346aa7 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -6,7 +6,7 @@ export function mergeConfig(base, override = {}) {
+   const result = { ...base };
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+       result[key] = value;
+     }
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..751ee23 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,12 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("mergeConfig does not mutate base", async () => {
++  const { configFor } = await import("../src/tenants.js");
++  const { DEFAULTS } = await import("../src/defaults.js");
++  configFor("acme");
++  assert.equal(DEFAULTS.http.timeoutMs, 5000);
++  assert.equal(DEFAULTS.http.retry.attempts, 2);
++  assert.equal(configFor("initech").http.timeoutMs, 5000);
++});

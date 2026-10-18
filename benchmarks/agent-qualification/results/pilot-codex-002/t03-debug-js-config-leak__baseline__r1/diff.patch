@@ -1,0 +1,82 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..e569740 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -1,14 +1,26 @@
+ function isPlainObject(value) {
+-  return value !== null && typeof value === "object" && !Array.isArray(value);
++  if (value === null || typeof value !== "object") return false;
++  const prototype = Object.getPrototypeOf(value);
++  return prototype === Object.prototype || prototype === null;
++}
++
++function clone(value) {
++  if (Array.isArray(value)) return value.map(clone);
++  if (isPlainObject(value)) return mergeConfig(value);
++  return value;
+ }
+ 
+ export function mergeConfig(base, override = {}) {
+-  const result = { ...base };
++  const result = Object.fromEntries(
++    Object.entries(base).map(([key, value]) => [key, clone(value)])
++  );
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+-      result[key] = value;
++      Object.defineProperty(result, key, {
++        value: clone(value), enumerable: true, writable: true, configurable: true
++      });
+     }
+   }
+   return result;
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..5011a7d 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,42 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++function deepFreeze(value) {
++  if (value !== null && typeof value === "object") {
++    Object.values(value).forEach(deepFreeze);
++    Object.freeze(value);
++  }
++  return value;
++}
++
++test("merging frozen inputs preserves both inputs and isolates the result", () => {
++  const base = deepFreeze({
++    http: { timeoutMs: 5000, retry: { attempts: 2, backoffMs: 100 } },
++    regions: ["eu"], untouched: { values: [{ enabled: true }] }
++  });
++  const override = deepFreeze({
++    http: { retry: { attempts: 5 } },
++    regions: [{ name: "us" }], added: { enabled: true }
++  });
++  const merged = mergeConfig(base, override);
++  assert.deepEqual(merged.http, {
++    timeoutMs: 5000, retry: { attempts: 5, backoffMs: 100 }
++  });
++  assert.deepEqual(merged.regions, [{ name: "us" }]);
++  merged.http.retry.backoffMs = 999;
++  merged.untouched.values[0].enabled = false;
++  merged.regions[0].name = "changed";
++  merged.added.enabled = false;
++  assert.equal(base.http.retry.backoffMs, 100);
++  assert.equal(base.untouched.values[0].enabled, true);
++  assert.equal(override.regions[0].name, "us");
++  assert.equal(override.added.enabled, true);
++});
++
++test("arrays and scalars replace objects, while plain objects merge recursively", () => {
++  assert.deepEqual(mergeConfig(
++    { a: { old: true }, b: [1, 2], c: { old: true }, d: 1 },
++    { a: [3], b: { new: true }, c: null, d: false }
++  ), { a: [3], b: { new: true }, c: null, d: false });
++});

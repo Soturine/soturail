@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "d85cd0efb709d7bedf718d14bbf6fdaa472d413aeb5fccfd48efb64c6f1ac0c9",
+  "fixtureHead": "122ea69455dffeb5a0b29a564066e08d8a327593",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target claude --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:07:48.208Z",
+  "wallMs": 49820,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "functional",
+        "name": "documents current option names and defaults",
+        "pass": true,
+        "detail": "all present"
+      },
+      {
+        "kind": "functional",
+        "name": "does not present stale options as current",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "functional",
+        "name": "README js examples execute",
+        "pass": true,
+        "detail": "1 example(s) ran"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 6,
+    "toolsByName": {
+      "Bash": 5,
+      "Write": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 7,
+    "tokens": {
+      "input": 1318,
+      "output": 6761,
+      "cacheRead": 174525,
+      "cacheWrite": 18025
+    },
+    "costUsd": 0.00886255,
+    "apiMs": 36873,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "soturail-change",
+      "soturail-core",
+      "soturail-debug",
+      "soturail-knowledge",
+      "soturail-release",
+      "soturail-research",
+      "soturail-review",
+      "soturail-security",
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "cee2523a67986d58113516ebe65007fdd4190e4d58febecb11cdf3e983a1fa89",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:12:03.502Z"
+    }
+  ],
+  "oracleDigest": "3ada1e06272a6f71e98212e5b92d6fd23f553a7276f04d0187a143bad1a3a04a"
+}

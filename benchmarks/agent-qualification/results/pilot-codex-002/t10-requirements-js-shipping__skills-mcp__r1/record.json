@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t10-requirements-js-shipping",
+  "category": "requirements",
+  "stack": "node",
+  "locale": "es",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "dc5ab75a030527b069ae5f531090cb5e0258e2253749ea67985ec4e4661a28c4",
+  "fixtureHead": "68aa415dc31635146c73813def499f12e5edb466",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:06:33.872Z",
+  "wallMs": 81778,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/shipping.js",
+    " M test/shipping.test.js",
+    "?? OPEN_QUESTIONS.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "R4 contradiction recorded in OPEN_QUESTIONS.md",
+        "pass": true,
+        "detail": "R4 referenced"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 0.6666666666666666,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 22,
+    "toolsByName": {
+      "shell": 10,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 4,
+      "mcp__soturail__soturail.candidates.record": 5,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 1,
+    "toolErrors": 2,
+    "recoveredErrors": 4,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 7,
+    "soturailMcpCalls": 11,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create --help; soturail evidence collect --help; soturail evidence verify --help; rg --files test .soturail",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create shipping-rules --title \"Reglas de envio\" --intent \"Implementar R1-R3 y R5; dejar R4 contradictorio s",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect; soturail evidence verify; soturail contract verify .soturail/contracts/shipping-rules.json'",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'"
+    ],
+    "edits": 1,
+    "checksRun": 5,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 22376,
+      "output": 2604,
+      "cacheRead": 179200,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "126790f91557e7a428666cb17d74e3a8ec88cd5a292eeb12103b4bc248936f12"
+}

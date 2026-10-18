@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t04-feature-js-rate-limit",
+  "category": "feature",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "76964fb12f754ec7abb53f0d15b7a767e37b05f96b84faf86a279ee5dda06b56",
+  "fixtureHead": "a0c843a46abc76c9090894dc33f8b2a7dfe7d47f",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:56:16.611Z",
+  "wallMs": 101068,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M src/limiter.js",
+    " M test/limiter.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "README documents overrides and remaining()",
+        "pass": true,
+        "detail": "ok"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 9,
+    "toolsByName": {
+      "shell": 8,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 7,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-Content .soturail/indexes/tree.txt; soturail read package.json; soturail read README.md; soturail contract create --help;",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail read src/limiter.js; soturail read test/limiter.test.js; Get-Content .agents/skills/soturail-core/references/candida",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test; soturail evidence collect; soturail evidence verify; soturail contract verify .soturail/contracts/p",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/evidence/evidence_20261018065726_0096ff94/evidence.json; git diff --stat; soturail evidence verify --",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$candidate = @{ kind = '\"'impact'; producer = @{ kind = 'semantic-worker'; skill = 'soturail-change' }; verificationState = '",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$candidate = Get-Content .soturail/impact-per-key-limits.json -Raw | ConvertFrom-Json; $candidate.affected[0].relation = '\"'t"
+    ],
+    "edits": 1,
+    "checksRun": 3,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 25631,
+      "output": 2237,
+      "cacheRead": 171904,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "9f7686d980b265ab13f73a2461f135f936a772f648b0d31c7e2715684bc811ac"
+}

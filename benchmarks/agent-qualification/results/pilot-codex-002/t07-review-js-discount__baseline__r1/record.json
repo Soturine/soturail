@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "7d4e35829cb17ff86e9c0507c20330a5d8e3ca89",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:01:32.603Z",
+  "wallMs": 42215,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": false,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": false,
+        "detail": "missing or invalid"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": false,
+        "detail": "not reported"
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": false,
+        "detail": "not reported"
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": false,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": true,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 5,
+    "toolsByName": {
+      "shell": 5
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 0,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 5346,
+      "output": 1094,
+      "cacheRead": 94848,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "ff81d666f79b86382a002f385e46d7d866542f49fafb8f7c3688581fc35dbf39"
+}

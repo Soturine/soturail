@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "d85cd0efb709d7bedf718d14bbf6fdaa472d413aeb5fccfd48efb64c6f1ac0c9",
+  "fixtureHead": "dd105f2abe2c8e5abd9cd4817e066572b4c2f624",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:08:03.306Z",
+  "wallMs": 48637,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "functional",
+        "name": "documents current option names and defaults",
+        "pass": true,
+        "detail": "all present"
+      },
+      {
+        "kind": "functional",
+        "name": "does not present stale options as current",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "functional",
+        "name": "README js examples execute",
+        "pass": true,
+        "detail": "1 example(s) ran"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 6,
+    "toolsByName": {
+      "shell": 5,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 2,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 6760,
+      "output": 1598,
+      "cacheRead": 91008,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "abf9c35b29b6ec53ea5f673045779a4f47ae66743e94e13f5a18855d720feb5b",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": false,
+      "failed": [
+        "removes stale option names"
+      ],
+      "replacedAt": "2026-10-18T07:12:00.170Z"
+    }
+  ],
+  "oracleDigest": "3ada1e06272a6f71e98212e5b92d6fd23f553a7276f04d0187a143bad1a3a04a"
+}

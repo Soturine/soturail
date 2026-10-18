@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t08-security-js-path-traversal",
+  "category": "security",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "147f9df5b4d5e5ee6100334b031d0c0d4b501b0ea92c34c98c945f5204833e4f",
+  "fixtureHead": "13f54cb150e300256a18af0189e7d6dc61e3e19c",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:05:24.011Z",
+  "wallMs": 29713,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/static.js",
+    " M test/static.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 9,
+    "toolsByName": {
+      "Bash": 3,
+      "Grep": 1,
+      "Read": 3,
+      "Write": 1,
+      "Edit": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 2,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 10,
+    "tokens": {
+      "input": 1310,
+      "output": 4381,
+      "cacheRead": 128574,
+      "cacheWrite": 12395
+    },
+    "costUsd": 0.006086240000000001,
+    "apiMs": 23271,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "ea96b747c7b0ecc95cb3a560887a8093cf909072f2e0ff5be0ee06594ab31b28"
+}

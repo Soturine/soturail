@@ -1,0 +1,49 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..242c556 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,9 +1,24 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
+ 
+ 
++def split_fields(line):
++    # Divide nas vírgulas que estão fora de aspas; "" dentro de aspas alterna o estado duas vezes e continua correto.
++    raws = []
++    in_quotes = False
++    start = 0
++    for index, char in enumerate(line):
++        if char == '"':
++            in_quotes = not in_quotes
++        elif char == "," and not in_quotes:
++            raws.append(line[start:index])
++            start = index + 1
++    raws.append(line[start:])
++    return raws
++
++
+ def split_line(line):
+     fields = []
+-    for raw in line.split(","):
++    for raw in split_fields(line):
+         value = raw.strip()
+         if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+             value = value[1:-1].replace('""', '"')
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..db6f12e 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -8,6 +8,14 @@ class ParseTest(unittest.TestCase):
+         rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
+         self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
+ 
++    def test_quoted_field_with_comma(self):
++        rows = parse_customers('nome,endereco,cidade\nAna,"Rua A, 10",Recife\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10", "cidade": "Recife"}])
++
++    def test_quoted_field_with_escaped_quotes_and_comma(self):
++        rows = parse_customers('nome,obs\nAna,"disse ""oi"", tudo bem"\n')
++        self.assertEqual(rows, [{"nome": "Ana", "obs": 'disse "oi", tudo bem'}])
++
+     def test_wrong_field_count(self):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")

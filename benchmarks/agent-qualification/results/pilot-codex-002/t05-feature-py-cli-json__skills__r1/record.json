@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t05-feature-py-cli-json",
+  "category": "feature",
+  "stack": "python",
+  "locale": "ja",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "b59b53597ffe3664ff68485f8fa5317c2cebd9fd00586feb54941bf55ae4184e",
+  "fixtureHead": "718215463c04cb59e999fa95a9c4ac0cb6097b58",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:59:00.001Z",
+  "wallMs": 138159,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M inventory/__main__.py",
+    " M inventory/report.py",
+    " M tests/test_report.py",
+    "?? inventory/__pycache__/__init__.cpython-312.pyc",
+    "?? inventory/__pycache__/__main__.cpython-312.pyc",
+    "?? inventory/__pycache__/report.cpython-312.pyc",
+    "?? tests/__pycache__/test_report.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 4 tests in 1.194s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 12,
+    "toolsByName": {
+      "shell": 10,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 4,
+    "recoveredErrors": 2,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 9,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/indexes/tree.txt; soturail run -- git status --short; soturail contract create --help; soturail evide",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail read inventory/__main__.py; soturail read inventory/report.py; soturail read tests/test_report.py; soturail read REA",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests; soturail evidence collect; soturail evidence verify; soturail contract ",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify --help; soturail run -- git diff --check; soturail read .soturail/contracts/inventory-json.json'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\n{\\\"kind\\\":\\\"impact\\\",\\\"producer\\\":{\\\"kind\\\":\\\"semantic-worker\\\",\\\"skill\\\":\\\"soturail-change\\\"},\\\"verificationState\\\":\\\"inf",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-ChildItem .soturail/evidence/evidence_20261018070052_17d99876; soturail read .soturail/evidence/evidence_20261018070052_1",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/evidence/evidence_20261018070052_17d99876/evidence.json; Get-ChildItem .soturail -Force | Select-Obje",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$candidatePath = Join-Path (Get-Location) '\"'.soturail/impact-inventory-json.json'; \"'$candidate = Get-Content -Raw $candidat"
+    ],
+    "edits": 2,
+    "checksRun": 6,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 20061,
+      "output": 2597,
+      "cacheRead": 260224,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "60b766c7daf25b6423ecd2e9711a0182014ec5edf37e3b56bc0dc1ff92644e99"
+}

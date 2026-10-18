@@ -1,0 +1,282 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..bed122f 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,17 @@
++{"kind":"output","output_sha256":"8ece47e68f1108dfd6eb602bea268d59fcb5781ecfe1cda8c896f651c12fda38","raw_id":"39280549","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070749547Z-39280549.log","created_at":"2026-10-18T07:07:49.547Z"}
++{"kind":"block","block_id":"block_8aa4f010","block_sha256":"8aa4f01041aecb428971bb206dcb87a6d899f9ac210758e3306327d5e183fdad","normalized_sha256":"b22eb744efc44a7ff16ae5d22803e248dcccbbcfd9a5e46f2c68ca3656ee4e9c","raw_id":"aa7c384f","line_count":8,"token_estimate":109,"has_risk":false,"preview":"file:///C:/Users/rafael/AppData/Local/Temp/aq-runs/pilot-codex-002/t11-docs-js-retry__skills-mcp__r1/[eval1]:1 | import assert from node:assert/strict;","created_at":"2026-10-18T07:08:31.446Z"}
++{"kind":"block","block_id":"block_ba6cbe01","block_sha256":"ba6cbe011e0be9b04dbb02ca18ea8bdf879e425906305e11eb145e39b7bf6496","normalized_sha256":"6886d5872a18d257486dc935f145432ec9b6cb4c983ac58a9a93cdac5d24b087","raw_id":"aa7c384f","line_count":8,"token_estimate":84,"has_risk":false,"preview":"    at node:internal/process/execution:77:24 |     at asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:11)","created_at":"2026-10-18T07:08:31.446Z"}
++{"kind":"output","output_sha256":"f686fbaae5c794e9834706ba6e503b07d0b6ff4f67e6bb56c2805052dfbd9fd3","raw_id":"aa7c384f","command":"node --input-type=module -e \"import assert from node:assert/strict;\nimport { retry } from ./src/retry.js;\nconst delays = [];\nconst originalTimer = globalThis.setTimeout;\nglobalThis.setTimeout = (resolve, ms) => { delays.push(ms); resolve(); };\ntry {\n  const failures = Array.from({length: 4}, (_, i) => new Error(String(i)));\n  const attempts = [];\n  await assert.rejects(retry((n) => { attempts.push(n); throw failures[n]; }), e => {\n    assert.ok(e instanceof AggregateError);\n    assert.deepEqual(e.errors, failures);\n    assert.equal(e.message, retry:\" 4 attempt(s) \"failed);\n    return true;\n  });\n  assert.deepEqual(attempts, [0, 1, 2, 3]);\n  assert.deepEqual(delays.splice(0), [200, 400, 800]);\n  assert.equal(await retry(() => 7), 7);\n  const error = new Error(stop);\n  let predicates = 0;\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { predicates++; return false; }}), e => e === error);\n  assert.equal(predicates, 2);\n  assert.deepEqual(delays.splice(0), []);\n  await assert.rejects(retry(() => { throw error; }, {retries: 0, shouldRetry: () => false}), e => e instanceof AggregateError && e.errors[0] === error);\n  let calls = 0;\n  assert.equal(await retry(() => { if (calls++ < 2) throw error; return 9; }, {baseDelayMs: 10, factor: 1}), 9);\n  assert.deepEqual(delays.splice(0), [10, 10]);\n  const predicateError = new Error(predicate);\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { throw predicateError; }}), e => e === predicateError);\n  await assert.rejects(retry(() => { throw error; }, {attempts: 1, delay: 0}), e => e.errors.length === 4);\n  assert.deepEqual(delays, [200, 400, 800]);\n  console.log(README\" behavior checks \"passed);\n} finally { globalThis.setTimeout = originalTimer; }\"","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070831178Z-aa7c384f.log","created_at":"2026-10-18T07:08:31.178Z"}
++{"kind":"block","block_id":"block_6fd36745","block_sha256":"6fd36745dcbf93f0933b849d6f56e9a4e0eaa24a2cbc03cb25e71a2686430070","normalized_sha256":"07a1a176b96c679a1e623b7969528ab7b1910763e8a997aca989ed03499b6aa6","raw_id":"244f2380","line_count":8,"token_estimate":32,"has_risk":false,"preview":" | > patient-retry@2.0.0 test","created_at":"2026-10-18T07:08:35.381Z"}
++{"kind":"output","output_sha256":"e767172eb935874b86c48678b3150f9a87831c2555206073050bf1cd9dd796bd","raw_id":"244f2380","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070833606Z-244f2380.log","created_at":"2026-10-18T07:08:33.606Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"58686014","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070837197Z-58686014.log","created_at":"2026-10-18T07:08:37.197Z"}
++{"kind":"output","output_sha256":"067c60edce4cf4aaf7f8e323296aef3e37aae31d8a22898c17f55400faf87169","raw_id":"5330806d","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070852924Z-5330806d.log","created_at":"2026-10-18T07:08:52.924Z"}
++{"kind":"block","block_id":"block_1f8d52d4","block_sha256":"1f8d52d4b62e099005822ce58d85477f1e72419a2a2c90a1af0306df7b76ea28","normalized_sha256":"44bcda2fd6af4bb78edbb00da738c0f7111a91fd4fe4a501626e037a329fd11b","raw_id":"13f81f15","line_count":8,"token_estimate":40,"has_risk":false,"preview":"diff --git a/README.md b/README.md | index c49eb46..0e21c0e 100644","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_50d29135","block_sha256":"50d29135e40e32dfac86e290a8f481af56221c7028e81730182dc8dcc39adc79","normalized_sha256":"2d279a7c73208c9bd1ca8d8d4ec6d57ab444fec23c0339273b292f676c81ab1a","raw_id":"13f81f15","line_count":8,"token_estimate":80,"has_risk":false,"preview":"+Retry a function until it succeeds, with exponential backoff. Synchronous return | +values and thrown errors are supported too.","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_af488d16","block_sha256":"af488d16fc001b933010b5003a18a84ce4e97f0bb2e273cf8a28ab0bb4c769e4","normalized_sha256":"51ebecb4d749f277764c253955cbb657bb518de5f248749c7930192d8df5dc8a","raw_id":"13f81f15","line_count":8,"token_estimate":38,"has_risk":true,"preview":"+const value = await retry((attempt) => fetchThing(), { | +  retries: 3,","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_b474ac55","block_sha256":"b474ac55db71366a0ccd215729b0320c38e40aa4b49589bda39eb5f94d547e7c","normalized_sha256":"34c69a3dfff6e0f89e9f496f551ba3cba84334fae7836eb1688e88566d7cf3eb","raw_id":"13f81f15","line_count":8,"token_estimate":94,"has_risk":false,"preview":" Options: |  ","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_17fc3585","block_sha256":"17fc3585080e45ada12e20a0a84c55047785a5788eb008b7c7d0ef7278db7782","normalized_sha256":"ef86489ea1fa09f5d3e36d2c4618fd2f2dc716ccab6549276bd19661fa44d057","raw_id":"13f81f15","line_count":8,"token_estimate":145,"has_risk":true,"preview":"+| `factor` | `2` | Delay multiplier; after failed attempt `n`, wait `baseDelayMs * factor ** n` before retrying. Use `1` for a fixed delay. | | +| `shouldRetry` | `() => true` | Synchronous predicate called with the thrown error; a falsy r","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_f7539d09","block_sha256":"f7539d095486a60bfd69ff19ef4fa8f1fd47859ddaeaea45794239f6c7bc7ab0","normalized_sha256":"0cbad84f2e292d48dfb32b559fea24c3904868d746522ab5319f81c9351f94a5","raw_id":"13f81f15","line_count":8,"token_estimate":103,"has_risk":true,"preview":"+The old `attempts` and `delay` options are ignored. Options are not validated; use | +a nonnegative integer for `retries` and suitable numeric delay values.","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"block","block_id":"block_ad46d841","block_sha256":"ad46d84138a62cbc8c160ce07249b7771cc254a4fc39f9c295f55cbeac885daa","normalized_sha256":"2ff289c4f4f6205869375105a4496381cccd9a2e1837dc7c6ca90849fb87fc57","raw_id":"13f81f15","line_count":8,"token_estimate":141,"has_risk":true,"preview":"+  Its `errors` array contains every failure in call order, and its message is | +  `retry: N attempt(s) failed`, where `N` is the number of failed calls. This also","created_at":"2026-10-18T07:08:58.097Z"}
++{"kind":"output","output_sha256":"a61bae4e4e88e8c8aacbe4df84463076bad6e023c34283fa51ed12f2650ba5e1","raw_id":"13f81f15","command":"git diff README.md src/retry.js test/retry.test.js","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070857949Z-13f81f15.log","created_at":"2026-10-18T07:08:57.949Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"f6b9a9b6","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070913987Z-f6b9a9b6.log","created_at":"2026-10-18T07:09:13.987Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index e8559c3..8038d91 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:07:32.867Z",
++  "generated_at": "2026-10-18T07:07:44.598Z",
+   "root": "t11-docs-js-retry__skills-mcp__r1",
+-  "total_files": 56,
++  "total_files": 74,
+   "stats": {
+-    "scanned_files": 56,
++    "scanned_files": 74,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 0e40ce3..0d39328 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t11-docs-js-retry__skills-mcp__r1
+-Files indexed: 56
++Files indexed: 74
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..8fc174c 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,8 @@
++{"type":"command_run","raw_id":"39280549","command":"git status --short","exit_code":0,"raw_tokens_estimated":24,"compressed_tokens_estimated":76,"estimated_raw_tokens":24,"estimated_reduced_payload_tokens":76,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":111,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:07:50.066Z"}
++{"type":"command_run","raw_id":"aa7c384f","command":"node --input-type=module -e \"import assert from node:assert/strict;\nimport { retry } from ./src/retry.js;\nconst delays = [];\nconst originalTimer = globalThis.setTimeout;\nglobalThis.setTimeout = (resolve, ms) => { delays.push(ms); resolve(); };\ntry {\n  const failures = Array.from({length: 4}, (_, i) => new Error(String(i)));\n  const attempts = [];\n  await assert.rejects(retry((n) => { attempts.push(n); throw failures[n]; }), e => {\n    assert.ok(e instanceof AggregateError);\n    assert.deepEqual(e.errors, failures);\n    assert.equal(e.message, retry:\" 4 attempt(s) \"failed);\n    return true;\n  });\n  assert.deepEqual(attempts, [0, 1, 2, 3]);\n  assert.deepEqual(delays.splice(0), [200, 400, 800]);\n  assert.equal(await retry(() => 7), 7);\n  const error = new Error(stop);\n  let predicates = 0;\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { predicates++; return false; }}), e => e === error);\n  assert.equal(predicates, 2);\n  assert.deepEqual(delays.splice(0), []);\n  await assert.rejects(retry(() => { throw error; }, {retries: 0, shouldRetry: () => false}), e => e instanceof AggregateError && e.errors[0] === error);\n  let calls = 0;\n  assert.equal(await retry(() => { if (calls++ < 2) throw error; return 9; }, {baseDelayMs: 10, factor: 1}), 9);\n  assert.deepEqual(delays.splice(0), [10, 10]);\n  const predicateError = new Error(predicate);\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { throw predicateError; }}), e => e === predicateError);\n  await assert.rejects(retry(() => { throw error; }, {attempts: 1, delay: 0}), e => e.errors.length === 4);\n  assert.deepEqual(delays, [200, 400, 800]);\n  console.log(README\" behavior checks \"passed);\n} finally { globalThis.setTimeout = originalTimer; }\"","exit_code":1,"raw_tokens_estimated":196,"compressed_tokens_estimated":539,"estimated_raw_tokens":196,"estimated_reduced_payload_tokens":539,"estimated_soturail_metadata_tokens":472,"estimated_net_tokens_sent":1011,"summary_overhead_tokens":472,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:31.729Z"}
++{"type":"command_run","raw_id":"244f2380","command":"npm test","exit_code":0,"raw_tokens_estimated":49,"compressed_tokens_estimated":66,"estimated_raw_tokens":49,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:35.718Z"}
++{"type":"command_run","raw_id":"58686014","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:37.505Z"}
++{"type":"command_run","raw_id":"5330806d","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_tokens_estimated":8,"compressed_tokens_estimated":26,"estimated_raw_tokens":8,"estimated_reduced_payload_tokens":26,"estimated_soturail_metadata_tokens":39,"estimated_net_tokens_sent":65,"summary_overhead_tokens":39,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:53.967Z"}
++{"type":"command_run","raw_id":"13f81f15","command":"git diff README.md src/retry.js test/retry.test.js","exit_code":0,"raw_tokens_estimated":640,"compressed_tokens_estimated":636,"estimated_raw_tokens":640,"estimated_reduced_payload_tokens":636,"estimated_soturail_metadata_tokens":43,"estimated_net_tokens_sent":679,"summary_overhead_tokens":43,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":4,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:58.407Z"}
++{"type":"dedupe_hit","raw_id":"f6b9a9b6","details":{"previous_raw_id":"58686014","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},"created_at":"2026-10-18T07:09:14.208Z"}
++{"type":"command_run","raw_id":"f6b9a9b6","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":12,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":12,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":45,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:14.214Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..8237702 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,7 @@
++{"raw_id":"39280549","path":".soturail\\raw\\2026-10-18\\20261018T070749547Z-39280549.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T07:07:49.547Z","compressor":"git-reducer","raw_tokens_estimated":24,"compressed_tokens_estimated":76,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"f84155a897218cc8dec8c6beabdb63fc96f1aa6dcb9d726d2ce39eeb3613b508","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:07:49.547Z"}
++{"raw_id":"aa7c384f","path":".soturail\\raw\\2026-10-18\\20261018T070831178Z-aa7c384f.log","command":"node --input-type=module -e \"import assert from node:assert/strict;\nimport { retry } from ./src/retry.js;\nconst delays = [];\nconst originalTimer = globalThis.setTimeout;\nglobalThis.setTimeout = (resolve, ms) => { delays.push(ms); resolve(); };\ntry {\n  const failures = Array.from({length: 4}, (_, i) => new Error(String(i)));\n  const attempts = [];\n  await assert.rejects(retry((n) => { attempts.push(n); throw failures[n]; }), e => {\n    assert.ok(e instanceof AggregateError);\n    assert.deepEqual(e.errors, failures);\n    assert.equal(e.message, retry:\" 4 attempt(s) \"failed);\n    return true;\n  });\n  assert.deepEqual(attempts, [0, 1, 2, 3]);\n  assert.deepEqual(delays.splice(0), [200, 400, 800]);\n  assert.equal(await retry(() => 7), 7);\n  const error = new Error(stop);\n  let predicates = 0;\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { predicates++; return false; }}), e => e === error);\n  assert.equal(predicates, 2);\n  assert.deepEqual(delays.splice(0), []);\n  await assert.rejects(retry(() => { throw error; }, {retries: 0, shouldRetry: () => false}), e => e instanceof AggregateError && e.errors[0] === error);\n  let calls = 0;\n  assert.equal(await retry(() => { if (calls++ < 2) throw error; return 9; }, {baseDelayMs: 10, factor: 1}), 9);\n  assert.deepEqual(delays.splice(0), [10, 10]);\n  const predicateError = new Error(predicate);\n  await assert.rejects(retry(() => { throw error; }, {shouldRetry: () => { throw predicateError; }}), e => e === predicateError);\n  await assert.rejects(retry(() => { throw error; }, {attempts: 1, delay: 0}), e => e.errors.length === 4);\n  assert.deepEqual(delays, [200, 400, 800]);\n  console.log(README\" behavior checks \"passed);\n} finally { globalThis.setTimeout = originalTimer; }\"","exit_code":1,"created_at":"2026-10-18T07:08:31.178Z","compressor":"generic-stream","raw_tokens_estimated":196,"compressed_tokens_estimated":539,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"bb61939fc402a65411c62f6e37b8a76db65afea667c754a3076757fba56d1202","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:31.178Z"}
++{"raw_id":"244f2380","path":".soturail\\raw\\2026-10-18\\20261018T070833606Z-244f2380.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:08:33.606Z","compressor":"test-reducer","raw_tokens_estimated":49,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"68f448098fafd61303a8d30b3a51e709d62878a19e26dedca1a5818383275e37","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:33.606Z"}
++{"raw_id":"58686014","path":".soturail\\raw\\2026-10-18\\20261018T070837197Z-58686014.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:08:37.197Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"65913b9fabeeae3c6c12dea9a8b531cd8f57194912555f24b78ed820f7400aea","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:37.197Z"}
++{"raw_id":"5330806d","path":".soturail\\raw\\2026-10-18\\20261018T070852924Z-5330806d.log","command":"node .soturail/readme-check.mjs","exit_code":0,"created_at":"2026-10-18T07:08:52.924Z","compressor":"generic-stream","raw_tokens_estimated":8,"compressed_tokens_estimated":26,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"71e57cb7a711fd3c4633fc12c6f95b4c5102d09c1302ed72797d8fb38e8ca538","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:52.924Z"}
++{"raw_id":"13f81f15","path":".soturail\\raw\\2026-10-18\\20261018T070857949Z-13f81f15.log","command":"git diff README.md src/retry.js test/retry.test.js","exit_code":0,"created_at":"2026-10-18T07:08:57.949Z","compressor":"git-reducer","raw_tokens_estimated":640,"compressed_tokens_estimated":636,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"774e790c78da876ff92fbf29c8c8caba197ec3ae75d0b0b85230a1fe8b8982da","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:57.949Z"}
++{"raw_id":"f6b9a9b6","path":".soturail\\raw\\2026-10-18\\20261018T070913987Z-f6b9a9b6.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:09:13.987Z","compressor":"dedupe","raw_tokens_estimated":0,"compressed_tokens_estimated":12,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"fa9f40f0f7e05ca88daab3378b63806581d295bff6afc579416ceafa7fcb043c","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:13.987Z"}
+diff --git a/README.md b/README.md
+index c49eb46..0e21c0e 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,46 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry a function until it succeeds, with exponential backoff. Synchronous return
++values and thrown errors are supported too.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++// Up to 4 calls, waiting 200, 400, then 800 ms after failures.
++const value = await retry((attempt) => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++  shouldRetry: (error) => true,
++});
+ ```
+ 
+ Options:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | Retries after the initial call; a nonnegative integer gives at most `retries + 1` calls. Use `0` for one call. |
++| `baseDelayMs` | `200` | Base delay in milliseconds before the first retry. |
++| `factor` | `2` | Delay multiplier; after failed attempt `n`, wait `baseDelayMs * factor ** n` before retrying. Use `1` for a fixed delay. |
++| `shouldRetry` | `() => true` | Synchronous predicate called with the thrown error; a falsy result stops further attempts. |
+ 
+-Errors: after the last attempt the last error is rethrown.
++`retry(fn, options)` returns a promise for the first successful result. `fn` receives
++the zero-based attempt index (`0` for the initial call). The initial call starts
++without a delay; there is no delay after success or after retrying stops.
++
++The old `attempts` and `delay` options are ignored. Options are not validated; use
++a nonnegative integer for `retries` and suitable numeric delay values.
++
++On failure:
++
++- If `shouldRetry` consistently returns a falsy value before the final allowed
++  attempt, the original error is rethrown without another call to `fn`.
++- When all `retries + 1` calls fail, the promise rejects with an `AggregateError`.
++  Its `errors` array contains every failure in call order, and its message is
++  `retry: N attempt(s) failed`, where `N` is the number of failed calls. This also
++  applies when `retries` is `0` or the predicate returns false on the final call.
++
++The predicate is evaluated on each failure, including the final one. It can also
++be evaluated again when deciding which error to throw after stopping early, so
++keep it free of side effects and return a consistent result for the same error.
++If the predicate itself throws, its error rejects the promise directly.

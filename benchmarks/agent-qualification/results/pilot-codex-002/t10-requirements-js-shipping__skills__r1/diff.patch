@@ -1,0 +1,275 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..c06120a 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,9 @@
++{"kind":"block","block_id":"block_494dae3c","block_sha256":"494dae3c0c6334159d57008ed0c3309bf533dc376908cecb1ef409ea86397b8d","normalized_sha256":"80ff57a0d907658c044e1dd220a87dbcd0e88953980433a31b520b59aebf0473","raw_id":"cab1f2be","line_count":8,"token_estimate":74,"has_risk":false,"preview":" | > checkout@0.3.0 test","created_at":"2026-10-18T07:07:31.661Z"}
++{"kind":"block","block_id":"block_c7506c73","block_sha256":"c7506c736856a6f8ed7928444b95f0985640dd0e25645cf1894236945ce54cfc","normalized_sha256":"340ea9b48c73f28efb43b9b72490e5ab55709857340f6a218baa8e686ef471b4","raw_id":"cab1f2be","line_count":8,"token_estimate":39,"has_risk":false,"preview":"✔ contradictory free domestic express case stays explicitly unresolved (0.705ms) | ℹ tests 5","created_at":"2026-10-18T07:07:31.661Z"}
++{"kind":"output","output_sha256":"79f057877a6710bf72283887259d02ad398d18caa50d9bffe85c1da7dd7c5d48","raw_id":"cab1f2be","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070730384Z-cab1f2be.log","created_at":"2026-10-18T07:07:30.384Z"}
++{"kind":"block","block_id":"block_fb9b9107","block_sha256":"fb9b9107bfc58570c7a4b557ab26b9b23700413f1fb8168c68e6dcc2c2fc1ee6","normalized_sha256":"e1e48a1494ddff9603a60334eba7d7bbc3a57cee832f5da36d91518a33120dee","raw_id":"d6c59970","line_count":8,"token_estimate":73,"has_risk":false,"preview":" | > checkout@0.3.0 test","created_at":"2026-10-18T07:07:57.731Z"}
++{"kind":"block","block_id":"block_70242973","block_sha256":"702429735e48d510809391a8ec1d1da0b2eb21b2b5808328e30f3ed1f43308c1","normalized_sha256":"8524633c0072ea8f78511b44017c81f233f107861c3f1fab35d931989ce9c31c","raw_id":"d6c59970","line_count":8,"token_estimate":39,"has_risk":false,"preview":"✔ contradictory free domestic express case stays explicitly unresolved (0.4306ms) | ℹ tests 5","created_at":"2026-10-18T07:07:57.731Z"}
++{"kind":"output","output_sha256":"daed44221deebe85ac19d5b5000790983cc9b6813bf4054e278668db00ba4515","raw_id":"d6c59970","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070756199Z-d6c59970.log","created_at":"2026-10-18T07:07:56.199Z"}
++{"kind":"block","block_id":"block_fe88738d","block_sha256":"fe88738d7e79cd28484c3eec5a123052333b363423ee4d89ba6622d284d60e10","normalized_sha256":"2ef8c776f428c876d5e39ca15826fa2d66ae14f5941dfad5ae992c6297fb1a26","raw_id":"512070fa","line_count":8,"token_estimate":73,"has_risk":false,"preview":" | > checkout@0.3.0 test","created_at":"2026-10-18T07:08:13.707Z"}
++{"kind":"block","block_id":"block_744e33f9","block_sha256":"744e33f901db45197a4d03dfc2274b1b3930ec25c6416cab084b9398afc87e8d","normalized_sha256":"1317725f0275350c9bc79f89713063469d7ee4e5cf059a4aff3508b4fced6027","raw_id":"512070fa","line_count":8,"token_estimate":39,"has_risk":false,"preview":"✔ contradictory free domestic express case stays explicitly unresolved (0.4621ms) | ℹ tests 5","created_at":"2026-10-18T07:08:13.707Z"}
++{"kind":"output","output_sha256":"635d03cc0e8449ea60e86bc683d8d31f8e1c460d62013a70597eef1952367345","raw_id":"512070fa","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070812205Z-512070fa.log","created_at":"2026-10-18T07:08:12.205Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index 73fd430..1cd7bd1 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:06:27.719Z",
++  "generated_at": "2026-10-18T07:06:44.210Z",
+   "root": "t10-requirements-js-shipping__skills__r1",
+-  "total_files": 56,
++  "total_files": 74,
+   "stats": {
+-    "scanned_files": 56,
++    "scanned_files": 74,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index d1e50f6..ad07a27 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t10-requirements-js-shipping__skills__r1
+-Files indexed: 56
++Files indexed: 74
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..129a435 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,3 @@
++{"type":"command_run","raw_id":"cab1f2be","command":"npm test","exit_code":0,"raw_tokens_estimated":118,"compressed_tokens_estimated":66,"estimated_raw_tokens":118,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":52,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:07:31.976Z"}
++{"type":"command_run","raw_id":"d6c59970","command":"npm test","exit_code":0,"raw_tokens_estimated":118,"compressed_tokens_estimated":66,"estimated_raw_tokens":118,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":52,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:07:58.119Z"}
++{"type":"command_run","raw_id":"512070fa","command":"npm test","exit_code":0,"raw_tokens_estimated":118,"compressed_tokens_estimated":66,"estimated_raw_tokens":118,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":52,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:08:13.947Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..fcfceee 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,3 @@
++{"raw_id":"cab1f2be","path":".soturail\\raw\\2026-10-18\\20261018T070730384Z-cab1f2be.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:07:30.384Z","compressor":"test-reducer","raw_tokens_estimated":118,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"94a0177f49f7d1218e9e6b7d5e918ddae412baf3d01d6950dbdc029b24365ac7","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:07:30.384Z"}
++{"raw_id":"d6c59970","path":".soturail\\raw\\2026-10-18\\20261018T070756199Z-d6c59970.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:07:56.199Z","compressor":"test-reducer","raw_tokens_estimated":118,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c631aa9602ad2dfa66d2b8ed035bea387b237e875cbf295b6cd486d849f08bdf","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:07:56.199Z"}
++{"raw_id":"512070fa","path":".soturail\\raw\\2026-10-18\\20261018T070812205Z-512070fa.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:08:12.205Z","compressor":"test-reducer","raw_tokens_estimated":118,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"fb2732bac9ea32ee293240c9a9b93607212d718427cee9e69b17a0f13342b49d","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:08:12.205Z"}
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..20322c9 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,16 @@
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  if (typeof weightKg !== "number" || Number.isNaN(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg must be a non-negative number");
++  }
++
++  const domestic = country === "ES";
++  if (domestic && subtotal >= 50) {
++    if (express) {
++      throw new Error("Unresolved shipping requirement R4: see OPEN_QUESTIONS.md");
++    }
++    return 0;
++  }
++
++  const base = domestic ? 490 : 1200 + Math.max(0, Math.floor(weightKg - 2)) * 150;
++  return (base + (express ? 600 : 0)) / 100;
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..97f830d 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,39 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("domestic base, free threshold and express surcharge", () => {
++  for (const [subtotal, express, expected] of [
++    [0, false, 4.9], [49.99, false, 4.9], [50, false, 0],
++    [60, false, 0], [49.99, true, 10.9],
++  ]) {
++    assert.equal(shippingFee({ subtotal, country: "ES", weightKg: 1, express }), expected);
++  }
++  assert.equal(shippingFee({ subtotal: 10, country: "ES", weightKg: 0 }), 4.9);
++});
++
++test("international charges only complete kilograms above two", () => {
++  for (const country of ["FR", "US", "es"]) {
++    for (const [weightKg, expected] of [[0, 12], [2, 12], [2.99, 12], [3, 13.5], [4.7, 15]]) {
++      assert.equal(shippingFee({ subtotal: 60, country, weightKg }), expected);
++      assert.equal(shippingFee({ subtotal: 60, country, weightKg, express: true }), expected + 6);
++    }
++  }
++});
++
++test("invalid weights throw RangeError before pricing", () => {
++  for (const weightKg of [-1, NaN, "2", null, undefined, {}, true]) {
++    for (const country of ["ES", "FR"]) {
++      assert.throws(() => shippingFee({ subtotal: 60, country, weightKg, express: true }), RangeError);
++    }
++  }
++});
++
++test("contradictory free domestic express case stays explicitly unresolved", () => {
++  for (const subtotal of [50, 60, 100]) {
++    assert.throws(
++      () => shippingFee({ subtotal, country: "ES", weightKg: 1, express: true }),
++      /Unresolved shipping requirement R4: see OPEN_QUESTIONS.md/,
++    );
++  }
++});

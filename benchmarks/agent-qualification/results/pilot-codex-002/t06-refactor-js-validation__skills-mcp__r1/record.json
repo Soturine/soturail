@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t06-refactor-js-validation",
+  "category": "refactor",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "e43dd40bc1a05be88f3e09b0b6d81f133d1b2ceaa6312c3bb0bced38135fd876",
+  "fixtureHead": "bdaeca729af8bb58c694d650de39975265b123f4",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:59:15.644Z",
+  "wallMs": 99414,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/handlers/create-user.js",
+    " M src/handlers/update-user.js",
+    " M test/handlers.test.js",
+    "?? src/validation.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "shared module exists and both handlers import it",
+        "pass": true,
+        "detail": "imports found"
+      },
+      {
+        "kind": "functional",
+        "name": "email rule defined once",
+        "pass": true,
+        "detail": "email regex occurrences=1"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 26,
+    "toolsByName": {
+      "shell": 11,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 9,
+      "mcp__soturail__soturail.candidates.record": 2,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 2,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 10,
+    "soturailMcpCalls": 13,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence --help'",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect --help'",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff -- src test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence report'",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify --help'"
+    ],
+    "edits": 2,
+    "checksRun": 4,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 28285,
+      "output": 2783,
+      "cacheRead": 286592,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "46a6bf72f98bfc41998b741f0fb44f5db244511799e20049e6229c0deb9169e1"
+}

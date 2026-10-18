@@ -1,0 +1,55 @@
+diff --git a/README.md b/README.md
+index c49eb46..d148e87 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,44 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry a function until it succeeds, with exponential backoff between failures.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++  shouldRetry: (error) => true,
++});
+ ```
+ 
+-Options:
++`retry(fn, options)` returns a promise for the first successful result. It calls
++`fn(attempt)` with a zero-based attempt index (`0` on the initial call). Both
++synchronous throws and rejected promises count as failures; a synchronous return
++value also counts as success.
++
++All options are optional:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | Maximum retries after the initial call, for at most `retries + 1` calls. Use `0` for a single call. |
++| `baseDelayMs` | `200` | Base delay in milliseconds before a retry. |
++| `factor` | `2` | Multiplier for exponential backoff. Before retry index `n` (starting at `0`), the delay is `baseDelayMs * factor ** n`. |
++| `shouldRetry` | `() => true` | Synchronous predicate called with each failure; a falsy result stops further calls. |
++
++With the defaults, failed calls are followed by waits of 200, 400, and 800 ms,
++for at most four calls. There is no delay before the initial call or after the
++last failure. The old `attempts` and `delay` options are ignored.
++
++When all allowed calls fail, the promise rejects with an `AggregateError`. Its
++`errors` array contains every failure in call order, and its message is
++`retry: N attempt(s) failed`, where `N` is the number of failed calls. This also
++applies when `retries: 0` and the single call fails.
+ 
+-Errors: after the last attempt the last error is rethrown.
++If `shouldRetry` stops retries before the final allowed call, the implementation
++evaluates it again with the last failure. If that second evaluation is also
++falsy, the last failure is rethrown unchanged; otherwise an `AggregateError` is
++thrown. On the final allowed call, failure always produces an `AggregateError`,
++even if the predicate returns false. Use a synchronous, consistent predicate;
++it is not awaited, and an exception it throws propagates directly.

@@ -1,0 +1,49 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..b49e398 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -2,13 +2,21 @@ function isPlainObject(value) {
+   return value !== null && typeof value === "object" && !Array.isArray(value);
+ }
+ 
++function clone(value) {
++  if (Array.isArray(value)) return value.map(clone);
++  if (isPlainObject(value)) {
++    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, clone(v)]));
++  }
++  return value;
++}
++
+ export function mergeConfig(base, override = {}) {
+-  const result = { ...base };
++  const result = clone(base);
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+-      result[key] = value;
++      result[key] = clone(value);
+     }
+   }
+   return result;
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..1637e20 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,15 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("merging does not mutate base or leak between tenants", async () => {
++  const { configFor } = await import("../src/tenants.js");
++  const { DEFAULTS } = await import("../src/defaults.js");
++  configFor("acme").allowedRegions.push("xx");
++  configFor("acme");
++  assert.equal(DEFAULTS.http.timeoutMs, 5000);
++  assert.equal(DEFAULTS.http.retry.attempts, 2);
++  assert.deepEqual(DEFAULTS.allowedRegions, ["eu", "us"]);
++  assert.equal(configFor("initech").http.timeoutMs, 5000);
++  assert.equal(configFor("globex").http.retry.attempts, 2);
++});

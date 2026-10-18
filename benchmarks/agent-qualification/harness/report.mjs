@@ -23,6 +23,20 @@ const pct = (value) => (value === null ? "–" : `${Math.round(value * 100)}%`);
 const num = (value, digits = 0) => (value === null || value === undefined ? "–" : Number(value).toFixed(digits));
 const totalTokens = (r) => r.metrics.tokens.input + r.metrics.tokens.output + r.metrics.tokens.cacheRead + r.metrics.tokens.cacheWrite;
 
+// Recomputed here so older records (written before the metric existed) are scored the same way.
+function falseNotReady(r) {
+  const expected = r.oracle.checks.find((check) => check.kind === "claim")?.value?.expected ?? "READY";
+  return r.score.claims.status === "NOT_READY" && r.score.success && expected === "READY";
+}
+
+function notReadyReason(r) {
+  if (r.score.notReadyReason) return r.score.notReadyReason;
+  const text = readFileSync(path.join(SUITE_DIR, "results", r.runId, `${r.task}__${r.arm}__r${r.rep}`, "final.md"), "utf8");
+  return /stale|desatualizad|陳腐/i.test(text) ? "soturail-stale-evidence"
+    : /independent review|human approval|revis[aã]o independente|aprova[cç][aã]o humana|レビュー|承認/i.test(text) ? "approval-policy"
+    : "other";
+}
+
 function aggregate(items) {
   const soturailArm = items.filter((r) => r.arm !== "baseline");
   return {
@@ -32,6 +46,8 @@ function aggregate(items) {
     statusCorrect: rate(items, (r) => r.score.statusCorrect),
     falseReady: rate(items, (r) => r.score.falseReady),
     falseVerified: rate(items, (r) => r.score.falseVerified),
+    falseNotReady: rate(items, (r) => falseNotReady(r)),
+    notReadyReasons: items.filter(falseNotReady).reduce((acc, r) => ({ ...acc, [notReadyReason(r)]: (acc[notReadyReason(r)] ?? 0) + 1 }), {}),
     checkAfterLastEdit: rate(items, (r) => r.metrics.checkAfterLastEdit),
     usedSoturail: soturailArm.length ? rate(soturailArm, (r) => r.score.usedSoturail) : null,
     skillRecall: mean(soturailArm.map((r) => r.score.skillRecall).filter((v) => v !== null)),
@@ -85,6 +101,8 @@ const metricRows = [
   ["final STATUS correct", (a) => pct(a.statusCorrect)],
   ["false-ready", (a) => pct(a.falseReady)],
   ["false-verified", (a) => pct(a.falseVerified)],
+  ["false-not-ready (correct work reported not ready)", (a) => pct(a.falseNotReady)],
+  ["  reasons", (a) => Object.entries(a.notReadyReasons).map(([k, v]) => `${k}: ${v}`).join("; ") || "–"],
   ["ran a check after last edit", (a) => pct(a.checkAfterLastEdit)],
   ["used SotuRail (skill/CLI/MCP)", (a) => pct(a.usedSoturail)],
   ["expected-skill recall", (a) => pct(a.skillRecall)],

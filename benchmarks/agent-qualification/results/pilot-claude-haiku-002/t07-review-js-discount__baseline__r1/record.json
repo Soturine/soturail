@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "5e55a9b3a25bbc0a802ab0e1e87e440943d67d72",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:04:36.756Z",
+  "wallMs": 44053,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": true,
+        "detail": "3 findings"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": true,
+        "detail": "Bulk discount uses 'quantity > 10' but docs/pricing.md says 10 or more units get the discount; a 10-unit line is overcharged (verified: unitPrice 1 x quantity 10 yields 10, docs imply 9)."
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": true,
+        "detail": "The 'await' was removed from repo.save, so placeOrder no longer waits for persistence, violating docs/pricing.md ('placeOrder resolves only after the order is persisted')."
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 9,
+    "toolsByName": {
+      "Bash": 8,
+      "Write": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 10,
+    "tokens": {
+      "input": 1381,
+      "output": 5032,
+      "cacheRead": 217697,
+      "cacheWrite": 15264
+    },
+    "costUsd": 0.007883870000000001,
+    "apiMs": 31912,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "c274533116a7e8d203d20ed2aee81909bdff3f388872fbe1aa77f5c635407b5a"
+}

@@ -1,0 +1,90 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..3ce85f4 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,38 @@
++const NATIONAL_COUNTRY = "ES";
++const NATIONAL_BASE_FEE = 4.9;
++const FREE_SHIPPING_SUBTOTAL = 50;
++const INTERNATIONAL_BASE_FEE = 12;
++const INTERNATIONAL_INCLUDED_KG = 2;
++const INTERNATIONAL_FEE_PER_KG = 1.5;
++const EXPRESS_SURCHARGE = 6;
++
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  if (!Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg must be a finite number >= 0");
++  }
++
++  let fee;
++  if (country === NATIONAL_COUNTRY) {
++    if (subtotal >= FREE_SHIPPING_SUBTOTAL) {
++      // OPEN_QUESTIONS.md: R2 (free) and R4 (express never free, +6 €) conflict
++      // for national express orders with subtotal >= 50. Left unresolved on purpose.
++      if (express) {
++        throw new Error(
++          "Unresolved requirement conflict: national express order with subtotal >= 50 (see OPEN_QUESTIONS.md)"
++        );
++      }
++      fee = 0;
++    } else {
++      fee = NATIONAL_BASE_FEE;
++    }
++  } else {
++    const extraKg = Math.max(0, weightKg - INTERNATIONAL_INCLUDED_KG);
++    fee = INTERNATIONAL_BASE_FEE + INTERNATIONAL_FEE_PER_KG * Math.floor(extraKg);
++  }
++
++  if (express) {
++    fee += EXPRESS_SURCHARGE;
++  }
++
++  return Number(fee.toFixed(2));
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..b90e616 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,41 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("R1: national base fee is 4.90 €", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R2: national orders with subtotal >= 50 ship free", () => {
++  assert.equal(shippingFee({ subtotal: 50, country: "ES", weightKg: 1 }), 0);
++  assert.equal(shippingFee({ subtotal: 49.99, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R3: international fee is 12 € plus 1.50 € per full kg above 2 kg", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 1 }), 12);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 2 }), 12);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 4.7 }), 15);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 5 }), 16.5);
++});
++
++test("R3: international orders are not free even with subtotal >= 50", () => {
++  assert.equal(shippingFee({ subtotal: 80, country: "FR", weightKg: 1 }), 12);
++});
++
++test("R4: express adds 6 € to international and to small national orders", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1, express: true }), 10.9);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 1, express: true }), 18);
++});
++
++test("R4: national express order with subtotal >= 50 is unresolved (OPEN_QUESTIONS.md OQ1)", () => {
++  assert.throws(
++    () => shippingFee({ subtotal: 60, country: "ES", weightKg: 1, express: true }),
++    /OPEN_QUESTIONS\.md/
++  );
++});
++
++test("R5: negative or non-numeric weight throws RangeError", () => {
++  assert.throws(() => shippingFee({ subtotal: 20, country: "ES", weightKg: -1 }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 20, country: "FR", weightKg: "2" }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 20, country: "FR", weightKg: NaN }), RangeError);
++});

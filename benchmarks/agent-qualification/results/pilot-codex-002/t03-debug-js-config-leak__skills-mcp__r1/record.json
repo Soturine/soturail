@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t03-debug-js-config-leak",
+  "category": "bug",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "48ae4f0460fc1ed3e705923251810c8d3da3a1500adeae54de7e24d223a0f05b",
+  "fixtureHead": "52d852100c58ec808a9ed689a7576c8ede07ed4e",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:54:31.809Z",
+  "wallMs": 117607,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/merge.js",
+    " M test/merge.test.js",
+    "?? test/tenants.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-debug",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 33,
+    "toolsByName": {
+      "shell": 17,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 8,
+      "apply_patch": 2,
+      "mcp__soturail__soturail.expand": 1,
+      "mcp__soturail__soturail.candidates.record": 3
+    },
+    "duplicateCalls": 6,
+    "toolErrors": 3,
+    "recoveredErrors": 3,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-debug",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 16,
+    "soturailMcpCalls": 14,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create --help'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create tenant-config-isolation --title \"Isolate tenant configuration\" --intent \"Prevent tenant overrides an",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "mcp__soturail__soturail.expand",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect --help'",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff -- src/merge.js test/merge.test.js'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract verify .soturail/contracts/tenant-config-isolation.json'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract verify .soturail/contracts/tenant-config-isolation.json'"
+    ],
+    "edits": 2,
+    "checksRun": 8,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 34657,
+      "output": 3121,
+      "cacheRead": 254464,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "f2d43aa4a838dd5242ebb56520dc88741f69c73c0fc6653e7687fcbc21d9b013"
+}

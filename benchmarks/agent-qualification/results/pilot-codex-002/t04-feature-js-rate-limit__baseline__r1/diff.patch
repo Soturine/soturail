@@ -1,0 +1,123 @@
+diff --git a/README.md b/README.md
+index 62d7bd3..32cb01a 100644
+--- a/README.md
++++ b/README.md
+@@ -4,12 +4,25 @@ Fixed-window rate limiter.
+ 
+ ```js
+ import { createLimiter } from "./src/limiter.js";
+-const limiter = createLimiter({ limit: 100, windowMs: 60_000 });
+-limiter.tryAcquire("client-a"); // true while the key has budget in the current window
++const limiter = createLimiter({
++  limit: 100,
++  windowMs: 60_000,
++  overrides: { "client-a": 200 }
++});
++limiter.remaining("client-a"); // 200
++limiter.tryAcquire("client-a"); // true
++limiter.remaining("client-a"); // 199
++limiter.remaining("client-b"); // 100 (default limit)
+ ```
+ 
+ Options:
+ 
+-- `limit` (positive integer, required) — requests allowed per key per window.
+-- `windowMs` (positive integer, required) — window length.
+-- `now` (function, optional) — clock, defaults to `Date.now`. Windows start at multiples of `windowMs`.
++- `limit` (positive integer, required): default requests allowed per key per window.
++- `windowMs` (positive integer, required): window length in milliseconds.
++- `now` (function, optional): clock, defaults to `Date.now`. Windows start at multiples of `windowMs`.
++- `overrides` (object or `Map`, optional): key-to-limit mapping that replaces `limit` for those keys. Each value must be a positive integer. Only own enumerable string properties of an object are used; a `Map` supports arbitrary keys. The mapping is copied when the limiter is created.
++
++Methods:
++
++- `tryAcquire(key)`: consumes one request and returns `true` if the key has budget; otherwise returns `false` without consuming budget.
++- `remaining(key)`: returns the key's unused requests in the current window without consuming budget. Returns zero when exhausted and the full applicable limit for an unused key or at the start of a new window. Each key has an independent budget.
+diff --git a/src/limiter.js b/src/limiter.js
+index 5e2455e..42d48d9 100644
+--- a/src/limiter.js
++++ b/src/limiter.js
+@@ -2,9 +2,15 @@ function assertPositiveInteger(name, value) {
+   if (!Number.isInteger(value) || value <= 0) throw new RangeError(`${name} must be a positive integer`);
+ }
+ 
+-export function createLimiter({ limit, windowMs, now = Date.now }) {
++export function createLimiter({ limit, windowMs, now = Date.now, overrides = {} }) {
+   assertPositiveInteger("limit", limit);
+   assertPositiveInteger("windowMs", windowMs);
++  if (overrides === null || typeof overrides !== "object" || Array.isArray(overrides)) {
++    throw new TypeError("overrides must be an object or Map");
++  }
++  const limits = new Map(overrides instanceof Map ? overrides : Object.entries(overrides));
++  for (const value of limits.values()) assertPositiveInteger("override limit", value);
++  const limitFor = (key) => limits.has(key) ? limits.get(key) : limit;
+   const counters = new Map();
+ 
+   function bucket(key) {
+@@ -21,9 +27,12 @@ export function createLimiter({ limit, windowMs, now = Date.now }) {
+   return {
+     tryAcquire(key) {
+       const entry = bucket(key);
+-      if (entry.count >= limit) return false;
++      if (entry.count >= limitFor(key)) return false;
+       entry.count += 1;
+       return true;
++    },
++    remaining(key) {
++      return Math.max(0, limitFor(key) - bucket(key).count);
+     }
+   };
+ }
+diff --git a/test/limiter.test.js b/test/limiter.test.js
+index e3eaf9d..b0c5259 100644
+--- a/test/limiter.test.js
++++ b/test/limiter.test.js
+@@ -15,3 +15,48 @@ test("blocks after limit within a window and resets next window", () => {
+ test("validates options", () => {
+   assert.throws(() => createLimiter({ limit: 0, windowMs: 10 }), RangeError);
+ });
++
++test("uses per-key limits and reports remaining budget without consuming it", () => {
++  let t = 999;
++  const limiter = createLimiter({
++    limit: 2, windowMs: 1000, now: () => t, overrides: { low: 1, high: 3 }
++  });
++  for (const [key, budget] of [["low", 1], ["high", 3], ["default", 2], ["toString", 2]]) {
++    assert.equal(limiter.remaining(key), budget);
++    assert.equal(limiter.remaining(key), budget);
++    for (let used = 1; used <= budget; used++) {
++      assert.equal(limiter.tryAcquire(key), true);
++      assert.equal(limiter.remaining(key), budget - used);
++    }
++    assert.equal(limiter.tryAcquire(key), false);
++    assert.equal(limiter.remaining(key), 0);
++  }
++  t = 1000;
++  assert.equal(limiter.remaining("low"), 1);
++  assert.equal(limiter.remaining("high"), 3);
++  assert.equal(limiter.remaining("default"), 2);
++  assert.equal(limiter.tryAcquire("low"), true);
++  assert.equal(limiter.remaining("low"), 0);
++});
++
++test("accepts Map overrides and ignores inherited object properties", () => {
++  const key = {};
++  const limiter = createLimiter({ limit: 2, windowMs: 1000, overrides: new Map([[key, 1]]) });
++  assert.equal(limiter.remaining(key), 1);
++  assert.equal(limiter.tryAcquire(key), true);
++  assert.equal(limiter.tryAcquire(key), false);
++  assert.equal(limiter.remaining("other"), 2);
++  const inherited = createLimiter({ limit: 2, windowMs: 1000, overrides: Object.create({ a: 1 }) });
++  assert.equal(inherited.remaining("a"), 2);
++});
++
++test("validates override limits", () => {
++  for (const value of [0, -1, 1.5, NaN, Infinity, "2", undefined, null]) {
++    for (const overrides of [{ a: value }, new Map([["a", value]])]) {
++      assert.throws(() => createLimiter({ limit: 2, windowMs: 10, overrides }), RangeError);
++    }
++  }
++  for (const overrides of [null, [], "invalid", 3]) {
++    assert.throws(() => createLimiter({ limit: 2, windowMs: 10, overrides }), TypeError);
++  }
++});

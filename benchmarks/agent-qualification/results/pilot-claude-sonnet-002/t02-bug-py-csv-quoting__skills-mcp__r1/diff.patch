@@ -1,0 +1,71 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..35e241e 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -3,14 +3,42 @@
+ 
+ def split_line(line):
+     fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
++    current = []
++    quoted = False  # campo iniciou com aspas
++    in_quotes = False
++    i = 0
++    while i < len(line):
++        ch = line[i]
++        if in_quotes:
++            if ch == '"':
++                if line[i + 1:i + 2] == '"':
++                    current.append('"')
++                    i += 1
++                else:
++                    in_quotes = False
++            else:
++                current.append(ch)
++        elif ch == '"' and not "".join(current).strip():
++            current = []
++            quoted = True
++            in_quotes = True
++        elif ch == ",":
++            fields.append(_finish(current, quoted))
++            current, quoted = [], False
++        elif quoted and ch.isspace():
++            pass  # espaço depois do fecha-aspas
++        else:
++            current.append(ch)
++        i += 1
++    fields.append(_finish(current, quoted))
+     return fields
+ 
+ 
++def _finish(chars, quoted):
++    value = "".join(chars)
++    return value if quoted else value.strip()
++
++
+ def parse_customers(text):
+     lines = [line for line in text.splitlines() if line.strip()]
+     if not lines:
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..eb0d8f8 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -8,6 +8,14 @@ class ParseTest(unittest.TestCase):
+         rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
+         self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
+ 
++    def test_quoted_comma(self):
++        rows = parse_customers('nome,endereco,cidade\nAna,"Rua A, 10",Recife\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10", "cidade": "Recife"}])
++
++    def test_escaped_quote_and_spaces(self):
++        rows = parse_customers('a,b\n "x ""y"", z" , w \n')
++        self.assertEqual(rows, [{"a": 'x "y", z', "b": "w"}])
++
+     def test_wrong_field_count(self):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")

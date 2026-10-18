@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t04-feature-js-rate-limit",
+  "category": "feature",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "76964fb12f754ec7abb53f0d15b7a767e37b05f96b84faf86a279ee5dda06b56",
+  "fixtureHead": "8ece748c329c9c2ab85313a094420eb6142e60b8",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:02:37.681Z",
+  "wallMs": 31566,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M src/limiter.js",
+    " M test/limiter.test.js"
+  ],
+  "oracle": {
+    "pass": false,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": false,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "README documents overrides and remaining()",
+        "pass": true,
+        "detail": "ok"
+      }
+    ]
+  },
+  "score": {
+    "success": false,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": true,
+    "falseVerified": true,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 7,
+    "toolsByName": {
+      "Bash": 2,
+      "Read": 2,
+      "Edit": 3
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 3,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": 8,
+    "tokens": {
+      "input": 1371,
+      "output": 3839,
+      "cacheRead": 128945,
+      "cacheWrite": 12078
+    },
+    "costUsd": 0.00576165,
+    "apiMs": 19376,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "38da6c3290f83cb312cb579d8faec8bf50acd686d4f7de5e27e492e4494b98b2"
+}

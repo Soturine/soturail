@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t04-feature-js-rate-limit",
+  "category": "feature",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "76964fb12f754ec7abb53f0d15b7a767e37b05f96b84faf86a279ee5dda06b56",
+  "fixtureHead": "e04ac704ab5255631d12f7ef5321d887d01ea6ce",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:56:38.437Z",
+  "wallMs": 128891,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md",
+    " M src/limiter.js",
+    " M test/limiter.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "README documents overrides and remaining()",
+        "pass": true,
+        "detail": "ok"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 21,
+    "toolsByName": {
+      "shell": 8,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 7,
+      "mcp__soturail__soturail.candidates.record": 2,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change"
+    ],
+    "soturailCliCalls": 7,
+    "soturailMcpCalls": 11,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create --help; soturail evidence collect --help; soturail run -- git status --short'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create per-key-limits --title \"Per-key rate limits and remaining budget\" --intent \"Add overrides and remain",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test; soturail run -- git diff --check'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect; soturail evidence verify; soturail contract verify .soturail/contracts/per-key-limits.json; sotura",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify --help; soturail contract verify --help'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short; Get-ChildItem .soturail/evidence/evidence_20261018065813_ad5f4089'",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'"
+    ],
+    "edits": 2,
+    "checksRun": 6,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 30438,
+      "output": 2561,
+      "cacheRead": 272128,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "b3f89c7d9c6dd3d3eee962c590777866fe7b1dd1bdd5272b19276059a7a08cbd"
+}

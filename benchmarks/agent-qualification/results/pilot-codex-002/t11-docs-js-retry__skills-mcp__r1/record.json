@@ -1,0 +1,171 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "d85cd0efb709d7bedf718d14bbf6fdaa472d413aeb5fccfd48efb64c6f1ac0c9",
+  "fixtureHead": "cc4351a37eed47bb70df0b8de7f276bf4ce50bc1",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:07:30.583Z",
+  "wallMs": 104255,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M README.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "functional",
+        "name": "documents current option names and defaults",
+        "pass": true,
+        "detail": "all present"
+      },
+      {
+        "kind": "functional",
+        "name": "does not present stale options as current",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "functional",
+        "name": "README js examples execute",
+        "pass": true,
+        "detail": "1 example(s) ran"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-knowledge"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 30,
+    "toolsByName": {
+      "shell": 18,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 6,
+      "mcp__soturail__soturail.candidates.record": 1,
+      "apply_patch": 3
+    },
+    "duplicateCalls": 2,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-knowledge"
+    ],
+    "soturailCliCalls": 17,
+    "soturailMcpCalls": 9,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge --help'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge compile --help'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect --help'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify --help'",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$probe = @'\"'\nimport assert from \\\"node:assert/strict\\\";\nimport { retry } from \\\"./src/retry.js\\\";\nconst delays = [];\nconst o",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge compile --name readme-behavior README.md src/retry.js test/retry.test.js'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- node .soturail/readme-check.mjs'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge verify readme-behavior'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff -- README.md src/retry.js test/retry.test.js'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge update readme-behavior README.md src/retry.js test/retry.test.js'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail knowledge verify readme-behavior'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence verify'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check'"
+    ],
+    "edits": 3,
+    "checksRun": 7,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 40521,
+      "output": 3212,
+      "cacheRead": 175744,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "7f8b598243aab9af2cb15eda7983c7a305c553706d4f3d291dae6fa4b0f07bbc",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": false,
+      "failed": [
+        "removes stale option names"
+      ],
+      "replacedAt": "2026-10-18T07:12:00.512Z"
+    }
+  ],
+  "oracleDigest": "3ada1e06272a6f71e98212e5b92d6fd23f553a7276f04d0187a143bad1a3a04a"
+}

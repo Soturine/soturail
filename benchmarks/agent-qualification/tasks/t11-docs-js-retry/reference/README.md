@@ -22,3 +22,5 @@ Options:
 Errors: when `shouldRetry` returns `false` the original error is rethrown. When every call fails, an `AggregateError` is thrown whose `errors` lists every failure in order.
 
 `fn` receives the zero-based attempt number.
+
+Migrating from 1.x: the old `attempts` and `delay` options are ignored; use `retries` and `baseDelayMs`.

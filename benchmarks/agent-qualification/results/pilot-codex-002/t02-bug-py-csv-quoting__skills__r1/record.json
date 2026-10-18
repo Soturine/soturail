@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "00815f36524aa05d29684bd9fddedfccb60231ff",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:52:31.800Z",
+  "wallMs": 113206,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py",
+    "?? csvtool/__pycache__/__init__.cpython-312.pyc",
+    "?? csvtool/__pycache__/parse.cpython-312.pyc",
+    "?? tests/__pycache__/test_parse.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.017s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-debug"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 11,
+    "toolsByName": {
+      "shell": 9,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-debug"
+    ],
+    "soturailCliCalls": 8,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index; Get-ChildItem -Force'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read csvtool/importer.py; soturail read tests/test_importer.py; soturail read README.md; soturail read .soturail/ind",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read csvtool/parse.py; soturail read tests/test_parse.py; soturail read .agents/skills/soturail-core/references/cand",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail raw inspect db8183f2 --redacted; soturail run -- python -m unittest discover -s tests; soturail run -- git diff --ch",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\n{\\\"kind\\\":\\\"impact\\\",\\\"verificationState\\\":\\\"inferred\\\",\\\"target\\\":{\\\"path\\\":\\\"csvtool/parse.py\\\",\\\"symbol\\\":\\\"split_line\\",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$candidatePath = Join-Path (Get-Location) '\"'.soturail/csv-quoting-impact.json'\n\"'$candidateText = [System.IO.File]::ReadAllT",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command '$candidatePath = Join-Path (Get-Location) '\"'.soturail/csv-quoting-impact.json'\n\"'$candidate = Get-Content -Raw $candidatePat"
+    ],
+    "edits": 2,
+    "checksRun": 6,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 35127,
+      "output": 2068,
+      "cacheRead": 194560,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "6b1ad5167169eb6244dc6dda0af6b278581e0570554899bb29815509cf37fca9"
+}

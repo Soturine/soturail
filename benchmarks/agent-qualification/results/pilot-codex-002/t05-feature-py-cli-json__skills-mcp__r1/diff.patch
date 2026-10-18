@@ -1,0 +1,382 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..e9d2cc4 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,8 @@
++{"kind":"output","output_sha256":"b9000bf8b105490d731d3aa48a693670394581cec259e8be74cc1c294c437ed7","raw_id":"9791178c","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T065838528Z-9791178c.log","created_at":"2026-10-18T06:58:38.528Z"}
++{"kind":"block","block_id":"block_05b5f546","block_sha256":"05b5f5463e1990b72f29ff75f2000a51af6aabe63eb57ac09d8f0fe79ba3736e","normalized_sha256":"1a96b6a3702090bf6ac8e352b349747e66d378f0c3bd7d2d666e2c2f19ebe5ba","raw_id":"65c350b7","line_count":8,"token_estimate":77,"has_risk":false,"preview":"test_empty_json_report (test_report.ReportTest.test_empty_json_report) ... ok | test_json_report (test_report.ReportTest.test_json_report) ... ok","created_at":"2026-10-18T06:59:18.894Z"}
++{"kind":"output","output_sha256":"c22b378cae19902536e803ea098facae6deef8cc3bf9dd4662a65a26a985f827","raw_id":"65c350b7","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T065916287Z-65c350b7.log","created_at":"2026-10-18T06:59:16.287Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"7537bdc6","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T065921563Z-7537bdc6.log","created_at":"2026-10-18T06:59:21.563Z"}
++{"kind":"block","block_id":"block_86a8c094","block_sha256":"86a8c094b2bb674f3412987d28722d1bd912eb28e53cb3181b9081fece68a480","normalized_sha256":"e97237546b78d87b8c55e19883ebe4a8be415255f6a780879d22ac18f500506a","raw_id":"00983adf","line_count":8,"token_estimate":94,"has_risk":false,"preview":" .soturail/dedupe/index.jsonl    |   4 + |  .soturail/indexes/repo-map.json | 160 +++++++++++++++++++++++++++++++++++++++-","created_at":"2026-10-18T06:59:39.032Z"}
++{"kind":"output","output_sha256":"3984cff9ff220dc4e798e859a3e66ad2d921644b1edc23aa37408b4d66757cd4","raw_id":"00983adf","command":"git diff --stat","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T065938412Z-00983adf.log","created_at":"2026-10-18T06:59:38.412Z"}
++{"kind":"block","block_id":"block_908db645","block_sha256":"908db645496ce676d9abcec3b9e8e95536ec0c1c55cfaf5678e37ff80354482d","normalized_sha256":"5651d2f316461ef362c1c1ed878536a00a8ecfb47ea3eb0e4feb8fda4c24f7c9","raw_id":"acf80c9f","line_count":8,"token_estimate":77,"has_risk":false,"preview":"test_empty_json_report (test_report.ReportTest.test_empty_json_report) ... ok | test_json_report (test_report.ReportTest.test_json_report) ... ok","created_at":"2026-10-18T06:59:55.193Z"}
++{"kind":"output","output_sha256":"44826de48023e671486ba7f9e54cbdbd0e59a72d95a0a246c967d339b875318b","raw_id":"acf80c9f","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T065953380Z-acf80c9f.log","created_at":"2026-10-18T06:59:53.380Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index 9b2418b..596b675 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T06:57:55.234Z",
++  "generated_at": "2026-10-18T06:58:29.908Z",
+   "root": "t05-feature-py-cli-json__skills-mcp__r1",
+-  "total_files": 58,
++  "total_files": 80,
+   "stats": {
+-    "scanned_files": 58,
++    "scanned_files": 80,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+@@ -411,6 +537,27 @@
+         }
+       ]
+     },
++    {
++      "path": "inventory/__pycache__/__init__.cpython-312.pyc",
++      "size_bytes": 217,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": "inventory/__pycache__/__main__.cpython-312.pyc",
++      "size_bytes": 1256,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": "inventory/__pycache__/report.cpython-312.pyc",
++      "size_bytes": 1375,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "inventory/report.py",
+       "size_bytes": 556,
+@@ -442,6 +589,13 @@
+       "symbols": [],
+       "contracts": []
+     },
++    {
++      "path": "tests/__pycache__/test_report.cpython-312.pyc",
++      "size_bytes": 1179,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "tests/test_report.py",
+       "size_bytes": 424,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 9e3f666..3520b84 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t05-feature-py-cli-json__skills-mcp__r1
+-Files indexed: 58
++Files indexed: 80
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ data/stock.csv (csv, 68 bytes)
+@@ -57,6 +75,10 @@ examples/workflows/release-workflow.md (markdown, 213 bytes)
+ GEMINI.md (markdown, 160 bytes)
+ inventory/__init__.py (python, 0 bytes)
+ inventory/__main__.py (python, 509 bytes) - function:main
++inventory/__pycache__/__init__.cpython-312.pyc (pyc, 217 bytes)
++inventory/__pycache__/__main__.cpython-312.pyc (pyc, 1256 bytes)
++inventory/__pycache__/report.cpython-312.pyc (pyc, 1375 bytes)
+ inventory/report.py (python, 556 bytes) - function:load, function:render_text
+ README.md (markdown, 207 bytes)
++tests/__pycache__/test_report.cpython-312.pyc (pyc, 1179 bytes)
+ tests/test_report.py (python, 424 bytes) - class:ReportTest, function:test_text_report
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..9dd6768 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,5 @@
++{"type":"command_run","raw_id":"9791178c","command":"git status --short","exit_code":0,"raw_tokens_estimated":36,"compressed_tokens_estimated":100,"estimated_raw_tokens":36,"estimated_reduced_payload_tokens":100,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":135,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T06:58:40.833Z"}
++{"type":"command_run","raw_id":"65c350b7","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":79,"compressed_tokens_estimated":95,"estimated_raw_tokens":79,"estimated_reduced_payload_tokens":95,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":136,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T06:59:19.721Z"}
++{"type":"command_run","raw_id":"7537bdc6","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T06:59:22.487Z"}
++{"type":"command_run","raw_id":"00983adf","command":"git diff --stat","exit_code":0,"raw_tokens_estimated":120,"compressed_tokens_estimated":34,"estimated_raw_tokens":120,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":34,"estimated_net_tokens_sent":68,"summary_overhead_tokens":34,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":86,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T06:59:39.458Z"}
++{"type":"command_run","raw_id":"acf80c9f","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":79,"compressed_tokens_estimated":95,"estimated_raw_tokens":79,"estimated_reduced_payload_tokens":95,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":136,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T06:59:55.453Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..f54395a 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"9791178c","path":".soturail\\raw\\2026-10-18\\20261018T065838528Z-9791178c.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T06:58:38.528Z","compressor":"git-reducer","raw_tokens_estimated":36,"compressed_tokens_estimated":100,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"321d0a1c7194be54743fb7722f161783bfce2743befec1ba485a15e8c5f75e05","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T06:58:38.528Z"}
++{"raw_id":"65c350b7","path":".soturail\\raw\\2026-10-18\\20261018T065916287Z-65c350b7.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T06:59:16.287Z","compressor":"generic-stream","raw_tokens_estimated":79,"compressed_tokens_estimated":95,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"07f4f1cd93c92c2d80d84126a440bc1e4aaedb11acfcb532ab0ca749cf18da22","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T06:59:16.287Z"}
++{"raw_id":"7537bdc6","path":".soturail\\raw\\2026-10-18\\20261018T065921563Z-7537bdc6.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T06:59:21.563Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"21b2025380722a0cba4c3bba9bde6c0dcd782128eeecf4a40fe1784dc148eb59","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T06:59:21.563Z"}
++{"raw_id":"00983adf","path":".soturail\\raw\\2026-10-18\\20261018T065938412Z-00983adf.log","command":"git diff --stat","exit_code":0,"created_at":"2026-10-18T06:59:38.412Z","compressor":"git-reducer","raw_tokens_estimated":120,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"e5e11a45c7bd3a5a43d25b16f43b36fb1dfdd81bfa7496c1b66133e9569fb9dd","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T06:59:38.412Z"}
++{"raw_id":"acf80c9f","path":".soturail\\raw\\2026-10-18\\20261018T065953380Z-acf80c9f.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T06:59:53.380Z","compressor":"generic-stream","raw_tokens_estimated":79,"compressed_tokens_estimated":95,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"1a53befd808cec616236fbdb55200373ea7193a3c8b86d2207711dbd017d7333","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T06:59:53.380Z"}
+diff --git a/README.md b/README.md
+index f4c8cfb..46f9f1a 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,7 @@
+ # inventory
+ 
+-Usage: `python -m inventory report data/stock.csv [--threshold N]`
++Usage: `python -m inventory report data/stock.csv [--threshold N] [--format text|json]`
+ 
+ Prints one line per item sorted by SKU: `SKU  NAME  QTY` and appends ` LOW` when quantity is below the threshold (default 5).
++
++Use `--format json` for an array sorted by SKU, with `sku`, `name`, integer `quantity`, and boolean `low_stock` fields. Text remains the default.
+diff --git a/inventory/__main__.py b/inventory/__main__.py
+index 3a654e7..bdc0b6b 100644
+--- a/inventory/__main__.py
++++ b/inventory/__main__.py
+@@ -1,7 +1,7 @@
+ import argparse
+ import sys
+ 
+-from .report import load, render_text
++from .report import load, render_json, render_text
+ 
+ 
+ def main(argv=None):
+@@ -10,9 +10,11 @@ def main(argv=None):
+     report = sub.add_parser("report")
+     report.add_argument("path")
+     report.add_argument("--threshold", type=int, default=5)
++    report.add_argument("--format", choices=("text", "json"), default="text")
+     args = parser.parse_args(argv)
+     items = load(args.path)
+-    print(render_text(items, args.threshold))
++    render = render_json if args.format == "json" else render_text
++    print(render(items, args.threshold))
+     return 0
+ 
+ 
+diff --git a/inventory/report.py b/inventory/report.py
+index 6215cbc..4dcc786 100644
+--- a/inventory/report.py
++++ b/inventory/report.py
+@@ -1,4 +1,5 @@
+ import csv
++import json
+ 
+ 
+ def load(path):
+@@ -17,3 +18,15 @@ def render_text(items, threshold):
+             line += " LOW"
+         lines.append(line)
+     return "\n".join(lines)
++
++
++def render_json(items, threshold):
++    return json.dumps([
++        {
++            "sku": item["sku"],
++            "name": item["name"],
++            "quantity": item["quantity"],
++            "low_stock": item["quantity"] < threshold,
++        }
++        for item in sorted(items, key=lambda entry: entry["sku"])
++    ])
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 176f156..2245f4b 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -1,5 +1,8 @@
++import json
++from pathlib import Path
+ import subprocess
+ import sys
++import tempfile
+ import unittest
+ 
+ 
+@@ -8,6 +11,38 @@ class ReportTest(unittest.TestCase):
+         out = subprocess.run([sys.executable, "-m", "inventory", "report", "data/stock.csv"], capture_output=True, text=True, check=True).stdout
+         self.assertEqual(out.splitlines(), ["A-100  Anchor  3 LOW", "B-200  Bolt M6  40", "C-310  Clamp 2in  5"])
+ 
++    def test_json_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "stock.csv"
++            path.write_text('sku,name,quantity\nZ-2,"Bolt, large",6\nA-1,Anchor,3\nM-1,Clamp,5\n', encoding="utf-8")
++            for threshold in (5, 6):
++                with self.subTest(threshold=threshold):
++                    result = subprocess.run(
++                        [sys.executable, "-m", "inventory", "report", str(path),
++                         "--format", "json", "--threshold", str(threshold)],
++                        capture_output=True, text=True, check=True,
++                    )
++                    items = json.loads(result.stdout)
++                    self.assertEqual(items, [
++                        {"sku": "A-1", "name": "Anchor", "quantity": 3, "low_stock": True},
++                        {"sku": "M-1", "name": "Clamp", "quantity": 5, "low_stock": threshold == 6},
++                        {"sku": "Z-2", "name": "Bolt, large", "quantity": 6, "low_stock": False},
++                    ])
++                    for item in items:
++                        self.assertIs(type(item["quantity"]), int)
++                        self.assertIs(type(item["low_stock"]), bool)
++                    self.assertEqual(result.stderr, "")
++
++    def test_empty_json_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "empty.csv"
++            path.write_text("sku,name,quantity\n", encoding="utf-8")
++            result = subprocess.run(
++                [sys.executable, "-m", "inventory", "report", str(path), "--format", "json"],
++                capture_output=True, text=True, check=True,
++            )
++            self.assertEqual(json.loads(result.stdout), [])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

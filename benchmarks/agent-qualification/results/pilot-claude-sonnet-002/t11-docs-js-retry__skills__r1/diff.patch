@@ -1,0 +1,49 @@
+diff --git a/README.md b/README.md
+index c49eb46..bfccb57 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,38 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++  shouldRetry: (error) => error.code !== "EINVAL",
++});
+ ```
+ 
+-Options:
++`retry(fn, options)` calls `fn` until it resolves and returns its value. `fn` receives the zero-based attempt number as its only argument.
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base wait in milliseconds before the first retry |
++| `factor` | `2` | backoff multiplier: the wait before retry `n` (`n` from 0) is `baseDelayMs * factor ** n` (200, 400, 800 ms with the defaults) |
++| `shouldRetry` | `() => true` | called with each error; return `false` to stop retrying |
++
++## Errors
++
++- If every call fails, `retry` throws an `AggregateError` (message `retry: <n> attempt(s) failed`) whose `errors` array holds every failure in order.
++- If `shouldRetry(error)` returns `false` before the last attempt, that error is rethrown as-is (not wrapped) and no further calls are made.
++- If the final allowed attempt fails, the result is always an `AggregateError`, even when `shouldRetry` returns `false` for that last error. The same applies with `retries: 0`.
++- `shouldRetry` may be called more than once for the same error.
+ 
+-Errors: after the last attempt the last error is rethrown.
++## Tests
++
++```
++npm test
++```

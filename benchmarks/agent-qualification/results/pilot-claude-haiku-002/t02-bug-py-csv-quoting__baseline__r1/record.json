@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "9ae238c1c9af847b5b4809b5ca33ef2387392d5e",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:00:49.675Z",
+  "wallMs": 28826,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py",
+    "?? csvtool/__pycache__/__init__.cpython-312.pyc",
+    "?? csvtool/__pycache__/parse.cpython-312.pyc",
+    "?? tests/__pycache__/test_parse.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.020s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 5,
+    "toolsByName": {
+      "Bash": 3,
+      "Edit": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 2,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 6,
+    "tokens": {
+      "input": 1341,
+      "output": 3311,
+      "cacheRead": 106129,
+      "cacheWrite": 11463
+    },
+    "costUsd": 0.0051434900000000006,
+    "apiMs": 18785,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "5a58e5bf6c16da436ff569502e340d596c5b17709fa4dbd0ccf14530dbceb411"
+}

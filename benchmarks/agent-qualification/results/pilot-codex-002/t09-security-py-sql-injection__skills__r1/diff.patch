@@ -1,0 +1,332 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..d61d011 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,3 @@
++{"kind":"block","block_id":"block_49913ec4","block_sha256":"49913ec461fd18206b01c9dec984d0b00f4550f11969caf8e651bd3c538f6b50","normalized_sha256":"f3d46568af57242f33176255b1331aacd17b801baa3c76adff9885b5be3489d8","raw_id":"1c02e4e2","line_count":8,"token_estimate":162,"has_risk":false,"preview":"test_empty_search_preserves_order (test_users.UsersTest.test_empty_search_preserves_order) ... ok | test_get_by_email (test_users.UsersTest.test_get_by_email) ... ok","created_at":"2026-10-18T07:05:34.490Z"}
++{"kind":"output","output_sha256":"9a8110d0d4a5d01a0ffa20c48200416d53464b437bb84c1ee9a4f38b4244cffc","raw_id":"1c02e4e2","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070534164Z-1c02e4e2.log","created_at":"2026-10-18T07:05:34.164Z"}
++{"kind":"output","output_sha256":"9a8110d0d4a5d01a0ffa20c48200416d53464b437bb84c1ee9a4f38b4244cffc","raw_id":"dcac2519","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070603403Z-dcac2519.log","created_at":"2026-10-18T07:06:03.403Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index c19a6ae..382f755 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:04:28.077Z",
++  "generated_at": "2026-10-18T07:04:47.691Z",
+   "root": "t09-security-py-sql-injection__skills__r1",
+-  "total_files": 57,
++  "total_files": 79,
+   "stats": {
+-    "scanned_files": 57,
++    "scanned_files": 79,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+@@ -30,6 +156,27 @@
+       "symbols": [],
+       "contracts": []
+     },
++    {
++      "path": "directory/__pycache__/__init__.cpython-312.pyc",
++      "size_bytes": 219,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": "directory/__pycache__/db.cpython-312.pyc",
++      "size_bytes": 931,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": "directory/__pycache__/users.cpython-312.pyc",
++      "size_bytes": 1392,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "directory/db.py",
+       "size_bytes": 377,
+@@ -434,6 +581,13 @@
+       "symbols": [],
+       "contracts": []
+     },
++    {
++      "path": "tests/__pycache__/test_users.cpython-312.pyc",
++      "size_bytes": 1601,
++      "language": "pyc",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "tests/test_users.py",
+       "size_bytes": 590,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 1b183ae..9c74bae 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,10 +1,31 @@
+ Heuristic Repo Map
+ Root: t09-security-py-sql-injection__skills__r1
+-Files indexed: 57
++Files indexed: 79
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ directory/__init__.py (python, 0 bytes)
++directory/__pycache__/__init__.cpython-312.pyc (pyc, 219 bytes)
++directory/__pycache__/db.cpython-312.pyc (pyc, 931 bytes)
++directory/__pycache__/users.cpython-312.pyc (pyc, 1392 bytes)
+ directory/db.py (python, 377 bytes) - function:connect, function:seed
+ directory/users.py (python, 640 bytes) - function:search_users, function:get_user_by_email, function:set_role
+ docs/agents.md (markdown, 510 bytes)
+@@ -58,4 +79,5 @@ examples/workflows/README.md (markdown, 245 bytes)
+ examples/workflows/release-workflow.md (markdown, 213 bytes)
+ GEMINI.md (markdown, 160 bytes)
+ README.md (markdown, 356 bytes)
++tests/__pycache__/test_users.cpython-312.pyc (pyc, 1601 bytes)
+ tests/test_users.py (python, 590 bytes) - class:UsersTest, function:setUp, function:test_search, function:test_get_by_email
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..b5d595b 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,3 @@
++{"type":"command_run","raw_id":"1c02e4e2","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":190,"compressed_tokens_estimated":205,"estimated_raw_tokens":190,"estimated_reduced_payload_tokens":205,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":246,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:05:34.661Z"}
++{"type":"dedupe_hit","raw_id":"dcac2519","details":{"previous_raw_id":"1c02e4e2","output_sha256":"9a8110d0d4a5d01a0ffa20c48200416d53464b437bb84c1ee9a4f38b4244cffc"},"created_at":"2026-10-18T07:06:04.398Z"}
++{"type":"command_run","raw_id":"dcac2519","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":190,"compressed_tokens_estimated":12,"estimated_raw_tokens":190,"estimated_reduced_payload_tokens":12,"estimated_soturail_metadata_tokens":39,"estimated_net_tokens_sent":51,"summary_overhead_tokens":39,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":178,"dedupe_estimated_tokens_saved":190,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:06:04.416Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..5fcaed7 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,2 @@
++{"raw_id":"1c02e4e2","path":".soturail\\raw\\2026-10-18\\20261018T070534164Z-1c02e4e2.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T07:05:34.164Z","compressor":"generic-stream","raw_tokens_estimated":190,"compressed_tokens_estimated":205,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2c61307d81f97f7f4b5f678236bb4ee849dcc0f50bd407f479d6139adc16ae13","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:05:34.164Z"}
++{"raw_id":"dcac2519","path":".soturail\\raw\\2026-10-18\\20261018T070603403Z-dcac2519.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T07:06:03.403Z","compressor":"dedupe","raw_tokens_estimated":190,"compressed_tokens_estimated":12,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d7df0be343fc58cb50ce5e2b731c8fe588a33a20c4ecd5554d816945edb91229","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:06:03.403Z"}
+diff --git a/directory/users.py b/directory/users.py
+index 4cdd414..c23dae3 100644
+--- a/directory/users.py
++++ b/directory/users.py
+@@ -2,12 +2,13 @@ ROLES = {"viewer", "editor", "admin"}
+ 
+ 
+ def search_users(conn, name_fragment):
+-    query = f"SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower('%{name_fragment}%') ORDER BY id"
+-    return [dict(row) for row in conn.execute(query)]
++    escaped = name_fragment.replace("!", "!!").replace("%", "!%").replace("_", "!_")
++    query = "SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower(?) ESCAPE '!' ORDER BY id"
++    return [dict(row) for row in conn.execute(query, (f"%{escaped}%",))]
+ 
+ 
+ def get_user_by_email(conn, email):
+-    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = '" + email + "'").fetchone()
++    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = ?", (email,)).fetchone()
+     return dict(row) if row else None
+ 
+ 
+diff --git a/tests/test_users.py b/tests/test_users.py
+index 04d6180..9e08cc4 100644
+--- a/tests/test_users.py
++++ b/tests/test_users.py
+@@ -1,12 +1,13 @@
+ import unittest
+ 
+ from directory.db import connect, seed
+-from directory.users import get_user_by_email, search_users
++from directory.users import get_user_by_email, search_users, set_role
+ 
+ 
+ class UsersTest(unittest.TestCase):
+     def setUp(self):
+         self.conn = connect()
++        self.addCleanup(self.conn.close)
+         seed(self.conn, [("Ana Lima", "ana@x.io", "admin"), ("Bruno", "bruno@x.io", "viewer")])
+ 
+     def test_search(self):
+@@ -15,6 +16,35 @@ class UsersTest(unittest.TestCase):
+     def test_get_by_email(self):
+         self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "viewer")
+ 
++    def test_injection_cannot_broaden_lookups(self):
++        for payload in ("' OR 1=1 --", "') OR 1=1 --", "' UNION SELECT 1, 'x', 'y', 'admin' --"):
++            with self.subTest(payload=payload):
++                self.assertEqual(search_users(self.conn, payload), [])
++                self.assertIsNone(get_user_by_email(self.conn, payload))
++
++    def test_quoted_values_are_data(self):
++        seed(self.conn, [("O'Brien", "o'brien@x.io", "editor")])
++        self.assertEqual([u["name"] for u in search_users(self.conn, "o'BR")], ["O'Brien"])
++        self.assertEqual(get_user_by_email(self.conn, "o'brien@x.io")["name"], "O'Brien")
++        self.assertIsNone(get_user_by_email(self.conn, "missing@x.io"))
++
++    def test_search_treats_pattern_characters_literally(self):
++        for fragment in ("%", "_", "!", "!%_", "\\"):
++            with self.subTest(fragment=fragment):
++                email = f"literal-{fragment}@x.io"
++                seed(self.conn, [(f"Literal {fragment}", email, "viewer")])
++                self.assertEqual([u["email"] for u in search_users(self.conn, fragment)], [email])
++
++    def test_empty_search_preserves_order(self):
++        self.assertEqual([u["id"] for u in search_users(self.conn, "")], [1, 2])
++
++    def test_role_update_is_scoped_and_validated(self):
++        set_role(self.conn, 2, "editor")
++        set_role(self.conn, "1 OR 1=1", "viewer")
++        with self.assertRaises(ValueError):
++            set_role(self.conn, 1, "admin'; DROP TABLE users; --")
++        self.assertEqual([u["role"] for u in search_users(self.conn, "")], ["admin", "editor"])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

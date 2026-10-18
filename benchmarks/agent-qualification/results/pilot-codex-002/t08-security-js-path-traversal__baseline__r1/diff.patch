@@ -1,0 +1,104 @@
+diff --git a/src/static.js b/src/static.js
+index f2f38b9..26b8fbf 100644
+--- a/src/static.js
++++ b/src/static.js
+@@ -3,14 +3,37 @@ import path from "node:path";
+ 
+ const TYPES = { ".html": "text/html", ".css": "text/css", ".txt": "text/plain" };
+ 
++function isWithin(root, target) {
++  const relative = path.relative(root, target);
++  return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
++}
++
++function failure(status) {
++  return { status, type: "text/plain", body: Buffer.from(status === 400 ? "bad request" : status === 403 ? "forbidden" : "not found") };
++}
++
+ // Resolves a request path such as "/css/site.css" against the public root.
+ export async function serveStatic(publicRoot, requestPath) {
+-  const decoded = decodeURIComponent(requestPath.split("?")[0]);
+-  const target = path.join(publicRoot, decoded);
++  let decoded;
++  try {
++    decoded = decodeURIComponent(requestPath.split("?")[0]);
++  } catch {
++    return failure(400);
++  }
++  if (decoded.includes("\0")) return failure(400);
++  // Treat both slash styles as separators, including on POSIX hosts. Colons
++  // cannot name public assets portably (Windows drives and alternate streams).
++  if (decoded.includes(":")) return failure(403);
++  const root = path.resolve(publicRoot);
++  const target = path.resolve(root, `.${path.sep}${decoded.replace(/\\/g, "/")}`);
++  if (!isWithin(root, target)) return failure(403);
+   try {
+-    const body = await fs.readFile(target);
++    const realRoot = await fs.realpath(root);
++    const realTarget = await fs.realpath(target);
++    if (!isWithin(realRoot, realTarget)) return failure(403);
++    const body = await fs.readFile(realTarget);
+     return { status: 200, type: TYPES[path.extname(target)] ?? "application/octet-stream", body };
+   } catch {
+-    return { status: 404, type: "text/plain", body: Buffer.from("not found") };
++    return failure(404);
+   }
+ }
+diff --git a/test/static.test.js b/test/static.test.js
+index b9d6e6e..3e279bb 100644
+--- a/test/static.test.js
++++ b/test/static.test.js
+@@ -1,6 +1,8 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import path from "node:path";
++import { promises as fs } from "node:fs";
++import os from "node:os";
+ import { serveStatic } from "../src/static.js";
+ 
+ const root = path.resolve("public");
+@@ -14,3 +16,44 @@ test("serves a nested file", async () => {
+ test("missing file is 404", async () => {
+   assert.equal((await serveStatic(root, "/nope.txt")).status, 404);
+ });
++
++test("serves valid dotted filenames, encoded paths, and query strings", async () => {
++  for (const url of ["/notes..v2.txt", "/css/%73ite.css?version=1", "/index.html"]) {
++    assert.equal((await serveStatic(root, url)).status, 200, url);
++  }
++});
++
++test("blocks traversal with literal, encoded, and Windows separators", async () => {
++  for (const url of [
++    "/../secret.env", "/%2e%2e/secret.env", "/..%2fsecret.env",
++    "/%2e%2e%5csecret.env", "/..\\secret.env", "/css/../../secret.env",
++    "/../public-other/secret.txt", "/C:/secret.env", "/index.html:secret",
++  ]) {
++    const res = await serveStatic(root, url);
++    assert.equal(res.status, 403, url);
++    assert.equal(res.body.toString(), "forbidden");
++  }
++});
++
++test("malformed encoding and null bytes return a controlled response", async () => {
++  for (const url of ["/%", "/%GG", "/%E0%A4", "/index.html%00"]) {
++    assert.equal((await serveStatic(root, url)).status, 400, url);
++  }
++});
++
++test("checks real paths against the directory boundary", async (t) => {
++  const fixture = await fs.mkdtemp(path.join(os.tmpdir(), "asset-server-"));
++  t.after(() => fs.rm(fixture, { recursive: true, force: true }));
++  const publicDir = path.join(fixture, "public");
++  const outside = path.join(fixture, "public-other");
++  await fs.mkdir(publicDir);
++  await fs.mkdir(outside);
++  await fs.writeFile(path.join(outside, "secret.txt"), "private fixture");
++  await fs.writeFile(path.join(publicDir, "ok.txt"), "public fixture");
++  await fs.symlink(outside, path.join(publicDir, "escape"), "junction");
++  assert.equal((await serveStatic(publicDir, "/escape/secret.txt")).status, 403);
++  assert.equal((await serveStatic(publicDir, "/../public-other/secret.txt")).status, 403);
++  const res = await serveStatic(publicDir, "/ok.txt");
++  assert.equal(res.status, 200);
++  assert.equal(res.body.toString(), "public fixture");
++});

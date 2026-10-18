@@ -1,0 +1,137 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-sonnet-002",
+  "task": "t05-feature-py-cli-json",
+  "category": "feature",
+  "stack": "python",
+  "locale": "ja",
+  "arm": "skills",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "b59b53597ffe3664ff68485f8fa5317c2cebd9fd00586feb54941bf55ae4184e",
+  "fixtureHead": "1e5c3aa5f2a67e9ea6938d63bca8e798442018b8",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target claude --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:54:31.793Z",
+  "wallMs": 24038,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M inventory/__main__.py",
+    " M inventory/report.py",
+    " M tests/test_report.py",
+    "?? inventory/__pycache__/__init__.cpython-312.pyc",
+    "?? inventory/__pycache__/__main__.cpython-312.pyc",
+    "?? inventory/__pycache__/report.cpython-312.pyc",
+    "?? tests/__pycache__/test_report.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 4 tests in 1.439s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 12,
+    "toolsByName": {
+      "Glob": 1,
+      "Read": 3,
+      "Edit": 6,
+      "Bash": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 6,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 13,
+    "tokens": {
+      "input": 1407,
+      "output": 2321,
+      "cacheRead": 131298,
+      "cacheWrite": 11984
+    },
+    "costUsd": 0.0842113,
+    "apiMs": 17980,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "soturail-change",
+      "soturail-core",
+      "soturail-debug",
+      "soturail-knowledge",
+      "soturail-release",
+      "soturail-research",
+      "soturail-review",
+      "soturail-security",
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "6119665dafdf991c16600f5066059fd6cbde521d6d022e4e319cc6cc88038392"
+}

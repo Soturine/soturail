@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "a2bfddd9a401fc5e37ae095ab92b1f4d33ee528532cffba37003e58a007454b0",
+  "fixtureHead": "e2d364f1c34d0cb0047e20e8b0d401eb07291c47",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:04:58.404Z",
+  "wallMs": 86069,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "2026-10-18T07:05:06.651143Z ERROR codex_models_manager::manager: failed to load models cache: EOF while parsing a value at line 1 column 0\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M directory/users.py",
+    " M tests/test_users.py",
+    "?? directory/__pycache__/__init__.cpython-312.pyc",
+    "?? directory/__pycache__/db.cpython-312.pyc",
+    "?? directory/__pycache__/users.cpython-312.pyc",
+    "?? tests/__pycache__/test_users.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 7 tests in 0.004s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 25,
+    "toolsByName": {
+      "shell": 6,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 10,
+      "mcp__soturail__soturail.candidates.record": 6,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 3,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 5,
+    "soturailMcpCalls": 18,
+    "soturailCommands": [
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.index",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read .soturail/indexes/tree.txt\nsoturail run -- git status --short\nsoturail contract create --help'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create directory-security --title \"Secure user directory SQL\" --intent \"Prevent SQL injection and preserve ",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v'",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check\nsoturail run -- git diff -- directory/users.py tests/test_users.py\nsoturail evidence collect",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v\nsoturail run -- git diff --check\nsoturail evidence collect\nsoturail e"
+    ],
+    "edits": 1,
+    "checksRun": 5,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 23303,
+      "output": 2425,
+      "cacheRead": 258816,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "bc5ca0ddb72661465212674c590e3e5c97c31ecc20f566513f06e08dacab2001"
+}

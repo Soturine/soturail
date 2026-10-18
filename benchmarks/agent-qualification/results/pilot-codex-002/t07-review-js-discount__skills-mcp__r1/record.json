@@ -1,0 +1,173 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-codex-002",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "29ec5bc6aeb7c9bc358430696de6db13f8703b1a",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:02:18.859Z",
+  "wallMs": 116682,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": true,
+        "detail": "3 findings"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": true,
+        "detail": "Exactly 10 units receive no bulk discount because the comparison is exclusive. docs/pricing.md requires 10 or more: a line with unitPrice 1 and quantity 10 totals 10 instead of 9. Use an inclusive threshold."
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": true,
+        "detail": "The previously valid placeOrder(repo, order) call now always rejects with TypeError because audit is undefined, even after repo.save has persisted the order. Preserve compatibility or update the API and all consumers so a successful save is not reported as a failure."
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": null,
+    "toolCalls": 26,
+    "toolsByName": {
+      "shell": 12,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 7,
+      "mcp__soturail__soturail.candidates.record": 5,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 3,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "soturailCliCalls": 11,
+    "soturailMcpCalls": 13,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list'",
+      "mcp__soturail__soturail.index",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"Get-Content '.agents/skills/soturail-core/references/candidate-artifacts.md'; soturail evidence --help; soturail governance e",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git status --short --branch'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff main...HEAD'",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail evidence collect --help; soturail evidence verify --help; soturail capabilities describe governance.evaluate --json'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"rg --files --hidden .soturail -g '*contract*' -g '*evidence*'; soturail run -- git grep -n placeOrder\"",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-ChildItem .soturail -Recurse -File | Where-Object { $_.FullName -match '\"'contract|evidence' } | Select-Object -ExpandPro",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\nimport assert from 'node:assert/strict';\nimport { orderTotal } from '../../src/pricing.js';\nimport { placeOrder } from '..",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"(Get-Content .soturail/review-repro.mjs -Raw).Replace('../../src/','../src/') | Set-Content .soturail/review-repro.mjs\nsotura",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail run -- node .soturail/review-repro.mjs\nsoturail run -- node --input-type=module -e 'import fs from \\\"node:fs\\\"; impo",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\nimport fs from 'node:fs';\nimport assert from 'node:assert/strict';\nconst a=JSON.parse(fs.readFileSync('review.json','utf8'"
+    ],
+    "edits": 1,
+    "checksRun": 8,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 53884,
+      "output": 2435,
+      "cacheRead": 344448,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "f137cbdecdbc49d51f7a98737b7f981d0379508671334e9d88cd29537eed2c84"
+}

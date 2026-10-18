@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-haiku-002",
+  "task": "t10-requirements-js-shipping",
+  "category": "requirements",
+  "stack": "node",
+  "locale": "es",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-haiku-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "dc5ab75a030527b069ae5f531090cb5e0258e2253749ea67985ec4e4661a28c4",
+  "fixtureHead": "f1f5f330f1f20e5dd028a6f6124ce1943c8c0852",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:07:00.959Z",
+  "wallMs": 44801,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/shipping.js",
+    " M test/shipping.test.js",
+    "?? OPEN_QUESTIONS.md"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      },
+      {
+        "kind": "functional",
+        "name": "R4 contradiction recorded in OPEN_QUESTIONS.md",
+        "pass": true,
+        "detail": "R4 referenced"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": true,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "metrics": {
+    "model": "claude-haiku-5-5",
+    "toolCalls": 9,
+    "toolsByName": {
+      "Read": 4,
+      "Glob": 1,
+      "Write": 2,
+      "Edit": 1,
+      "PowerShell": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 3,
+    "checksRun": 0,
+    "checkAfterLastEdit": false,
+    "turns": 10,
+    "tokens": {
+      "input": 1399,
+      "output": 8086,
+      "cacheRead": 139740,
+      "cacheWrite": 16494
+    },
+    "costUsd": 0.008879100000000001,
+    "apiMs": 38933,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "2f1312dc8c742b5e87ddd24ce5c43c0f57e60e09a4cbbb30e8746bf99f6b9fb1"
+}

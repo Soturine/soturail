@@ -1,0 +1,261 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..903da2a 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,4 @@
++{"kind":"block","block_id":"block_f501bdd0","block_sha256":"f501bdd042f0cb849165753a2831d6f91a0dba0ed754543fe7aef7e9384907c8","normalized_sha256":"8c86869253b9d4dce051be20c693e4305e2678bb47d527413339a04690482a80","raw_id":"b4eadb37","line_count":8,"token_estimate":32,"has_risk":false,"preview":" | > patient-retry@2.0.0 test","created_at":"2026-10-18T07:09:10.498Z"}
++{"kind":"output","output_sha256":"3025c331a867618728104b83de030d9d12d4a89a17cc8ea2b52efbf11a0b789c","raw_id":"b4eadb37","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070908511Z-b4eadb37.log","created_at":"2026-10-18T07:09:08.511Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"14aca124","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070912160Z-14aca124.log","created_at":"2026-10-18T07:09:12.160Z"}
++{"kind":"output","output_sha256":"067c60edce4cf4aaf7f8e323296aef3e37aae31d8a22898c17f55400faf87169","raw_id":"4720ba87","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T070931951Z-4720ba87.log","created_at":"2026-10-18T07:09:31.951Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index f72f73a..898dbf9 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:08:22.444Z",
++  "generated_at": "2026-10-18T07:08:36.601Z",
+   "root": "t11-docs-js-retry__skills__r1",
+-  "total_files": 56,
++  "total_files": 74,
+   "stats": {
+-    "scanned_files": 56,
++    "scanned_files": 74,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 0e99d66..5db5fb9 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t11-docs-js-retry__skills__r1
+-Files indexed: 56
++Files indexed: 74
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..77ec92b 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,3 @@
++{"type":"command_run","raw_id":"b4eadb37","command":"npm test","exit_code":0,"raw_tokens_estimated":49,"compressed_tokens_estimated":66,"estimated_raw_tokens":49,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:10.847Z"}
++{"type":"command_run","raw_id":"14aca124","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:12.702Z"}
++{"type":"command_run","raw_id":"4720ba87","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_tokens_estimated":8,"compressed_tokens_estimated":26,"estimated_raw_tokens":8,"estimated_reduced_payload_tokens":26,"estimated_soturail_metadata_tokens":39,"estimated_net_tokens_sent":65,"summary_overhead_tokens":39,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:09:32.552Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..df076ee 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,3 @@
++{"raw_id":"b4eadb37","path":".soturail\\raw\\2026-10-18\\20261018T070908511Z-b4eadb37.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:09:08.511Z","compressor":"test-reducer","raw_tokens_estimated":49,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"28cde3f977eeacf365b9d842bd7fab04cef2f455b003a89f477cae1da5160833","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:08.511Z"}
++{"raw_id":"14aca124","path":".soturail\\raw\\2026-10-18\\20261018T070912160Z-14aca124.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:09:12.160Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"5d5d02a628d9a68dfa018dfcfdbb1881f23ea9d6712ce6a5d015e7233632e480","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:12.160Z"}
++{"raw_id":"4720ba87","path":".soturail\\raw\\2026-10-18\\20261018T070931951Z-4720ba87.log","command":"node .soturail/readme-check.mjs","exit_code":0,"created_at":"2026-10-18T07:09:31.951Z","compressor":"generic-stream","raw_tokens_estimated":8,"compressed_tokens_estimated":26,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"a45045394af640cb34a0e6398f4ba37f1ef39fe41b02706af6478d21923c689e","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:09:31.951Z"}
+diff --git a/README.md b/README.md
+index c49eb46..191e030 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,47 @@
+ # patient-retry
+ 
+-Retry an async function.
++Call a function until it succeeds, with exponential backoff between failures.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++  shouldRetry: (error) => true,
++});
+ ```
+ 
+ Options:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | retries after the initial call; at most `retries + 1` calls |
++| `baseDelayMs` | `200` | initial delay in milliseconds |
++| `factor` | `2` | multiplier for each successive delay |
++| `shouldRetry` | `() => true` | synchronous predicate called with each failure; a falsy result stops retries |
+ 
+-Errors: after the last attempt the last error is rethrown.
++`retry(fn, options)` returns a promise. The first call runs immediately, and
++`fn` receives a zero-based attempt index (`0` for the initial call). Both returned
++values and promises are supported; synchronous throws and promise rejections
++count as failures. The first successful value is returned.
++
++After failure at attempt index `n`, the delay before the next call is
++`baseDelayMs * factor ** n`. Defaults allow four calls, with waits of 200, 400,
++and 800 milliseconds. `retries: 0` makes just one call. The old `attempts` and
++`delay` options are ignored; use `retries` and `baseDelayMs` instead.
++
++If all allowed calls fail, the promise rejects with an `AggregateError`. Its
++`errors` array contains every failure in call order, and its message is
++`retry: N attempt(s) failed`, where `N` is the number of failed calls.
++
++If `shouldRetry` returns a falsy value before the final allowed call, the last
++error is rethrown, provided the predicate also returns a falsy value when checked
++again after the loop. On the final allowed call (including `retries: 0`), a falsy
++result still produces an `AggregateError`. Keep the predicate deterministic:
++it can be called again after the loop. If the predicate itself throws, that
++exception rejects the promise directly.
++
++Use a non-negative integer for `retries` and finite, non-negative delay settings;
++the function does not validate options.

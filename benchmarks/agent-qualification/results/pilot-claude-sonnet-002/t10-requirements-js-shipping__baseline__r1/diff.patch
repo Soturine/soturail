@@ -1,0 +1,34 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..38bd0a4 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,28 @@
++const round2 = (n) => Math.round(n * 100) / 100;
++
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  if (typeof weightKg !== "number" || Number.isNaN(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg must be a non-negative number");
++  }
++
++  const domestic = country === "ES";
++
++  // Caso sin resolver (ver OPEN_QUESTIONS.md, Q1): R2 y R4 se contradicen.
++  if (domestic && express && subtotal >= 50) {
++    throw new Error(
++      "Unresolved requirement: express domestic order with subtotal >= 50 (see OPEN_QUESTIONS.md Q1)"
++    );
++  }
++
++  let fee;
++  if (domestic) {
++    fee = subtotal >= 50 ? 0 : 4.9;
++  } else {
++    const extraKg = Math.max(0, Math.floor(weightKg - 2));
++    fee = 12 + 1.5 * extraKg;
++  }
++
++  if (express) fee += 6;
++
++  return round2(fee);
+ }

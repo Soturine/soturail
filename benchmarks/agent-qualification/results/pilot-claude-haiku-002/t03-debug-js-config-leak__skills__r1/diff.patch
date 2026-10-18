@@ -1,0 +1,39 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..9346aa7 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -6,7 +6,7 @@ export function mergeConfig(base, override = {}) {
+   const result = { ...base };
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+       result[key] = value;
+     }
+diff --git a/src/tenants.js b/src/tenants.js
+index e9d6337..56663c2 100644
+--- a/src/tenants.js
++++ b/src/tenants.js
+@@ -8,5 +8,5 @@ const TENANT_OVERRIDES = {
+ };
+ 
+ export function configFor(tenant) {
+-  return mergeConfig(DEFAULTS, TENANT_OVERRIDES[tenant] ?? {});
++  return structuredClone(mergeConfig(DEFAULTS, TENANT_OVERRIDES[tenant] ?? {}));
+ }
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..f54dda7 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,10 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("merge does not mutate its inputs", () => {
++  const base = { http: { timeoutMs: 1, retry: { attempts: 2 } } };
++  const override = { http: { retry: { attempts: 5 } } };
++  mergeConfig(base, override);
++  assert.deepEqual(base, { http: { timeoutMs: 1, retry: { attempts: 2 } } });
++});

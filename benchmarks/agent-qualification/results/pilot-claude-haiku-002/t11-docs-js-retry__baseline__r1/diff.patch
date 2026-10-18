@@ -1,0 +1,62 @@
+diff --git a/README.md b/README.md
+index c49eb46..79c8295 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,51 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), { retries: 5, baseDelayMs: 100 });
+ ```
+ 
+-Options:
++`retry(fn, options)` calls `fn` until it resolves, and resolves with the value of the first successful call.
++
++`fn` is called with the zero-based attempt index (`0` for the first call, `1` for the first retry, and so on).
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | milliseconds to wait before the first retry |
++| `factor` | `2` | multiplier applied to the delay after each retry |
++| `shouldRetry` | `() => true` | `(error) => boolean`; return `false` to stop retrying for that error |
++
++Before retry `n` (counting from `0`), `retry` waits `baseDelayMs * factor ** n` milliseconds. With the defaults, the waits are 200 ms, 400 ms, and 800 ms. No wait happens after the final attempt.
++
++## Errors
++
++- If every attempt fails, `retry` throws an `AggregateError`. Its `errors` array contains every thrown value, in the order they were thrown. The message is `retry: <n> attempt(s) failed`.
++- If `shouldRetry(error)` returns `false` before retries are exhausted, `retry` rethrows that error as-is, without waiting further.
++- If `shouldRetry` returns `false` for the error from the final attempt, `retry` still throws an `AggregateError`, not the original error.
++- `shouldRetry` may be called more than once for the same error when it stops retrying, so keep it free of side effects.
++
++## Example: retry only some errors
+ 
+-Errors: after the last attempt the last error is rethrown.
++```js
++const value = await retry(
++  (attempt) => fetchThing(attempt),
++  {
++    retries: 4,
++    baseDelayMs: 50,
++    factor: 3,
++    shouldRetry: (error) => error.code === "ETIMEDOUT",
++  },
++);
++```
++
++## Tests
++
++```sh
++npm test
++```
