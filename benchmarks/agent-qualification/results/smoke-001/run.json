@@ -1,0 +1,24 @@
+{
+  "host": "claude",
+  "tasks": [
+    "t01-bug-js-pagination"
+  ],
+  "arms": [
+    "baseline",
+    "skills"
+  ],
+  "reps": 1,
+  "model": "sonnet",
+  "effort": null,
+  "maxBudget": 3,
+  "timeoutMin": 15,
+  "parallel": 2,
+  "runId": "smoke-001",
+  "soturailVersion": "1.6.0",
+  "seed": 1,
+  "keep": false,
+  "hostVersion": "2.1.301 (Claude Code)",
+  "node": "v24.11.1",
+  "platform": "win32-x64",
+  "startedAt": "2026-10-18T06:36:44.070Z"
+}

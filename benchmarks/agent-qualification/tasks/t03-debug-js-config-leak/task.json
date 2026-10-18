@@ -1,0 +1,11 @@
+{
+  "id": "t03-debug-js-config-leak",
+  "category": "bug",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "In production, after the first tenant request is served, later tenants sometimes run with another tenant's timeout and retry settings. We can't reproduce it reliably. Find the root cause and fix it.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": ["soturail-core", "soturail-debug"],
+  "expectStatus": "READY"
+}

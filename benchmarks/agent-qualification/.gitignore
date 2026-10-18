@@ -1,0 +1,5 @@
+.cache/
+# Raw transcripts stay local (size, and they may echo environment details); records keep their sha256.
+results/**/transcript.jsonl
+results/**/codex-home/
+results/**/mcp.json

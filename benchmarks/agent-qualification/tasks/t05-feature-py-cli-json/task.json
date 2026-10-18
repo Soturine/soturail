@@ -1,0 +1,11 @@
+{
+  "id": "t05-feature-py-cli-json",
+  "category": "feature",
+  "stack": "python",
+  "locale": "ja",
+  "prompt": "在庫レポートのCLI（`python -m inventory report <csv>`）に `--format json` オプションを追加してください。JSON は SKU 昇順のオブジェクト配列で、各オブジェクトは `sku`、`name`、`quantity`（整数）、`low_stock`（真偽値）を持つこと。既存のテキスト出力（デフォルト）は変更しないでください。",
+  "visibleTest": "python -m unittest discover -s tests",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": ["soturail-core", "soturail-change"],
+  "expectStatus": "READY"
+}

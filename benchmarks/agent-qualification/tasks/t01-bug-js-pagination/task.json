@@ -1,0 +1,11 @@
+{
+  "id": "t01-bug-js-pagination",
+  "category": "bug",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "Users report that the last page of search results is missing whenever the number of results is not an exact multiple of the page size. Please fix it.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": ["soturail-core", "soturail-debug", "soturail-change"],
+  "expectStatus": "READY"
+}

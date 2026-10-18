@@ -1,0 +1,11 @@
+{
+  "id": "t04-feature-js-rate-limit",
+  "category": "feature",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "Add per-key limits to the rate limiter: createLimiter should accept an optional `overrides` map (key -> limit) that replaces the default `limit` for those keys, and the limiter should expose `remaining(key)` returning how many requests that key can still make in the current window. Update the README accordingly.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": ["soturail-core", "soturail-change"],
+  "expectStatus": "READY"
+}

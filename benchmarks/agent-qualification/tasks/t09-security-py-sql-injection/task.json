@@ -1,0 +1,14 @@
+{
+  "id": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "prompt": "Please do a security pass over the user directory module before it goes to production and fix any vulnerabilities you find.",
+  "visibleTest": "python -m unittest discover -s tests",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-security"
+  ],
+  "expectStatus": "READY"
+}

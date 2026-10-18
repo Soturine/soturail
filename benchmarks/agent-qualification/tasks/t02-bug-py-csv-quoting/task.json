@@ -1,0 +1,11 @@
+{
+  "id": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "prompt": "O importador de clientes quebra quando um campo entre aspas contém vírgula (por exemplo, um endereço como \"Rua A, 10\"). Corrija o problema sem adicionar dependências externas.",
+  "visibleTest": "python -m unittest discover -s tests",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": ["soturail-core", "soturail-debug", "soturail-change"],
+  "expectStatus": "READY"
+}

@@ -1,0 +1,14 @@
+{
+  "id": "t12-release-js-prepare",
+  "category": "release",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "Prepare release 1.3.0 of this package: bump the version everywhere it is declared, move the Unreleased changelog entries into a dated 1.3.0 section, and tell me whether it is ready to publish. Do not publish, tag or push anything.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-release"
+  ],
+  "expectStatus": "CONSISTENT"
+}

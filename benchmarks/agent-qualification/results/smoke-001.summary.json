@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "soturail.qualification.summary.v1",
+  "runIds": [
+    "smoke-001"
+  ],
+  "hosts": [
+    "claude/claude-sonnet-5-5"
+  ],
+  "generatedAt": "2026-10-18T06:37:40.980Z",
+  "records": 2,
+  "byArm": {
+    "baseline": {
+      "runs": 1,
+      "success": 1,
+      "regressions": 0,
+      "statusCorrect": 1,
+      "falseReady": 0,
+      "falseVerified": 0,
+      "checkAfterLastEdit": 1,
+      "usedSoturail": null,
+      "skillRecall": null,
+      "toolCalls": 4,
+      "duplicateCalls": 0,
+      "toolErrors": 0,
+      "recoveredErrors": 0,
+      "turns": 5,
+      "tokens": 86623,
+      "outputTokens": 742,
+      "cacheWrite": 7782,
+      "costUsd": 0.0462116,
+      "wallSec": 13.894,
+      "timeouts": 0,
+      "permissionDenials": 0
+    },
+    "skills": {
+      "runs": 1,
+      "success": 1,
+      "regressions": 0,
+      "statusCorrect": 1,
+      "falseReady": 0,
+      "falseVerified": 0,
+      "checkAfterLastEdit": 1,
+      "usedSoturail": 0,
+      "skillRecall": 0,
+      "toolCalls": 5,
+      "duplicateCalls": 0,
+      "toolErrors": 0,
+      "recoveredErrors": 0,
+      "turns": 6,
+      "tokens": 91829,
+      "outputTokens": 892,
+      "cacheWrite": 9220,
+      "costUsd": 0.053806400000000004,
+      "wallSec": 11.461,
+      "timeouts": 0,
+      "permissionDenials": 0
+    }
+  },
+  "perTask": [
+    {
+      "task": "t01-bug-js-pagination",
+      "category": "bug",
+      "baseline": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.0462116,
+        "tokens": 86623,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      },
+      "skills": {
+        "runs": 1,
+        "success": 1,
+        "falseReady": 0,
+        "statusCorrect": 1,
+        "costUsd": 0.053806400000000004,
+        "tokens": 91829,
+        "skills": [],
+        "soturailCalls": 0,
+        "failedChecks": []
+      }
+    }
+  ]
+}

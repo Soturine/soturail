@@ -1,0 +1,19 @@
+{
+  "id": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "Review the changes on the current branch `feature/bulk-discount` against `main` before we merge. Do not modify the source code. Write your findings to `review.json` as a JSON array of objects with `file`, `line`, `severity` (high|medium|low) and `summary`. Only report real defects, not style preferences.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-review"
+  ],
+  "expectStatus": "NOT_READY",
+  "setup": {
+    "branch": "feature/bulk-discount",
+    "overlay": "branch",
+    "message": "feat(pricing): bulk discount and async order save"
+  }
+}

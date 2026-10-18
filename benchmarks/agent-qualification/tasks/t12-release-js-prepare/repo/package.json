@@ -1,0 +1,7 @@
+{
+  "name": "bytefmt",
+  "version": "1.2.3",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": { "test": "node --test \"test/**/*.test.js\"" }
+}

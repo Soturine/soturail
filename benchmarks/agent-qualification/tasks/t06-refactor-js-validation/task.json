@@ -1,0 +1,14 @@
+{
+  "id": "t06-refactor-js-validation",
+  "category": "refactor",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "The user create and update handlers duplicate the same validation logic. Extract it into a single shared module `src/validation.js` used by both handlers, without changing any observable behavior.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-change"
+  ],
+  "expectStatus": "READY"
+}

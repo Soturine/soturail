@@ -30,5 +30,12 @@ jobs:
       - run: npm run docs:check
       - run: node dist/cli.js mcp smoke
       - run: node dist/cli.js self architecture --check
+      - if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Agent qualification oracle controls
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        run: node benchmarks/agent-qualification/harness/validate-oracles.mjs
       - run: npm audit
       - run: cargo test --manifest-path native/soturail-native/Cargo.toml

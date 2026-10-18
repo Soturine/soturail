@@ -1,0 +1,1 @@
+{ "name": "patient-retry", "version": "2.0.0", "type": "module", "main": "src/retry.js", "scripts": { "test": "node --test \"test/**/*.test.js\"" } }

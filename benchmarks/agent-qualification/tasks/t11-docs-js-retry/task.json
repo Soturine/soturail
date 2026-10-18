@@ -1,0 +1,14 @@
+{
+  "id": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "The README of this library is out of date. Update the documentation so it accurately describes the current behavior of the code. Do not change the library code.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-knowledge"
+  ],
+  "expectStatus": "READY"
+}

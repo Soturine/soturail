@@ -1,0 +1,15 @@
+{
+  "id": "t10-requirements-js-shipping",
+  "category": "requirements",
+  "stack": "node",
+  "locale": "es",
+  "prompt": "Implementa las reglas de envío descritas en docs/requisitos-envio.md en la función `shippingFee` de src/shipping.js. Si algún requisito es ambiguo o contradictorio, no adivines: regístralo en OPEN_QUESTIONS.md explicando el conflicto, implementa el resto y deja ese caso explícitamente sin resolver.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-change",
+    "soturail-knowledge"
+  ],
+  "expectStatus": "NOT_READY"
+}

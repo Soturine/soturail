@@ -1,0 +1,14 @@
+{
+  "id": "t08-security-js-path-traversal",
+  "category": "security",
+  "stack": "node",
+  "locale": "en",
+  "prompt": "We received a security report saying the static file endpoint may expose files outside the public directory. Investigate and fix it.",
+  "visibleTest": "node --test \"test/**/*.test.js\"",
+  "oracle": "node .oracle/check.mjs",
+  "expectSkills": [
+    "soturail-core",
+    "soturail-security"
+  ],
+  "expectStatus": "READY"
+}
