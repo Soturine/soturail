@@ -6,23 +6,37 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
-### Fixed
-
-- Workspace fingerprints detect edits in projects without a Git work tree by hashing workspace content (previously every edit was invisible and old evidence stayed current), and fail closed when the workspace is too large to scan.
-- `.soturail/.gitignore` is written (only if missing) so raw logs, file snapshots, evidence and caches stay out of Git; `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` stay versionable. The project's own `.gitignore` is not modified.
-- Workspace fingerprints no longer include SotuRail's own runtime state under `.soturail/`. In projects that do not gitignore `.soturail/` (the `soturail init` default), every recorded run used to invalidate its own evidence, so change contracts could never become ready.
-- Missing paths are reported as `Path not found: <path>` instead of Node's raw `ENOENT … realpath` message; the `ENOENT` code is kept.
-- `mcp config` now includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config.
+Planned for the next minor release.
 
 ### Changed
 
-- **`soturail init` is minimal by default** (next minor release, not 1.6.1): it creates only `.soturail/` and never writes outside it. The previous starter set (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `docs/`, `examples/`) is opt-in with `soturail init --with-docs`, still without overwriting existing files.
-- The core and change Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work, `project.read` is for untrusted paths, possible secrets and large files, and only durable findings are recorded as candidates.
+- **`soturail init` is minimal by default**: it creates only `.soturail/` and never writes outside it. The previous starter set (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `docs/`, `examples/`) is opt-in with `soturail init --with-docs`, still without overwriting existing files.
 
 ### Added
 
-- `soturail run --summary-only` (next minor release): agent mode that does not mirror output live and prints the reduced summary or, when that is not smaller, the redacted output once, plus a one-line `raw_id` trailer. The default tee mode printed the full output and a summary on top, so `soturail run` always cost an agent more tokens than running the command directly. The core and debug Skills now use it.
-- Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, and a deterministic dogfood of the published package.
+- `soturail run --summary-only`: agent mode that does not mirror output live and prints the reduced summary or, when that is not smaller, the redacted output once, plus a one-line `raw_id` trailer. The default tee mode printed the full output and a summary on top, so `soturail run` always cost an agent more tokens than running the command directly. The core and debug Skills now use it.
+- Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, readiness classified from SotuRail verdict codes, and a deterministic dogfood of the published package.
+
+## [1.6.1] - UNRELEASED
+
+Corrective release. Every fix below was found by dogfooding the published 1.6.0 on external projects and by real-agent qualification; see `docs/releases/RELEASE_NOTES_v1.6.1.md`.
+
+### Fixed
+
+- Change contracts can become ready in projects that do not gitignore `.soturail/` (the `soturail init` default). The workspace fingerprint included SotuRail's own raw logs, evidence and metrics, so every recorded run invalidated the evidence it had just written.
+- Workspace fingerprints detect edits in projects without a Git work tree by hashing workspace content. Previously every edit was invisible and earlier evidence stayed current (false green). Workspaces too large to scan fail closed.
+- `.soturail/.gitignore` is written (only if missing) so raw logs, file snapshots, evidence and caches stay out of Git; `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` stay versionable. The project's own `.gitignore` is not modified, and files already tracked stay tracked.
+- Missing paths are reported as `Path not found: <path>` instead of Node's raw `ENOENT … realpath` message; the `ENOENT` code is kept.
+- `mcp config` includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config; the server version no longer depends on whichever `soturail` is first on `PATH`.
+
+### Changed
+
+- The bundled Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work; ordinary files are read with the host's tools and `project.read` is kept for untrusted paths, possible secrets and large files; only findings that must outlive the session are recorded as candidates. Security keeps `project.read`.
+
+### Upgrade notes
+
+- Evidence recorded by 1.6.0 in a project that did not gitignore `.soturail/`, or in a project without Git, may now read as stale once. Re-run the checks.
+- If `.soturail/` contents were already committed, the new `.soturail/.gitignore` does not untrack them; use `git rm -r --cached .soturail/raw` (and other runtime directories) if needed.
 
 ## [1.6.0] - 2026-10-04
 
