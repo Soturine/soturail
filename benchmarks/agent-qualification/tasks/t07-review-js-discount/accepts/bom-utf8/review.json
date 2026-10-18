@@ -1,0 +1,14 @@
+﻿[
+  {
+    "file": "src/pricing.js",
+    "line": 7,
+    "severity": "high",
+    "summary": "Threshold uses > instead of >= so exactly 10 units get no discount, contradicting docs/pricing.md."
+  },
+  {
+    "file": "src/orders.js",
+    "line": 5,
+    "severity": "high",
+    "summary": "repo.save is not awaited: placeOrder can resolve before persistence and save rejections become unhandled."
+  }
+]

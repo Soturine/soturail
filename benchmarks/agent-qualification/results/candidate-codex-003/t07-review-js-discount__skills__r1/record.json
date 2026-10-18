@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-003",
+  "task": "t07-review-js-discount",
+  "category": "review",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-a0bf606faa76",
+  "promptSha256": "20139afa9395f9be78296a4d9c3ba539c4100003f1b1809af357fce348d50975",
+  "fixtureHead": "250b40fa5b5d431f8eef2a0622c11bdb3a935b0b",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:19:20.800Z",
+  "wallMs": 92271,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t07-review-js-discount__skills__r1-28292\"))\n2026-10-18T07:19:26.047400Z ERROR codex_models_manager::manager: failed to load models cache: EOF while parsing a value at line 1 column 0\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    "?? review.json"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "review.json is a JSON array",
+        "pass": true,
+        "detail": "3 findings"
+      },
+      {
+        "kind": "functional",
+        "name": "finds bulk-threshold-off-by-one",
+        "pass": true,
+        "detail": "The strict > comparison excludes exactly 10 units, although docs/pricing.md requires the 10% discount for 10 or more. A line with unitPrice 1 and quantity 10 totals 10 instead of 9. Use an inclusive threshold."
+      },
+      {
+        "kind": "functional",
+        "name": "finds unawaited-save",
+        "pass": true,
+        "detail": "The previously supported placeOrder(repo, order) call now throws TypeError because audit is undefined. The save has already started and can complete, so callers receive a failure for a persisted order and may create duplicates on retry. Preserve compatibility or migrate callers before requiring audit."
+      },
+      {
+        "kind": "informational",
+        "name": "false positives (informational)",
+        "pass": true,
+        "informational": true,
+        "detail": "0 unmatched finding(s)",
+        "value": 0
+      },
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "oracleDigest": "9a4807a38d381f359705729e3db0d190f94716eae01b94bc1f9067a13feafefe",
+  "metrics": {
+    "model": null,
+    "toolCalls": 10,
+    "toolsByName": {
+      "shell": 10
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 1,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-review"
+    ],
+    "soturailCliCalls": 9,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index; soturail run -- git diff main...HEAD; soturail run -- git status --short'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-Content .soturail/indexes/tree.txt; soturail read src/orders.js; soturail read src/pricing.js; soturail read package.json",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"soturail read docs/pricing.md; soturail read docs/architecture.md; soturail read test/pricing.test.js; soturail run -- rg -n ",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-ChildItem .soturail -Recurse -File | Where-Object { $_.FullName -notmatch '\"'\\\\\\\\(raw|indexes|metrics|dedupe)\\\\\\\\' } | Se",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities describe semantic.candidate.record --json; soturail capabilities describe governance.evaluate --json'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\nimport assert from 'node:assert/strict';\nimport { orderTotal } from '../src/pricing.js';\nimport { placeOrder } from '../sr",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command \"@'\n[\n  {\n    \\\"file\\\": \\\"src/pricing.js\\\",\n    \\\"line\\\": 7,\n    \\\"severity\\\": \\\"medium\\\",\n    \\\"summary\\\": \\\"The strict > com",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail governance evaluate --capability evidence.verify; Get-Content .soturail/evidence/evidence_20261018072041_54c17028/*;",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail governance evaluate --capability evidence.verify --actor codex'"
+    ],
+    "edits": 0,
+    "checksRun": 6,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 24581,
+      "output": 1687,
+      "cacheRead": 214912,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "528e87b04eb8729bf5414fab37bd3e3497ff17afdccc790605c47b434f1b4941",
+  "oracleHistory": [
+    {
+      "oracleDigest": "88376b730eaed007f5c0897966be6c7ebdb8de130cf48353354bb23366962d23",
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:28:52.562Z"
+    }
+  ]
+}

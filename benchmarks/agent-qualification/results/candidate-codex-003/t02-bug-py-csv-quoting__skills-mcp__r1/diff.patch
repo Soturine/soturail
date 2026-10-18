@@ -1,0 +1,262 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..51ca761 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,14 @@
++{"kind":"output","output_sha256":"8ece47e68f1108dfd6eb602bea268d59fcb5781ecfe1cda8c896f651c12fda38","raw_id":"56ec6b9c","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071441999Z-56ec6b9c.log","created_at":"2026-10-18T07:14:41.999Z"}
++{"kind":"block","block_id":"block_68ed6e6e","block_sha256":"68ed6e6e257b2c7aa5bdfef170a32638a6cd0a9c10015c982867c41f64cb4caf","normalized_sha256":"11827361bcd387768e46538c28f777bc03722309eafd836e3561a6aa4cd936fa","raw_id":"c8ac4f62","line_count":8,"token_estimate":141,"has_risk":true,"preview":"EF.. | ======================================================================","created_at":"2026-10-18T07:14:53.521Z"}
++{"kind":"block","block_id":"block_c83b15cf","block_sha256":"c83b15cffef5c703ebab6c7523356b8c060faed77e943878f530f4be33c2ec98","normalized_sha256":"817b4dd3ca126c71d88b11cf63e2897cc7551d5f4a9cacb7eb7ea674d7548077","raw_id":"c8ac4f62","line_count":8,"token_estimate":148,"has_risk":true,"preview":"  File \"C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-runs\\candidate-codex-003\\t02-bug-py-csv-quoting__skills-mcp__r1\\csvtool\\parse.py\", line 23, in parse_customers |     raise ValueError(f\"linha {number}: esperado {len(header)} campos, encontrado ","created_at":"2026-10-18T07:14:53.521Z"}
++{"kind":"block","block_id":"block_a7050f6e","block_sha256":"a7050f6e7ea5867ebcf3c8832e752647297e33f47fdd4f22b7a2c3c0ced39061","normalized_sha256":"ebc49c5861e621b328746b6e04fc28743917727452281af4ff8ae07940a8693c","raw_id":"c8ac4f62","line_count":8,"token_estimate":161,"has_risk":false,"preview":"  File \"C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-runs\\candidate-codex-003\\t02-bug-py-csv-quoting__skills-mcp__r1\\tests\\test_parse.py\", line 21, in test_quoted_header_and_escaped_quotes |     self.assertEqual(rows, [{\"nome, completo\": 'Ana \"Bia","created_at":"2026-10-18T07:14:53.521Z"}
++{"kind":"block","block_id":"block_34ca0925","block_sha256":"34ca0925d3af9a7b45faf1a9f9e1fbd360cd5e3e4bf982ff8f5441a287b0e453","normalized_sha256":"1a785454bb2cc9b70fa5f9a075735a1bd9205c571aa74c1a208853ffe9292af5","raw_id":"c8ac4f62","line_count":8,"token_estimate":71,"has_risk":true,"preview":"- [{'\"nome': 'Ana \"Bia\"', 'completo\"': '\"Rua A', 'endereco': '10\"', 'extra': ''}] | + [{'endereco': 'Rua A, 10', 'extra': '', 'nome, completo': 'Ana \"Bia\"'}]","created_at":"2026-10-18T07:14:53.521Z"}
++{"kind":"output","output_sha256":"5157877d16a451be35437a308a4f7353b66f9dd37533add24531f5e5e35ae273","raw_id":"c8ac4f62","command":"python -m unittest discover -s tests","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071453229Z-c8ac4f62.log","created_at":"2026-10-18T07:14:53.229Z"}
++{"kind":"output","output_sha256":"1b6f69157102cc03f5264c937d138171570f1a3f06ab9ba2d8345507e1df7261","raw_id":"46154b2b","command":"python -m unittest discover -s tests","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071502169Z-46154b2b.log","created_at":"2026-10-18T07:15:02.169Z"}
++{"kind":"block","block_id":"block_ffa8aa7f","block_sha256":"ffa8aa7fc9c90f84655f47ebe9c08c85790af02ea77383c26f8032575d335bca","normalized_sha256":"457c0e08b2286963416af825ed91612b3e3455f8b793e63f0e04d98113712930","raw_id":"d4dccccd","line_count":8,"token_estimate":53,"has_risk":false,"preview":"diff --git a/csvtool/parse.py b/csvtool/parse.py | index b0b7cb5..067e6f0 100644","created_at":"2026-10-18T07:15:11.174Z"}
++{"kind":"block","block_id":"block_7678feb4","block_sha256":"7678feb455120ab66c33ec1a889a87576734680c4b2eaa96fb171f6c81a75bd3","normalized_sha256":"be6da673e60ee12d822541fd24bc6ff23cf656956dfa615a28e1d7930752f9f5","raw_id":"d4dccccd","line_count":8,"token_estimate":57,"has_risk":false,"preview":"+ |  ","created_at":"2026-10-18T07:15:11.174Z"}
++{"kind":"block","block_id":"block_db85d84e","block_sha256":"db85d84e4aec7b0ddc10b4e5cb530bbced5d2c70ae8534bd8ccd16606555f421","normalized_sha256":"95b19508ec45b2b9f72d72039663cb6ee3dc7c3f0e1caa28fcbea2d9b4f227ab","raw_id":"d4dccccd","line_count":8,"token_estimate":57,"has_risk":false,"preview":"-        fields.append(value) | -    return fields","created_at":"2026-10-18T07:15:11.174Z"}
++{"kind":"block","block_id":"block_4e093e2c","block_sha256":"4e093e2c206db368eb24749be6290b8a94ff341e415aec3138191a70be59b344","normalized_sha256":"f590b313d4b756111331f4c6924ab3bc9515154a3dd06270766c2cea3ccbb666","raw_id":"d4dccccd","line_count":8,"token_estimate":79,"has_risk":false,"preview":"--- a/tests/test_parse.py | +++ b/tests/test_parse.py","created_at":"2026-10-18T07:15:11.174Z"}
++{"kind":"block","block_id":"block_2a518acd","block_sha256":"2a518acd4996704c59d8f61a46588c7ac8f2211c231740d07c65a83c344f5823","normalized_sha256":"4e77c2c117e5f0afd471ed022b9c2447a38564d9ca925eaf793b505cffda3f6f","raw_id":"d4dccccd","line_count":8,"token_estimate":97,"has_risk":false,"preview":"+        self.assertEqual(rows, [{\"nome\": \"Ana\", \"endereco\": \"Rua A, 10\", \"cidade\": \"Recife\"}]) | +","created_at":"2026-10-18T07:15:11.174Z"}
++{"kind":"output","output_sha256":"1567ce93c058ee0f7ba25260e513c08fb8e9d2412d865a6742b3226c9bf88fcb","raw_id":"d4dccccd","command":"git diff csvtool/parse.py tests/test_parse.py","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071511052Z-d4dccccd.log","created_at":"2026-10-18T07:15:11.052Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"645e0291","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071520507Z-645e0291.log","created_at":"2026-10-18T07:15:20.507Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index a78bb7c..5d4ac95 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:14:23.376Z",
++  "generated_at": "2026-10-18T07:14:38.316Z",
+   "root": "t02-bug-py-csv-quoting__skills-mcp__r1",
+-  "total_files": 58,
++  "total_files": 76,
+   "stats": {
+-    "scanned_files": 58,
+-    "ignored_files": 0,
++    "scanned_files": 76,
++    "ignored_files": 3,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": ".gitignore",
+       "size_bytes": 19,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 2527e56..8927ca8 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t02-bug-py-csv-quoting__skills-mcp__r1
+-Files indexed: 58
++Files indexed: 76
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ .gitignore (text, 19 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..21f511d 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,7 @@
++{"type":"command_run","raw_id":"56ec6b9c","command":"git status --short","exit_code":0,"raw_tokens_estimated":24,"compressed_tokens_estimated":76,"estimated_raw_tokens":24,"estimated_reduced_payload_tokens":76,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":111,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:14:42.325Z"}
++{"type":"command_run","raw_id":"c8ac4f62","command":"python -m unittest discover -s tests","exit_code":1,"raw_tokens_estimated":528,"compressed_tokens_estimated":344,"estimated_raw_tokens":528,"estimated_reduced_payload_tokens":344,"estimated_soturail_metadata_tokens":40,"estimated_net_tokens_sent":384,"summary_overhead_tokens":40,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":184,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:14:53.710Z"}
++{"type":"expand","raw_id":"c8ac4f62","created_at":"2026-10-18T07:15:00.010Z"}
++{"type":"expand","raw_id":"c8ac4f62","details":{"source":"mcp","disclosure":"redacted-only","redaction_count":0},"created_at":"2026-10-18T07:15:00.033Z"}
++{"type":"command_run","raw_id":"46154b2b","command":"python -m unittest discover -s tests","exit_code":0,"raw_tokens_estimated":27,"compressed_tokens_estimated":44,"estimated_raw_tokens":27,"estimated_reduced_payload_tokens":44,"estimated_soturail_metadata_tokens":40,"estimated_net_tokens_sent":84,"summary_overhead_tokens":40,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:15:02.868Z"}
++{"type":"command_run","raw_id":"d4dccccd","command":"git diff csvtool/parse.py tests/test_parse.py","exit_code":0,"raw_tokens_estimated":347,"compressed_tokens_estimated":322,"estimated_raw_tokens":347,"estimated_reduced_payload_tokens":322,"estimated_soturail_metadata_tokens":42,"estimated_net_tokens_sent":364,"summary_overhead_tokens":42,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":25,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:15:11.454Z"}
++{"type":"command_run","raw_id":"645e0291","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:15:20.738Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..e7041fa 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"56ec6b9c","path":".soturail\\raw\\2026-10-18\\20261018T071441999Z-56ec6b9c.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T07:14:41.999Z","compressor":"git-reducer","raw_tokens_estimated":24,"compressed_tokens_estimated":76,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d56cade22f14ebfda28a428ec7b6970cb08d66f9f9e35058f04487c954068c93","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:14:41.999Z"}
++{"raw_id":"c8ac4f62","path":".soturail\\raw\\2026-10-18\\20261018T071453229Z-c8ac4f62.log","command":"python -m unittest discover -s tests","exit_code":1,"created_at":"2026-10-18T07:14:53.229Z","compressor":"test-reducer","raw_tokens_estimated":528,"compressed_tokens_estimated":344,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37530519811ddcec7fbc3c854ab2cfa2d9cf900641944a0cba9eef6dedb0c094","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:14:53.229Z"}
++{"raw_id":"46154b2b","path":".soturail\\raw\\2026-10-18\\20261018T071502169Z-46154b2b.log","command":"python -m unittest discover -s tests","exit_code":0,"created_at":"2026-10-18T07:15:02.169Z","compressor":"generic-stream","raw_tokens_estimated":27,"compressed_tokens_estimated":44,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2e372c9adae66f974badd5f4b4317e80f6842c252d2d50b7838e6a42e8b1baae","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:15:02.169Z"}
++{"raw_id":"d4dccccd","path":".soturail\\raw\\2026-10-18\\20261018T071511052Z-d4dccccd.log","command":"git diff csvtool/parse.py tests/test_parse.py","exit_code":0,"created_at":"2026-10-18T07:15:11.052Z","compressor":"git-reducer","raw_tokens_estimated":347,"compressed_tokens_estimated":322,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2e372c9adae66f974badd5f4b4317e80f6842c252d2d50b7838e6a42e8b1baae","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:15:11.052Z"}
++{"raw_id":"645e0291","path":".soturail\\raw\\2026-10-18\\20261018T071520507Z-645e0291.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:15:20.507Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2e372c9adae66f974badd5f4b4317e80f6842c252d2d50b7838e6a42e8b1baae","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:15:20.507Z"}
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..067e6f0 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,14 +1,10 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
+ 
++import csv
++
+ 
+ def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
++    return next(csv.reader([line], skipinitialspace=True))
+ 
+ 
+ def parse_customers(text):
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..0f815f2 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -12,6 +12,14 @@ class ParseTest(unittest.TestCase):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")
+ 
++    def test_quoted_comma(self):
++        rows = parse_customers('nome,endereco,cidade\nAna,"Rua A, 10",Recife\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10", "cidade": "Recife"}])
++
++    def test_quoted_header_and_escaped_quotes(self):
++        rows = parse_customers('"nome, completo",endereco,extra\n"Ana ""Bia""", "Rua A, 10",\n')
++        self.assertEqual(rows, [{"nome, completo": 'Ana "Bia"', "endereco": "Rua A, 10", "extra": ""}])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

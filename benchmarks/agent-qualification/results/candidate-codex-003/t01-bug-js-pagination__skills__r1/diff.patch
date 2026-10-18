@@ -1,0 +1,279 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..6309837 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,21 @@
++{"kind":"output","output_sha256":"0a19343c97943699929f13a6f468ad99263783267b3a53188ff9631ba08c50fa","raw_id":"f69c35ca","command":"rg -n page|pagination src test tests","exit_code":255,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071310713Z-f69c35ca.log","created_at":"2026-10-18T07:13:10.713Z"}
++{"kind":"block","block_id":"block_9d3b1a1a","block_sha256":"9d3b1a1ab66d34e48882558130c31675647e670d3f527b7310949bda6a8eb366","normalized_sha256":"60bea5816c57d189ccb3608b36d194cf4a1760f995333cc9a0c7f50d11bab5ea","raw_id":"76f46406","line_count":8,"token_estimate":46,"has_risk":false,"preview":" | > catalog-search@0.4.0 test","created_at":"2026-10-18T07:13:18.996Z"}
++{"kind":"output","output_sha256":"8ce149a7ea7b4debc080fcc115e8f61ba6009f084d254328e5597ebc14d0b028","raw_id":"76f46406","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071318081Z-76f46406.log","created_at":"2026-10-18T07:13:18.081Z"}
++{"kind":"block","block_id":"block_c77a6023","block_sha256":"c77a60238eb52c9412946808af9fbb84479f5c29a19cab5365293a47c8da33d8","normalized_sha256":"595c44e07539ffce4a1f79fdfbf0626fe456e6d4175565fcdf4e8fc24abb4fdb","raw_id":"f166857b","line_count":8,"token_estimate":72,"has_risk":false,"preview":" | > catalog-search@0.4.0 test","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_1a262674","block_sha256":"1a2626747c75bd8d76dfb814d4cc0cab643397ec26104112ba15be17e4fda632","normalized_sha256":"ab9af16c8e9eb1221e054b3523e18494f790d1221725584654ef1c5954ce2254","raw_id":"f166857b","line_count":8,"token_estimate":43,"has_risk":false,"preview":"✔ empty results have zero pages (0.2214ms) | ✖ pages beyond the final partial page remain empty (0.2783ms)","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_c0b3bf07","block_sha256":"c0b3bf07037c71647e24fea3823ec2ebb6be037e8e45baaf2407c384e16b0793","normalized_sha256":"1f011751b826b49c4248555fe49e92840fd622db48c7d869d2b274a2587e6e45","raw_id":"f166857b","line_count":8,"token_estimate":54,"has_risk":true,"preview":"ℹ todo 0 | ℹ duration_ms 124.8342","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_6e01699c","block_sha256":"6e01699cef304f6a585f4ae8a7ae834ffe750a64ed0befc4cef59e84a9142074","normalized_sha256":"1d76f303cbdc94238304c92d3c0b313448c4f1f380349ea33a3474dad14e07d6","raw_id":"f166857b","line_count":8,"token_estimate":24,"has_risk":false,"preview":"  + actual - expected |   ","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_169c035b","block_sha256":"169c035b816e03bc6f2d1c380ea12d4a881e30d6ab477a04eecfaf1ef223bf1a","normalized_sha256":"6a23b23ccfeaddf3f0ab1bf9b65d9f7b53617b2a79f796c5ce96a2d3f99c531f","raw_id":"f166857b","line_count":8,"token_estimate":78,"has_risk":true,"preview":"      pageSize: 2, |       totalItems: 5,","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_2db8bcb8","block_sha256":"2db8bcb8424636077116d28058d78fc698bb84231e373effc0fe26c6d4b89cb7","normalized_sha256":"2f09eddbe58d0a30309e1410a2fc7b65d7c765ce1606c9e94f01f4d23ea052b9","raw_id":"f166857b","line_count":8,"token_estimate":119,"has_risk":false,"preview":"      at Test.run (node:internal/test_runner/test:1106:25) |       at Test.processPendingSubtests (node:internal/test_runner/test:788:18)","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_761d0d09","block_sha256":"761d0d0914b2cd4f4c4b1fa1a2dae7e25c70d84f0620706a8c0e926f33cb7f94","normalized_sha256":"2cb37dfb9ec07af62c4927120ac4940c8eab016300b7f26ba05e55a4ed38d4be","raw_id":"f166857b","line_count":8,"token_estimate":81,"has_risk":true,"preview":"    expected: { items: [ 5 ], page: 3, pageSize: 2, totalItems: 5, totalPages: 3 }, |     operator: 'deepStrictEqual',","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_7ae9f362","block_sha256":"7ae9f36287a7b02dfaeeccfe3e8e862251164de9ba907608d32daa3c8dd1b155","normalized_sha256":"d7409209b32f709003635567f6f63b000f323c5149515b38668a46fb5c280b9f","raw_id":"f166857b","line_count":8,"token_estimate":21,"has_risk":false,"preview":"  + actual - expected |   ","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_2185dbba","block_sha256":"2185dbba47b0f607ef04475de760621216b8383bb0b174eceb201766fe922974","normalized_sha256":"70c38337476372dbbbfd240993a38ce50d40d5152473520f82321c4ca3c0f43f","raw_id":"f166857b","line_count":8,"token_estimate":100,"has_risk":true,"preview":"  -     name: 'Apricot' |   -   }","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_63cd4dfc","block_sha256":"63cd4dfce6be3224305f92ce2e724dce4004f963c38cdf111dfd47f522e62bf4","normalized_sha256":"8611404e168cee2a4f33572ef276f81b756fa9c1bbe272eaa8d3cd3b9c2a0e87","raw_id":"f166857b","line_count":8,"token_estimate":92,"has_risk":false,"preview":"      at Test.postRun (node:internal/test_runner/test:1235:19) |       at Test.run (node:internal/test_runner/test:1163:12)","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_624e6f90","block_sha256":"624e6f90a68113d08ea6bdca90792d6be83788e68f7005d8b3b85b304ff6b060","normalized_sha256":"200ba5492aa63d222bb10a7ec68fe0d29f28906b2de6532c4a774da9a58827ab","raw_id":"f166857b","line_count":8,"token_estimate":52,"has_risk":true,"preview":"    diff: 'simple' |   }","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_7eed6aad","block_sha256":"7eed6aadd074ce19eb18f6dc2606a2e4509e0258a0364117844b250f40a1e0e6","normalized_sha256":"63c98110fc11326c3265e982b35b642801cf5fbb5ffc600e072b90790c09ac33","raw_id":"f166857b","line_count":8,"token_estimate":142,"has_risk":true,"preview":"   |       at TestContext.<anonymous> (file:///C:/Users/rafael/AppData/Local/Temp/aq-runs/candidate-codex-003/t01-bug-js-pagination__skills__r1/test/paginate.test.js:40:10)","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"block","block_id":"block_0d542516","block_sha256":"0d5425169b676410701c08b11367bf18f4d6d5f52edb46cc2f55c7d0925a635b","normalized_sha256":"a77275296bb98a146479cc1e29e6784aec5f45337f5dab7568618d8919cc804f","raw_id":"f166857b","line_count":8,"token_estimate":35,"has_risk":false,"preview":"    generatedMessage: true, |     code: 'ERR_ASSERTION',","created_at":"2026-10-18T07:13:29.525Z"}
++{"kind":"output","output_sha256":"30724f2e2f3663c898ccb0aaa281a4d5176ad32fbbf927b64202dbcc93d0404e","raw_id":"f166857b","command":"npm test","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071328582Z-f166857b.log","created_at":"2026-10-18T07:13:28.582Z"}
++{"kind":"block","block_id":"block_fd5186f9","block_sha256":"fd5186f9b4f09ca4db6352292faa968b0f54e4c1d450112caa047a064234159c","normalized_sha256":"44ef36cc043f04dac0b0c6e3f562a8af7a37df7ee3cdff1013bd509e6863e1e0","raw_id":"5475174f","line_count":8,"token_estimate":72,"has_risk":false,"preview":" | > catalog-search@0.4.0 test","created_at":"2026-10-18T07:13:37.718Z"}
++{"kind":"block","block_id":"block_855c2b17","block_sha256":"855c2b17f9647b4edac41a486bb067ac377674efb143877a574a8d40596eb847","normalized_sha256":"376a0969ad63a496623d0de3ea314e69ed412c9c06f8f427b60afc3bd956a3b4","raw_id":"5475174f","line_count":8,"token_estimate":43,"has_risk":false,"preview":"✔ empty results have zero pages (0.3488ms) | ✔ pages beyond the final partial page remain empty (0.1638ms)","created_at":"2026-10-18T07:13:37.718Z"}
++{"kind":"output","output_sha256":"8d85f12eb5642dc05c0379263b39466d1d12a5f5e5e01d454026f8cd35ebf525","raw_id":"5475174f","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071336789Z-5475174f.log","created_at":"2026-10-18T07:13:36.789Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"a3e87b9f","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071345031Z-a3e87b9f.log","created_at":"2026-10-18T07:13:45.031Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index c2e52c6..b3795a2 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:12:46.279Z",
++  "generated_at": "2026-10-18T07:13:05.351Z",
+   "root": "t01-bug-js-pagination__skills__r1",
+-  "total_files": 57,
++  "total_files": 75,
+   "stats": {
+-    "scanned_files": 57,
++    "scanned_files": 75,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 6ad839d..dc63e46 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t01-bug-js-pagination__skills__r1
+-Files indexed: 57
++Files indexed: 75
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..7d8c3ef 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,5 @@
++{"type":"command_run","raw_id":"f69c35ca","command":"rg -n page|pagination src test tests","exit_code":255,"raw_tokens_estimated":27,"compressed_tokens_estimated":44,"estimated_raw_tokens":27,"estimated_reduced_payload_tokens":44,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":85,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:13:10.934Z"}
++{"type":"command_run","raw_id":"76f46406","command":"npm test","exit_code":0,"raw_tokens_estimated":65,"compressed_tokens_estimated":66,"estimated_raw_tokens":65,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:13:19.157Z"}
++{"type":"command_run","raw_id":"f166857b","command":"npm test","exit_code":1,"raw_tokens_estimated":913,"compressed_tokens_estimated":409,"estimated_raw_tokens":913,"estimated_reduced_payload_tokens":409,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":442,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":504,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:13:29.777Z"}
++{"type":"command_run","raw_id":"5475174f","command":"npm test","exit_code":0,"raw_tokens_estimated":122,"compressed_tokens_estimated":66,"estimated_raw_tokens":122,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":56,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:13:37.869Z"}
++{"type":"command_run","raw_id":"a3e87b9f","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:13:45.235Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..931f281 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"f69c35ca","path":".soturail\\raw\\2026-10-18\\20261018T071310713Z-f69c35ca.log","command":"rg -n page|pagination src test tests","exit_code":255,"created_at":"2026-10-18T07:13:10.713Z","compressor":"generic-stream","raw_tokens_estimated":27,"compressed_tokens_estimated":44,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"869bfb09e0732cb8b23404cb28b82c41e73b9e82e255455548f91584fa49e413","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:13:10.713Z"}
++{"raw_id":"76f46406","path":".soturail\\raw\\2026-10-18\\20261018T071318081Z-76f46406.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:13:18.081Z","compressor":"test-reducer","raw_tokens_estimated":65,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"869bfb09e0732cb8b23404cb28b82c41e73b9e82e255455548f91584fa49e413","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:13:18.081Z"}
++{"raw_id":"f166857b","path":".soturail\\raw\\2026-10-18\\20261018T071328582Z-f166857b.log","command":"npm test","exit_code":1,"created_at":"2026-10-18T07:13:28.582Z","compressor":"test-reducer","raw_tokens_estimated":913,"compressed_tokens_estimated":409,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"7e08c8d86a23610921dfc7d87ccc86ca80557aa9ad0a1c55106e1c4cb4dece54","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:13:28.582Z"}
++{"raw_id":"5475174f","path":".soturail\\raw\\2026-10-18\\20261018T071336789Z-5475174f.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:13:36.789Z","compressor":"test-reducer","raw_tokens_estimated":122,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"cc5aa4f1b456adf965991736ab9f550db2d6d1b1bcd5b993f997167c06d99fef","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:13:36.789Z"}
++{"raw_id":"a3e87b9f","path":".soturail\\raw\\2026-10-18\\20261018T071345031Z-a3e87b9f.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:13:45.031Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"cc5aa4f1b456adf965991736ab9f550db2d6d1b1bcd5b993f997167c06d99fef","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:13:45.031Z"}
+diff --git a/src/paginate.js b/src/paginate.js
+index 05b5769..0df2342 100644
+--- a/src/paginate.js
++++ b/src/paginate.js
+@@ -1,5 +1,5 @@
+ export function totalPages(totalItems, pageSize) {
+-  return Math.floor(totalItems / pageSize);
++  return Math.ceil(totalItems / pageSize);
+ }
+ 
+ export function paginate(items, page, pageSize) {
+diff --git a/test/paginate.test.js b/test/paginate.test.js
+index 97c2891..20ec698 100644
+--- a/test/paginate.test.js
++++ b/test/paginate.test.js
+@@ -1,6 +1,7 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import { paginate } from "../src/paginate.js";
++import { search } from "../src/search.js";
+ 
+ test("first page of an evenly divisible list", () => {
+   const result = paginate([1, 2, 3, 4], 1, 2);
+@@ -11,3 +12,30 @@ test("first page of an evenly divisible list", () => {
+ test("rejects a non-positive page size", () => {
+   assert.throws(() => paginate([1], 1, 0), RangeError);
+ });
++
++test("includes a partially filled final page", () => {
++  const result = paginate([1, 2, 3, 4, 5], 3, 2);
++  assert.deepEqual(result, {
++    items: [5], page: 3, pageSize: 2, totalItems: 5, totalPages: 3
++  });
++});
++
++test("includes results when fewer items than the page size match", () => {
++  const catalog = [{ name: "Apple" }, { name: "Apricot" }, { name: "Pear" }];
++  const result = search(catalog, "ap", { pageSize: 20 });
++  assert.deepEqual(result.items, catalog.slice(0, 2));
++  assert.equal(result.totalPages, 1);
++  assert.equal(result.totalItems, 2);
++});
++
++test("empty results have zero pages", () => {
++  const result = paginate([], 1, 2);
++  assert.deepEqual(result.items, []);
++  assert.equal(result.totalPages, 0);
++});
++
++test("pages beyond the final partial page remain empty", () => {
++  const result = paginate([1, 2, 3], 3, 2);
++  assert.deepEqual(result.items, []);
++  assert.equal(result.totalPages, 2);
++});

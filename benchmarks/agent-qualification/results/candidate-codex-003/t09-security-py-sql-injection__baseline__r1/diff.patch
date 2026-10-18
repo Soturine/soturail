@@ -1,0 +1,82 @@
+diff --git a/directory/users.py b/directory/users.py
+index 4cdd414..1d7b455 100644
+--- a/directory/users.py
++++ b/directory/users.py
+@@ -2,12 +2,13 @@ ROLES = {"viewer", "editor", "admin"}
+ 
+ 
+ def search_users(conn, name_fragment):
+-    query = f"SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower('%{name_fragment}%') ORDER BY id"
+-    return [dict(row) for row in conn.execute(query)]
++    fragment = name_fragment.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
++    query = "SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower(?) ESCAPE '\\' ORDER BY id"
++    return [dict(row) for row in conn.execute(query, (f"%{fragment}%",))]
+ 
+ 
+ def get_user_by_email(conn, email):
+-    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = '" + email + "'").fetchone()
++    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = ?", (email,)).fetchone()
+     return dict(row) if row else None
+ 
+ 
+diff --git a/tests/test_users.py b/tests/test_users.py
+index 04d6180..c9ca8fc 100644
+--- a/tests/test_users.py
++++ b/tests/test_users.py
+@@ -1,12 +1,13 @@
+ import unittest
+ 
+ from directory.db import connect, seed
+-from directory.users import get_user_by_email, search_users
++from directory.users import get_user_by_email, search_users, set_role
+ 
+ 
+ class UsersTest(unittest.TestCase):
+     def setUp(self):
+         self.conn = connect()
++        self.addCleanup(self.conn.close)
+         seed(self.conn, [("Ana Lima", "ana@x.io", "admin"), ("Bruno", "bruno@x.io", "viewer")])
+ 
+     def test_search(self):
+@@ -15,6 +16,41 @@ class UsersTest(unittest.TestCase):
+     def test_get_by_email(self):
+         self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "viewer")
+ 
++    def test_search_injection_is_literal(self):
++        for fragment in ("') OR 1=1 --", "' UNION SELECT id, name, email, role FROM users --"):
++            with self.subTest(fragment=fragment):
++                self.assertEqual(search_users(self.conn, fragment), [])
++
++    def test_email_injection_does_not_return_user(self):
++        for email in ("' OR 1=1 --", "'; DROP TABLE users; --"):
++            with self.subTest(email=email):
++                self.assertIsNone(get_user_by_email(self.conn, email))
++        self.assertEqual(len(search_users(self.conn, "")), 2)
++
++    def test_quoted_values(self):
++        seed(self.conn, [("O'Neil", "o'neil@x.io", "viewer")])
++        self.assertEqual(search_users(self.conn, "O'N")[0]["name"], "O'Neil")
++        self.assertEqual(get_user_by_email(self.conn, "o'neil@x.io")["name"], "O'Neil")
++
++    def test_search_metacharacters_are_literal(self):
++        for fragment in ("%", "_", "\\", "\\%_"):
++            with self.subTest(fragment=fragment):
++                name = "Literal " + fragment
++                seed(self.conn, [(name, name + "@x.io", "viewer")])
++                self.assertEqual([u["name"] for u in search_users(self.conn, fragment)], [name])
++
++    def test_search_case_and_order(self):
++        seed(self.conn, [("ANA Silva", "silva@x.io", "editor")])
++        self.assertEqual([u["name"] for u in search_users(self.conn, "ANA")], ["Ana Lima", "ANA Silva"])
++
++    def test_role_validation_and_parameter_binding(self):
++        set_role(self.conn, 2, "editor")
++        self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "editor")
++        with self.assertRaises(ValueError):
++            set_role(self.conn, 2, "admin'; --")
++        set_role(self.conn, "2 OR 1=1", "admin")
++        self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "editor")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

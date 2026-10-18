@@ -1,0 +1,297 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..3c9e181 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,15 @@
++{"kind":"block","block_id":"block_382db52e","block_sha256":"382db52e8db53cf3484ab9624008456e6506f460be20b15a21fd5800a7649b96","normalized_sha256":"13fe8d9b05bea92fe2d6e3ea6ffce514cdcced2f85b0b94b12914b5245de839b","raw_id":"96562dbf","line_count":8,"token_estimate":55,"has_risk":false,"preview":" | > asset-server@0.9.1 test","created_at":"2026-10-18T07:21:25.717Z"}
++{"kind":"block","block_id":"block_cecce8a7","block_sha256":"cecce8a7f9a10161164bf8de9a96a77a3961da7aacf68bfd314d04ee59095f4b","normalized_sha256":"4d3f7ed8105595c285e7a79fd7107dfbf061e7551633cab3f7d258d02db13760","raw_id":"96562dbf","line_count":8,"token_estimate":22,"has_risk":false,"preview":"ℹ suites 0 | ℹ pass 2","created_at":"2026-10-18T07:21:25.717Z"}
++{"kind":"block","block_id":"block_49b3773b","block_sha256":"49b3773ba75b00ca6bde83aa2ccc5e7017c34eb26eb42366060a82935e8f62d3","normalized_sha256":"9a78ad7a08ccca216aa909b2a434ef59620b1b22761c56055131e18f1da01cbc","raw_id":"96562dbf","line_count":8,"token_estimate":53,"has_risk":true,"preview":"✖ failing tests: | ","created_at":"2026-10-18T07:21:25.717Z"}
++{"kind":"block","block_id":"block_ceee0e07","block_sha256":"ceee0e0745bc7695f71a82aaad24d66e1984522dbf97b7ac3356b1dfdc35e468","normalized_sha256":"f3b49672ca4111f4cad8c0abb4d9921d11be3497a3c09d5b011f5196ad612c40","raw_id":"96562dbf","line_count":8,"token_estimate":111,"has_risk":true,"preview":"      at TestContext.<anonymous> (file:///C:/Users/rafael/AppData/Local/Temp/aq-runs/candidate-codex-003/t08-security-js-path-traversal__skills__r1/test/static.test.js:42:12) |       at async Test.run (node:internal/test_runner/test:1113:7)","created_at":"2026-10-18T07:21:25.717Z"}
++{"kind":"output","output_sha256":"fcbea41c2fe24bebb875a83229004e0651b47fe579f39081d00ddd2420dca0fc","raw_id":"96562dbf","command":"npm test","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072124552Z-96562dbf.log","created_at":"2026-10-18T07:21:24.552Z"}
++{"kind":"block","block_id":"block_c5c701cc","block_sha256":"c5c701cc834551e5171c4cc3a044391c4a1b754d62290e9dc331a501085b3aed","normalized_sha256":"43d9b0bf2e41148d153084c98cbb0f6d261f42394c80bc7571d42a9d4a0a1a6d","raw_id":"65ab5c49","line_count":8,"token_estimate":54,"has_risk":false,"preview":" | > asset-server@0.9.1 test","created_at":"2026-10-18T07:21:37.399Z"}
++{"kind":"block","block_id":"block_8011cc6a","block_sha256":"8011cc6a8860d0b60467a5a9cc7be9215f53a82f7a5313441a38162f324b8bd3","normalized_sha256":"ed861df809cff10cef6c582f9de64d3d2002af7e6ca2ea0042fed3b5426eb542","raw_id":"65ab5c49","line_count":8,"token_estimate":22,"has_risk":false,"preview":"ℹ suites 0 | ℹ pass 3","created_at":"2026-10-18T07:21:37.399Z"}
++{"kind":"output","output_sha256":"30ab0805f6bc000018250befda0ddcfe388fce71e2801101f62a8be10fe6e757","raw_id":"65ab5c49","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072136440Z-65ab5c49.log","created_at":"2026-10-18T07:21:36.440Z"}
++{"kind":"block","block_id":"block_945c5a6b","block_sha256":"945c5a6bdb8a0d935732e52298aec89b35e7b652e9f443f185b84a5013f23ba3","normalized_sha256":"e0f3c2d4f06df7c2acb312d748aa37f37ddc18b1ba960ca28294ec64a03b3352","raw_id":"588d3274","line_count":8,"token_estimate":54,"has_risk":false,"preview":" | > asset-server@0.9.1 test","created_at":"2026-10-18T07:21:53.721Z"}
++{"kind":"block","block_id":"block_a930261d","block_sha256":"a930261dfb892a72b6474e9ad0ff328e6f552a1047906869225bee85e77ea575","normalized_sha256":"f5e1653f82ace50ef3f83c2b73ffcc650219e5a0369f9453e5cf35f18eec2c5f","raw_id":"588d3274","line_count":8,"token_estimate":22,"has_risk":false,"preview":"ℹ suites 0 | ℹ pass 3","created_at":"2026-10-18T07:21:53.721Z"}
++{"kind":"output","output_sha256":"e24e21b9d02d895566a9e2033831b57bfc3aa37ebf26dc64a82fb88f86f1b6da","raw_id":"588d3274","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072152582Z-588d3274.log","created_at":"2026-10-18T07:21:52.582Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"ad4a5cba","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072154762Z-ad4a5cba.log","created_at":"2026-10-18T07:21:54.762Z"}
++{"kind":"block","block_id":"block_a05925ee","block_sha256":"a05925ee07f801b7535d85e442ee18dbe35f8b7961861e26932151850c0e252c","normalized_sha256":"b3cf022a5bfe1010e598da985b125244e691caeaaf5d1f0501b6ff33ce4851c6","raw_id":"3f10805f","line_count":8,"token_estimate":54,"has_risk":false,"preview":" | > asset-server@0.9.1 test","created_at":"2026-10-18T07:22:09.997Z"}
++{"kind":"block","block_id":"block_25fa3f00","block_sha256":"25fa3f00c654a4c19646fac69ceed2629ce60b4eff11f1782a1f3144cd70ed74","normalized_sha256":"cd588da6bcabdf6804fec979f93bc715854c74752f7d80f8af675111ecda05fc","raw_id":"3f10805f","line_count":8,"token_estimate":22,"has_risk":false,"preview":"ℹ suites 0 | ℹ pass 3","created_at":"2026-10-18T07:22:09.997Z"}
++{"kind":"output","output_sha256":"cac471a7bdc97c6d051ea3338347e4d8e48e6961252773f605973dcd700013c2","raw_id":"3f10805f","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072208991Z-3f10805f.log","created_at":"2026-10-18T07:22:08.991Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index 3dcc400..a072eda 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:20:42.045Z",
++  "generated_at": "2026-10-18T07:20:54.811Z",
+   "root": "t08-security-js-path-traversal__skills__r1",
+-  "total_files": 60,
++  "total_files": 78,
+   "stats": {
+-    "scanned_files": 60,
++    "scanned_files": 78,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 8e262e6..89072ec 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t08-security-js-path-traversal__skills__r1
+-Files indexed: 60
++Files indexed: 78
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..7584741 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,5 @@
++{"type":"command_run","raw_id":"96562dbf","command":"npm test","exit_code":1,"raw_tokens_estimated":247,"compressed_tokens_estimated":184,"estimated_raw_tokens":247,"estimated_reduced_payload_tokens":184,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":217,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":63,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:21:25.953Z"}
++{"type":"command_run","raw_id":"65ab5c49","command":"npm test","exit_code":0,"raw_tokens_estimated":76,"compressed_tokens_estimated":66,"estimated_raw_tokens":76,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":10,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:21:37.526Z"}
++{"type":"command_run","raw_id":"588d3274","command":"npm test","exit_code":0,"raw_tokens_estimated":76,"compressed_tokens_estimated":66,"estimated_raw_tokens":76,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":10,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:21:53.864Z"}
++{"type":"command_run","raw_id":"ad4a5cba","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:21:55.085Z"}
++{"type":"command_run","raw_id":"3f10805f","command":"npm test","exit_code":0,"raw_tokens_estimated":76,"compressed_tokens_estimated":66,"estimated_raw_tokens":76,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":10,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:22:10.146Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..041a3bd 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"96562dbf","path":".soturail\\raw\\2026-10-18\\20261018T072124552Z-96562dbf.log","command":"npm test","exit_code":1,"created_at":"2026-10-18T07:21:24.552Z","compressor":"test-reducer","raw_tokens_estimated":247,"compressed_tokens_estimated":184,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"efb52312d068228a0cfc7a2338d93ff8cc19825552c3a0ee60bf437ad06fc851","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:21:24.552Z"}
++{"raw_id":"65ab5c49","path":".soturail\\raw\\2026-10-18\\20261018T072136440Z-65ab5c49.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:21:36.440Z","compressor":"test-reducer","raw_tokens_estimated":76,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"e8e846074b943577d0b771257bb204493e2ff537e3b8dafc5165de2f2574722d","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:21:36.440Z"}
++{"raw_id":"588d3274","path":".soturail\\raw\\2026-10-18\\20261018T072152582Z-588d3274.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:21:52.582Z","compressor":"test-reducer","raw_tokens_estimated":76,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d74b7c534bb8d28e00718c7449255410bcc5bcbff23327ef31052de45fd11279","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:21:52.582Z"}
++{"raw_id":"ad4a5cba","path":".soturail\\raw\\2026-10-18\\20261018T072154762Z-ad4a5cba.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:21:54.762Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d74b7c534bb8d28e00718c7449255410bcc5bcbff23327ef31052de45fd11279","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:21:54.762Z"}
++{"raw_id":"3f10805f","path":".soturail\\raw\\2026-10-18\\20261018T072208991Z-3f10805f.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:22:08.991Z","compressor":"test-reducer","raw_tokens_estimated":76,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d74b7c534bb8d28e00718c7449255410bcc5bcbff23327ef31052de45fd11279","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:22:08.991Z"}
+diff --git a/src/static.js b/src/static.js
+index f2f38b9..1b4ccde 100644
+--- a/src/static.js
++++ b/src/static.js
+@@ -3,11 +3,22 @@ import path from "node:path";
+ 
+ const TYPES = { ".html": "text/html", ".css": "text/css", ".txt": "text/plain" };
+ 
++function isWithin(root, target) {
++  const relative = path.relative(root, target);
++  return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
++}
++
+ // Resolves a request path such as "/css/site.css" against the public root.
+ export async function serveStatic(publicRoot, requestPath) {
+-  const decoded = decodeURIComponent(requestPath.split("?")[0]);
+-  const target = path.join(publicRoot, decoded);
+   try {
++    const decoded = decodeURIComponent(requestPath.split("?")[0]).replaceAll("\\", "/");
++    // Reject drive paths and Windows alternate data streams on every platform.
++    if (decoded.includes(":") || decoded.includes("\0")) throw new Error("invalid path");
++    const root = await fs.realpath(publicRoot);
++    const requested = path.resolve(root, `.${decoded.startsWith("/") ? "" : "/"}${decoded}`);
++    if (!isWithin(root, requested)) throw new Error("outside public root");
++    const target = await fs.realpath(requested);
++    if (!isWithin(root, target)) throw new Error("outside public root");
+     const body = await fs.readFile(target);
+     return { status: 200, type: TYPES[path.extname(target)] ?? "application/octet-stream", body };
+   } catch {
+diff --git a/test/static.test.js b/test/static.test.js
+index b9d6e6e..60ccace 100644
+--- a/test/static.test.js
++++ b/test/static.test.js
+@@ -1,6 +1,8 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import path from "node:path";
++import { promises as fs } from "node:fs";
++import os from "node:os";
+ import { serveStatic } from "../src/static.js";
+ 
+ const root = path.resolve("public");
+@@ -14,3 +16,35 @@ test("serves a nested file", async () => {
+ test("missing file is 404", async () => {
+   assert.equal((await serveStatic(root, "/nope.txt")).status, 404);
+ });
++
++test("contains decoded paths and symlinks within the public directory", async (t) => {
++  const fixture = await fs.mkdtemp(path.join(os.tmpdir(), "static-containment-"));
++  t.after(() => fs.rm(fixture, { recursive: true, force: true }));
++  const publicRoot = path.join(fixture, "public");
++  const outside = path.join(fixture, "public-other");
++  await fs.mkdir(publicRoot);
++  await fs.mkdir(outside);
++  await fs.writeFile(path.join(outside, "example.txt"), "outside fixture");
++  await fs.writeFile(path.join(publicRoot, "notes..v2.txt"), "public fixture");
++  await fs.symlink(outside, path.join(publicRoot, "linked"), process.platform === "win32" ? "junction" : "dir");
++  await fs.symlink(publicRoot, path.join(publicRoot, "inside"), process.platform === "win32" ? "junction" : "dir");
++
++  for (const request of [
++    "/../public-other/example.txt",
++    "/%2e%2e/public-other/example.txt",
++    "/..%2fpublic-other%2fexample.txt",
++    "/..%5cpublic-other%5cexample.txt",
++    "/..\\public-other\\example.txt",
++    "/linked/example.txt",
++    "/%", "/%ZZ", "/%00", "/C:/example.txt",
++  ]) {
++    const result = await serveStatic(publicRoot, request);
++    assert.equal(result.status, 404, request);
++    assert.equal(result.body.toString(), "not found", request);
++  }
++  for (const request of ["/notes..v2.txt", "/notes%2e%2ev2.txt?download=1", "/inside/notes..v2.txt"]) {
++    const result = await serveStatic(publicRoot, request);
++    assert.equal(result.status, 200, request);
++    assert.equal(result.body.toString(), "public fixture");
++  }
++});

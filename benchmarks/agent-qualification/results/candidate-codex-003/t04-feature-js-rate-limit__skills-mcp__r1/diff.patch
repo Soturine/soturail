@@ -1,0 +1,357 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..7781388 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,27 @@
++{"kind":"output","output_sha256":"8ece47e68f1108dfd6eb602bea268d59fcb5781ecfe1cda8c896f651c12fda38","raw_id":"18a43f43","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071639755Z-18a43f43.log","created_at":"2026-10-18T07:16:39.755Z"}
++{"kind":"block","block_id":"block_e65b7c3f","block_sha256":"e65b7c3fd15c9b37fc7151a32909b1ff6f0ba7d78131038948d74cb4b2cb043e","normalized_sha256":"cfd74235fb05bb4d44168b06b5787b7d59a27b7e90ff0004bd4067ce5bcc0974","raw_id":"9f8ad057","line_count":8,"token_estimate":81,"has_risk":false,"preview":" | > tiny-limiter@1.0.0 test","created_at":"2026-10-18T07:17:12.520Z"}
++{"kind":"block","block_id":"block_bf3bfb4f","block_sha256":"bf3bfb4f31aa0a1b74ab38b87aa6bcf741efd00e90c8041c50e7337f138f96aa","normalized_sha256":"065f9489ab1cd06431d174144a4a44b0bf1ebc351844ca801e6ac45e659d5734","raw_id":"9f8ad057","line_count":8,"token_estimate":48,"has_risk":false,"preview":"✔ validates override limits (0.2466ms) | ✖ only own override keys replace the default, including special property names (0.997ms)","created_at":"2026-10-18T07:17:12.520Z"}
++{"kind":"block","block_id":"block_ca3bf2e3","block_sha256":"ca3bf2e3421bef24e68f0dbc421a845f06a74dc13e47443417204e9cbe677f03","normalized_sha256":"39fd5a116787eda43ba922190f4c897601e191aa59ae9a18a26982c6b0c6ce14","raw_id":"9f8ad057","line_count":8,"token_estimate":62,"has_risk":true,"preview":"ℹ todo 0 | ℹ duration_ms 108.4546","created_at":"2026-10-18T07:17:12.520Z"}
++{"kind":"block","block_id":"block_44c08e13","block_sha256":"44c08e132d67f0ce528e63c37de2d40584df2dc3a1cfaea0daff05dd853c3986","normalized_sha256":"7d60da04d799177b6c49e6a84ed2df31d08c77c13f834b43cb9812ee6e15c8bf","raw_id":"9f8ad057","line_count":8,"token_estimate":112,"has_risk":true,"preview":"   |   2 !== 3","created_at":"2026-10-18T07:17:12.520Z"}
++{"kind":"block","block_id":"block_4ba5662c","block_sha256":"4ba5662c51169908e8d7c5433b167b92dc457cb1171bb6f0fce48dd8d7a770da","normalized_sha256":"8a965b6526eb94f7ab2dcfdcd4745f6a0bcfa8330c0ea4b1667125f9937cbe95","raw_id":"9f8ad057","line_count":8,"token_estimate":70,"has_risk":false,"preview":"      at Test.run (node:internal/test_runner/test:1163:12) |       at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {","created_at":"2026-10-18T07:17:12.520Z"}
++{"kind":"output","output_sha256":"51a1748c69eee03ab5415749ef5f824474a581317c604b7ee3c412b6171cd843","raw_id":"9f8ad057","command":"npm test","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071711680Z-9f8ad057.log","created_at":"2026-10-18T07:17:11.680Z"}
++{"kind":"block","block_id":"block_6be4e348","block_sha256":"6be4e3489938a2886bd6eb4ed03f6cd0ae3424339069f3a74071f2422479d7df","normalized_sha256":"3afdec8fc8eb81b48deb8d97ba0dd62f5106100ee2f852daec0baa4a5888191a","raw_id":"3799686f","line_count":8,"token_estimate":81,"has_risk":false,"preview":" | > tiny-limiter@1.0.0 test","created_at":"2026-10-18T07:17:21.663Z"}
++{"kind":"block","block_id":"block_e1fb4917","block_sha256":"e1fb491723cd4a2093b782b799340833c77988954f1d35004e15b6e40dadfe21","normalized_sha256":"34f61a744b55d5ecdd236082e2f9425884a084a364d7215e33727e38de03f1b8","raw_id":"3799686f","line_count":8,"token_estimate":49,"has_risk":false,"preview":"✔ validates override limits (0.4143ms) | ✔ only own override keys replace the default, including special property names (0.2185ms)","created_at":"2026-10-18T07:17:21.663Z"}
++{"kind":"output","output_sha256":"ff50ee6c91cd600537d13496f426c024c7913537acc784f64704340282d92bc9","raw_id":"3799686f","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071720904Z-3799686f.log","created_at":"2026-10-18T07:17:20.904Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"ea461d5b","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071722855Z-ea461d5b.log","created_at":"2026-10-18T07:17:22.855Z"}
++{"kind":"block","block_id":"block_628624ae","block_sha256":"628624ae5794e7df1f8940ea1069835fbbee22130634575d0607996eb3907a81","normalized_sha256":"94dd860ba8938d05ee8cdcd0aa758e941ed9bf34eedf12d37bbd3a4365b2d6f9","raw_id":"c3179991","line_count":8,"token_estimate":51,"has_risk":false,"preview":"diff --git a/README.md b/README.md | index 62d7bd3..28f1f1f 100644","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_ce45065f","block_sha256":"ce45065fb773cbdb13b9f051b16e7ed1a13488a39526e28b31f353cf1ba7a828","normalized_sha256":"5dde5b70ee9dbb6946833c37f7094d53827063b0878a26719de525649cb1effe","raw_id":"c3179991","line_count":8,"token_estimate":75,"has_risk":false,"preview":"-const limiter = createLimiter({ limit: 100, windowMs: 60_000 }); | +const limiter = createLimiter({","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_46b454cf","block_sha256":"46b454cf984be0c8d82aea577d8756f539520cc9cb53ac38c0f8ba22e930f560","normalized_sha256":"6a26847635760ce25ea8963d82a36b0009451038cfa8f563459c1f2f974e702d","raw_id":"c3179991","line_count":8,"token_estimate":86,"has_risk":false,"preview":"+limiter.remaining(\"client-a\"); // 199 |  ```","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_755da34e","block_sha256":"755da34ed909c9658939ddd3e5086e3106e909b762e2764f81d5024d655c9c46","normalized_sha256":"ffad9813b372a2f26ca5b9ec239edf7c90d61a93a4c8249533ec9045c2e09379","raw_id":"c3179991","line_count":8,"token_estimate":124,"has_risk":false,"preview":" - `now` (function, optional) — clock, defaults to `Date.now`. Windows start at multiples of `windowMs`. | +","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_02551a58","block_sha256":"02551a5832f1364c99dffef928421a373816ac00f245f8b90ef2d09e56873822","normalized_sha256":"d2ed34b2d465c005f9e9bf9cc6f4116839afdb174e30a3551cda1072be4cdca5","raw_id":"c3179991","line_count":8,"token_estimate":103,"has_risk":false,"preview":"   if (!Number.isInteger(value) || value <= 0) throw new RangeError(`${name} must be a positive integer`); |  }","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_0916ac47","block_sha256":"0916ac479879663229c7f3959e30e9840b9341a98435e45eecf2c97373f25789","normalized_sha256":"ec996f560a34f30a1810eb16351a4cdecc51a98880b397f0979644d7ddb7ec1d","raw_id":"c3179991","line_count":8,"token_estimate":60,"has_risk":false,"preview":"+  for (const [key, value] of limits) assertPositiveInteger(`overrides[${key}]`, value); |    const counters = new Map();","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_d85b12a4","block_sha256":"d85b12a4bf3e13c6e82f063f223f3459a47d325453b29cf6e723fce1c63cdee3","normalized_sha256":"3fe4296dbc782122081da3ff2fc42da19df07f3f0e9f92ba7d8feed60436323e","raw_id":"c3179991","line_count":8,"token_estimate":91,"has_risk":false,"preview":"     const windowStart = Math.floor(now() / windowMs) * windowMs; |      const current = counters.get(key);","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_4693492b","block_sha256":"4693492b7f03ecf411b7b98338634e4bcc454c05c804f3b04db72157f1464792","normalized_sha256":"4e329c9757d57c96c04330479741797baade62a3e5a46ca94e0b20e39456ca5d","raw_id":"c3179991","line_count":8,"token_estimate":38,"has_risk":false,"preview":"       entry.count += 1; |        return true;","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_5b377be6","block_sha256":"5b377be68a49acd87dd36a43cab3e5ae1cb88e89e981ad2520aa0922b9f2019f","normalized_sha256":"1289f79ebb51e256f42beb9b5cb4ea14d63077b0fbfcf8abfeb354399e9caaa6","raw_id":"c3179991","line_count":8,"token_estimate":88,"has_risk":false,"preview":"diff --git a/test/limiter.test.js b/test/limiter.test.js | index e3eaf9d..40455b6 100644","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_a94642ba","block_sha256":"a94642ba8a3f14a23ecb1a865f984995cd31ddd637ce202e0a81077485046439","normalized_sha256":"b708135dabedcf5cc81a7a9275d5babcf1272f52561258a17a9b6663314867fb","raw_id":"c3179991","line_count":8,"token_estimate":78,"has_risk":false,"preview":"+ | +test(\"uses independent override and default budgets and resets at the boundary\", () => {","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_93842d7a","block_sha256":"93842d7accbfbe461198b2cda059784c6fa8c5df936f604bb8376a0af7c52d64","normalized_sha256":"b57475684a112f38b1258990353ca0849eb9582a530cba0149efff780b2a42c7","raw_id":"c3179991","line_count":8,"token_estimate":90,"has_risk":false,"preview":"+    assert.equal(limiter.remaining(key), budget); | +    assert.equal(limiter.remaining(key), budget);","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_828bd055","block_sha256":"828bd055d2f0c9604691d006e5dc992d2b40e5cc434dbd18224e23e79eb7fc00","normalized_sha256":"198832fc275908c4375089e0f67ecfb3f01c6627e019d43f00683e20300ac787","raw_id":"c3179991","line_count":8,"token_estimate":67,"has_risk":false,"preview":"+  } | +  t = 1000;","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_bafa20e7","block_sha256":"bafa20e7dd81a5920392ae210299b9b2880ce5a2d4b50074f64d193f593dc45f","normalized_sha256":"90b1a49d9834aa8df2613bffc914aece965368033b3d4c0559beae8f49cd706c","raw_id":"c3179991","line_count":8,"token_estimate":83,"has_risk":false,"preview":"+ | +test(\"remaining works without overrides and after skipping windows\", () => {","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_0e8dce66","block_sha256":"0e8dce667a1f3363c5aaadb9df7340aa57d43c65f1a4101f0223264dc7718765","normalized_sha256":"b6d9ea4e2f55cd0de45f3312560dee8ee771f4473dd4f716af7496e30a64b83c","raw_id":"c3179991","line_count":8,"token_estimate":70,"has_risk":false,"preview":"+  t = 5000; | +  assert.equal(limiter.remaining(\"a\"), 2);","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"block","block_id":"block_5f9861ef","block_sha256":"5f9861ef4e3608e37e377fd3c49cee308dc75ba96c5c2f0e97aee1f4f6e87302","normalized_sha256":"c861a7dbb5e464754d00541bdc11a98bb54426b1363eac37d7e845ea9627ea3b","raw_id":"c3179991","line_count":8,"token_estimate":74,"has_risk":false,"preview":"+    }), RangeError); | +  }","created_at":"2026-10-18T07:17:32.958Z"}
++{"kind":"output","output_sha256":"636e108ea86bd3cdf118397cadbb89256c9ded745746534ecb5457c511ab97e2","raw_id":"c3179991","command":"git diff src/limiter.js README.md test/limiter.test.js","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T071732863Z-c3179991.log","created_at":"2026-10-18T07:17:32.863Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index a94105b..beabb94 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:16:18.232Z",
++  "generated_at": "2026-10-18T07:16:31.236Z",
+   "root": "t04-feature-js-rate-limit__skills-mcp__r1",
+-  "total_files": 56,
++  "total_files": 74,
+   "stats": {
+-    "scanned_files": 56,
++    "scanned_files": 74,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index cab8fd3..89aa7b5 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t04-feature-js-rate-limit__skills-mcp__r1
+-Files indexed: 56
++Files indexed: 74
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..9bef78f 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,5 @@
++{"type":"command_run","raw_id":"18a43f43","command":"git status --short","exit_code":0,"raw_tokens_estimated":24,"compressed_tokens_estimated":76,"estimated_raw_tokens":24,"estimated_reduced_payload_tokens":76,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":111,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:16:40.026Z"}
++{"type":"command_run","raw_id":"9f8ad057","command":"npm test","exit_code":1,"raw_tokens_estimated":373,"compressed_tokens_estimated":249,"estimated_raw_tokens":373,"estimated_reduced_payload_tokens":249,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":282,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":124,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:17:12.677Z"}
++{"type":"command_run","raw_id":"3799686f","command":"npm test","exit_code":0,"raw_tokens_estimated":138,"compressed_tokens_estimated":66,"estimated_raw_tokens":138,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":72,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:17:21.786Z"}
++{"type":"command_run","raw_id":"ea461d5b","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:17:23.124Z"}
++{"type":"command_run","raw_id":"c3179991","command":"git diff src/limiter.js README.md test/limiter.test.js","exit_code":0,"raw_tokens_estimated":1250,"compressed_tokens_estimated":1002,"estimated_raw_tokens":1250,"estimated_reduced_payload_tokens":1002,"estimated_soturail_metadata_tokens":44,"estimated_net_tokens_sent":1046,"summary_overhead_tokens":44,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":248,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:17:33.234Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..9604cd9 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"18a43f43","path":".soturail\\raw\\2026-10-18\\20261018T071639755Z-18a43f43.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T07:16:39.755Z","compressor":"git-reducer","raw_tokens_estimated":24,"compressed_tokens_estimated":76,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"d6a4774c5f6421a852035dfa77979dfe38380ba51ebabf644ea13448ca1bc45a","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:16:39.755Z"}
++{"raw_id":"9f8ad057","path":".soturail\\raw\\2026-10-18\\20261018T071711680Z-9f8ad057.log","command":"npm test","exit_code":1,"created_at":"2026-10-18T07:17:11.680Z","compressor":"test-reducer","raw_tokens_estimated":373,"compressed_tokens_estimated":249,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"ae0cc0e24c4417de074eb11042f5600a488c55279e34aaa5bbaf6eeb92faa2f0","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:17:11.680Z"}
++{"raw_id":"3799686f","path":".soturail\\raw\\2026-10-18\\20261018T071720904Z-3799686f.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:17:20.904Z","compressor":"test-reducer","raw_tokens_estimated":138,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"1efda8a12377bc15a078b5f42c725f191a8aeb5736431cfba0616b7f1529e893","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:17:20.904Z"}
++{"raw_id":"ea461d5b","path":".soturail\\raw\\2026-10-18\\20261018T071722855Z-ea461d5b.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:17:22.855Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"1efda8a12377bc15a078b5f42c725f191a8aeb5736431cfba0616b7f1529e893","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:17:22.855Z"}
++{"raw_id":"c3179991","path":".soturail\\raw\\2026-10-18\\20261018T071732863Z-c3179991.log","command":"git diff src/limiter.js README.md test/limiter.test.js","exit_code":0,"created_at":"2026-10-18T07:17:32.863Z","compressor":"git-reducer","raw_tokens_estimated":1250,"compressed_tokens_estimated":1002,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"1efda8a12377bc15a078b5f42c725f191a8aeb5736431cfba0616b7f1529e893","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:17:32.863Z"}
+diff --git a/README.md b/README.md
+index 62d7bd3..28f1f1f 100644
+--- a/README.md
++++ b/README.md
+@@ -4,12 +4,21 @@ Fixed-window rate limiter.
+ 
+ ```js
+ import { createLimiter } from "./src/limiter.js";
+-const limiter = createLimiter({ limit: 100, windowMs: 60_000 });
++const limiter = createLimiter({
++  limit: 100,
++  windowMs: 60_000,
++  overrides: { "client-a": 200 }
++});
++limiter.remaining("client-a"); // 200
+ limiter.tryAcquire("client-a"); // true while the key has budget in the current window
++limiter.remaining("client-a"); // 199
+ ```
+ 
+ Options:
+ 
+ - `limit` (positive integer, required) — requests allowed per key per window.
+ - `windowMs` (positive integer, required) — window length.
++- `overrides` (object, optional) — own string keys mapped to positive integer limits, replacing `limit` for those keys. Other keys use `limit`.
+ - `now` (function, optional) — clock, defaults to `Date.now`. Windows start at multiples of `windowMs`.
++
++`remaining(key)` returns the number of requests still available in the current window without consuming a request. It returns zero when exhausted and resets to the key's limit at the next window boundary.
+diff --git a/src/limiter.js b/src/limiter.js
+index 5e2455e..6258968 100644
+--- a/src/limiter.js
++++ b/src/limiter.js
+@@ -2,11 +2,17 @@ function assertPositiveInteger(name, value) {
+   if (!Number.isInteger(value) || value <= 0) throw new RangeError(`${name} must be a positive integer`);
+ }
+ 
+-export function createLimiter({ limit, windowMs, now = Date.now }) {
++export function createLimiter({ limit, windowMs, now = Date.now, overrides = {} }) {
+   assertPositiveInteger("limit", limit);
+   assertPositiveInteger("windowMs", windowMs);
++  const limits = new Map(Object.entries(overrides));
++  for (const [key, value] of limits) assertPositiveInteger(`overrides[${key}]`, value);
+   const counters = new Map();
+ 
++  function limitFor(key) {
++    return limits.has(key) ? limits.get(key) : limit;
++  }
++
+   function bucket(key) {
+     const windowStart = Math.floor(now() / windowMs) * windowMs;
+     const current = counters.get(key);
+@@ -21,9 +27,12 @@ export function createLimiter({ limit, windowMs, now = Date.now }) {
+   return {
+     tryAcquire(key) {
+       const entry = bucket(key);
+-      if (entry.count >= limit) return false;
++      if (entry.count >= limitFor(key)) return false;
+       entry.count += 1;
+       return true;
++    },
++    remaining(key) {
++      return Math.max(0, limitFor(key) - bucket(key).count);
+     }
+   };
+ }
+diff --git a/test/limiter.test.js b/test/limiter.test.js
+index e3eaf9d..40455b6 100644
+--- a/test/limiter.test.js
++++ b/test/limiter.test.js
+@@ -15,3 +15,57 @@ test("blocks after limit within a window and resets next window", () => {
+ test("validates options", () => {
+   assert.throws(() => createLimiter({ limit: 0, windowMs: 10 }), RangeError);
+ });
++
++test("uses independent override and default budgets and resets at the boundary", () => {
++  let t = 999;
++  const limiter = createLimiter({
++    limit: 2, windowMs: 1000, now: () => t,
++    overrides: { small: 1, large: 3 }
++  });
++  for (const [key, budget] of [["small", 1], ["large", 3], ["default", 2]]) {
++    assert.equal(limiter.remaining(key), budget);
++    assert.equal(limiter.remaining(key), budget);
++    for (let i = 0; i < budget; i++) {
++      assert.equal(limiter.tryAcquire(key), true);
++      assert.equal(limiter.remaining(key), budget - i - 1);
++    }
++    assert.equal(limiter.tryAcquire(key), false);
++    assert.equal(limiter.remaining(key), 0);
++  }
++  t = 1000;
++  assert.equal(limiter.remaining("small"), 1);
++  assert.equal(limiter.remaining("large"), 3);
++  assert.equal(limiter.remaining("default"), 2);
++  assert.equal(limiter.tryAcquire("small"), true);
++  assert.equal(limiter.remaining("small"), 0);
++});
++
++test("remaining works without overrides and after skipping windows", () => {
++  let t = 0;
++  const limiter = createLimiter({ limit: 2, windowMs: 1000, now: () => t });
++  assert.equal(limiter.remaining("a"), 2);
++  limiter.tryAcquire("a");
++  assert.equal(limiter.remaining("a"), 1);
++  assert.equal(limiter.remaining("b"), 2);
++  t = 5000;
++  assert.equal(limiter.remaining("a"), 2);
++});
++
++test("validates override limits", () => {
++  for (const value of [0, -1, 1.5, NaN, Infinity, "2", null, undefined]) {
++    assert.throws(() => createLimiter({
++      limit: 2, windowMs: 1000, overrides: { a: value }
++    }), RangeError);
++  }
++});
++
++test("only own override keys replace the default, including special property names", () => {
++  const overrides = Object.create({ inherited: 1 });
++  overrides.constructor = 1;
++  Object.defineProperty(overrides, "__proto__", { value: 3, enumerable: true });
++  const limiter = createLimiter({ limit: 2, windowMs: 1000, overrides });
++  assert.equal(limiter.remaining("inherited"), 2);
++  assert.equal(limiter.remaining("toString"), 2);
++  assert.equal(limiter.remaining("constructor"), 1);
++  assert.equal(limiter.remaining("__proto__"), 3);
++});

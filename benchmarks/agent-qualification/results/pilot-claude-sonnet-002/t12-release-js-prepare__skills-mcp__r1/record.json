@@ -86,6 +86,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [
       "soturail-release"
@@ -157,5 +159,14 @@
       "soturail:connected"
     ]
   },
-  "transcriptSha256": "6a76a8665fdbf7d102b1d93e8bd6b6b1ebbcd774f0ef4d1abba1200fc32c8ed1"
+  "transcriptSha256": "6a76a8665fdbf7d102b1d93e8bd6b6b1ebbcd774f0ef4d1abba1200fc32c8ed1",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:29:14.547Z"
+    }
+  ],
+  "oracleDigest": "a84f0e999a1d9bc23a68f0e1f0465c1a1fa974b46936e460f28cdf27075aa821"
 }

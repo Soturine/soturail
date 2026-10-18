@@ -80,6 +80,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [],
     "skillRecall": 0,
@@ -147,5 +149,14 @@
       "soturail:connected"
     ]
   },
-  "transcriptSha256": "a456f1b582c5b08a0b9a754aca0c60d6916373a3e49e0a937ebcfc21fb2bd6cd"
+  "transcriptSha256": "a456f1b582c5b08a0b9a754aca0c60d6916373a3e49e0a937ebcfc21fb2bd6cd",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:29:12.411Z"
+    }
+  ],
+  "oracleDigest": "cef370f447b277879b6bd5d9a2cec331f8d570024317cab0eff3ec21c6d2755d"
 }

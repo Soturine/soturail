@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-claude-sonnet-002
 
-Hosts/models: claude/claude-sonnet-5-5. Records: 36. Generated 2026-10-18T07:12:11.389Z.
+Hosts/models: claude/claude-sonnet-5-5. Records: 36. Generated 2026-10-18T07:30:29.965Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 

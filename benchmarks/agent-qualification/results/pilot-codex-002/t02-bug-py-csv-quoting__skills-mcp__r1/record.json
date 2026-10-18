@@ -53,7 +53,7 @@
         "kind": "functional",
         "name": "hidden python tests",
         "pass": true,
-        "detail": "Ran 6 tests in 0.010s | OK"
+        "detail": "Ran 6 tests in 0.009s | OK"
       }
     ]
   },
@@ -66,6 +66,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [
       "soturail-core",
@@ -136,5 +138,14 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "fd6ed6282f55ca98aa8f888211b9c17797e7d54d9f28be78fc6afef26dedfb7a"
+  "transcriptSha256": "fd6ed6282f55ca98aa8f888211b9c17797e7d54d9f28be78fc6afef26dedfb7a",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:28:25.722Z"
+    }
+  ],
+  "oracleDigest": "48ed9c2b2fa8d28f007cafe31282dd8af534e03f9a42bf5f81070e7e0774b7b2"
 }

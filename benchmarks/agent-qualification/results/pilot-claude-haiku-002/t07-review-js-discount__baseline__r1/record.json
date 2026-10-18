@@ -85,6 +85,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [],
     "skillRecall": 0,
@@ -140,5 +142,14 @@
     ],
     "mcpServers": []
   },
-  "transcriptSha256": "c274533116a7e8d203d20ed2aee81909bdff3f388872fbe1aa77f5c635407b5a"
+  "transcriptSha256": "c274533116a7e8d203d20ed2aee81909bdff3f388872fbe1aa77f5c635407b5a",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:29:25.988Z"
+    }
+  ],
+  "oracleDigest": "9a4807a38d381f359705729e3db0d190f94716eae01b94bc1f9067a13feafefe"
 }

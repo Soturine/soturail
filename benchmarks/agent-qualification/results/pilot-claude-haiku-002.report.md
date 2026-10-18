@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-claude-haiku-002
 
-Hosts/models: claude/claude-haiku-5-5. Records: 36. Generated 2026-10-18T07:12:11.555Z.
+Hosts/models: claude/claude-haiku-5-5. Records: 36. Generated 2026-10-18T07:30:30.129Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 

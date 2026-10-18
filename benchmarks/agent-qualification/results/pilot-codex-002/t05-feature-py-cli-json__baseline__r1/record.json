@@ -43,7 +43,7 @@
         "kind": "functional",
         "name": "hidden python tests",
         "pass": true,
-        "detail": "Ran 4 tests in 2.129s | OK"
+        "detail": "Ran 4 tests in 0.701s | OK"
       }
     ]
   },
@@ -56,6 +56,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [],
     "skillRecall": 0,
@@ -93,5 +95,14 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "33140a6365a98f459865a57fdf277ee18001ec3d11bfc83c02283eae12102ac2"
+  "transcriptSha256": "33140a6365a98f459865a57fdf277ee18001ec3d11bfc83c02283eae12102ac2",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:28:30.278Z"
+    }
+  ],
+  "oracleDigest": "d441ad3f20f6e352d96426cebabdcb50ff580279d67e70be9823c0890bc15720"
 }

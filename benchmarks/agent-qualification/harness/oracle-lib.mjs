@@ -14,7 +14,8 @@ export function runCommand(command, { timeoutMs = 120000 } = {}) {
 
 export function readText(relative) {
   try {
-    return readFileSync(relative, "utf8");
+    // RFC 8259 lets parsers ignore a UTF-8 BOM; Windows PowerShell 5.1 writes one by default.
+    return readFileSync(relative, "utf8").replace(/^﻿/, "");
   } catch {
     return null;
   }

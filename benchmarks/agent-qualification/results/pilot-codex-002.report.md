@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-codex-002
 
-Hosts/models: codex/null. Records: 36. Generated 2026-10-18T07:12:11.157Z.
+Hosts/models: codex/null. Records: 36. Generated 2026-10-18T07:30:29.455Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -9,11 +9,11 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
 | runs | 12 | 12 | 12 |
-| task success (oracle) | 92% | 100% | 100% |
+| task success (oracle) | 100% | 100% | 100% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
 | final STATUS correct | 100% | 58% | 58% |
 | false-ready | 0% | 0% | 0% |
-| false-verified | 8% | 17% | 8% |
+| false-verified | 0% | 17% | 8% |
 | false-not-ready (correct work reported not ready) | 0% | 42% | 42% |
 |   reasons | – | soturail-stale-evidence: 5 | soturail-stale-evidence: 5 |
 | ran a check after last edit | 100% | 83% | 92% |
@@ -41,7 +41,7 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | t04-feature-js-rate-limit | feature | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change; 7 call(s)<br>skills-mcp: soturail-core,soturail-change; 18 call(s) |
 | t05-feature-py-cli-json | feature | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change; 9 call(s)<br>skills-mcp: soturail-core,soturail-change; 15 call(s) |
 | t06-refactor-js-validation | refactor | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change; 8 call(s)<br>skills-mcp: soturail-core,soturail-change; 23 call(s) |
-| t07-review-js-discount | review | 0/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-review; 10 call(s)<br>skills-mcp: soturail-core,soturail-review; 24 call(s) |
+| t07-review-js-discount | review | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-review; 10 call(s)<br>skills-mcp: soturail-core,soturail-review; 24 call(s) |
 | t08-security-js-path-traversal | security | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change,soturail-debug,soturail-security; 7 call(s)<br>skills-mcp: soturail-core,soturail-change,soturail-debug,soturail-security; 9 call(s) |
 | t09-security-py-sql-injection | security | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change,soturail-security; 8 call(s)<br>skills-mcp: soturail-core,soturail-change,soturail-security; 23 call(s) |
 | t10-requirements-js-shipping | requirements | 1/1 | 1/1 | 1/1 | – | – | – | skills: soturail-core,soturail-change; 7 call(s)<br>skills-mcp: soturail-core,soturail-change; 18 call(s) |
@@ -50,4 +50,3 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 
 ## Failed oracle checks
 
-- t07-review-js-discount / baseline: review.json is a JSON array; finds bulk-threshold-off-by-one; finds unawaited-save

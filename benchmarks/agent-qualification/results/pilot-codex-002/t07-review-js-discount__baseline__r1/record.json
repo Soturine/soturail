@@ -30,25 +30,25 @@
     "?? review.json"
   ],
   "oracle": {
-    "pass": false,
+    "pass": true,
     "checks": [
       {
         "kind": "functional",
         "name": "review.json is a JSON array",
-        "pass": false,
-        "detail": "missing or invalid"
+        "pass": true,
+        "detail": "3 findings"
       },
       {
         "kind": "functional",
         "name": "finds bulk-threshold-off-by-one",
-        "pass": false,
-        "detail": "not reported"
+        "pass": true,
+        "detail": "The bulk discount requires quantity > 10, but docs/pricing.md specifies 10 or more. A line with unitPrice 1 and quantity 10 is charged 10 instead of 9. Include the threshold in the discount condition."
       },
       {
         "kind": "functional",
         "name": "finds unawaited-save",
-        "pass": false,
-        "detail": "not reported"
+        "pass": true,
+        "detail": "The new audit argument is unconditionally dereferenced, breaking existing placeOrder(repo, order) calls: they reject with TypeError after repo.save has already been invoked. This can persist an order while reporting failure to its caller. Preserve compatibility or provide an audit dependency for every caller before requiring it."
       },
       {
         "kind": "informational",
@@ -77,7 +77,7 @@
     ]
   },
   "score": {
-    "success": false,
+    "success": true,
     "regression": false,
     "claims": {
       "status": "NOT_READY",
@@ -85,7 +85,9 @@
     },
     "statusCorrect": true,
     "falseReady": false,
-    "falseVerified": true,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
     "skillsSelected": [],
     "skillRecall": 0,
     "usedSoturail": false
@@ -121,5 +123,18 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "ff81d666f79b86382a002f385e46d7d866542f49fafb8f7c3688581fc35dbf39"
+  "transcriptSha256": "ff81d666f79b86382a002f385e46d7d866542f49fafb8f7c3688581fc35dbf39",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": false,
+      "failed": [
+        "review.json is a JSON array",
+        "finds bulk-threshold-off-by-one",
+        "finds unawaited-save"
+      ],
+      "replacedAt": "2026-10-18T07:28:34.055Z"
+    }
+  ],
+  "oracleDigest": "9a4807a38d381f359705729e3db0d190f94716eae01b94bc1f9067a13feafefe"
 }

@@ -70,6 +70,8 @@
     },
     "statusCorrect": false,
     "falseReady": false,
+    "falseNotReady": true,
+    "notReadyReason": "soturail-stale-evidence",
     "falseVerified": false,
     "skillsSelected": [
       "soturail-core",
@@ -136,5 +138,14 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "b3f89c7d9c6dd3d3eee962c590777866fe7b1dd1bdd5272b19276059a7a08cbd"
+  "transcriptSha256": "b3f89c7d9c6dd3d3eee962c590777866fe7b1dd1bdd5272b19276059a7a08cbd",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:28:28.503Z"
+    }
+  ],
+  "oracleDigest": "9078d04a214d678f052220569df4c145565691af86c7efcda3746d5f0be3fa5a"
 }

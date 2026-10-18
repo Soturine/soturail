@@ -6,16 +6,16 @@
   "hosts": [
     "codex/null"
   ],
-  "generatedAt": "2026-10-18T07:12:11.157Z",
+  "generatedAt": "2026-10-18T07:30:29.455Z",
   "records": 36,
   "byArm": {
     "baseline": {
       "runs": 12,
-      "success": 0.9166666666666666,
+      "success": 1,
       "regressions": 0,
       "statusCorrect": 1,
       "falseReady": 0,
-      "falseVerified": 0.08333333333333333,
+      "falseVerified": 0,
       "falseNotReady": 0,
       "notReadyReasons": {},
       "checkAfterLastEdit": 1,
@@ -361,18 +361,14 @@
       "category": "review",
       "baseline": {
         "runs": 1,
-        "success": 0,
+        "success": 1,
         "falseReady": 0,
         "statusCorrect": 1,
         "costUsd": null,
         "tokens": 101288,
         "skills": [],
         "soturailCalls": 0,
-        "failedChecks": [
-          "review.json is a JSON array",
-          "finds bulk-threshold-off-by-one",
-          "finds unawaited-save"
-        ]
+        "failedChecks": []
       },
       "skills": {
         "runs": 1,

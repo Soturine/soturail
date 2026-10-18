@@ -1,0 +1,1703 @@
+{
+  "schemaVersion": "soturail.qualification.dogfood.v1",
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "node": "v24.11.1",
+  "platform": "win32-x64",
+  "generatedAt": "2026-10-18T07:27:40.662Z",
+  "results": [
+    {
+      "name": "cookie",
+      "project": {
+        "repo": "https://github.com/jshttp/cookie.git",
+        "stack": "node",
+        "docsLocale": "en",
+        "setup": "npm install --no-audit --no-fund",
+        "check": "npm test",
+        "file": "src/index.ts"
+      },
+      "head": "51c485421a95ee796de6d8dab53a5ade0a20db8a",
+      "trackedBefore": 27,
+      "steps": [
+        {
+          "id": "init",
+          "documented": "soturail init",
+          "code": 0,
+          "ms": 699,
+          "verdict": "PASS",
+          "note": "52 files added outside .soturail/ (24 under docs/), 0 pre-existing modified",
+          "outputTail": "  + examples\\mcp\\tools-list.json\n  + examples\\context-packs\\generic-workflow.md\n  + examples\\hooks\\prompt-only-codex.md\n\nSkipped existing paths (0):\n  none"
+        },
+        {
+          "id": "init-gitignore",
+          "documented": ".soturail/ kept local",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": ".soturail/ not in .gitignore — runtime state (raw logs) can be committed",
+          "outputTail": ""
+        },
+        {
+          "id": "doctor",
+          "documented": "soturail doctor",
+          "code": 0,
+          "ms": 590,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "SotuRail doctor\nOK workspace: .soturail workspace exists\nOK write permissions: workspace is writable\nOK Node.js: current version is v24.11.1; SotuRail requires Node.js >=22\nOK config: config.json is valid"
+        },
+        {
+          "id": "index",
+          "documented": "soturail index",
+          "code": 0,
+          "ms": 777,
+          "verdict": "PASS",
+          "note": "27 tracked files, 0.8s",
+          "outputTail": "Heuristic Repo Map written.\nFiles indexed: 79\nIgnored files: 0\nIgnored directories: 3\nRepo map: .soturail\\indexes\\repo-map.json\nTree: .soturail\\indexes\\tree.txt"
+        },
+        {
+          "id": "skills-export-claude",
+          "documented": "skills export --target claude --layout portable --install",
+          "code": 0,
+          "ms": 644,
+          "verdict": "PASS",
+          "note": "8 skills -> .claude/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-codex",
+          "documented": "skills export --target codex --layout portable --install",
+          "code": 0,
+          "ms": 591,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-generic",
+          "documented": "skills export --target generic --layout portable --install",
+          "code": 0,
+          "ms": 657,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (generic-fallback)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-discover",
+          "documented": "skills discover",
+          "code": 0,
+          "ms": 593,
+          "verdict": "PASS",
+          "note": "8 skills",
+          "outputTail": "      \"description\": \"Apply security discipline in a SotuRail repository: authentication, authorization, secrets, tokens, permissions, injection, dependency risk, MCP exposure and agent/skill safety. Check guarded reads, redacted logs, skill validation and authority gates before acting. Use whenever a task touches auth, credentials, sensitive data or external side effects. Not a substitute for a sandbox or OS permissions. Combine with soturail-core and the task skill.\",\n      \"source\": \"bundled\"\n    }\n  ],\n  \"issues\": []\n}"
+        },
+        {
+          "id": "capabilities-list",
+          "documented": "capabilities list --json",
+          "code": 0,
+          "ms": 560,
+          "verdict": "PASS",
+          "note": "20 capabilities in v2 catalog (8 in v1 key); unavailable: dependency.docs, structural.impact",
+          "outputTail": "        \"approvalRequired\": false,\n        \"sideEffects\": \"local-state\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "skill-capabilities-discoverable",
+          "documented": "every capability a skill uses is listed",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "18 ids used by skills; 0 absent from `capabilities list` (0 resolvable via describe): ",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp-config-claude",
+          "documented": "mcp config --agent claude",
+          "code": 0,
+          "ms": 562,
+          "verdict": "PASS",
+          "note": "host-native mcpServers shape",
+          "outputTail": "MCP config written: .soturail\\exports\\mcp\\claude\\mcp-config.json\nReview this snippet before adding it to a host application."
+        },
+        {
+          "id": "mcp-smoke",
+          "documented": "mcp smoke",
+          "code": 0,
+          "ms": 604,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "protocol: 2026-07-28\nlegacy_initialize: pass\ntyped_tool_schemas: pass\nraw_self_authorization_exposed: no\narbitrary_shell_tool_exposed: no\nresult: pass"
+        },
+        {
+          "id": "mcp initialize",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail 1.6.0 protocol 2025-06-18",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail.index, soturail.read, soturail.format, soturail.rules.check, soturail.skills.list, soturail.capabilities, soturail.candidates.record, soturail.context.",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.capabilities",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.capability.catalog.v1\", \"descriptorDigest\": \"ca71e76748c1b285f90291eeae3059c935be1fb35a7c792288656137b3fd4686\", \"locale\": \"en [5818 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.skills.list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.skill.catalog.v1\", \"skills\": [ { \"name\": \"soturail-change\", \"description\": \"Plan, implement and verify a code o [4121 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "[Line 1]: /** [Line 2]: * RegExp to match cookie-name in RFC 6265 sec 4.1.1 [Line 3]: * This refers out to the obsoleted definition of token in RFC 2616 sec 2 [5842 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read (path escape)",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{\"content\":[{\"type\":\"text\",\"text\":\"Path escapes allowed boundary: C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-dogfood\\\\soturail-candidate-e732c21\\\\outside.txt\"} [115 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.index",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "Heuristic Repo Map written. Files indexed: 115 Ignored files: 0 Ignored directories: 3 Repo map: .soturail\\indexes\\repo-map.json Tree: .soturail\\indexes\\tree.tx [162 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "run-check",
+          "documented": "soturail run -- npm test",
+          "code": 0,
+          "ms": 13063,
+          "verdict": "PASS",
+          "note": "soturail exit 0, direct exit 0",
+          "outputTail": "      Tests  63740 passed (63740)\n   Start at  04:24:12\n   Duration  6.05s (transform 287ms, setup 0ms, import 2.68s, tests 2.80s, environment 1ms)\n=============================== Coverage summary ===============================\n\u001b[33m-\u001b[39m Adding to empty esbuild project\n\u001b[32m✔\u001b[39m Adding to empty esbuild project"
+        },
+        {
+          "id": "contract-create",
+          "documented": "contract create",
+          "code": 0,
+          "ms": 676,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "Change contract created: .soturail\\contracts\\dogfood-change.json\nbaseline: fa09fe32c35605aebf9e1a2d9ae4822c2c71292ae0b5cdb23df462e09b90cef3"
+        },
+        {
+          "id": "contract-verify-current",
+          "documented": "contract verify after a run",
+          "code": 0,
+          "ms": 799,
+          "verdict": "PASS",
+          "note": "verdict=ready (check exit 0)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "freshness-after-edit",
+          "documented": "evidence becomes stale after a workspace change",
+          "code": 1,
+          "ms": 1207,
+          "verdict": "PASS",
+          "note": "verdict=not-ready after editing src/index.ts",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "readiness-after-rerun",
+          "documented": "fresh run restores readiness",
+          "code": 1,
+          "ms": 1290,
+          "verdict": "PASS",
+          "note": "verdict=not-ready (rerun exit 1; the edit itself may legitimately break the check)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "self-claim-rejected",
+          "documented": "caller flags cannot satisfy readiness",
+          "code": 1,
+          "ms": 1456,
+          "verdict": "PASS",
+          "note": "verdict=not-ready",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "error-read-missing",
+          "documented": "clear error for missing file",
+          "code": 1,
+          "ms": 656,
+          "verdict": "PASS",
+          "note": "1 SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\cookie\\does\\not\\exist.txt",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\cookie\\does\\not\\exist.txt"
+        },
+        {
+          "id": "error-read-escape",
+          "documented": "WorkspaceGuard blocks path escape",
+          "code": 1,
+          "ms": 615,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd",
+          "outputTail": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd"
+        },
+        {
+          "id": "error-contract-missing",
+          "documented": "clear error for missing contract",
+          "code": 1,
+          "ms": 759,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\cookie\\.soturail\\contracts\\nope.jso",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\cookie\\.soturail\\contracts\\nope.json"
+        },
+        {
+          "id": "unknown-host-fallback",
+          "documented": "unknown host -> generic fallback",
+          "code": 0,
+          "ms": 654,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "status-json",
+          "documented": "status --json",
+          "code": 0,
+          "ms": 1070,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "    \"soturail native candidates\",\n    \"soturail self baseline --check\",\n    \"soturail brain doctor --repair-plan\",\n    \"soturail dashboard build\"\n  ]\n}"
+        },
+        {
+          "id": "final-footprint",
+          "documented": "-",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": "137 changed/untracked paths; 47 under .soturail/ visible to git",
+          "outputTail": ""
+        }
+      ],
+      "mcpTools": [
+        {
+          "name": "soturail.index",
+          "required": []
+        },
+        {
+          "name": "soturail.read",
+          "required": [
+            "file"
+          ]
+        },
+        {
+          "name": "soturail.format",
+          "required": []
+        },
+        {
+          "name": "soturail.rules.check",
+          "required": []
+        },
+        {
+          "name": "soturail.skills.list",
+          "required": []
+        },
+        {
+          "name": "soturail.capabilities",
+          "required": []
+        },
+        {
+          "name": "soturail.candidates.record",
+          "required": [
+            "candidate"
+          ]
+        },
+        {
+          "name": "soturail.context.pack",
+          "required": []
+        },
+        {
+          "name": "soturail.expand",
+          "required": [
+            "raw_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "itsdangerous",
+      "project": {
+        "repo": "https://github.com/pallets/itsdangerous.git",
+        "stack": "python",
+        "docsLocale": "en",
+        "setup": null,
+        "check": "python -m pytest -q -p no:cacheprovider tests/test_itsdangerous/test_signer.py tests/test_itsdangerous/test_serializer.py",
+        "env": {
+          "PYTHONPATH": "src"
+        },
+        "file": "src/itsdangerous/signer.py"
+      },
+      "head": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "trackedBefore": 50,
+      "steps": [
+        {
+          "id": "init",
+          "documented": "soturail init",
+          "code": 0,
+          "ms": 1070,
+          "verdict": "PASS",
+          "note": "52 files added outside .soturail/ (24 under docs/), 0 pre-existing modified",
+          "outputTail": "  + examples\\mcp\\tools-list.json\n  + examples\\context-packs\\generic-workflow.md\n  + examples\\hooks\\prompt-only-codex.md\n\nSkipped existing paths (0):\n  none"
+        },
+        {
+          "id": "init-gitignore",
+          "documented": ".soturail/ kept local",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": ".soturail/ not in .gitignore — runtime state (raw logs) can be committed",
+          "outputTail": ""
+        },
+        {
+          "id": "doctor",
+          "documented": "soturail doctor",
+          "code": 0,
+          "ms": 611,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "SotuRail doctor\nOK workspace: .soturail workspace exists\nOK write permissions: workspace is writable\nOK Node.js: current version is v24.11.1; SotuRail requires Node.js >=22\nOK config: config.json is valid"
+        },
+        {
+          "id": "index",
+          "documented": "soturail index",
+          "code": 0,
+          "ms": 835,
+          "verdict": "PASS",
+          "note": "50 tracked files, 0.8s",
+          "outputTail": "Heuristic Repo Map written.\nFiles indexed: 102\nIgnored files: 0\nIgnored directories: 2\nRepo map: .soturail\\indexes\\repo-map.json\nTree: .soturail\\indexes\\tree.txt"
+        },
+        {
+          "id": "skills-export-claude",
+          "documented": "skills export --target claude --layout portable --install",
+          "code": 0,
+          "ms": 731,
+          "verdict": "PASS",
+          "note": "8 skills -> .claude/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-codex",
+          "documented": "skills export --target codex --layout portable --install",
+          "code": 0,
+          "ms": 1053,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-generic",
+          "documented": "skills export --target generic --layout portable --install",
+          "code": 0,
+          "ms": 1112,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (generic-fallback)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-discover",
+          "documented": "skills discover",
+          "code": 0,
+          "ms": 926,
+          "verdict": "PASS",
+          "note": "8 skills",
+          "outputTail": "      \"description\": \"Apply security discipline in a SotuRail repository: authentication, authorization, secrets, tokens, permissions, injection, dependency risk, MCP exposure and agent/skill safety. Check guarded reads, redacted logs, skill validation and authority gates before acting. Use whenever a task touches auth, credentials, sensitive data or external side effects. Not a substitute for a sandbox or OS permissions. Combine with soturail-core and the task skill.\",\n      \"source\": \"bundled\"\n    }\n  ],\n  \"issues\": []\n}"
+        },
+        {
+          "id": "capabilities-list",
+          "documented": "capabilities list --json",
+          "code": 0,
+          "ms": 783,
+          "verdict": "PASS",
+          "note": "20 capabilities in v2 catalog (8 in v1 key); unavailable: dependency.docs, structural.impact",
+          "outputTail": "        \"approvalRequired\": false,\n        \"sideEffects\": \"local-state\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "skill-capabilities-discoverable",
+          "documented": "every capability a skill uses is listed",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "18 ids used by skills; 0 absent from `capabilities list` (0 resolvable via describe): ",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp-config-claude",
+          "documented": "mcp config --agent claude",
+          "code": 0,
+          "ms": 798,
+          "verdict": "PASS",
+          "note": "host-native mcpServers shape",
+          "outputTail": "MCP config written: .soturail\\exports\\mcp\\claude\\mcp-config.json\nReview this snippet before adding it to a host application."
+        },
+        {
+          "id": "mcp-smoke",
+          "documented": "mcp smoke",
+          "code": 0,
+          "ms": 691,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "protocol: 2026-07-28\nlegacy_initialize: pass\ntyped_tool_schemas: pass\nraw_self_authorization_exposed: no\narbitrary_shell_tool_exposed: no\nresult: pass"
+        },
+        {
+          "id": "mcp initialize",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail 1.6.0 protocol 2025-06-18",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail.index, soturail.read, soturail.format, soturail.rules.check, soturail.skills.list, soturail.capabilities, soturail.candidates.record, soturail.context.",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.capabilities",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.capability.catalog.v1\", \"descriptorDigest\": \"ca71e76748c1b285f90291eeae3059c935be1fb35a7c792288656137b3fd4686\", \"locale\": \"en [5818 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.skills.list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.skill.catalog.v1\", \"skills\": [ { \"name\": \"soturail-change\", \"description\": \"Plan, implement and verify a code o [4121 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "[Line 1]: from __future__ import annotations [Line 2]: [Line 3]: import collections.abc as cabc [Line 4]: import hashlib [Line 5]: import hmac [Line 6]: import [1067 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read (path escape)",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{\"content\":[{\"type\":\"text\",\"text\":\"Path escapes allowed boundary: C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-dogfood\\\\soturail-candidate-e732c21\\\\outside.txt\"} [115 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.index",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "Heuristic Repo Map written. Files indexed: 138 Ignored files: 0 Ignored directories: 2 Repo map: .soturail\\indexes\\repo-map.json Tree: .soturail\\indexes\\tree.tx [162 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "run-check",
+          "documented": "soturail run -- python -m pytest -q -p no:cacheprovider tests/test_itsdangerous/test_signer.py tests/test_itsdangerous/test_serializer.py",
+          "code": 0,
+          "ms": 2665,
+          "verdict": "PASS",
+          "note": "soturail exit 0, direct exit 0",
+          "outputTail": "\nSummary counts:\n58 passed in 0.36s\n\nFailures, assertions, stack traces, and file paths:\n58 passed in 0.36s"
+        },
+        {
+          "id": "contract-create",
+          "documented": "contract create",
+          "code": 0,
+          "ms": 900,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "Change contract created: .soturail\\contracts\\dogfood-change.json\nbaseline: 1ed3b591b0e55d404d4dd64222e814f3ec116b7a58a58584f6aa0180addd5a1f"
+        },
+        {
+          "id": "contract-verify-current",
+          "documented": "contract verify after a run",
+          "code": 0,
+          "ms": 1041,
+          "verdict": "PASS",
+          "note": "verdict=ready (check exit 0)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "freshness-after-edit",
+          "documented": "evidence becomes stale after a workspace change",
+          "code": 1,
+          "ms": 839,
+          "verdict": "PASS",
+          "note": "verdict=not-ready after editing src/itsdangerous/signer.py",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "readiness-after-rerun",
+          "documented": "fresh run restores readiness",
+          "code": 0,
+          "ms": 1058,
+          "verdict": "PASS",
+          "note": "verdict=ready (rerun exit 0; the edit itself may legitimately break the check)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "self-claim-rejected",
+          "documented": "caller flags cannot satisfy readiness",
+          "code": 1,
+          "ms": 775,
+          "verdict": "PASS",
+          "note": "verdict=not-ready",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "error-read-missing",
+          "documented": "clear error for missing file",
+          "code": 1,
+          "ms": 546,
+          "verdict": "PASS",
+          "note": "1 SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\itsdangerous\\does\\not\\exist.txt",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\itsdangerous\\does\\not\\exist.txt"
+        },
+        {
+          "id": "error-read-escape",
+          "documented": "WorkspaceGuard blocks path escape",
+          "code": 1,
+          "ms": 561,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd",
+          "outputTail": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd"
+        },
+        {
+          "id": "error-contract-missing",
+          "documented": "clear error for missing contract",
+          "code": 1,
+          "ms": 553,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\itsdangerous\\.soturail\\contracts\\no",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\itsdangerous\\.soturail\\contracts\\nope.json"
+        },
+        {
+          "id": "unknown-host-fallback",
+          "documented": "unknown host -> generic fallback",
+          "code": 0,
+          "ms": 624,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "status-json",
+          "documented": "status --json",
+          "code": 0,
+          "ms": 853,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "    \"soturail native candidates\",\n    \"soturail self baseline --check\",\n    \"soturail brain doctor --repair-plan\",\n    \"soturail dashboard build\"\n  ]\n}"
+        },
+        {
+          "id": "final-footprint",
+          "documented": "-",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": "136 changed/untracked paths; 47 under .soturail/ visible to git",
+          "outputTail": ""
+        }
+      ],
+      "mcpTools": [
+        {
+          "name": "soturail.index",
+          "required": []
+        },
+        {
+          "name": "soturail.read",
+          "required": [
+            "file"
+          ]
+        },
+        {
+          "name": "soturail.format",
+          "required": []
+        },
+        {
+          "name": "soturail.rules.check",
+          "required": []
+        },
+        {
+          "name": "soturail.skills.list",
+          "required": []
+        },
+        {
+          "name": "soturail.capabilities",
+          "required": []
+        },
+        {
+          "name": "soturail.candidates.record",
+          "required": [
+            "candidate"
+          ]
+        },
+        {
+          "name": "soturail.context.pack",
+          "required": []
+        },
+        {
+          "name": "soturail.expand",
+          "required": [
+            "raw_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cookie-unicode-path",
+      "project": {
+        "repo": "https://github.com/jshttp/cookie.git",
+        "stack": "node",
+        "docsLocale": "en",
+        "setup": "npm install --no-audit --no-fund",
+        "check": "npm test",
+        "file": "src/index.ts",
+        "dirName": "projeto com espaço ção"
+      },
+      "head": "51c485421a95ee796de6d8dab53a5ade0a20db8a",
+      "trackedBefore": 27,
+      "steps": [
+        {
+          "id": "init",
+          "documented": "soturail init",
+          "code": 0,
+          "ms": 935,
+          "verdict": "PASS",
+          "note": "52 files added outside .soturail/ (24 under docs/), 0 pre-existing modified",
+          "outputTail": "  + examples\\mcp\\tools-list.json\n  + examples\\context-packs\\generic-workflow.md\n  + examples\\hooks\\prompt-only-codex.md\n\nSkipped existing paths (0):\n  none"
+        },
+        {
+          "id": "init-gitignore",
+          "documented": ".soturail/ kept local",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": ".soturail/ not in .gitignore — runtime state (raw logs) can be committed",
+          "outputTail": ""
+        },
+        {
+          "id": "doctor",
+          "documented": "soturail doctor",
+          "code": 0,
+          "ms": 724,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "SotuRail doctor\nOK workspace: .soturail workspace exists\nOK write permissions: workspace is writable\nOK Node.js: current version is v24.11.1; SotuRail requires Node.js >=22\nOK config: config.json is valid"
+        },
+        {
+          "id": "index",
+          "documented": "soturail index",
+          "code": 0,
+          "ms": 837,
+          "verdict": "PASS",
+          "note": "27 tracked files, 0.8s",
+          "outputTail": "Heuristic Repo Map written.\nFiles indexed: 79\nIgnored files: 0\nIgnored directories: 3\nRepo map: .soturail\\indexes\\repo-map.json\nTree: .soturail\\indexes\\tree.txt"
+        },
+        {
+          "id": "skills-export-claude",
+          "documented": "skills export --target claude --layout portable --install",
+          "code": 0,
+          "ms": 685,
+          "verdict": "PASS",
+          "note": "8 skills -> .claude/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-codex",
+          "documented": "skills export --target codex --layout portable --install",
+          "code": 0,
+          "ms": 711,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-generic",
+          "documented": "skills export --target generic --layout portable --install",
+          "code": 0,
+          "ms": 675,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (generic-fallback)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-discover",
+          "documented": "skills discover",
+          "code": 0,
+          "ms": 535,
+          "verdict": "PASS",
+          "note": "8 skills",
+          "outputTail": "      \"description\": \"Apply security discipline in a SotuRail repository: authentication, authorization, secrets, tokens, permissions, injection, dependency risk, MCP exposure and agent/skill safety. Check guarded reads, redacted logs, skill validation and authority gates before acting. Use whenever a task touches auth, credentials, sensitive data or external side effects. Not a substitute for a sandbox or OS permissions. Combine with soturail-core and the task skill.\",\n      \"source\": \"bundled\"\n    }\n  ],\n  \"issues\": []\n}"
+        },
+        {
+          "id": "capabilities-list",
+          "documented": "capabilities list --json",
+          "code": 0,
+          "ms": 485,
+          "verdict": "PASS",
+          "note": "20 capabilities in v2 catalog (8 in v1 key); unavailable: dependency.docs, structural.impact",
+          "outputTail": "        \"approvalRequired\": false,\n        \"sideEffects\": \"local-state\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "skill-capabilities-discoverable",
+          "documented": "every capability a skill uses is listed",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "18 ids used by skills; 0 absent from `capabilities list` (0 resolvable via describe): ",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp-config-claude",
+          "documented": "mcp config --agent claude",
+          "code": 0,
+          "ms": 529,
+          "verdict": "PASS",
+          "note": "host-native mcpServers shape",
+          "outputTail": "MCP config written: .soturail\\exports\\mcp\\claude\\mcp-config.json\nReview this snippet before adding it to a host application."
+        },
+        {
+          "id": "mcp-smoke",
+          "documented": "mcp smoke",
+          "code": 0,
+          "ms": 510,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "protocol: 2026-07-28\nlegacy_initialize: pass\ntyped_tool_schemas: pass\nraw_self_authorization_exposed: no\narbitrary_shell_tool_exposed: no\nresult: pass"
+        },
+        {
+          "id": "mcp initialize",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail 1.6.0 protocol 2025-06-18",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail.index, soturail.read, soturail.format, soturail.rules.check, soturail.skills.list, soturail.capabilities, soturail.candidates.record, soturail.context.",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.capabilities",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.capability.catalog.v1\", \"descriptorDigest\": \"ca71e76748c1b285f90291eeae3059c935be1fb35a7c792288656137b3fd4686\", \"locale\": \"en [5818 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.skills.list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.skill.catalog.v1\", \"skills\": [ { \"name\": \"soturail-change\", \"description\": \"Plan, implement and verify a code o [4121 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "[Line 1]: /** [Line 2]: * RegExp to match cookie-name in RFC 6265 sec 4.1.1 [Line 3]: * This refers out to the obsoleted definition of token in RFC 2616 sec 2 [5842 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read (path escape)",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{\"content\":[{\"type\":\"text\",\"text\":\"Path escapes allowed boundary: C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-dogfood\\\\soturail-candidate-e732c21\\\\outside.txt\"} [115 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.index",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "Heuristic Repo Map written. Files indexed: 115 Ignored files: 0 Ignored directories: 3 Repo map: .soturail\\indexes\\repo-map.json Tree: .soturail\\indexes\\tree.tx [162 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "run-check",
+          "documented": "soturail run -- npm test",
+          "code": 0,
+          "ms": 16580,
+          "verdict": "PASS",
+          "note": "soturail exit 0, direct exit 0",
+          "outputTail": "      Tests  63740 passed (63740)\n   Start at  04:25:39\n   Duration  8.98s (transform 298ms, setup 0ms, import 2.97s, tests 5.32s, environment 1ms)\n=============================== Coverage summary ===============================\n\u001b[33m-\u001b[39m Adding to empty esbuild project\n\u001b[32m✔\u001b[39m Adding to empty esbuild project"
+        },
+        {
+          "id": "contract-create",
+          "documented": "contract create",
+          "code": 0,
+          "ms": 1302,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "Change contract created: .soturail\\contracts\\dogfood-change.json\nbaseline: 5dcef005870f107dac3a5b6fe4a2ed40065a312c870da00c18432d3b53be4ce8"
+        },
+        {
+          "id": "contract-verify-current",
+          "documented": "contract verify after a run",
+          "code": 0,
+          "ms": 1602,
+          "verdict": "PASS",
+          "note": "verdict=ready (check exit 0)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "freshness-after-edit",
+          "documented": "evidence becomes stale after a workspace change",
+          "code": 1,
+          "ms": 1024,
+          "verdict": "PASS",
+          "note": "verdict=not-ready after editing src/index.ts",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "readiness-after-rerun",
+          "documented": "fresh run restores readiness",
+          "code": 1,
+          "ms": 1112,
+          "verdict": "PASS",
+          "note": "verdict=not-ready (rerun exit 1; the edit itself may legitimately break the check)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "self-claim-rejected",
+          "documented": "caller flags cannot satisfy readiness",
+          "code": 1,
+          "ms": 935,
+          "verdict": "PASS",
+          "note": "verdict=not-ready",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "error-read-missing",
+          "documented": "clear error for missing file",
+          "code": 1,
+          "ms": 589,
+          "verdict": "PASS",
+          "note": "1 SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\projeto com espaço ção\\does\\not\\exi",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\projeto com espaço ção\\does\\not\\exist.txt"
+        },
+        {
+          "id": "error-read-escape",
+          "documented": "WorkspaceGuard blocks path escape",
+          "code": 1,
+          "ms": 592,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd",
+          "outputTail": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd"
+        },
+        {
+          "id": "error-contract-missing",
+          "documented": "clear error for missing contract",
+          "code": 1,
+          "ms": 577,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\projeto com espaço ção\\.soturail\\co",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\projeto com espaço ção\\.soturail\\contracts\\nope.json"
+        },
+        {
+          "id": "unknown-host-fallback",
+          "documented": "unknown host -> generic fallback",
+          "code": 0,
+          "ms": 622,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "status-json",
+          "documented": "status --json",
+          "code": 0,
+          "ms": 881,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "    \"soturail native candidates\",\n    \"soturail self baseline --check\",\n    \"soturail brain doctor --repair-plan\",\n    \"soturail dashboard build\"\n  ]\n}"
+        },
+        {
+          "id": "final-footprint",
+          "documented": "-",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": "137 changed/untracked paths; 47 under .soturail/ visible to git",
+          "outputTail": ""
+        }
+      ],
+      "mcpTools": [
+        {
+          "name": "soturail.index",
+          "required": []
+        },
+        {
+          "name": "soturail.read",
+          "required": [
+            "file"
+          ]
+        },
+        {
+          "name": "soturail.format",
+          "required": []
+        },
+        {
+          "name": "soturail.rules.check",
+          "required": []
+        },
+        {
+          "name": "soturail.skills.list",
+          "required": []
+        },
+        {
+          "name": "soturail.capabilities",
+          "required": []
+        },
+        {
+          "name": "soturail.candidates.record",
+          "required": [
+            "candidate"
+          ]
+        },
+        {
+          "name": "soturail.context.pack",
+          "required": []
+        },
+        {
+          "name": "soturail.expand",
+          "required": [
+            "raw_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sotuhire",
+      "project": {
+        "repo": "https://github.com/Soturine/SotuHire.git",
+        "stack": "python+typescript monorepo",
+        "docsLocale": "pt-BR",
+        "setup": null,
+        "check": "python --version",
+        "file": "README.md"
+      },
+      "head": "8ea37d764861863df13ad17a1226d6f8c179c403",
+      "trackedBefore": 1509,
+      "steps": [
+        {
+          "id": "init",
+          "documented": "soturail init",
+          "code": 0,
+          "ms": 1499,
+          "verdict": "PASS",
+          "note": "52 files added outside .soturail/ (24 under docs/), 0 pre-existing modified",
+          "outputTail": "  + examples\\mcp\\tools-list.json\n  + examples\\context-packs\\generic-workflow.md\n  + examples\\hooks\\prompt-only-codex.md\n\nSkipped existing paths (0):\n  none"
+        },
+        {
+          "id": "init-gitignore",
+          "documented": ".soturail/ kept local",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": ".soturail/ not in .gitignore — runtime state (raw logs) can be committed",
+          "outputTail": ""
+        },
+        {
+          "id": "doctor",
+          "documented": "soturail doctor",
+          "code": 0,
+          "ms": 700,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "SotuRail doctor\nOK workspace: .soturail workspace exists\nOK write permissions: workspace is writable\nOK Node.js: current version is v24.11.1; SotuRail requires Node.js >=22\nOK config: config.json is valid"
+        },
+        {
+          "id": "index",
+          "documented": "soturail index",
+          "code": 0,
+          "ms": 4841,
+          "verdict": "PASS",
+          "note": "1509 tracked files, 4.8s",
+          "outputTail": "Heuristic Repo Map written.\nFiles indexed: 1291\nIgnored files: 246\nIgnored directories: 4\nRepo map: .soturail\\indexes\\repo-map.json\nTree: .soturail\\indexes\\tree.txt"
+        },
+        {
+          "id": "skills-export-claude",
+          "documented": "skills export --target claude --layout portable --install",
+          "code": 0,
+          "ms": 727,
+          "verdict": "PASS",
+          "note": "8 skills -> .claude/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-codex",
+          "documented": "skills export --target codex --layout portable --install",
+          "code": 0,
+          "ms": 737,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-generic",
+          "documented": "skills export --target generic --layout portable --install",
+          "code": 0,
+          "ms": 887,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (generic-fallback)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-discover",
+          "documented": "skills discover",
+          "code": 0,
+          "ms": 827,
+          "verdict": "PASS",
+          "note": "8 skills",
+          "outputTail": "      \"description\": \"Apply security discipline in a SotuRail repository: authentication, authorization, secrets, tokens, permissions, injection, dependency risk, MCP exposure and agent/skill safety. Check guarded reads, redacted logs, skill validation and authority gates before acting. Use whenever a task touches auth, credentials, sensitive data or external side effects. Not a substitute for a sandbox or OS permissions. Combine with soturail-core and the task skill.\",\n      \"source\": \"bundled\"\n    }\n  ],\n  \"issues\": []\n}"
+        },
+        {
+          "id": "capabilities-list",
+          "documented": "capabilities list --json",
+          "code": 0,
+          "ms": 735,
+          "verdict": "PASS",
+          "note": "20 capabilities in v2 catalog (8 in v1 key); unavailable: dependency.docs, structural.impact",
+          "outputTail": "        \"approvalRequired\": false,\n        \"sideEffects\": \"local-state\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "skill-capabilities-discoverable",
+          "documented": "every capability a skill uses is listed",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "18 ids used by skills; 0 absent from `capabilities list` (0 resolvable via describe): ",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp-config-claude",
+          "documented": "mcp config --agent claude",
+          "code": 0,
+          "ms": 788,
+          "verdict": "PASS",
+          "note": "host-native mcpServers shape",
+          "outputTail": "MCP config written: .soturail\\exports\\mcp\\claude\\mcp-config.json\nReview this snippet before adding it to a host application."
+        },
+        {
+          "id": "mcp-smoke",
+          "documented": "mcp smoke",
+          "code": 0,
+          "ms": 665,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "protocol: 2026-07-28\nlegacy_initialize: pass\ntyped_tool_schemas: pass\nraw_self_authorization_exposed: no\narbitrary_shell_tool_exposed: no\nresult: pass"
+        },
+        {
+          "id": "mcp initialize",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail 1.6.0 protocol 2025-06-18",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail.index, soturail.read, soturail.format, soturail.rules.check, soturail.skills.list, soturail.capabilities, soturail.candidates.record, soturail.context.",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.capabilities",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.capability.catalog.v1\", \"descriptorDigest\": \"ca71e76748c1b285f90291eeae3059c935be1fb35a7c792288656137b3fd4686\", \"locale\": \"en [5818 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.skills.list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.skill.catalog.v1\", \"skills\": [ { \"name\": \"soturail-change\", \"description\": \"Plan, implement and verify a code o [4121 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "[Line 1]: # SotuHire — Copiloto de Carreira Local-First com IA, Evidências e Aprovação Humana [Line 2]: [Line 3]: [![CI](https://github.com/Soturine/SotuHire/a [3425 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read (path escape)",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{\"content\":[{\"type\":\"text\",\"text\":\"Path escapes allowed boundary: C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-dogfood\\\\soturail-candidate-e732c21\\\\outside.txt\"} [115 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.index",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "Heuristic Repo Map written. Files indexed: 1327 Ignored files: 246 Ignored directories: 4 Repo map: .soturail\\indexes\\repo-map.json Tree: .soturail\\indexes\\tree [165 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "run-check",
+          "documented": "soturail run -- python --version",
+          "code": 0,
+          "ms": 1486,
+          "verdict": "PASS",
+          "note": "soturail exit 0, direct exit 0",
+          "outputTail": "\nGeneric Stream Summary\nRaw log: soturail expand 5c37a8c9\n\nFirst lines:\nPython 3.12.6"
+        },
+        {
+          "id": "contract-create",
+          "documented": "contract create",
+          "code": 0,
+          "ms": 1207,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "Change contract created: .soturail\\contracts\\dogfood-change.json\nbaseline: 41c75a9670ffa70cdabfda55516ea3c554d1a46c39e015a9f7b05ba62e9c68a1"
+        },
+        {
+          "id": "contract-verify-current",
+          "documented": "contract verify after a run",
+          "code": 0,
+          "ms": 931,
+          "verdict": "PASS",
+          "note": "verdict=ready (check exit 0)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "freshness-after-edit",
+          "documented": "evidence becomes stale after a workspace change",
+          "code": 1,
+          "ms": 1457,
+          "verdict": "PASS",
+          "note": "verdict=not-ready after editing README.md",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "readiness-after-rerun",
+          "documented": "fresh run restores readiness",
+          "code": 0,
+          "ms": 1163,
+          "verdict": "PASS",
+          "note": "verdict=ready (rerun exit 0; the edit itself may legitimately break the check)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "self-claim-rejected",
+          "documented": "caller flags cannot satisfy readiness",
+          "code": 1,
+          "ms": 1149,
+          "verdict": "PASS",
+          "note": "verdict=not-ready",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "error-read-missing",
+          "documented": "clear error for missing file",
+          "code": 1,
+          "ms": 700,
+          "verdict": "PASS",
+          "note": "1 SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\sotuhire\\does\\not\\exist.txt",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\sotuhire\\does\\not\\exist.txt"
+        },
+        {
+          "id": "error-read-escape",
+          "documented": "WorkspaceGuard blocks path escape",
+          "code": 1,
+          "ms": 735,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd",
+          "outputTail": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd"
+        },
+        {
+          "id": "error-contract-missing",
+          "documented": "clear error for missing contract",
+          "code": 1,
+          "ms": 739,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\sotuhire\\.soturail\\contracts\\nope.j",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\sotuhire\\.soturail\\contracts\\nope.json"
+        },
+        {
+          "id": "unknown-host-fallback",
+          "documented": "unknown host -> generic fallback",
+          "code": 0,
+          "ms": 998,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "status-json",
+          "documented": "status --json",
+          "code": 0,
+          "ms": 1273,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "    \"soturail native candidates\",\n    \"soturail self baseline --check\",\n    \"soturail brain doctor --repair-plan\",\n    \"soturail dashboard build\"\n  ]\n}"
+        },
+        {
+          "id": "final-footprint",
+          "documented": "-",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": "134 changed/untracked paths; 45 under .soturail/ visible to git",
+          "outputTail": ""
+        }
+      ],
+      "mcpTools": [
+        {
+          "name": "soturail.index",
+          "required": []
+        },
+        {
+          "name": "soturail.read",
+          "required": [
+            "file"
+          ]
+        },
+        {
+          "name": "soturail.format",
+          "required": []
+        },
+        {
+          "name": "soturail.rules.check",
+          "required": []
+        },
+        {
+          "name": "soturail.skills.list",
+          "required": []
+        },
+        {
+          "name": "soturail.capabilities",
+          "required": []
+        },
+        {
+          "name": "soturail.candidates.record",
+          "required": [
+            "candidate"
+          ]
+        },
+        {
+          "name": "soturail.context.pack",
+          "required": []
+        },
+        {
+          "name": "soturail.expand",
+          "required": [
+            "raw_id"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "replicascan",
+      "project": {
+        "repo": "https://github.com/Soturine/replicascan.git",
+        "stack": "kotlin/android",
+        "docsLocale": "pt-BR",
+        "setup": null,
+        "check": "gradle test",
+        "file": "README.md"
+      },
+      "head": "50c160b8f0c71919f2f77a816c208130b5dbf440",
+      "trackedBefore": 543,
+      "steps": [
+        {
+          "id": "init",
+          "documented": "soturail init",
+          "code": 0,
+          "ms": 817,
+          "verdict": "PASS",
+          "note": "49 files added outside .soturail/ (22 under docs/), 0 pre-existing modified",
+          "outputTail": "  + examples\\hooks\\prompt-only-codex.md\n\nSkipped existing paths (3):\n  = AGENTS.md\n  = docs\\architecture.md\n  = docs\\release-checklist.md"
+        },
+        {
+          "id": "init-gitignore",
+          "documented": ".soturail/ kept local",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": ".soturail/ not in .gitignore — runtime state (raw logs) can be committed",
+          "outputTail": ""
+        },
+        {
+          "id": "doctor",
+          "documented": "soturail doctor",
+          "code": 0,
+          "ms": 666,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "SotuRail doctor\nOK workspace: .soturail workspace exists\nOK write permissions: workspace is writable\nOK Node.js: current version is v24.11.1; SotuRail requires Node.js >=22\nOK config: config.json is valid"
+        },
+        {
+          "id": "index",
+          "documented": "soturail index",
+          "code": 0,
+          "ms": 1680,
+          "verdict": "PASS",
+          "note": "543 tracked files, 1.7s",
+          "outputTail": "Heuristic Repo Map written.\nFiles indexed: 395\nIgnored files: 197\nIgnored directories: 2\nRepo map: .soturail\\indexes\\repo-map.json\nTree: .soturail\\indexes\\tree.txt"
+        },
+        {
+          "id": "skills-export-claude",
+          "documented": "skills export --target claude --layout portable --install",
+          "code": 0,
+          "ms": 741,
+          "verdict": "PASS",
+          "note": "8 skills -> .claude/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-codex",
+          "documented": "skills export --target codex --layout portable --install",
+          "code": 0,
+          "ms": 652,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (verified-docs)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-export-generic",
+          "documented": "skills export --target generic --layout portable --install",
+          "code": 0,
+          "ms": 662,
+          "verdict": "PASS",
+          "note": "8 skills -> .agents/skills (generic-fallback)",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "skills-discover",
+          "documented": "skills discover",
+          "code": 0,
+          "ms": 734,
+          "verdict": "PASS",
+          "note": "8 skills",
+          "outputTail": "      \"description\": \"Apply security discipline in a SotuRail repository: authentication, authorization, secrets, tokens, permissions, injection, dependency risk, MCP exposure and agent/skill safety. Check guarded reads, redacted logs, skill validation and authority gates before acting. Use whenever a task touches auth, credentials, sensitive data or external side effects. Not a substitute for a sandbox or OS permissions. Combine with soturail-core and the task skill.\",\n      \"source\": \"bundled\"\n    }\n  ],\n  \"issues\": []\n}"
+        },
+        {
+          "id": "capabilities-list",
+          "documented": "capabilities list --json",
+          "code": 0,
+          "ms": 716,
+          "verdict": "PASS",
+          "note": "20 capabilities in v2 catalog (8 in v1 key); unavailable: dependency.docs, structural.impact",
+          "outputTail": "        \"approvalRequired\": false,\n        \"sideEffects\": \"local-state\"\n      }\n    ]\n  }\n}"
+        },
+        {
+          "id": "skill-capabilities-discoverable",
+          "documented": "every capability a skill uses is listed",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "18 ids used by skills; 0 absent from `capabilities list` (0 resolvable via describe): ",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp-config-claude",
+          "documented": "mcp config --agent claude",
+          "code": 0,
+          "ms": 730,
+          "verdict": "PASS",
+          "note": "host-native mcpServers shape",
+          "outputTail": "MCP config written: .soturail\\exports\\mcp\\claude\\mcp-config.json\nReview this snippet before adding it to a host application."
+        },
+        {
+          "id": "mcp-smoke",
+          "documented": "mcp smoke",
+          "code": 0,
+          "ms": 739,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "protocol: 2026-07-28\nlegacy_initialize: pass\ntyped_tool_schemas: pass\nraw_self_authorization_exposed: no\narbitrary_shell_tool_exposed: no\nresult: pass"
+        },
+        {
+          "id": "mcp initialize",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail 1.6.0 protocol 2025-06-18",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "soturail.index, soturail.read, soturail.format, soturail.rules.check, soturail.skills.list, soturail.capabilities, soturail.candidates.record, soturail.context.",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.capabilities",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.capability.catalog.v1\", \"descriptorDigest\": \"ca71e76748c1b285f90291eeae3059c935be1fb35a7c792288656137b3fd4686\", \"locale\": \"en [5818 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.skills.list",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{ \"schemaVersion\": \"soturail.skill.catalog.v1\", \"skills\": [ { \"name\": \"soturail-change\", \"description\": \"Plan, implement and verify a code o [4121 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "[Line 1]: # ReplicaScan [Line 2]: [Line 3]: ![Android](https://img.shields.io/badge/platform-Android-2E7D8C) [Line 4]: ![Kotlin](https://img.shields.io/badge/K [8293 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.read (path escape)",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "{\"content\":[{\"type\":\"text\",\"text\":\"Path escapes allowed boundary: C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-dogfood\\\\soturail-candidate-e732c21\\\\outside.txt\"} [115 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "mcp tools/call soturail.index",
+          "documented": "MCP stdio",
+          "code": null,
+          "ms": null,
+          "verdict": "PASS",
+          "note": "Heuristic Repo Map written. Files indexed: 431 Ignored files: 197 Ignored directories: 2 Repo map: .soturail\\indexes\\repo-map.json Tree: .soturail\\indexes\\tree. [164 chars]",
+          "outputTail": ""
+        },
+        {
+          "id": "run-check",
+          "documented": "soturail run -- gradle test",
+          "code": 1,
+          "ms": 1870,
+          "verdict": "PASS",
+          "note": "soturail exit 1, direct exit 1",
+          "outputTail": "\nFirst non-noise lines:\n'gradle' n�o � reconhecido como um comando interno\nou externo, um programa oper�vel ou um arquivo em lotes.\n'gradle' n�o � reconhecido como um comando interno\nou externo, um programa oper�vel ou um arquivo em lotes."
+        },
+        {
+          "id": "contract-create",
+          "documented": "contract create",
+          "code": 0,
+          "ms": 1307,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "Change contract created: .soturail\\contracts\\dogfood-change.json\nbaseline: b1625a8960134c7fac59998b40c6d5e8bf880faf28e944b91789f48b2ca2cc34"
+        },
+        {
+          "id": "contract-verify-current",
+          "documented": "contract verify after a run",
+          "code": 1,
+          "ms": 1010,
+          "verdict": "PASS",
+          "note": "verdict=not-ready (check exit 1)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "freshness-after-edit",
+          "documented": "evidence becomes stale after a workspace change",
+          "code": 1,
+          "ms": 841,
+          "verdict": "PASS",
+          "note": "verdict=not-ready after editing README.md",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "readiness-after-rerun",
+          "documented": "fresh run restores readiness",
+          "code": 1,
+          "ms": 993,
+          "verdict": "PASS",
+          "note": "verdict=not-ready (rerun exit 1; the edit itself may legitimately break the check)",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "self-claim-rejected",
+          "documented": "caller flags cannot satisfy readiness",
+          "code": 1,
+          "ms": 1127,
+          "verdict": "PASS",
+          "note": "verdict=not-ready",
+          "outputTail": "    \"runtimeEvidence\": false,\n    \"independentReview\": false,\n    \"humanApproval\": false,\n    \"source\": \"caller\"\n  }\n}"
+        },
+        {
+          "id": "error-read-missing",
+          "documented": "clear error for missing file",
+          "code": 1,
+          "ms": 821,
+          "verdict": "PASS",
+          "note": "1 SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\replicascan\\does\\not\\exist.txt",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\replicascan\\does\\not\\exist.txt"
+        },
+        {
+          "id": "error-read-escape",
+          "documented": "WorkspaceGuard blocks path escape",
+          "code": 1,
+          "ms": 696,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd",
+          "outputTail": "SotuRail error: Path escapes allowed boundary: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\etc\\passwd"
+        },
+        {
+          "id": "error-contract-missing",
+          "documented": "clear error for missing contract",
+          "code": 1,
+          "ms": 702,
+          "verdict": "PASS",
+          "note": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\replicascan\\.soturail\\contracts\\nop",
+          "outputTail": "SotuRail error: Path not found: C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-dogfood\\soturail-candidate-e732c21\\replicascan\\.soturail\\contracts\\nope.json"
+        },
+        {
+          "id": "unknown-host-fallback",
+          "documented": "unknown host -> generic fallback",
+          "code": 0,
+          "ms": 705,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "        }\n      ]\n    }\n  ],\n  \"skipped\": []\n}"
+        },
+        {
+          "id": "status-json",
+          "documented": "status --json",
+          "code": 0,
+          "ms": 913,
+          "verdict": "PASS",
+          "note": "",
+          "outputTail": "    \"soturail native candidates\",\n    \"soturail self baseline --check\",\n    \"soturail brain doctor --repair-plan\",\n    \"soturail dashboard build\"\n  ]\n}"
+        },
+        {
+          "id": "final-footprint",
+          "documented": "-",
+          "code": null,
+          "ms": null,
+          "verdict": "WARN",
+          "note": "131 changed/untracked paths; 45 under .soturail/ visible to git",
+          "outputTail": ""
+        }
+      ],
+      "mcpTools": [
+        {
+          "name": "soturail.index",
+          "required": []
+        },
+        {
+          "name": "soturail.read",
+          "required": [
+            "file"
+          ]
+        },
+        {
+          "name": "soturail.format",
+          "required": []
+        },
+        {
+          "name": "soturail.rules.check",
+          "required": []
+        },
+        {
+          "name": "soturail.skills.list",
+          "required": []
+        },
+        {
+          "name": "soturail.capabilities",
+          "required": []
+        },
+        {
+          "name": "soturail.candidates.record",
+          "required": [
+            "candidate"
+          ]
+        },
+        {
+          "name": "soturail.context.pack",
+          "required": []
+        },
+        {
+          "name": "soturail.expand",
+          "required": [
+            "raw_id"
+          ]
+        }
+      ]
+    }
+  ]
+}

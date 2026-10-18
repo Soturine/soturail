@@ -1,0 +1,43 @@
+diff --git a/src/paginate.js b/src/paginate.js
+index 05b5769..0df2342 100644
+--- a/src/paginate.js
++++ b/src/paginate.js
+@@ -1,5 +1,5 @@
+ export function totalPages(totalItems, pageSize) {
+-  return Math.floor(totalItems / pageSize);
++  return Math.ceil(totalItems / pageSize);
+ }
+ 
+ export function paginate(items, page, pageSize) {
+diff --git a/test/paginate.test.js b/test/paginate.test.js
+index 97c2891..af49a75 100644
+--- a/test/paginate.test.js
++++ b/test/paginate.test.js
+@@ -11,3 +11,27 @@ test("first page of an evenly divisible list", () => {
+ test("rejects a non-positive page size", () => {
+   assert.throws(() => paginate([1], 1, 0), RangeError);
+ });
++
++test("returns the partial final page", () => {
++  assert.deepEqual(paginate([1, 2, 3, 4, 5], 3, 2), {
++    items: [5], page: 3, pageSize: 2, totalItems: 5, totalPages: 3
++  });
++});
++
++test("returns results when there are fewer items than the page size", () => {
++  const result = paginate([1], 1, 20);
++  assert.deepEqual(result.items, [1]);
++  assert.equal(result.totalPages, 1);
++});
++
++test("empty results have no pages", () => {
++  const result = paginate([], 1, 2);
++  assert.deepEqual(result.items, []);
++  assert.equal(result.totalPages, 0);
++});
++
++test("pages beyond the partial final page are empty", () => {
++  const result = paginate([1, 2, 3], 3, 2);
++  assert.deepEqual(result.items, []);
++  assert.equal(result.totalPages, 2);
++});

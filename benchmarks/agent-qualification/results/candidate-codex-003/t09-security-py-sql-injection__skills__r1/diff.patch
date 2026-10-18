@@ -1,0 +1,293 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..4cd8017 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,9 @@
++{"kind":"output","output_sha256":"8ece47e68f1108dfd6eb602bea268d59fcb5781ecfe1cda8c896f651c12fda38","raw_id":"1d450899","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072226572Z-1d450899.log","created_at":"2026-10-18T07:22:26.572Z"}
++{"kind":"block","block_id":"block_82fef575","block_sha256":"82fef575a6d7d4d60d9e381102d44650a29a770479c843bb2c5891ea213af823","normalized_sha256":"c75fe1d631ca38e85df20a9d25c0a958cce2f7179e7bd7c1525a00b6604b4ddd","raw_id":"01c8c53b","line_count":8,"token_estimate":55,"has_risk":false,"preview":"test_get_by_email (test_users.UsersTest.test_get_by_email) ... ok | test_search (test_users.UsersTest.test_search) ... ok","created_at":"2026-10-18T07:22:55.965Z"}
++{"kind":"output","output_sha256":"4ed497e3cdbf55d2c9563dd7de1717ebdab0c2c043c07423b8e3255f64268f5d","raw_id":"01c8c53b","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072255637Z-01c8c53b.log","created_at":"2026-10-18T07:22:55.637Z"}
++{"kind":"block","block_id":"block_8b8ecae1","block_sha256":"8b8ecae1ffd5adf49fe93a0cf62826c3a013a52b700543844e91189f5018acc1","normalized_sha256":"abc71250005a691199cca0ead15237fbe601e1b3ce821dbf6e63bdd3d6fa6b23","raw_id":"1d2faabe","line_count":8,"token_estimate":157,"has_risk":false,"preview":"test_get_by_email (test_users.UsersTest.test_get_by_email) ... ok | test_lookup_injection_payloads (test_users.UsersTest.test_lookup_injection_payloads) ... ok","created_at":"2026-10-18T07:23:05.638Z"}
++{"kind":"output","output_sha256":"30fae10aa377820262980860c6f8730fbdf3e942bed3e6dcf1b793cef5c519b8","raw_id":"1d2faabe","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072305386Z-1d2faabe.log","created_at":"2026-10-18T07:23:05.386Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"05b423c0","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072306623Z-05b423c0.log","created_at":"2026-10-18T07:23:06.623Z"}
++{"kind":"block","block_id":"block_8b8ecae1","block_sha256":"8b8ecae1ffd5adf49fe93a0cf62826c3a013a52b700543844e91189f5018acc1","normalized_sha256":"abc71250005a691199cca0ead15237fbe601e1b3ce821dbf6e63bdd3d6fa6b23","raw_id":"86f1f5d1","line_count":8,"token_estimate":157,"has_risk":false,"preview":"test_get_by_email (test_users.UsersTest.test_get_by_email) ... ok | test_lookup_injection_payloads (test_users.UsersTest.test_lookup_injection_payloads) ... ok","created_at":"2026-10-18T07:23:16.128Z"}
++{"kind":"block_hit","block_id":"block_8b8ecae1","current_raw_id":"86f1f5d1","previous_raw_id":"1d2faabe","line_count":8,"tokens_saved":153,"created_at":"2026-10-18T07:23:16.128Z"}
++{"kind":"output","output_sha256":"38066107e12c6db2927f4c94149d79d693a40b3b266df581209e976cf557e489","raw_id":"86f1f5d1","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072315860Z-86f1f5d1.log","created_at":"2026-10-18T07:23:15.860Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index b274b55..9cea906 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:22:09.553Z",
++  "generated_at": "2026-10-18T07:22:21.832Z",
+   "root": "t09-security-py-sql-injection__skills__r1",
+-  "total_files": 58,
++  "total_files": 76,
+   "stats": {
+-    "scanned_files": 58,
+-    "ignored_files": 0,
++    "scanned_files": 76,
++    "ignored_files": 4,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2323,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4042,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": ".gitignore",
+       "size_bytes": 19,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index aef2d6c..e0fedf3 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t09-security-py-sql-injection__skills__r1
+-Files indexed: 58
++Files indexed: 76
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2323 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4042 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ .gitignore (text, 19 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..fba1525 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,6 @@
++{"type":"command_run","raw_id":"1d450899","command":"git status --short","exit_code":0,"raw_tokens_estimated":24,"compressed_tokens_estimated":76,"estimated_raw_tokens":24,"estimated_reduced_payload_tokens":76,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":111,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:22:27.017Z"}
++{"type":"command_run","raw_id":"01c8c53b","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":57,"compressed_tokens_estimated":73,"estimated_raw_tokens":57,"estimated_reduced_payload_tokens":73,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":114,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:22:56.169Z"}
++{"type":"command_run","raw_id":"1d2faabe","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":185,"compressed_tokens_estimated":200,"estimated_raw_tokens":185,"estimated_reduced_payload_tokens":200,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":241,"summary_overhead_tokens":41,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:23:05.769Z"}
++{"type":"command_run","raw_id":"05b423c0","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:23:06.982Z"}
++{"type":"dedupe_hit","raw_id":"86f1f5d1","details":{"mode":"block","reused_blocks":1,"estimated_tokens_saved":153},"created_at":"2026-10-18T07:23:16.257Z"}
++{"type":"command_run","raw_id":"86f1f5d1","command":"python -m unittest discover -s tests -v","exit_code":0,"raw_tokens_estimated":185,"compressed_tokens_estimated":59,"estimated_raw_tokens":185,"estimated_reduced_payload_tokens":59,"estimated_soturail_metadata_tokens":41,"estimated_net_tokens_sent":100,"summary_overhead_tokens":41,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":126,"dedupe_estimated_tokens_saved":153,"dedupe_blocks_reused":1,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:23:16.261Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..f8791ff 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"1d450899","path":".soturail\\raw\\2026-10-18\\20261018T072226572Z-1d450899.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T07:22:26.572Z","compressor":"git-reducer","raw_tokens_estimated":24,"compressed_tokens_estimated":76,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c5b0dbf0f6692e2b5144191ba16953f7f3edf61ee7140668569569ea08ddec1a","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:22:26.572Z"}
++{"raw_id":"01c8c53b","path":".soturail\\raw\\2026-10-18\\20261018T072255637Z-01c8c53b.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T07:22:55.637Z","compressor":"generic-stream","raw_tokens_estimated":57,"compressed_tokens_estimated":73,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c5b0dbf0f6692e2b5144191ba16953f7f3edf61ee7140668569569ea08ddec1a","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:22:55.637Z"}
++{"raw_id":"1d2faabe","path":".soturail\\raw\\2026-10-18\\20261018T072305386Z-1d2faabe.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T07:23:05.386Z","compressor":"generic-stream","raw_tokens_estimated":185,"compressed_tokens_estimated":200,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2a9caf8b62714412ec34e46c147121ce5e85ed1bca03aede7b29de5e285ecfb7","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:23:05.386Z"}
++{"raw_id":"05b423c0","path":".soturail\\raw\\2026-10-18\\20261018T072306623Z-05b423c0.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:23:06.623Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2a9caf8b62714412ec34e46c147121ce5e85ed1bca03aede7b29de5e285ecfb7","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:23:06.623Z"}
++{"raw_id":"86f1f5d1","path":".soturail\\raw\\2026-10-18\\20261018T072315860Z-86f1f5d1.log","command":"python -m unittest discover -s tests -v","exit_code":0,"created_at":"2026-10-18T07:23:15.860Z","compressor":"generic-stream","raw_tokens_estimated":185,"compressed_tokens_estimated":59,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2a9caf8b62714412ec34e46c147121ce5e85ed1bca03aede7b29de5e285ecfb7","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:23:15.860Z"}
+diff --git a/directory/users.py b/directory/users.py
+index 4cdd414..9c84c12 100644
+--- a/directory/users.py
++++ b/directory/users.py
+@@ -2,12 +2,13 @@ ROLES = {"viewer", "editor", "admin"}
+ 
+ 
+ def search_users(conn, name_fragment):
+-    query = f"SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower('%{name_fragment}%') ORDER BY id"
+-    return [dict(row) for row in conn.execute(query)]
++    fragment = name_fragment.replace("!", "!!").replace("%", "!%").replace("_", "!_")
++    query = "SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower(?) ESCAPE '!' ORDER BY id"
++    return [dict(row) for row in conn.execute(query, (f"%{fragment}%",))]
+ 
+ 
+ def get_user_by_email(conn, email):
+-    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = '" + email + "'").fetchone()
++    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = ?", (email,)).fetchone()
+     return dict(row) if row else None
+ 
+ 
+diff --git a/tests/test_users.py b/tests/test_users.py
+index 04d6180..832d78f 100644
+--- a/tests/test_users.py
++++ b/tests/test_users.py
+@@ -1,12 +1,13 @@
+ import unittest
+ 
+ from directory.db import connect, seed
+-from directory.users import get_user_by_email, search_users
++from directory.users import get_user_by_email, search_users, set_role
+ 
+ 
+ class UsersTest(unittest.TestCase):
+     def setUp(self):
+         self.conn = connect()
++        self.addCleanup(self.conn.close)
+         seed(self.conn, [("Ana Lima", "ana@x.io", "admin"), ("Bruno", "bruno@x.io", "viewer")])
+ 
+     def test_search(self):
+@@ -15,6 +16,37 @@ class UsersTest(unittest.TestCase):
+     def test_get_by_email(self):
+         self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "viewer")
+ 
++    def test_lookup_injection_payloads(self):
++        for payload in ("' OR 1=1 --", "') OR 1=1 --", "'; DROP TABLE users; --"):
++            with self.subTest(payload=payload):
++                self.assertEqual(search_users(self.conn, payload), [])
++                self.assertIsNone(get_user_by_email(self.conn, payload))
++        self.assertEqual(len(search_users(self.conn, "")), 2)
++
++    def test_quoted_values_remain_searchable(self):
++        seed(self.conn, [("O'Neil", "o'neil@x.io", "viewer")])
++        self.assertEqual([u["name"] for u in search_users(self.conn, "O'NE")], ["O'Neil"])
++        self.assertEqual(get_user_by_email(self.conn, "o'neil@x.io")["name"], "O'Neil")
++
++    def test_search_literal_wildcards_and_escape(self):
++        seed(self.conn, [("100%_! done", "literal@x.io", "viewer")])
++        for fragment in ("%", "_", "!", "%_!", "100%_! DONE"):
++            with self.subTest(fragment=fragment):
++                self.assertEqual([u["name"] for u in search_users(self.conn, fragment)], ["100%_! done"])
++
++    def test_search_order_and_missing_email(self):
++        self.assertEqual([u["id"] for u in search_users(self.conn, "")], [1, 2])
++        self.assertIsNone(get_user_by_email(self.conn, "missing@x.io"))
++
++    def test_role_updates_are_constrained(self):
++        for role in ("viewer", "editor", "admin"):
++            set_role(self.conn, 2, role)
++            self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], role)
++        with self.assertRaises(ValueError):
++            set_role(self.conn, 2, "admin'; DROP TABLE users; --")
++        set_role(self.conn, "1 OR 1=1", "editor")
++        self.assertEqual([u["role"] for u in search_users(self.conn, "")], ["admin", "admin"])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

@@ -1,0 +1,89 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..e24c615 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,6 @@
++{"kind":"block","block_id":"block_d24551b0","block_sha256":"d24551b0fd5ec2f11b5265105f4e4884282f2030a938e827aa1d387787223cda","normalized_sha256":"ce5d1a762df3b1b894d38d582b34d800d9adde7c936fc4ac875de43d8cd5fcce","raw_id":"d286f0c3","line_count":8,"token_estimate":27,"has_risk":false,"preview":"✔ returns first success (3.5685ms) | ℹ tests 1","created_at":"2026-10-18T07:25:46.848Z"}
++{"kind":"output","output_sha256":"78cbea80381424d67f35403f7cda7f129dea4741706246896cdbbe89d0ffb7db","raw_id":"d286f0c3","command":"node --test test/retry.test.js","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072546470Z-d286f0c3.log","created_at":"2026-10-18T07:25:46.470Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"a434841b","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072548337Z-a434841b.log","created_at":"2026-10-18T07:25:48.337Z"}
++{"kind":"output","output_sha256":"067c60edce4cf4aaf7f8e323296aef3e37aae31d8a22898c17f55400faf87169","raw_id":"22ac4266","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072601658Z-22ac4266.log","created_at":"2026-10-18T07:26:01.658Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"52cf8fa8","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072604650Z-52cf8fa8.log","created_at":"2026-10-18T07:26:04.650Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"03e29b2a","command":"git diff src/retry.js test/retry.test.js package.json","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T072618256Z-03e29b2a.log","created_at":"2026-10-18T07:26:18.256Z"}
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..9796981 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,7 @@
++{"type":"command_run","raw_id":"d286f0c3","command":"node --test test/retry.test.js","exit_code":0,"raw_tokens_estimated":33,"compressed_tokens_estimated":66,"estimated_raw_tokens":33,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":38,"estimated_net_tokens_sent":104,"summary_overhead_tokens":38,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:25:47.015Z"}
++{"type":"command_run","raw_id":"a434841b","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:25:48.798Z"}
++{"type":"command_run","raw_id":"22ac4266","command":"node .soturail/readme-check.mjs","exit_code":0,"raw_tokens_estimated":8,"compressed_tokens_estimated":26,"estimated_raw_tokens":8,"estimated_reduced_payload_tokens":26,"estimated_soturail_metadata_tokens":39,"estimated_net_tokens_sent":65,"summary_overhead_tokens":39,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:26:02.149Z"}
++{"type":"dedupe_hit","raw_id":"52cf8fa8","details":{"previous_raw_id":"a434841b","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},"created_at":"2026-10-18T07:26:04.883Z"}
++{"type":"command_run","raw_id":"52cf8fa8","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":12,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":12,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":45,"summary_overhead_tokens":33,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:26:04.887Z"}
++{"type":"dedupe_hit","raw_id":"03e29b2a","details":{"previous_raw_id":"52cf8fa8","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},"created_at":"2026-10-18T07:26:18.469Z"}
++{"type":"command_run","raw_id":"03e29b2a","command":"git diff src/retry.js test/retry.test.js package.json","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":12,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":12,"estimated_soturail_metadata_tokens":43,"estimated_net_tokens_sent":55,"summary_overhead_tokens":43,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:26:18.474Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..96fe4d5 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,5 @@
++{"raw_id":"d286f0c3","path":".soturail\\raw\\2026-10-18\\20261018T072546470Z-d286f0c3.log","command":"node --test test/retry.test.js","exit_code":0,"created_at":"2026-10-18T07:25:46.470Z","compressor":"test-reducer","raw_tokens_estimated":33,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37c49233884c9a67ecbc662df2374986a330f0777bffde2fa042d89e16db3f0f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:25:46.470Z"}
++{"raw_id":"a434841b","path":".soturail\\raw\\2026-10-18\\20261018T072548337Z-a434841b.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:25:48.337Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37c49233884c9a67ecbc662df2374986a330f0777bffde2fa042d89e16db3f0f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:25:48.337Z"}
++{"raw_id":"22ac4266","path":".soturail\\raw\\2026-10-18\\20261018T072601658Z-22ac4266.log","command":"node .soturail/readme-check.mjs","exit_code":0,"created_at":"2026-10-18T07:26:01.658Z","compressor":"generic-stream","raw_tokens_estimated":8,"compressed_tokens_estimated":26,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37c49233884c9a67ecbc662df2374986a330f0777bffde2fa042d89e16db3f0f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:26:01.658Z"}
++{"raw_id":"52cf8fa8","path":".soturail\\raw\\2026-10-18\\20261018T072604650Z-52cf8fa8.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:26:04.650Z","compressor":"dedupe","raw_tokens_estimated":0,"compressed_tokens_estimated":12,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37c49233884c9a67ecbc662df2374986a330f0777bffde2fa042d89e16db3f0f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:26:04.650Z"}
++{"raw_id":"03e29b2a","path":".soturail\\raw\\2026-10-18\\20261018T072618256Z-03e29b2a.log","command":"git diff src/retry.js test/retry.test.js package.json","exit_code":0,"created_at":"2026-10-18T07:26:18.256Z","compressor":"dedupe","raw_tokens_estimated":0,"compressed_tokens_estimated":12,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"37c49233884c9a67ecbc662df2374986a330f0777bffde2fa042d89e16db3f0f","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:26:18.256Z"}
+diff --git a/README.md b/README.md
+index c49eb46..69c8550 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,46 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry a function until it succeeds, with exponential delays between failed calls.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++});
+ ```
+ 
++`retry(fn, options)` returns a promise for the first successful result. It calls
++`fn(attempt)` with a zero-based attempt index (`0` for the initial call). Both
++synchronous return values and promises are supported; thrown errors and rejected
++promises count as failures.
++
+ Options:
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | Retries after the initial call; at most `retries + 1` calls. Set to `0` for a single call. |
++| `baseDelayMs` | `200` | Base delay in milliseconds before a retry. |
++| `factor` | `2` | Delay multiplier: after failed attempt `n`, wait `baseDelayMs * factor ** n` before retrying. |
++| `shouldRetry` | `() => true` | Synchronous predicate called with the failure to decide whether to continue. |
++
++With the defaults, there are at most four calls, with waits of 200, 400, and
++800 milliseconds. There is no wait before the initial call or after the last
++failure. The old `attempts` and `delay` options are ignored.
++
++If all permitted calls fail, the promise rejects with an `AggregateError`. Its
++`errors` array contains every failure in call order, and its message is
++`retry: N attempt(s) failed`, where `N` is the number of failed calls.
++
++If `shouldRetry(error)` returns false before the final permitted attempt, retries
++stop without waiting and the original error is rethrown, provided the predicate
++also returns false when checked again after the loop. On the final permitted
++attempt, the result is an `AggregateError` even if the predicate returns false
++(including when `retries` is `0`).
+ 
+-Errors: after the last attempt the last error is rethrown.
++Use a synchronous, consistent predicate: it is called after each failure,
++including the final one, and may be called again after the loop when fewer than
++`retries + 1` calls failed. A predicate that throws causes its own error to be
++propagated directly.

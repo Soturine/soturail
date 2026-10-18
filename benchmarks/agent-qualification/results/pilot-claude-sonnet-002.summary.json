@@ -6,7 +6,7 @@
   "hosts": [
     "claude/claude-sonnet-5-5"
   ],
-  "generatedAt": "2026-10-18T07:12:11.389Z",
+  "generatedAt": "2026-10-18T07:30:29.965Z",
   "records": 36,
   "byArm": {
     "baseline": {

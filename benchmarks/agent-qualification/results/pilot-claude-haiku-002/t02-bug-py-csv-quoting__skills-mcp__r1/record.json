@@ -53,7 +53,7 @@
         "kind": "functional",
         "name": "hidden python tests",
         "pass": true,
-        "detail": "Ran 6 tests in 0.011s | OK"
+        "detail": "Ran 6 tests in 0.008s | OK"
       }
     ]
   },
@@ -66,6 +66,8 @@
     },
     "statusCorrect": true,
     "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
     "falseVerified": false,
     "skillsSelected": [],
     "skillRecall": 0,
@@ -133,5 +135,14 @@
       "soturail:connected"
     ]
   },
-  "transcriptSha256": "1ca2c221df75e50a9674ee3ab805ea0aab6161d3c2ba8f3062273f57f1e8771c"
+  "transcriptSha256": "1ca2c221df75e50a9674ee3ab805ea0aab6161d3c2ba8f3062273f57f1e8771c",
+  "oracleHistory": [
+    {
+      "oracleDigest": null,
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:29:17.138Z"
+    }
+  ],
+  "oracleDigest": "48ed9c2b2fa8d28f007cafe31282dd8af534e03f9a42bf5f81070e7e0774b7b2"
 }

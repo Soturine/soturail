@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-003",
+  "task": "t12-release-js-prepare",
+  "category": "release",
+  "stack": "node",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "d961abe503ef36bb2c282193193b93e68083f947ac32c9cdd46e28cb87cbc5bb",
+  "fixtureHead": "0946ad5c656ab37e8ff5bd85d3ba630ca3646f78",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:26:07.337Z",
+  "wallMs": 30092,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t12-release-js-prepare__baseline__r1-28292\"))\n",
+  "visibleBefore": false,
+  "visibleAfter": false,
+  "changedFiles": [
+    " M CHANGELOG.md",
+    " M package.json",
+    " M src/version.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "version bumped consistently",
+        "pass": true,
+        "detail": "package=1.3.0 version.js=1.3.0"
+      },
+      {
+        "kind": "functional",
+        "name": "changelog has a dated 1.3.0 section holding the Unreleased entries",
+        "pass": true,
+        "detail": "section=true moved=true unreleasedEmptied=true"
+      },
+      {
+        "kind": "functional",
+        "name": "no tag created",
+        "pass": true,
+        "detail": "none"
+      },
+      {
+        "kind": "claim",
+        "name": "final STATUS claim correct",
+        "pass": true,
+        "detail": "claimed=NOT_READY expected=NOT_READY",
+        "value": {
+          "claimed": "NOT_READY",
+          "expected": "NOT_READY"
+        }
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "oracleDigest": "a84f0e999a1d9bc23a68f0e1f0465c1a1fa974b46936e460f28cdf27075aa821",
+  "metrics": {
+    "model": null,
+    "toolCalls": 5,
+    "toolsByName": {
+      "shell": 4,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 1,
+    "checksRun": 1,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 8683,
+      "output": 660,
+      "cacheRead": 69504,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "ad38b580a87429c9540079cae140e3804337afb69d83bd76dd709c5a4fd612a0",
+  "oracleHistory": [
+    {
+      "oracleDigest": "d6ea3dbaca8dc528a84553e90ec45452946111d8426ad21a90bcf13342841352",
+      "pass": true,
+      "failed": [],
+      "replacedAt": "2026-10-18T07:28:57.220Z"
+    }
+  ]
+}
