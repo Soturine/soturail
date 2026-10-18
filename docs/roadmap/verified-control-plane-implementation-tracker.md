@@ -45,6 +45,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | HST-001 | Host adapter registry | 1.6.0 | [x] | `host-adapters.ts`; 121 → 7 literal host branches | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | LEG-001 | Legacy removal / migration | 1.6.0 | [x] | approved-memory migration, alias/dead code removal, deprecations with v2.0 targets | legacy cleanup suite | legacy removal report | Remove obsolete implementation, migrate persisted state, deprecate public contracts with a removal target. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [~] | selection fixtures + satisfiability tests; agent-run scoring pending | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
+| QUA-001 | Real-agent qualification harness | 1.7.0 | [~] | baseline audit; harness pending | oracle negative/positive controls | [v1.7 qualification baseline](../audits/v1.7.0-real-agent-qualification-baseline.md) | Same agent with/without SotuRail on 12 oracle-scored tasks; promotion criteria gate v1.7 scope. Closes the agent-run half of EVL-001. |
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [x] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [x] | `skills/soturail-{change,debug,review,security,research,knowledge,release}` | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [x] | `skills export --layout portable --install`, projection markers | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
@@ -81,6 +82,12 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | Fingerprint fix | `f973981` (test only, red), `a3a9daa` (fix) | `a3a9daa` green | `a3a9daa` |
 | 10A — contract lifecycle / trust hardening | `1192db6` | green (all jobs, first run) | `1192db6` |
 | 10 — release qualification / v1.6.0 | release commit | full local gates passed on `1192db6`; release SHA requalified in CI before tagging | `1192db6` |
+
+## Checkpoint log (v1.7 real-agent qualification)
+
+| Checkpoint | Commit | CI | Last-known-green |
+|---|---|---|---|
+| 0 — baseline and inventory | see git log | pending | `7704906` |
 
 ## Foundation
 

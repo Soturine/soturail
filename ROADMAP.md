@@ -25,6 +25,10 @@ Therefore:
 - keyword matching, English-specific text heuristics and stack-specific rule lists may exist only as bounded fallback/diagnostic mechanisms, never as the authoritative semantic layer;
 - CLI remains important for humans, CI, administration, diagnostics and deterministic fallback, but agents should primarily discover SotuRail through Skills, MCP, structured artifacts and capability discovery.
 
+## Next step — Real-Agent Qualification (before v1.7 scope)
+
+v1.7 scope is decided by evidence, not by architecture. First measure the same agents with and without SotuRail on oracle-scored tasks, dogfood the published package on external projects, and fix what is reproduced. `StructuralProvider` work starts only if that evidence names a concrete capability it would improve. Plan, metrics, budget and promotion criteria: [v1.7 Real-Agent Qualification Baseline](docs/audits/v1.7.0-real-agent-qualification-baseline.md).
+
 ## Milestone A — Integrity / Foundation (v1.5 baseline, migration follow-up)
 
 Delivered baseline: WorkspaceGuard, Artifact Envelope/Registry/Store, workspace fingerprints, atomic storage, JSONL tail recovery, MCP hardening, raw lifecycle, evidence freshness, knowledge cleanup, and Run Manifest.
