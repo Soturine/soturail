@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promises as fs } from "node:fs";
 import path from "node:path";
@@ -16,6 +16,13 @@ export interface WorkspaceFingerprint {
   head: string;
   dirty: boolean;
   dirtyDigest: string;
+  /**
+   * How edits are detected. `git`: porcelain status plus content of dirty files.
+   * `content-scan`: no Git work tree, so every workspace file is hashed.
+   * `unavailable`: too large to scan; the fingerprint is unique per call, so earlier
+   * evidence can never look current (fail closed). Not part of the digest.
+   */
+  freshnessBasis: "git" | "content-scan" | "unavailable";
   relevantFilesDigest: string;
   lockfileDigest: string;
   configurationDigest: string;
@@ -26,9 +33,17 @@ export interface WorkspaceFingerprint {
   };
 }
 
-export async function createWorkspaceFingerprint(root = process.cwd()): Promise<WorkspaceFingerprint> {
+export interface FingerprintOptions {
+  /** Upper bound for the content scan used when there is no Git work tree. */
+  maxScanFiles?: number;
+}
+
+const DEFAULT_MAX_SCAN_FILES = 20000;
+
+export async function createWorkspaceFingerprint(root = process.cwd(), options: FingerprintOptions = {}): Promise<WorkspaceFingerprint> {
   const resolvedRoot = path.resolve(root);
-  const [repositoryIdentity, worktreeIdentity, branch, head, status] = await Promise.all([
+  const [insideWorkTree, repositoryIdentity, worktreeIdentity, branch, head, status] = await Promise.all([
+    git(root, ["rev-parse", "--is-inside-work-tree"], "false"),
     git(root, ["config", "--get", "remote.origin.url"], "UNKNOWN"),
     git(root, ["rev-parse", "--show-toplevel"], resolvedRoot),
     git(root, ["branch", "--show-current"], "DETACHED"),
@@ -39,13 +54,16 @@ export async function createWorkspaceFingerprint(root = process.cwd()): Promise<
   const relevantFilesDigest = await digestFiles(resolvedRoot, relevantFiles);
   const lockfileDigest = await digestFiles(resolvedRoot, ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "Cargo.lock"]);
   const configurationDigest = await digestFiles(resolvedRoot, ["package.json", "tsconfig.json", ".soturail/config/config.json"]);
-  const dirtyDigest = await digestDirtyState(resolvedRoot, status);
+  // Without a Git work tree, `git status` is empty and would hide every edit (false green).
+  const scan = insideWorkTree === "true" ? null : await digestWorkspaceContent(resolvedRoot, options.maxScanFiles ?? DEFAULT_MAX_SCAN_FILES);
+  const freshnessBasis: WorkspaceFingerprint["freshnessBasis"] = scan === null ? "git" : scan.complete ? "content-scan" : "unavailable";
+  const dirtyDigest = scan === null ? await digestDirtyState(resolvedRoot, status) : scan.complete ? scan.digest : `unavailable:${randomUUID()}`;
   const stable = {
     repositoryIdentity: sanitizeRepositoryIdentity(repositoryIdentity),
     worktreeIdentity: normalizePath(worktreeIdentity),
     branch: branch || "DETACHED",
     head,
-    dirty: status.length > 0,
+    dirty: scan === null ? status.length > 0 : true,
     dirtyDigest,
     relevantFilesDigest,
     lockfileDigest,
@@ -56,7 +74,8 @@ export async function createWorkspaceFingerprint(root = process.cwd()): Promise<
     schemaVersion: "soturail.workspace-fingerprint.v1",
     fingerprint: sha256(JSON.stringify(stable)),
     createdAt: new Date().toISOString(),
-    ...stable
+    ...stable,
+    freshnessBasis
   };
 }
 
@@ -72,6 +91,28 @@ async function digestDirtyState(root: string, status: string): Promise<string> {
     else parts.push(`${normalizePath(relative)}:${stat?.isDirectory() ? "directory" : "missing"}`);
   }
   return sha256(parts.join("\0"));
+}
+
+async function digestWorkspaceContent(root: string, maxFiles: number): Promise<{ complete: boolean; digest: string }> {
+  const parts: string[] = [];
+  const pending = [""];
+  while (pending.length > 0) {
+    const relativeDir = pending.pop() as string;
+    const entries = await fs.readdir(path.join(root, relativeDir), { withFileTypes: true }).catch(() => []);
+    for (const entry of entries) {
+      const relative = relativeDir ? `${relativeDir}/${entry.name}` : entry.name;
+      if (ignored(relative) || /^\.soturail(?:\/|$)/i.test(relative)) continue;
+      if (entry.isDirectory()) {
+        pending.push(relative);
+      } else if (entry.isFile()) {
+        if (parts.length >= maxFiles) return { complete: false, digest: "" };
+        const stat = await fs.stat(path.join(root, relative)).catch(() => null);
+        const content = stat && stat.size <= 10 * 1024 * 1024 ? sha256(await fs.readFile(path.join(root, relative))) : `size:${stat?.size ?? "missing"}:${stat?.mtimeMs ?? 0}`;
+        parts.push(`${relative}:${content}`);
+      }
+    }
+  }
+  return { complete: true, digest: sha256(parts.sort().join("\0")) };
 }
 
 async function digestFiles(root: string, files: string[]): Promise<string> {

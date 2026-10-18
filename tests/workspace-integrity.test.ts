@@ -158,6 +158,31 @@ describe("artifact identity", () => {
     expect((await createWorkspaceFingerprint(root)).fingerprint).not.toBe(before.fingerprint);
   });
 
+  it("detects source edits in a project without git (no false green)", async () => {
+    const root = await temporaryProject();
+    const before = await createWorkspaceFingerprint(root);
+    expect(before.freshnessBasis).toBe("content-scan");
+    await fs.mkdir(path.join(root, ".soturail", "raw"), { recursive: true });
+    await fs.writeFile(path.join(root, ".soturail", "raw", "run.log"), "runtime", "utf8");
+    expect((await createWorkspaceFingerprint(root)).fingerprint).toBe(before.fingerprint);
+    await fs.writeFile(path.join(root, "inside.txt"), "edited", "utf8");
+    expect((await createWorkspaceFingerprint(root)).fingerprint).not.toBe(before.fingerprint);
+  });
+
+  it("fails closed when a project without git is too large to scan", async () => {
+    const root = await temporaryProject();
+    const first = await createWorkspaceFingerprint(root, { maxScanFiles: 0 });
+    const second = await createWorkspaceFingerprint(root, { maxScanFiles: 0 });
+    expect(first.freshnessBasis).toBe("unavailable");
+    expect(second.fingerprint).not.toBe(first.fingerprint);
+  });
+
+  it("keeps git-based fingerprints unchanged by the content-scan fallback", async () => {
+    const root = await temporaryProject();
+    await initializeGit(root);
+    expect((await createWorkspaceFingerprint(root)).freshnessBasis).toBe("git");
+  });
+
   it("still binds the SotuRail configuration file", async () => {
     const root = await temporaryProject();
     await initializeGit(root);
