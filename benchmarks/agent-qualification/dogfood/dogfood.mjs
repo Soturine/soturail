@@ -6,7 +6,7 @@
 //   node dogfood/dogfood.mjs [--version 1.6.0] [--projects cookie,itsdangerous,...] [--out results/dogfood-<date>]
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync, appendFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync, appendFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { SUITE_DIR, ensureSoturail, sanitizedPath } from "../harness/lib.mjs";
@@ -16,7 +16,10 @@ const PROJECTS = {
   itsdangerous: { repo: "https://github.com/pallets/itsdangerous.git", stack: "python", docsLocale: "en", setup: null, check: "python -m pytest -q -p no:cacheprovider tests/test_itsdangerous/test_signer.py tests/test_itsdangerous/test_serializer.py", env: { PYTHONPATH: "src" }, file: "src/itsdangerous/signer.py" },
   "cookie-unicode-path": { repo: "https://github.com/jshttp/cookie.git", stack: "node", docsLocale: "en", setup: "npm install --no-audit --no-fund", check: "npm test", file: "src/index.ts", dirName: "projeto com espaço ção" },
   sotuhire: { repo: "https://github.com/Soturine/SotuHire.git", stack: "python+typescript monorepo", docsLocale: "pt-BR", setup: null, check: "python --version", file: "README.md" },
-  replicascan: { repo: "https://github.com/Soturine/replicascan.git", stack: "kotlin/android", docsLocale: "pt-BR", setup: null, check: "gradle test", file: "README.md" }
+  replicascan: { repo: "https://github.com/Soturine/replicascan.git", stack: "kotlin/android", docsLocale: "pt-BR", setup: null, check: "gradle test", file: "README.md" },
+  // Local, created fresh each run: a brand-new repository (no commit yet) and a directory without Git.
+  "fresh-git": { local: "git", stack: "new git repo, no commits, no .gitignore", docsLocale: "en", setup: null, check: "node --version", file: "README.md" },
+  "no-git": { local: "plain", stack: "plain directory, no git", docsLocale: "en", setup: null, check: "node --version", file: "index.js" }
 };
 
 const args = process.argv.slice(2);
@@ -110,7 +113,12 @@ async function dogfood(name) {
   };
   process.stdout.write(`\n== ${name} (${project.stack}, docs ${project.docsLocale})\n`);
 
-  if (!existsSync(path.join(dir, ".git"))) {
+  if (project.local) {
+    rmSync(dir, { recursive: true, force: true });
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(path.join(dir, project.file), project.file.endsWith(".js") ? "console.log('hello');\n" : "# demo\n");
+    if (project.local === "git") sh("git init -q", dir);
+  } else if (!existsSync(path.join(dir, ".git"))) {
     mkdirSync(root, { recursive: true });
     const clone = sh(`git clone -c core.autocrlf=false --depth 1 ${project.repo} "${dir}"`, root);
     if (clone.code !== 0) { step("clone", "-", clone, "ERROR", "clone failed"); return { name, project, steps }; }
@@ -128,8 +136,16 @@ async function dogfood(name) {
   const added = [...afterInit.keys()].filter((file) => !before.has(file));
   const modified = [...before.keys()].filter((file) => afterInit.has(file) && afterInit.get(file) !== before.get(file));
   step("init", "soturail init", init, init.code === 0 && modified.length === 0 ? "PASS" : init.code === 0 ? "WARN" : "FAIL", `${added.length} files added outside .soturail/ (${added.filter((f) => f.startsWith("docs/")).length} under docs/), ${modified.length} pre-existing modified${modified.length ? `: ${modified.slice(0, 5).join(", ")}` : ""}`);
-  const gitignore = existsSync(path.join(dir, ".gitignore")) ? readFileSync(path.join(dir, ".gitignore"), "utf8") : "";
-  step("init-gitignore", ".soturail/ kept local", null, /\.soturail/.test(gitignore) ? "PASS" : "WARN", /\.soturail/.test(gitignore) ? ".soturail ignored" : ".soturail/ not in .gitignore — runtime state (raw logs) can be committed");
+  if (project.local === "plain") {
+    step("init-gitignore", "runtime state kept out of git", null, "N/A", "no git repository");
+  } else {
+    // Probe with git itself: runtime state must be ignored, reviewable configuration must not be.
+    const probe = [".soturail/raw/x.log", ".soturail/evidence/e/evidence.json", ".soturail/fs/snapshots/s.json", ".soturail/contracts/c.json", ".soturail/config/config.json"];
+    const ignoredNow = sh(`git check-ignore --no-index ${probe.join(" ")}`, dir).stdout.split(/\r?\n/).filter(Boolean);
+    const runtimeLocal = probe.slice(0, 3).every((item) => ignoredNow.includes(item));
+    const configVisible = probe.slice(3).every((item) => !ignoredNow.includes(item));
+    step("init-gitignore", "runtime state kept out of git; configuration versionable", null, runtimeLocal && configVisible ? "PASS" : "WARN", `raw/evidence/snapshots ignored=${runtimeLocal}; contracts/config visible=${configVisible}`);
+  }
 
   const doctor = cli(dir, ["doctor"]);
   step("doctor", "soturail doctor", doctor, doctor.code === 0 ? "PASS" : "FAIL");
@@ -232,8 +248,9 @@ async function dogfood(name) {
   step("status-json", "status --json", status, status.code === 0 ? "PASS" : "FAIL");
 
   const untracked = sh("git status --porcelain -uall", dir).stdout.split(/\r?\n/).filter(Boolean);
-  const runtimeVisible = untracked.filter((line) => line.includes(".soturail/"));
-  step("final-footprint", "-", null, runtimeVisible.length ? "WARN" : "PASS", `${untracked.length} changed/untracked paths; ${runtimeVisible.length} under .soturail/ visible to git`);
+  const versionable = /\.soturail\/(\.gitignore|config\/config\.json|contracts\/|rules\/|skills\/|specs\/)/;
+  const runtimeVisible = untracked.filter((line) => line.includes(".soturail/") && !versionable.test(line));
+  step("final-footprint", "-", null, project.local === "plain" ? "N/A" : runtimeVisible.length ? "WARN" : "PASS", `${untracked.length} changed/untracked paths; ${runtimeVisible.length} runtime paths under .soturail/ visible to git`);
 
   return { name, project, head, trackedBefore, steps, mcpTools: mcp.tools };
 }
@@ -242,6 +259,7 @@ const results = [];
 for (const name of selected) results.push(await dogfood(name));
 const summary = {
   schemaVersion: "soturail.qualification.dogfood.v1", soturailVersion: soturail.version, node: process.version, platform: `${process.platform}-${process.arch}`,
+  package: version.endsWith(".tgz") ? { tarball: path.basename(version), sha256: createHash("sha256").update(readFileSync(version)).digest("hex") } : { npm: `soturail@${version}` },
   generatedAt: new Date().toISOString(), results
 };
 writeFileSync(path.join(outDir, "dogfood.json"), `${JSON.stringify(summary, null, 2)}\n`);
@@ -250,7 +268,7 @@ const allSteps = [...new Set(results.flatMap((r) => r.steps.map((s) => s.id)))];
 const md = [
   `# Dogfood — soturail@${soturail.version}`,
   "",
-  `${summary.platform}, Node ${summary.node}, ${summary.generatedAt}. Published package from npm; shallow clones of public repositories in the OS temp directory.`,
+  `${summary.platform}, Node ${summary.node}, ${summary.generatedAt}. Package: ${summary.package.npm ?? `${summary.package.tarball} (sha256 ${summary.package.sha256})`}, installed in an isolated cache. External projects are shallow clones in the OS temp directory; local projects are created fresh.`,
   "",
   `| step | ${results.map((r) => `${r.name}`).join(" | ")} |`,
   `|---|${results.map(() => "---").join("|")}|`,
