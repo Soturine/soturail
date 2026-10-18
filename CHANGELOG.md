@@ -21,6 +21,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- `soturail run --summary-only` (next minor release): agent mode that does not mirror output live and prints the reduced summary or, when that is not smaller, the redacted output once, plus a one-line `raw_id` trailer. The default tee mode printed the full output and a summary on top, so `soturail run` always cost an agent more tokens than running the command directly. The core and debug Skills now use it.
 - Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, and a deterministic dogfood of the published package.
 
 ## [1.6.0] - 2026-10-04

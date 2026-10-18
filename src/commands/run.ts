@@ -1,4 +1,4 @@
-import type { Writable } from "node:stream";
+import { Writable } from "node:stream";
 import { promises as fs } from "node:fs";
 import type { Command } from "commander";
 import { applyBlockDedupe, type SimilarDedupeMode } from "../core/block-dedupe.js";
@@ -17,6 +17,11 @@ import { redactText } from "../core/report-redaction.js";
 
 export interface RunCliOptions {
   interactive?: boolean;
+  /**
+   * Agent mode: do not mirror output live. Print the reduced summary when it is smaller than the
+   * output, otherwise the (redacted) output once, followed by a one-line raw_id trailer.
+   */
+  summaryOnly?: boolean;
   unsafeConfirm?: string;
   native?: boolean;
   engine?: ReducerEngine;
@@ -101,9 +106,11 @@ export async function executeRunCommand(
   const dedupe = new DedupeStore(root);
   const log = await rawStore.createLog(command);
 
+  // The tee mirrors output for humans; in summary-only mode it would duplicate what the agent reads.
+  const runnerOptions = options.summaryOnly ? { ...options, terminalStdout: discard(), terminalStderr: discard() } : options;
   const result = nativeInfo.available
-    ? await runNativePath(commandParts, log, options, root)
-    : await runTypeScriptPath(command, log.stream, options, root);
+    ? await runNativePath(commandParts, log, runnerOptions, root)
+    : await runTypeScriptPath(command, log.stream, runnerOptions, root);
   const outputHash = sha256Text(result.rawText);
   const previous = await dedupe.findReusable(outputHash, result.exitCode);
   const similarMode = options.similarDedupe ?? config.dedupe.similar_dedupe;
@@ -211,6 +218,13 @@ export async function executeRunCommand(
     }
   });
 
+  const effective = netTokens <= record.raw_tokens_estimated;
+  if (options.summaryOnly) {
+    const trailer = `[soturail] exit ${result.exitCode} · raw_id ${log.rawId} · full output: soturail expand ${log.rawId}`;
+    const body = effective ? compression.summary : redactText(result.rawText).text;
+    return { rawId: log.rawId, exitCode: result.exitCode, summary: `${body.trimEnd()}\n${trailer}\n`, record };
+  }
+
   const summary = [
     "",
     "SotuRail run complete.",
@@ -222,7 +236,7 @@ export async function executeRunCommand(
     ...(blockDedupe && blockDedupe.reusedBlocks.length > 0
       ? [`Dedupe: reused ${blockDedupe.reusedBlocks.length} block(s), estimated_tokens_saved: ${blockDedupe.tokensSaved}`]
       : []),
-    ...(netTokens > record.raw_tokens_estimated
+    ...(!effective
       ? ["Compression was not effective for this small command, but raw recovery paths and audit metadata were preserved."]
       : []),
     "",
@@ -296,6 +310,10 @@ async function runNativePath(
   return { exitCode: native.exitCode, rawText };
 }
 
+function discard(): Writable {
+  return new Writable({ write(_chunk, _encoding, callback) { callback(); } });
+}
+
 async function closeLogStream(stream: Writable): Promise<void> {
   await new Promise<void>((resolve) => stream.end(resolve));
 }
@@ -307,6 +325,7 @@ export function registerRunCommand(program: Command): void {
     .allowUnknownOption(true)
     .allowExcessArguments(true)
     .option("--interactive", "Forward stdin/TTY behavior when possible")
+    .option("--summary-only", "Agent mode: no live output; print the reduced summary, or the redacted output once if it is smaller, plus a raw_id trailer")
     .option("--native", "Prefer the optional native reducer engine")
     .option("--engine <engine>", "Reducer engine: auto, ts, or native", "auto")
     .option("--similar-dedupe <mode>", "Experimental similar-output dedupe mode: off or conservative", "off")
@@ -332,6 +351,9 @@ export function registerRunCommand(program: Command): void {
       };
       if (options.interactive !== undefined) {
         runOptions.interactive = options.interactive;
+      }
+      if (options.summaryOnly !== undefined) {
+        runOptions.summaryOnly = options.summaryOnly;
       }
       if (options.unsafeConfirm !== undefined) {
         runOptions.unsafeConfirm = options.unsafeConfirm;

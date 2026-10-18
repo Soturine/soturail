@@ -243,6 +243,33 @@ describe("safe runner and raw store", () => {
     expect(log).toContain("hello from runner");
     expect(result.summary).toContain(`soturail expand ${result.rawId}`);
   });
+
+  it("summary-only mode never sends an agent more than the output plus one trailer line", async () => {
+    const root = await tempRoot();
+    const mirrored: string[] = [];
+    const stdout = new PassThrough();
+    stdout.on("data", (chunk: Buffer) => mirrored.push(chunk.toString()));
+    const small = `"${process.execPath}" -e "console.log('tiny ok')"`;
+    const tiny = await executeRunCommand([small], { terminalStdout: stdout, terminalStderr: drainedPassThrough(), summaryOnly: true }, root);
+    expect(mirrored.join("")).toBe("");
+    expect(tiny.summary.match(/tiny ok/g)).toHaveLength(1);
+    expect(tiny.summary.trimEnd().split(/\r?\n/).at(-1)).toBe(`[soturail] exit 0 · raw_id ${tiny.rawId} · full output: soturail expand ${tiny.rawId}`);
+    expect(tiny.summary.length).toBeLessThan("tiny ok\n".length + 120);
+
+    const noisy = `"${process.execPath}" -e "for (let i = 0; i < 400; i++) console.log('ok ' + i + ' passing step with repeated progress text')"`;
+    const large = await executeRunCommand([noisy], { terminalStdout: stdout, terminalStderr: drainedPassThrough(), summaryOnly: true }, root);
+    const rawLength = 400 * "ok 100 passing step with repeated progress text\n".length;
+    expect(mirrored.join("")).toBe("");
+    expect(large.summary.length).toBeLessThan(rawLength);
+    expect(large.summary).toContain(`soturail expand ${large.rawId}`);
+  });
+
+  it("summary-only mode redacts probable secrets it prints", async () => {
+    const root = await tempRoot();
+    const leak = `"${process.execPath}" -e "console.log('token=ghp_abcdefghijklmnopqrstuvwxyz0123456789')"`;
+    const result = await executeRunCommand([leak], { terminalStdout: drainedPassThrough(), terminalStderr: drainedPassThrough(), summaryOnly: true }, root);
+    expect(result.summary).not.toContain("ghp_abcdefghijklmnopqrstuvwxyz0123456789");
+  });
 });
 
 describe("expand", () => {

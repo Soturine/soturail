@@ -48,3 +48,13 @@ soturail run --similar-dedupe conservative npm test
 ```
 
 Similar-output dedupe is deterministic and experimental. It normalizes whitespace, timestamps and temporary paths; it does not use AI or semantic matching.
+
+## Agent mode: `--summary-only`
+
+By default `soturail run` mirrors the command's output live (for humans) and then prints the reduced summary, so a reader of stdout sees both. An agent reading stdout should use:
+
+```bash
+soturail run --summary-only -- npm test
+```
+
+Nothing is mirrored live. When the reduced summary is smaller than the output, only the summary is printed; otherwise the output is printed once, redacted. Either way the last line is `[soturail] exit <code> · raw_id <id> · full output: soturail expand <id>`, and the raw log is recorded exactly as in the default mode. Measured on Node test runs: a one-test run is 127 bytes natively, 641 in the default mode and 208 in summary-only; a 200-test run is 4,780, 5,191 and 357.
