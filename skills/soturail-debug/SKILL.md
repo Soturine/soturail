@@ -13,7 +13,7 @@ Reproduce, isolate, fix, re-run the same check.
 
 ## Workflow
 
-1. **Reproduce** with `command.run` (`soturail run -- <command>`). The exit code is the authoritative signal; output wording varies by tool and locale.
+1. **Reproduce** with `command.run` (`soturail run --summary-only -- <command>`; `soturail expand <raw_id>` when you need the full log). The exit code is the authoritative signal; output wording varies by tool and locale.
 2. **Inspect** the recorded output with `raw.inspect.redacted` instead of pasting full logs. Prefer structured reports (JUnit, JSON reporters, compiler diagnostics) when the project can emit them.
 3. **Isolate.** Form hypotheses from the evidence, read only the implicated files, and state the most likely cause citing the log and source lines; record it as a `claim` candidate when it must outlive this session (handoff, review, recurring failure).
 4. **Fix** the cause, not the symptom. If the fix changes behavior beyond the failure, switch to soturail-change discipline.
