@@ -116,5 +116,19 @@
     "mcpServers": []
   },
   "transcriptSha256": "9031e1b984b81089cf6f37d508baae9893870c1720c449fc2fa6abc478c9c0fb",
-  "invalid": "You’ve hit your usage limit"
+  "invalid": "You’ve hit your usage limit",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": []
+  },
+  "readiness": {
+    "functionalSuccess": false,
+    "agentCheckedAfterLastEdit": false,
+    "soturailEvidence": "none",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "no-claim",
+    "basis": "final-message-fallback",
+    "codes": []
+  }
 }

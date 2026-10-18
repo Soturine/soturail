@@ -1,6 +1,6 @@
 # Agent qualification report — candidate-codex-003
 
-Hosts/models: codex/null. Records: 36. Generated 2026-10-18T07:30:29.764Z.
+Hosts/models: codex/null. Valid records: 36; excluded as invalid (host failure): 0. Generated 2026-10-18T19:15:18.533Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -9,14 +9,17 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
 | runs | 12 | 12 | 12 |
-| task success (oracle) | 100% | 100% | 100% |
+| **functional success** (oracle) | 100% | 100% | 100% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
-| final STATUS correct | 100% | 75% | 75% |
-| false-ready | 0% | 0% | 0% |
+| **agent evidence**: ran a check after last edit | 100% | 100% | 100% |
+| **SotuRail evidence current** (runs with contracts) | – | 100% of 8 | 71% of 7 |
+| **review/approval pending** | 0% | 25% | 25% |
+| **undue technical block** | 0% | 0% | 0% |
+| **final readiness claim correct** (review-pending counts as correct) | 100% | 100% | 100% |
+|   correct-ready / correct-not-ready / review-pending | 9 / 3 / 0 | 6 / 3 / 3 | 6 / 3 / 3 |
+|   false-ready / false-not-ready / no claim | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+|   classification basis | final-message-fallback: 12 | soturail-verdict-codes: 8; final-message-fallback: 4 | final-message-fallback: 5; soturail-verdict-codes: 7 |
 | false-verified | 0% | 0% | 0% |
-| false-not-ready (correct work reported not ready) | 0% | 25% | 25% |
-|   reasons | – | approval-policy: 3 | approval-policy: 3 |
-| ran a check after last edit | 100% | 100% | 100% |
 | used SotuRail (skill/CLI/MCP) | – | 100% | 100% |
 | expected-skill recall | – | 97% | 97% |
 | tool calls (mean) | 5.3 | 13.0 | 24.5 |

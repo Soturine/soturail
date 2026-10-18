@@ -140,5 +140,30 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "fc078a19a538e29ba76f469c2b2ab655ec59f378456e4b5af0cfddc3ceaf6e65"
+  "transcriptSha256": "fc078a19a538e29ba76f469c2b2ab655ec59f378456e4b5af0cfddc3ceaf6e65",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/tenant-config-isolation.json",
+        "risk": "medium",
+        "verdict": "ready",
+        "codes": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "passed"
+    ]
+  }
 }

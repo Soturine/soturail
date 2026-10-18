@@ -118,5 +118,30 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "705f3077fcf6df6f5f0a77e4581e46292879b9104684f7638eabb3c72a352f54"
+  "transcriptSha256": "705f3077fcf6df6f5f0a77e4581e46292879b9104684f7638eabb3c72a352f54",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/inventory-report-json.json",
+        "risk": "low",
+        "verdict": "ready",
+        "codes": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "passed"
+    ]
+  }
 }

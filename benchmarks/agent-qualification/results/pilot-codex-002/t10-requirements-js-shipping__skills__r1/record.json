@@ -142,5 +142,34 @@
       "replacedAt": "2026-10-18T07:28:39.356Z"
     }
   ],
-  "oracleDigest": "cef370f447b277879b6bd5d9a2cec331f8d570024317cab0eff3ec21c6d2755d"
+  "oracleDigest": "cef370f447b277879b6bd5d9a2cec331f8d570024317cab0eff3ec21c6d2755d",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/shipping-rules.json",
+        "risk": "medium",
+        "verdict": "not-ready",
+        "codes": [
+          "evidence_stale",
+          "criterion_unsatisfied",
+          "check_missing"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "not-current",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-not-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "evidence_stale",
+      "criterion_unsatisfied",
+      "check_missing"
+    ]
+  }
 }

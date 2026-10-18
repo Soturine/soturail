@@ -6,19 +6,29 @@
   "hosts": [
     "claude/claude-haiku-5-5"
   ],
-  "generatedAt": "2026-10-18T07:47:14.823Z",
+  "generatedAt": "2026-10-18T19:15:18.908Z",
   "records": 108,
   "byArm": {
     "baseline": {
       "runs": 36,
       "success": 0.8888888888888888,
       "regressions": 0,
-      "statusCorrect": 0.8611111111111112,
-      "falseReady": 0.1111111111111111,
       "falseVerified": 0.2222222222222222,
-      "falseNotReady": 0.027777777777777776,
-      "notReadyReasons": {
-        "other": 1
+      "withContracts": 0,
+      "evidenceCurrent": null,
+      "reviewPending": 0,
+      "undueBlock": 0,
+      "outcomes": {
+        "correct-ready": 22,
+        "correct-not-ready": 9,
+        "review-pending": 0,
+        "false-ready": 4,
+        "false-not-ready": 1,
+        "no-claim": 0
+      },
+      "claimCorrect": 0.8611111111111112,
+      "basis": {
+        "final-message-fallback": 36
       },
       "checkAfterLastEdit": 0.8888888888888888,
       "usedSoturail": null,
@@ -40,12 +50,22 @@
       "runs": 36,
       "success": 0.8888888888888888,
       "regressions": 0,
-      "statusCorrect": 0.8888888888888888,
-      "falseReady": 0.08333333333333333,
       "falseVerified": 0.16666666666666666,
-      "falseNotReady": 0.027777777777777776,
-      "notReadyReasons": {
-        "other": 1
+      "withContracts": 0,
+      "evidenceCurrent": null,
+      "reviewPending": 0,
+      "undueBlock": 0,
+      "outcomes": {
+        "correct-ready": 23,
+        "correct-not-ready": 9,
+        "review-pending": 0,
+        "false-ready": 3,
+        "false-not-ready": 1,
+        "no-claim": 0
+      },
+      "claimCorrect": 0.8888888888888888,
+      "basis": {
+        "final-message-fallback": 36
       },
       "checkAfterLastEdit": 0.8888888888888888,
       "usedSoturail": 0.08333333333333333,
@@ -67,12 +87,22 @@
       "runs": 36,
       "success": 0.8055555555555556,
       "regressions": 0,
-      "statusCorrect": 0.8611111111111112,
-      "falseReady": 0.1111111111111111,
       "falseVerified": 0.25,
-      "falseNotReady": 0.027777777777777776,
-      "notReadyReasons": {
-        "other": 1
+      "withContracts": 0,
+      "evidenceCurrent": null,
+      "reviewPending": 0,
+      "undueBlock": 0,
+      "outcomes": {
+        "correct-ready": 22,
+        "correct-not-ready": 9,
+        "review-pending": 0,
+        "false-ready": 4,
+        "false-not-ready": 1,
+        "no-claim": 0
+      },
+      "claimCorrect": 0.8611111111111112,
+      "basis": {
+        "final-message-fallback": 36
       },
       "checkAfterLastEdit": 0.8611111111111112,
       "usedSoturail": 0.05555555555555555,

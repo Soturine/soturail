@@ -130,5 +130,30 @@
       "failed": [],
       "replacedAt": "2026-10-18T07:28:44.025Z"
     }
-  ]
+  ],
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/csv-quoted-fields.json",
+        "risk": "low",
+        "verdict": "ready",
+        "codes": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "passed"
+    ]
+  }
 }

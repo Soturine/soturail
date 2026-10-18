@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-claude-haiku-002
 
-Hosts/models: claude/claude-haiku-5-5. Valid records: 108; excluded as invalid (host failure): 0. Generated 2026-10-18T07:47:14.823Z.
+Hosts/models: claude/claude-haiku-5-5. Valid records: 108; excluded as invalid (host failure): 0. Generated 2026-10-18T19:15:18.908Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -9,14 +9,17 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
 | runs | 36 | 36 | 36 |
-| task success (oracle) | 89% | 89% | 81% |
+| **functional success** (oracle) | 89% | 89% | 81% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
-| final STATUS correct | 86% | 89% | 86% |
-| false-ready | 11% | 8% | 11% |
+| **agent evidence**: ran a check after last edit | 89% | 89% | 86% |
+| **SotuRail evidence current** (runs with contracts) | – | – | – |
+| **review/approval pending** | 0% | 0% | 0% |
+| **undue technical block** | 0% | 0% | 0% |
+| **final readiness claim correct** (review-pending counts as correct) | 86% | 89% | 86% |
+|   correct-ready / correct-not-ready / review-pending | 22 / 9 / 0 | 23 / 9 / 0 | 22 / 9 / 0 |
+|   false-ready / false-not-ready / no claim | 4 / 1 / 0 | 3 / 1 / 0 | 4 / 1 / 0 |
+|   classification basis | final-message-fallback: 36 | final-message-fallback: 36 | final-message-fallback: 36 |
 | false-verified | 22% | 17% | 25% |
-| false-not-ready (correct work reported not ready) | 3% | 3% | 3% |
-|   reasons | other: 1 | other: 1 | other: 1 |
-| ran a check after last edit | 89% | 89% | 86% |
 | used SotuRail (skill/CLI/MCP) | – | 8% | 6% |
 | expected-skill recall | – | 3% | 1% |
 | tool calls (mean) | 8.8 | 7.9 | 8.2 |

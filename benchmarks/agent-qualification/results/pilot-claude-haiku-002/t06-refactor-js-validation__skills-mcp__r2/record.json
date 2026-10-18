@@ -145,5 +145,19 @@
       "soturail:connected"
     ]
   },
-  "transcriptSha256": "b152794a575814c9bed1e4b1d06abed39520235dda84c1708d4254209b3fc3b2"
+  "transcriptSha256": "b152794a575814c9bed1e4b1d06abed39520235dda84c1708d4254209b3fc3b2",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": []
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "none",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "final-message-fallback",
+    "codes": []
+  }
 }

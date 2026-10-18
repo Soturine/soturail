@@ -158,5 +158,36 @@
       "replacedAt": "2026-10-18T07:28:27.131Z"
     }
   ],
-  "oracleDigest": "0d323d3f1a306786695d1a4ee8e335c86e6d8ea14ddd3013de8ed738f22a2f71"
+  "oracleDigest": "0d323d3f1a306786695d1a4ee8e335c86e6d8ea14ddd3013de8ed738f22a2f71",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/tenant-config-isolation.json",
+        "risk": "high",
+        "verdict": "not-ready",
+        "codes": [
+          "evidence_stale",
+          "criterion_unsatisfied",
+          "check_missing",
+          "independent_review_required"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "not-current",
+    "reviewPending": true,
+    "undueTechnicalBlock": true,
+    "outcome": "false-not-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "evidence_stale",
+      "criterion_unsatisfied",
+      "check_missing",
+      "independent_review_required"
+    ]
+  }
 }

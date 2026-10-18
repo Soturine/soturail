@@ -6,18 +6,30 @@
   "hosts": [
     "codex/null"
   ],
-  "generatedAt": "2026-10-18T07:30:29.455Z",
+  "generatedAt": "2026-10-18T19:15:18.428Z",
   "records": 36,
   "byArm": {
     "baseline": {
       "runs": 12,
       "success": 1,
       "regressions": 0,
-      "statusCorrect": 1,
-      "falseReady": 0,
       "falseVerified": 0,
-      "falseNotReady": 0,
-      "notReadyReasons": {},
+      "withContracts": 0,
+      "evidenceCurrent": null,
+      "reviewPending": 0,
+      "undueBlock": 0,
+      "outcomes": {
+        "correct-ready": 9,
+        "correct-not-ready": 3,
+        "review-pending": 0,
+        "false-ready": 0,
+        "false-not-ready": 0,
+        "no-claim": 0
+      },
+      "claimCorrect": 1,
+      "basis": {
+        "final-message-fallback": 12
+      },
       "checkAfterLastEdit": 1,
       "usedSoturail": null,
       "skillRecall": null,
@@ -38,12 +50,23 @@
       "runs": 12,
       "success": 1,
       "regressions": 0,
-      "statusCorrect": 0.5833333333333334,
-      "falseReady": 0,
       "falseVerified": 0.16666666666666666,
-      "falseNotReady": 0.4166666666666667,
-      "notReadyReasons": {
-        "soturail-stale-evidence": 5
+      "withContracts": 6,
+      "evidenceCurrent": 0,
+      "reviewPending": 0.16666666666666666,
+      "undueBlock": 0.3333333333333333,
+      "outcomes": {
+        "correct-ready": 4,
+        "correct-not-ready": 3,
+        "review-pending": 1,
+        "false-ready": 0,
+        "false-not-ready": 4,
+        "no-claim": 0
+      },
+      "claimCorrect": 0.6666666666666666,
+      "basis": {
+        "final-message-fallback": 6,
+        "soturail-verdict-codes": 6
       },
       "checkAfterLastEdit": 0.8333333333333334,
       "usedSoturail": 1,
@@ -65,12 +88,23 @@
       "runs": 12,
       "success": 1,
       "regressions": 0,
-      "statusCorrect": 0.5833333333333334,
-      "falseReady": 0,
       "falseVerified": 0.08333333333333333,
-      "falseNotReady": 0.4166666666666667,
-      "notReadyReasons": {
-        "soturail-stale-evidence": 5
+      "withContracts": 6,
+      "evidenceCurrent": 0,
+      "reviewPending": 0.25,
+      "undueBlock": 0.3333333333333333,
+      "outcomes": {
+        "correct-ready": 4,
+        "correct-not-ready": 3,
+        "review-pending": 1,
+        "false-ready": 0,
+        "false-not-ready": 4,
+        "no-claim": 0
+      },
+      "claimCorrect": 0.6666666666666666,
+      "basis": {
+        "final-message-fallback": 6,
+        "soturail-verdict-codes": 6
       },
       "checkAfterLastEdit": 0.9166666666666666,
       "usedSoturail": 1,

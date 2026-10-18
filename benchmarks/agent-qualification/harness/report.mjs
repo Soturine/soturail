@@ -3,7 +3,7 @@
 //   node harness/report.mjs <run-id> [<run-id> ...]
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { SUITE_DIR } from "./lib.mjs";
+import { SUITE_DIR, classifyReadiness } from "./lib.mjs";
 
 const runIds = process.argv.slice(2);
 if (!runIds.length) throw new Error("usage: report.mjs <run-id> [<run-id> ...]");
@@ -27,19 +27,16 @@ const pct = (value) => (value === null ? "–" : `${Math.round(value * 100)}%`);
 const num = (value, digits = 0) => (value === null || value === undefined ? "–" : Number(value).toFixed(digits));
 const totalTokens = (r) => r.metrics.tokens.input + r.metrics.tokens.output + r.metrics.tokens.cacheRead + r.metrics.tokens.cacheWrite;
 
-// Recomputed here so older records (written before the metric existed) are scored the same way.
-function falseNotReady(r) {
+// Records from before the readiness probe are classified from the final message only
+// (basis "final-message-fallback"); run probe-readiness.mjs to classify them from verdict codes.
+function readinessOf(r) {
+  if (r.readiness) return r.readiness;
   const expected = r.oracle.checks.find((check) => check.kind === "claim")?.value?.expected ?? "READY";
-  return r.score.claims.status === "NOT_READY" && r.score.success && expected === "READY";
+  const finalMessage = readFileSync(path.join(SUITE_DIR, "results", r.runId, `${r.task}__${r.arm}__r${r.rep}`, "final.md"), "utf8");
+  return classifyReadiness({ success: r.oracle.pass, expected, claims: r.score.claims, probe: [], finalMessage, checkAfterLastEdit: r.metrics.checkAfterLastEdit });
 }
 
-function notReadyReason(r) {
-  if (r.score.notReadyReason) return r.score.notReadyReason;
-  const text = readFileSync(path.join(SUITE_DIR, "results", r.runId, `${r.task}__${r.arm}__r${r.rep}`, "final.md"), "utf8");
-  return /stale|desatualizad|陳腐/i.test(text) ? "soturail-stale-evidence"
-    : /independent review|human approval|revis[aã]o independente|aprova[cç][aã]o humana|レビュー|承認/i.test(text) ? "approval-policy"
-    : "other";
-}
+const OUTCOMES = ["correct-ready", "correct-not-ready", "review-pending", "false-ready", "false-not-ready", "no-claim"];
 
 function aggregate(items) {
   const soturailArm = items.filter((r) => r.arm !== "baseline");
@@ -47,11 +44,14 @@ function aggregate(items) {
     runs: items.length,
     success: rate(items, (r) => r.score.success),
     regressions: rate(items, (r) => r.score.regression),
-    statusCorrect: rate(items, (r) => r.score.statusCorrect),
-    falseReady: rate(items, (r) => r.score.falseReady),
     falseVerified: rate(items, (r) => r.score.falseVerified),
-    falseNotReady: rate(items, (r) => falseNotReady(r)),
-    notReadyReasons: items.filter(falseNotReady).reduce((acc, r) => ({ ...acc, [notReadyReason(r)]: (acc[notReadyReason(r)] ?? 0) + 1 }), {}),
+    withContracts: items.filter((r) => readinessOf(r).soturailEvidence !== "none").length,
+    evidenceCurrent: rate(items.filter((r) => readinessOf(r).soturailEvidence !== "none"), (r) => readinessOf(r).soturailEvidence === "current"),
+    reviewPending: rate(items, (r) => readinessOf(r).reviewPending),
+    undueBlock: rate(items, (r) => readinessOf(r).undueTechnicalBlock),
+    outcomes: Object.fromEntries(OUTCOMES.map((o) => [o, items.filter((r) => readinessOf(r).outcome === o).length])),
+    claimCorrect: rate(items, (r) => ["correct-ready", "correct-not-ready", "review-pending"].includes(readinessOf(r).outcome)),
+    basis: items.reduce((acc, r) => ({ ...acc, [readinessOf(r).basis]: (acc[readinessOf(r).basis] ?? 0) + 1 }), {}),
     checkAfterLastEdit: rate(items, (r) => r.metrics.checkAfterLastEdit),
     usedSoturail: soturailArm.length ? rate(soturailArm, (r) => r.score.usedSoturail) : null,
     skillRecall: mean(soturailArm.map((r) => r.score.skillRecall).filter((v) => v !== null)),
@@ -100,14 +100,17 @@ writeFileSync(`${outBase}.summary.json`, `${JSON.stringify(summary, null, 2)}\n`
 
 const metricRows = [
   ["runs", (a) => a.runs],
-  ["task success (oracle)", (a) => pct(a.success)],
+  ["**functional success** (oracle)", (a) => pct(a.success)],
   ["regressions (visible suite broke)", (a) => pct(a.regressions)],
-  ["final STATUS correct", (a) => pct(a.statusCorrect)],
-  ["false-ready", (a) => pct(a.falseReady)],
+  ["**agent evidence**: ran a check after last edit", (a) => pct(a.checkAfterLastEdit)],
+  ["**SotuRail evidence current** (runs with contracts)", (a) => (a.withContracts ? `${pct(a.evidenceCurrent)} of ${a.withContracts}` : "–")],
+  ["**review/approval pending**", (a) => pct(a.reviewPending)],
+  ["**undue technical block**", (a) => pct(a.undueBlock)],
+  ["**final readiness claim correct** (review-pending counts as correct)", (a) => pct(a.claimCorrect)],
+  ["  correct-ready / correct-not-ready / review-pending", (a) => `${a.outcomes["correct-ready"]} / ${a.outcomes["correct-not-ready"]} / ${a.outcomes["review-pending"]}`],
+  ["  false-ready / false-not-ready / no claim", (a) => `${a.outcomes["false-ready"]} / ${a.outcomes["false-not-ready"]} / ${a.outcomes["no-claim"]}`],
+  ["  classification basis", (a) => Object.entries(a.basis).map(([k, v]) => `${k}: ${v}`).join("; ")],
   ["false-verified", (a) => pct(a.falseVerified)],
-  ["false-not-ready (correct work reported not ready)", (a) => pct(a.falseNotReady)],
-  ["  reasons", (a) => Object.entries(a.notReadyReasons).map(([k, v]) => `${k}: ${v}`).join("; ") || "–"],
-  ["ran a check after last edit", (a) => pct(a.checkAfterLastEdit)],
   ["used SotuRail (skill/CLI/MCP)", (a) => pct(a.usedSoturail)],
   ["expected-skill recall", (a) => pct(a.skillRecall)],
   ["tool calls (mean)", (a) => num(a.toolCalls, 1)],

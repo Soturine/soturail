@@ -1,6 +1,6 @@
 # Agent qualification report — candidate-codex-004
 
-Hosts/models: codex/null. Valid records: 24; excluded as invalid (host failure): 12 (You’ve hit your usage limit). Generated 2026-10-18T07:42:53.072Z.
+Hosts/models: codex/null. Valid records: 24; excluded as invalid (host failure): 12 (You’ve hit your usage limit). Generated 2026-10-18T19:15:18.637Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -9,14 +9,17 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
 | runs | 8 | 8 | 8 |
-| task success (oracle) | 100% | 100% | 100% |
+| **functional success** (oracle) | 100% | 100% | 100% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
-| final STATUS correct | 100% | 88% | 88% |
-| false-ready | 0% | 0% | 0% |
+| **agent evidence**: ran a check after last edit | 100% | 100% | 100% |
+| **SotuRail evidence current** (runs with contracts) | – | 100% of 4 | 100% of 3 |
+| **review/approval pending** | 0% | 13% | 13% |
+| **undue technical block** | 0% | 0% | 0% |
+| **final readiness claim correct** (review-pending counts as correct) | 100% | 100% | 100% |
+|   correct-ready / correct-not-ready / review-pending | 7 / 1 / 0 | 6 / 1 / 1 | 6 / 1 / 1 |
+|   false-ready / false-not-ready / no claim | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+|   classification basis | final-message-fallback: 8 | final-message-fallback: 4; soturail-verdict-codes: 4 | final-message-fallback: 5; soturail-verdict-codes: 3 |
 | false-verified | 0% | 0% | 0% |
-| false-not-ready (correct work reported not ready) | 0% | 13% | 13% |
-|   reasons | – | approval-policy: 1 | approval-policy: 1 |
-| ran a check after last edit | 100% | 100% | 100% |
 | used SotuRail (skill/CLI/MCP) | – | 100% | 100% |
 | expected-skill recall | – | 100% | 100% |
 | tool calls (mean) | 5.5 | 12.1 | 16.5 |

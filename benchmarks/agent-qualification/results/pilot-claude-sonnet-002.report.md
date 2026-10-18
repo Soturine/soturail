@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-claude-sonnet-002
 
-Hosts/models: claude/claude-sonnet-5-5. Records: 36. Generated 2026-10-18T07:30:29.965Z.
+Hosts/models: claude/claude-sonnet-5-5. Valid records: 36; excluded as invalid (host failure): 0. Generated 2026-10-18T19:15:18.746Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -9,14 +9,17 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
 | runs | 12 | 12 | 12 |
-| task success (oracle) | 100% | 100% | 100% |
+| **functional success** (oracle) | 100% | 100% | 100% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
-| final STATUS correct | 100% | 100% | 100% |
-| false-ready | 0% | 0% | 0% |
+| **agent evidence**: ran a check after last edit | 92% | 92% | 92% |
+| **SotuRail evidence current** (runs with contracts) | – | – | – |
+| **review/approval pending** | 0% | 0% | 0% |
+| **undue technical block** | 0% | 0% | 0% |
+| **final readiness claim correct** (review-pending counts as correct) | 100% | 100% | 100% |
+|   correct-ready / correct-not-ready / review-pending | 9 / 3 / 0 | 9 / 3 / 0 | 9 / 3 / 0 |
+|   false-ready / false-not-ready / no claim | 0 / 0 / 0 | 0 / 0 / 0 | 0 / 0 / 0 |
+|   classification basis | final-message-fallback: 12 | final-message-fallback: 12 | final-message-fallback: 12 |
 | false-verified | 8% | 8% | 0% |
-| false-not-ready (correct work reported not ready) | 0% | 0% | 0% |
-|   reasons | – | – | – |
-| ran a check after last edit | 92% | 92% | 92% |
 | used SotuRail (skill/CLI/MCP) | – | 8% | 8% |
 | expected-skill recall | – | 4% | 4% |
 | tool calls (mean) | 6.3 | 6.4 | 7.7 |

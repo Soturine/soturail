@@ -129,5 +129,36 @@
     "mcpServers": []
   },
   "transcriptSha256": "9fbb367a4522c2fcb72e2136f4d3bec43cb85f69dd9aeb6fa9be7a9fa2460e04",
-  "invalid": "You’ve hit your usage limit"
+  "invalid": "You’ve hit your usage limit",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/user-directory-security.json",
+        "risk": "high",
+        "verdict": "not-ready",
+        "codes": [
+          "evidence_missing",
+          "criterion_unsatisfied",
+          "check_missing",
+          "independent_review_required"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": false,
+    "soturailEvidence": "not-current",
+    "reviewPending": true,
+    "undueTechnicalBlock": false,
+    "outcome": "no-claim",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "evidence_missing",
+      "criterion_unsatisfied",
+      "check_missing",
+      "independent_review_required"
+    ]
+  }
 }

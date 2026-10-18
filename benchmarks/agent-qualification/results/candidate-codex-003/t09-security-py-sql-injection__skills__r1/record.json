@@ -126,5 +126,30 @@
       "failed": [],
       "replacedAt": "2026-10-18T07:28:54.689Z"
     }
-  ]
+  ],
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/directory-security.json",
+        "risk": "high",
+        "verdict": "not-ready",
+        "codes": [
+          "independent_review_required"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": true,
+    "undueTechnicalBlock": false,
+    "outcome": "review-pending",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "independent_review_required"
+    ]
+  }
 }

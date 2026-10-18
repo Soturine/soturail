@@ -152,5 +152,32 @@
       "failed": [],
       "replacedAt": "2026-10-18T07:28:53.253Z"
     }
-  ]
+  ],
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/static-containment.json",
+        "risk": "high",
+        "verdict": "not-ready",
+        "codes": [
+          "criterion_unsatisfied",
+          "independent_review_required"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "not-current",
+    "reviewPending": true,
+    "undueTechnicalBlock": false,
+    "outcome": "review-pending",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "criterion_unsatisfied",
+      "independent_review_required"
+    ]
+  }
 }

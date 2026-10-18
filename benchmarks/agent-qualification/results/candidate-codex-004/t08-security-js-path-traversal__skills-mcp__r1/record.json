@@ -134,5 +134,30 @@
     "availableSkills": [],
     "mcpServers": []
   },
-  "transcriptSha256": "0fbeeb6432b5c0ee56f8bd4ae90bc58f3c0e7327425fac648589ccb3d837959e"
+  "transcriptSha256": "0fbeeb6432b5c0ee56f8bd4ae90bc58f3c0e7327425fac648589ccb3d837959e",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/static-containment.json",
+        "risk": "high",
+        "verdict": "not-ready",
+        "codes": [
+          "independent_review_required"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": true,
+    "undueTechnicalBlock": false,
+    "outcome": "review-pending",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "independent_review_required"
+    ]
+  }
 }

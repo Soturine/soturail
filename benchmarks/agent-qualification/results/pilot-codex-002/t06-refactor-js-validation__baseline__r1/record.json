@@ -111,5 +111,19 @@
       "replacedAt": "2026-10-18T07:28:33.090Z"
     }
   ],
-  "oracleDigest": "1b3fc3707c283f61e7ae2551f658340a86dcad754483f4308bf5e9a595ba5e6e"
+  "oracleDigest": "1b3fc3707c283f61e7ae2551f658340a86dcad754483f4308bf5e9a595ba5e6e",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": []
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "none",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "final-message-fallback",
+    "codes": []
+  }
 }

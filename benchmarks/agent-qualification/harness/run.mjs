@@ -12,7 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import {
   ARMS, PROMPT_SUFFIX, SUITE_DIR, diffStat, ensureSoturail, evaluate, findHostBinary, hostVersion,
-  infraFailure, loadTasks, oracleDigest, prepareWorkspace, runClaude, runCodex, scoreRun, sha256, visibleTests
+  classifyReadiness, infraFailure, loadTasks, oracleDigest, prepareWorkspace, probeSoturailReadiness, runClaude, runCodex, scoreRun, sha256, visibleTests
 } from "./lib.mjs";
 
 function parseArgs(argv) {
@@ -64,10 +64,14 @@ async function runOne(job, ctx) {
   const agent = ctx.options.host === "codex" ? await runCodex(agentArgs) : await runClaude(agentArgs);
   const { metrics } = agent;
   const invalid = infraFailure(agent);
+  // Probe SotuRail readiness before the harness touches the workspace (visible tests, oracle).
+  const readinessProbe = { when: "post-run", contracts: arm === "baseline" ? [] : probeSoturailReadiness(workDir, ctx.soturail) };
   const visibleAfter = visibleTests(task, workDir);
   const changes = diffStat(workDir);
   const oracle = evaluate(task, workDir, metrics.finalMessage);
   const score = scoreRun({ task, oracle, metrics, visibleBefore, visibleAfter });
+  const expected = oracle.checks.find((check) => check.kind === "claim")?.value?.expected ?? "READY";
+  const readiness = classifyReadiness({ success: score.success, expected, claims: score.claims, probe: readinessProbe.contracts, finalMessage: metrics.finalMessage, checkAfterLastEdit: metrics.checkAfterLastEdit });
   const record = {
     schemaVersion: "soturail.qualification.run.v1",
     runId: ctx.options.runId, task: task.id, category: task.category, stack: task.stack, locale: task.locale, arm, rep,
@@ -78,7 +82,7 @@ async function runOne(job, ctx) {
     startedAt, wallMs: agent.wallMs, timedOut: agent.timedOut, exitCode: agent.code, stderrTail: agent.stderr.slice(-800),
     visibleBefore: visibleBefore.pass, visibleAfter: visibleAfter.pass,
     changedFiles: changes.changedFiles,
-    invalid, oracle, score, oracleDigest: oracleDigest(task),
+    invalid, oracle, score, readinessProbe, readiness, oracleDigest: oracleDigest(task),
     metrics: { ...metrics, finalMessage: undefined },
     transcriptSha256: sha256(agent.stdout)
   };
@@ -100,7 +104,7 @@ async function main() {
     workRoot: path.join(os.tmpdir(), "aq-runs", options.runId)
   };
   mkdirSync(ctx.resultsDir, { recursive: true });
-  writeFileSync(path.join(ctx.resultsDir, "run.json"), `${JSON.stringify({ ...options, hostVersion: ctx.hostVersion, soturailVersion: soturail?.version ?? null, node: process.version, platform: `${process.platform}-${process.arch}`, startedAt: new Date().toISOString(), tasks: tasks.map((task) => task.id) }, null, 2)}\n`);
+  writeFileSync(path.join(ctx.resultsDir, "run.json"), `${JSON.stringify({ ...options, hostVersion: ctx.hostVersion, soturailSpec: options.soturailVersion, soturailVersion: soturail?.version ?? null, node: process.version, platform: `${process.platform}-${process.arch}`, startedAt: new Date().toISOString(), tasks: tasks.map((task) => task.id) }, null, 2)}\n`);
 
   const jobs = [];
   for (let rep = 1; rep <= options.reps; rep += 1) {

@@ -156,5 +156,41 @@
       "failed": [],
       "replacedAt": "2026-10-18T07:28:51.162Z"
     }
-  ]
+  ],
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": [
+      {
+        "file": ".soturail/contracts/shared-validation.json",
+        "risk": "low",
+        "verdict": "not-ready",
+        "codes": [
+          "contract_source_changed",
+          "contract_superseded"
+        ]
+      },
+      {
+        "file": ".soturail/contracts/shared-validation.r2.json",
+        "risk": "low",
+        "verdict": "ready",
+        "codes": [
+          "passed"
+        ]
+      }
+    ]
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "current",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-ready",
+    "basis": "soturail-verdict-codes",
+    "codes": [
+      "contract_source_changed",
+      "contract_superseded",
+      "passed"
+    ]
+  }
 }

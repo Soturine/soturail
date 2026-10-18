@@ -56,9 +56,13 @@ const git = (cwd, ...args) => run("git", args, { cwd });
  */
 export function ensureSoturail(spec) {
   const tarball = spec.endsWith(".tgz") ? path.resolve(spec) : null;
-  const key = tarball ? `candidate-${sha256(readFileSync(tarball)).slice(0, 12)}` : spec;
+  // A recorded candidate version ("1.6.0+candidate-<hash>") must resolve to that exact cached
+  // build. npm ignores semver build metadata and would silently install the published release.
+  const recordedCandidate = spec.match(/\+(candidate-[0-9a-f]{12})$/)?.[1] ?? null;
+  const key = tarball ? `candidate-${sha256(readFileSync(tarball)).slice(0, 12)}` : recordedCandidate ?? spec;
   const prefix = path.join(CACHE_DIR, `soturail-${key}`);
   const cli = path.join(prefix, "node_modules", "soturail", "dist", "cli.js");
+  if (recordedCandidate && !existsSync(cli)) throw new Error(`candidate build ${recordedCandidate} is not cached; pass its tarball instead`);
   if (!existsSync(cli)) {
     mkdirSync(prefix, { recursive: true });
     writeFileSync(path.join(prefix, "package.json"), "{\"private\":true}\n");
@@ -67,8 +71,9 @@ export function ensureSoturail(spec) {
     if (install.status !== 0) throw new Error(`npm install ${target} failed: ${install.stderr}`);
   }
   const pkg = JSON.parse(readFileSync(path.join(prefix, "node_modules", "soturail", "package.json"), "utf8"));
+  if (!tarball && !recordedCandidate && pkg.version !== spec) throw new Error(`requested soturail@${spec} but installed ${pkg.version}`);
   const shimDir = path.join(prefix, "node_modules", ".bin");
-  return { version: tarball ? `${pkg.version}+${key}` : pkg.version, cli, shimDir, prefix };
+  return { version: tarball || recordedCandidate ? `${pkg.version}+${key}` : pkg.version, cli, shimDir, prefix };
 }
 
 /** PATH without any directory that provides a `soturail` executable (e.g. a stale global install). */
@@ -462,4 +467,70 @@ export function oracleDigest(task) {
   walk(path.join(task.dir, "oracle"));
   hash.update(readFileSync(path.join(HARNESS_DIR, "oracle-lib.mjs")));
   return hash.digest("hex");
+}
+
+// ---------------------------------------------------------------------------- readiness
+
+const POLICY_CODES = new Set(["independent_review_required", "human_approval_required"]);
+const EVIDENCE_CODES = new Set(["evidence_stale", "evidence_missing", "check_missing", "criterion_unsatisfied", "check_asserted_without_evidence"]);
+
+/**
+ * Asks SotuRail itself (the arm's own version) for the verdict of every contract the agent
+ * created, so readiness is classified from reason codes rather than the agent's wording.
+ */
+export function probeSoturailReadiness(dir, soturail) {
+  const contractsDir = path.join(dir, ".soturail", "contracts");
+  if (!soturail || !existsSync(contractsDir)) return [];
+  const contracts = [];
+  for (const file of readdirSync(contractsDir).filter((name) => name.endsWith(".json")).sort()) {
+    const relative = `.soturail/contracts/${file}`;
+    const result = spawnSync(process.execPath, [soturail.cli, "contract", "verify", relative], { cwd: dir, encoding: "utf8", windowsHide: true, env: { ...process.env, PATH: sanitizedPath([soturail.shimDir]) } });
+    let verdict = null;
+    try { verdict = JSON.parse(result.stdout); } catch { /* not a verdict */ }
+    let risk = null;
+    try { risk = JSON.parse(readFileSync(path.join(contractsDir, file), "utf8")).risk ?? null; } catch { /* unreadable contract */ }
+    contracts.push({
+      file: relative,
+      risk,
+      verdict: verdict?.verdict ?? "error",
+      codes: [...new Set([...(verdict?.details ?? []).map((item) => item.code), ...(verdict?.integrity?.reasons ?? []).map((item) => item.code)])]
+    });
+  }
+  return contracts;
+}
+
+/**
+ * Separates five things a single "ready" flag conflates: functional success, current evidence,
+ * pending review/approval, an undue technical block, and the correctness of the final claim.
+ * A correct result held only by a required review is `review-pending`, never false-not-ready.
+ */
+export function classifyReadiness({ success, expected, claims, probe, finalMessage, checkAfterLastEdit }) {
+  const codes = new Set((probe ?? []).flatMap((contract) => contract.codes));
+  const fromProbe = (probe ?? []).length > 0;
+  const message = String(finalMessage ?? "");
+  const reviewPending = fromProbe
+    ? [...codes].some((code) => POLICY_CODES.has(code))
+    : /independent review|human approval|revis[aã]o independente|aprova[cç][aã]o humana|レビュー|承認/i.test(message);
+  const evidenceProblems = [...codes].filter((code) => EVIDENCE_CODES.has(code));
+  const soturailEvidence = !fromProbe ? "none" : evidenceProblems.length ? "not-current" : "current";
+  const heldNotReady = claims.status === "NOT_READY" && success && expected === "READY";
+  // Undue: the work is correct and was checked after the last edit, yet SotuRail evidence
+  // still blocks it, or the agent says stale evidence blocked it.
+  const undueTechnicalBlock = heldNotReady && checkAfterLastEdit && (codes.has("evidence_stale") || (!fromProbe && /\bstale\b/i.test(message)));
+  let outcome;
+  if (!claims.status) outcome = "no-claim";
+  else if (claims.status === "READY") outcome = success && expected === "READY" ? "correct-ready" : "false-ready";
+  else if (!heldNotReady) outcome = "correct-not-ready";
+  else if (reviewPending && !undueTechnicalBlock) outcome = "review-pending";
+  else outcome = "false-not-ready";
+  return {
+    functionalSuccess: success,
+    agentCheckedAfterLastEdit: checkAfterLastEdit,
+    soturailEvidence,
+    reviewPending,
+    undueTechnicalBlock,
+    outcome,
+    basis: fromProbe ? "soturail-verdict-codes" : "final-message-fallback",
+    codes: [...codes]
+  };
 }

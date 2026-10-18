@@ -153,5 +153,19 @@
     ],
     "mcpServers": []
   },
-  "transcriptSha256": "740a8aa573ebf30c230c4fba014fbccdfbf99dcf8eea3df8a1257c2c0bd8201e"
+  "transcriptSha256": "740a8aa573ebf30c230c4fba014fbccdfbf99dcf8eea3df8a1257c2c0bd8201e",
+  "readinessProbe": {
+    "when": "post-hoc",
+    "contracts": []
+  },
+  "readiness": {
+    "functionalSuccess": true,
+    "agentCheckedAfterLastEdit": true,
+    "soturailEvidence": "none",
+    "reviewPending": false,
+    "undueTechnicalBlock": false,
+    "outcome": "correct-not-ready",
+    "basis": "final-message-fallback",
+    "codes": []
+  }
 }
