@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "14c90650531b164e76350ca03879dfe23f0909a4",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:31:19.579Z",
+  "wallMs": 58343,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t02-bug-py-csv-quoting__skills__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.008s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-debug"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "oracleDigest": "48ed9c2b2fa8d28f007cafe31282dd8af534e03f9a42bf5f81070e7e0774b7b2",
+  "metrics": {
+    "model": null,
+    "toolCalls": 10,
+    "toolsByName": {
+      "shell": 8,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 1,
+    "toolErrors": 2,
+    "recoveredErrors": 2,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-debug"
+    ],
+    "soturailCliCalls": 3,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail index'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests'"
+    ],
+    "edits": 2,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 15563,
+      "output": 1513,
+      "cacheRead": 124544,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "bcb9856b6cd811491c49a132de55c64b05476eca90fa412967fcb2fb3228a35f"
+}

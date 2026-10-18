@@ -1,0 +1,119 @@
+diff --git a/README.md b/README.md
+index f4c8cfb..33c2ee2 100644
+--- a/README.md
++++ b/README.md
+@@ -1,5 +1,7 @@
+ # inventory
+ 
+-Usage: `python -m inventory report data/stock.csv [--threshold N]`
++Usage: `python -m inventory report data/stock.csv [--threshold N] [--format text|json]`
+ 
+ Prints one line per item sorted by SKU: `SKU  NAME  QTY` and appends ` LOW` when quantity is below the threshold (default 5).
++
++Use `--format json` for a JSON array sorted by SKU. Each object contains `sku`, `name`, integer `quantity`, and boolean `low_stock` (quantity below the threshold). The default format is `text`.
+diff --git a/inventory/__main__.py b/inventory/__main__.py
+index 3a654e7..8d76913 100644
+--- a/inventory/__main__.py
++++ b/inventory/__main__.py
+@@ -1,7 +1,7 @@
+ import argparse
+ import sys
+ 
+-from .report import load, render_text
++from .report import load, render_json, render_text
+ 
+ 
+ def main(argv=None):
+@@ -10,9 +10,11 @@ def main(argv=None):
+     report = sub.add_parser("report")
+     report.add_argument("path")
+     report.add_argument("--threshold", type=int, default=5)
++    report.add_argument("--format", choices=("text", "json"), default="text")
+     args = parser.parse_args(argv)
+     items = load(args.path)
+-    print(render_text(items, args.threshold))
++    renderer = render_json if args.format == "json" else render_text
++    print(renderer(items, args.threshold))
+     return 0
+ 
+ 
+diff --git a/inventory/report.py b/inventory/report.py
+index 6215cbc..4dcc786 100644
+--- a/inventory/report.py
++++ b/inventory/report.py
+@@ -1,4 +1,5 @@
+ import csv
++import json
+ 
+ 
+ def load(path):
+@@ -17,3 +18,15 @@ def render_text(items, threshold):
+             line += " LOW"
+         lines.append(line)
+     return "\n".join(lines)
++
++
++def render_json(items, threshold):
++    return json.dumps([
++        {
++            "sku": item["sku"],
++            "name": item["name"],
++            "quantity": item["quantity"],
++            "low_stock": item["quantity"] < threshold,
++        }
++        for item in sorted(items, key=lambda entry: entry["sku"])
++    ])
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 176f156..32ce2dd 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -1,13 +1,49 @@
++import json
+ import subprocess
+ import sys
++import tempfile
+ import unittest
++from pathlib import Path
+ 
+ 
+ class ReportTest(unittest.TestCase):
++    def run_report(self, *args):
++        return subprocess.run(
++            [sys.executable, "-m", "inventory", "report", *args],
++            capture_output=True, text=True, check=True,
++        ).stdout
++
+     def test_text_report(self):
+         out = subprocess.run([sys.executable, "-m", "inventory", "report", "data/stock.csv"], capture_output=True, text=True, check=True).stdout
+         self.assertEqual(out.splitlines(), ["A-100  Anchor  3 LOW", "B-200  Bolt M6  40", "C-310  Clamp 2in  5"])
+ 
++    def test_json_report(self):
++        items = json.loads(self.run_report("data/stock.csv", "--format", "json"))
++        self.assertEqual(items, [
++            {"sku": "A-100", "name": "Anchor", "quantity": 3, "low_stock": True},
++            {"sku": "B-200", "name": "Bolt M6", "quantity": 40, "low_stock": False},
++            {"sku": "C-310", "name": "Clamp 2in", "quantity": 5, "low_stock": False},
++        ])
++        for item in items:
++            self.assertIs(type(item["quantity"]), int)
++            self.assertIs(type(item["low_stock"]), bool)
++
++    def test_json_custom_threshold(self):
++        items = json.loads(self.run_report("data/stock.csv", "--format", "json", "--threshold", "3"))
++        self.assertFalse(items[0]["low_stock"])
++
++    def test_json_empty_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            path = Path(directory) / "empty.csv"
++            path.write_text("sku,name,quantity\n", encoding="utf-8")
++            self.assertEqual(json.loads(self.run_report(str(path), "--format", "json")), [])
++
++    def test_explicit_text_format(self):
++        self.assertEqual(
++            self.run_report("data/stock.csv", "--format", "text"),
++            self.run_report("data/stock.csv"),
++        )
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

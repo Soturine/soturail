@@ -1,0 +1,54 @@
+diff --git a/src/paginate.js b/src/paginate.js
+index 05b5769..0df2342 100644
+--- a/src/paginate.js
++++ b/src/paginate.js
+@@ -1,5 +1,5 @@
+ export function totalPages(totalItems, pageSize) {
+-  return Math.floor(totalItems / pageSize);
++  return Math.ceil(totalItems / pageSize);
+ }
+ 
+ export function paginate(items, page, pageSize) {
+diff --git a/test/paginate.test.js b/test/paginate.test.js
+index 97c2891..1fa0b28 100644
+--- a/test/paginate.test.js
++++ b/test/paginate.test.js
+@@ -1,6 +1,7 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import { paginate } from "../src/paginate.js";
++import { search } from "../src/search.js";
+ 
+ test("first page of an evenly divisible list", () => {
+   const result = paginate([1, 2, 3, 4], 1, 2);
+@@ -11,3 +12,30 @@ test("first page of an evenly divisible list", () => {
+ test("rejects a non-positive page size", () => {
+   assert.throws(() => paginate([1], 1, 0), RangeError);
+ });
++
++test("returns the final partial page", () => {
++  assert.deepEqual(paginate([1, 2, 3, 4, 5], 3, 2), {
++    items: [5], page: 3, pageSize: 2, totalItems: 5, totalPages: 3
++  });
++  assert.deepEqual(paginate([1, 2, 3, 4, 5], 4, 2).items, []);
++});
++
++test("returns results when there are fewer items than the page size", () => {
++  const result = paginate([1], 1, 20);
++  assert.deepEqual(result.items, [1]);
++  assert.equal(result.totalPages, 1);
++});
++
++test("empty results have zero pages", () => {
++  const result = paginate([], 1, 20);
++  assert.deepEqual(result.items, []);
++  assert.equal(result.totalPages, 0);
++});
++
++test("search returns the final partial page of matching results", () => {
++  const catalog = [{ name: "Apple" }, { name: "Pear" }, { name: "Apricot" }, { name: "Grape" }];
++  const result = search(catalog, "ap", { page: 2, pageSize: 2 });
++  assert.deepEqual(result.items, [{ name: "Grape" }]);
++  assert.equal(result.totalItems, 3);
++  assert.equal(result.totalPages, 2);
++});

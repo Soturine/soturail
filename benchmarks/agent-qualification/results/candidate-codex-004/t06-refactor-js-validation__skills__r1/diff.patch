@@ -1,0 +1,128 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..275817e 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,4 @@
++{"kind":"block","block_id":"block_0f6c34f5","block_sha256":"0f6c34f52e4dbd70bb9b06e8d393fa1a45f95ce4af0929e409d4ee7c0e8df682","normalized_sha256":"db047b6b69523e3bb3c5d9375d7bf5289e1cc94dab6e6adfa6fd264d383722ae","raw_id":"3fd69ed6","line_count":8,"token_estimate":78,"has_risk":false,"preview":" | > users-service@3.2.0 test","created_at":"2026-10-18T07:36:49.436Z"}
++{"kind":"block","block_id":"block_df450875","block_sha256":"df4508752d37ef42806785c7e636707c186608f02cdd2ce806274941d5c23dd3","normalized_sha256":"2a4a97e0041bb9b55fa5564b97af796a0dcd724729daebbb82c76d4792d45180","raw_id":"3fd69ed6","line_count":8,"token_estimate":34,"has_risk":false,"preview":"✔ both handlers preserve name and age boundaries (0.5143ms) | ℹ tests 5","created_at":"2026-10-18T07:36:49.436Z"}
++{"kind":"output","output_sha256":"81e596380eacc34687b899ef745a126de132787ffbe289d216ab8bab178bfad0","raw_id":"3fd69ed6","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073648513Z-3fd69ed6.log","created_at":"2026-10-18T07:36:48.513Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"0e3d04d5","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073650607Z-0e3d04d5.log","created_at":"2026-10-18T07:36:50.607Z"}
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..8f872b8 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,2 @@
++{"type":"command_run","raw_id":"3fd69ed6","command":"npm test","exit_code":0,"raw_tokens_estimated":117,"compressed_tokens_estimated":66,"estimated_raw_tokens":117,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":51,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:36:49.591Z"}
++{"type":"command_run","raw_id":"0e3d04d5","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:36:51.084Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..4bd2db7 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,2 @@
++{"raw_id":"3fd69ed6","path":".soturail\\raw\\2026-10-18\\20261018T073648513Z-3fd69ed6.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:36:48.513Z","compressor":"test-reducer","raw_tokens_estimated":117,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"f700eca8d8090b7061180e69bb1b0f1c5c6d0771a12b9d783631dd0daa5e9c59","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:36:48.513Z"}
++{"raw_id":"0e3d04d5","path":".soturail\\raw\\2026-10-18\\20261018T073650607Z-0e3d04d5.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:36:50.607Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"f700eca8d8090b7061180e69bb1b0f1c5c6d0771a12b9d783631dd0daa5e9c59","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:36:50.607Z"}
+diff --git a/src/handlers/create-user.js b/src/handlers/create-user.js
+index f7b2744..a731098 100644
+--- a/src/handlers/create-user.js
++++ b/src/handlers/create-user.js
+@@ -1,12 +1,10 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function createUser(store, input) {
+   const errors = [];
+-  const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
+-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
+-  const name = typeof input.name === "string" ? input.name.trim() : "";
+-  if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
+-  if (input.age !== undefined && (!Number.isInteger(input.age) || input.age < 13 || input.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
+-  }
++  const email = validateEmail(input, errors);
++  const name = validateName(input, errors);
++  validateAge(input, errors);
+   if (errors.length) return { status: 422, errors };
+   const user = store.insert({ email, name, ...(input.age !== undefined ? { age: input.age } : {}) });
+   return { status: 201, user };
+diff --git a/src/handlers/update-user.js b/src/handlers/update-user.js
+index b972dec..ef043af 100644
+--- a/src/handlers/update-user.js
++++ b/src/handlers/update-user.js
+@@ -1,21 +1,19 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function updateUser(store, id, patch) {
+   const current = store.get(id);
+   if (!current) return { status: 404, errors: ["user: not found"] };
+   const errors = [];
+   const next = { ...current };
+   if (patch.email !== undefined) {
+-    const email = typeof patch.email === "string" ? patch.email.trim().toLowerCase() : "";
+-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
++    const email = validateEmail(patch, errors);
+     next.email = email;
+   }
+   if (patch.name !== undefined) {
+-    const name = typeof patch.name === "string" ? patch.name.trim() : "";
+-    if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
++    const name = validateName(patch, errors);
+     next.name = name;
+   }
+-  if (patch.age !== undefined && (!Number.isInteger(patch.age) || patch.age < 13 || patch.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
+-  }
++  validateAge(patch, errors);
+   if (patch.age !== undefined) next.age = patch.age;
+   if (errors.length) return { status: 422, errors };
+   return { status: 200, user: store.replace(id, next) };
+diff --git a/test/handlers.test.js b/test/handlers.test.js
+index 0bea9d7..7e65794 100644
+--- a/test/handlers.test.js
++++ b/test/handlers.test.js
+@@ -16,3 +16,47 @@ test("update rejects invalid age", () => {
+   createUser(store, { email: "a@b.co", name: "Ana" });
+   assert.equal(updateUser(store, 1, { age: 7 }).status, 422);
+ });
++
++test("create and update preserve validation errors and leave stored data unchanged", () => {
++  const store = createStore();
++  const { user } = createUser(store, { email: "a@b.co", name: "Ana", age: 30 });
++  const invalid = { email: null, name: " x ", age: 12 };
++  const expected = { status: 422, errors: [
++    "email: invalid",
++    "name: must be 2-80 characters",
++    "age: must be an integer between 13 and 130"
++  ] };
++  assert.deepEqual(createUser(store, invalid), expected);
++  assert.deepEqual(updateUser(store, user.id, invalid), expected);
++  assert.deepEqual(store.get(user.id), user);
++  assert.equal(store.get(2), undefined);
++});
++
++test("update preserves omitted fields and normalizes supplied fields", () => {
++  const store = createStore();
++  const { user } = createUser(store, { email: "a@b.co", name: "Ana", age: 30 });
++  assert.deepEqual(updateUser(store, user.id, { email: undefined, name: undefined, age: undefined }),
++    { status: 200, user });
++  assert.deepEqual(updateUser(store, user.id, { email: " B@C.CO ", name: " Bea " }),
++    { status: 200, user: { id: user.id, email: "b@c.co", name: "Bea", age: 30 } });
++  assert.deepEqual(updateUser(store, 99, { email: null }),
++    { status: 404, errors: ["user: not found"] });
++});
++
++test("both handlers preserve name and age boundaries", () => {
++  for (const name of ["ab", "a".repeat(80)]) {
++    for (const age of [13, 130]) {
++      const store = createStore();
++      const input = { email: "a@b.co", name, age };
++      assert.equal(createUser(store, input).status, 201);
++      assert.equal(updateUser(store, 1, input).status, 200);
++    }
++  }
++  for (const patch of [{}, { name: "a" }, { name: "a".repeat(81) },
++    { age: null }, { age: "13" }, { age: 13.5 }, { age: 131 }]) {
++    const store = createStore();
++    createUser(store, { email: "a@b.co", name: "Ana" });
++    assert.equal(createUser(store, patch).status, 422);
++    assert.equal(updateUser(store, 1, patch).status, Object.keys(patch).length ? 422 : 200);
++  }
++});

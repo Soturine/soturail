@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t08-security-js-path-traversal",
+  "category": "security",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "promptSha256": "147f9df5b4d5e5ee6100334b031d0c0d4b501b0ea92c34c98c945f5204833e4f",
+  "fixtureHead": "663d1890bcb738719476f6bec8cfc8e6b2518b05",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:38:37.076Z",
+  "wallMs": 79779,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t08-security-js-path-traversal__skills-mcp__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M src/static.js",
+    " M test/static.test.js"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden node tests",
+        "pass": true,
+        "detail": ""
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "NOT_READY",
+      "verified": true
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseNotReady": true,
+    "notReadyReason": "approval-policy",
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "oracleDigest": "b3884d1c37c1facc39f3a8f28b6d922a8d70a3bf876fe9013a887ef51277926f",
+  "metrics": {
+    "model": null,
+    "toolCalls": 21,
+    "toolsByName": {
+      "shell": 6,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.capabilities": 1,
+      "mcp__soturail__soturail.read": 6,
+      "mcp__soturail__soturail.candidates.record": 5,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 2,
+    "recoveredErrors": 3,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 5,
+    "soturailMcpCalls": 13,
+    "soturailCommands": [
+      "mcp__soturail__soturail.index",
+      "mcp__soturail__soturail.capabilities",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create --help; soturail run -- git status --short'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create static-containment --title \"Contain static files within public root\" --intent \"Prevent static reques",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test'",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- npm test; soturail evidence collect --help; soturail evidence verify --help; soturail contract verify --help'",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- git diff --check; soturail run -- git diff -- src/static.js test/static.test.js; soturail evidence collect; s",
+      "mcp__soturail__soturail.candidates.record"
+    ],
+    "edits": 2,
+    "checksRun": 5,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 35796,
+      "output": 2507,
+      "cacheRead": 188416,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "0fbeeb6432b5c0ee56f8bd4ae90bc58f3c0e7327425fac648589ccb3d837959e"
+}

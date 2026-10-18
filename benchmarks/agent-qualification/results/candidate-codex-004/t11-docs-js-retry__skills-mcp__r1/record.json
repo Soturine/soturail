@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t11-docs-js-retry",
+  "category": "documentation",
+  "stack": "node",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "promptSha256": "d85cd0efb709d7bedf718d14bbf6fdaa472d413aeb5fccfd48efb64c6f1ac0c9",
+  "fixtureHead": "0229fca9d81218b47a2f2aeacc65d7317a2b8d30",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:41:00.473Z",
+  "wallMs": 16468,
+  "timedOut": false,
+  "exitCode": 1,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t11-docs-js-retry__skills-mcp__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [],
+  "oracle": {
+    "pass": false,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "protected paths unchanged",
+        "pass": true,
+        "detail": "unchanged"
+      },
+      {
+        "kind": "functional",
+        "name": "documents current option names and defaults",
+        "pass": false,
+        "detail": "missing /retries/, /baseDelayMs/, /factor/, /shouldRetry/, /\\b3\\b/, /\\b200\\b/, /AggregateError/"
+      },
+      {
+        "kind": "functional",
+        "name": "does not present stale options as current",
+        "pass": false,
+        "detail": "table rows=2 code uses old option=true"
+      },
+      {
+        "kind": "functional",
+        "name": "README js examples execute",
+        "pass": true,
+        "detail": "1 example(s) ran"
+      }
+    ]
+  },
+  "score": {
+    "success": false,
+    "regression": false,
+    "claims": {
+      "status": null,
+      "verified": null
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "oracleDigest": "334648e7161a40fd68547fe045ecb75d78c16509059edf8481e573b38d8ea327",
+  "metrics": {
+    "model": null,
+    "toolCalls": 0,
+    "toolsByName": {},
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 0,
+    "checksRun": 0,
+    "checkAfterLastEdit": false,
+    "turns": null,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": true,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "efa2ac21357f7c5eef37195ac8765c2b98e843512ac7ef032735c2665ea9775f",
+  "invalid": "You’ve hit your usage limit"
+}

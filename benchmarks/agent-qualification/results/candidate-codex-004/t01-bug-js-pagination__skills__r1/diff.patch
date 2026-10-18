@@ -1,0 +1,268 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..0c010cf 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,16 @@
++{"kind":"block","block_id":"block_320a95bb","block_sha256":"320a95bb0a44ea8b26958b1fc0ad4e30a2fb9ba8827a2080edac17a2916eed9e","normalized_sha256":"1e8e608e390b7d01554637dc012cfa2a2d8b283d194feab9d7021dd33103c94d","raw_id":"44173d80","line_count":8,"token_estimate":67,"has_risk":false,"preview":" | > catalog-search@0.4.0 test","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_515fc715","block_sha256":"515fc7159a1d71fe09b6d40bf5a21aef72015f3ece3e46f256177387e3eb414d","normalized_sha256":"fa99e9b42ee8dc56d22f871697e1100827190b561197c0c458706a174dd61c88","raw_id":"44173d80","line_count":8,"token_estimate":50,"has_risk":false,"preview":"✔ empty lists and pages past the end return no items (0.2697ms) | ✖ search returns the final partial page of matching results (0.61ms)","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_6d56a2f3","block_sha256":"6d56a2f3a7009604fd3b6bb34bb4c9582fd48df495c1032725831933a79d05ea","normalized_sha256":"0255838b84855a54e62cda27456598c3b7b1c4bd8a202cf6815570c46472b68c","raw_id":"44173d80","line_count":8,"token_estimate":52,"has_risk":true,"preview":"ℹ todo 0 | ℹ duration_ms 147.0576","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_8bfb64e2","block_sha256":"8bfb64e22b6c95b20880363c2094bd4632e5d476b820e0720b36fd0d7c47db16","normalized_sha256":"646a9993df2b9bc495e9f4a1309365d20d6da203d4689ffb6d430a1d7252bd1f","raw_id":"44173d80","line_count":8,"token_estimate":56,"has_risk":true,"preview":"  + actual - expected |   ","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_72a9103d","block_sha256":"72a9103da37e43a3e643c1774a8f5d6861cabdc91c5730579a30b0931fa61b16","normalized_sha256":"9bdac958a246650a1f421a39cde01b6bcb23e6ba5da790890fcf7deada5dee6a","raw_id":"44173d80","line_count":8,"token_estimate":113,"has_risk":false,"preview":"      at Test.runInAsyncScope (node:async_hooks:214:14) |       at Test.run (node:internal/test_runner/test:1106:25)","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_0260fb4d","block_sha256":"0260fb4dc344aaf6b2f8bdaefcfc0e5e719babd968c2e13e6e9f9e6310c17399","normalized_sha256":"836db0ea4249809c534dad7db83368f7a27b3a2fa1a6e4e7ba661a1f724d2aeb","raw_id":"44173d80","line_count":8,"token_estimate":48,"has_risk":true,"preview":"    actual: [], |     expected: [ 5 ],","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_25ef4040","block_sha256":"25ef4040bd2ea313c9f8f60cef31ac9c976a4043d017afe126daa2720755a902","normalized_sha256":"e888487155e623c271b6477c8ccd18c96622a20422624a978882d7df98506566","raw_id":"44173d80","line_count":8,"token_estimate":33,"has_risk":false,"preview":"  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal: |   + actual - expected","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_97f5aa79","block_sha256":"97f5aa794d2876328bbd3579523af9ad26937028e5018f4942ba17cefcfa4f6b","normalized_sha256":"a1a73d0d3d34fb17556ef3aa7279af9a21ade893cfedd162cfa3d081d6c1b21e","raw_id":"44173d80","line_count":8,"token_estimate":149,"has_risk":true,"preview":"      at TestContext.<anonymous> (file:///C:/Users/rafael/AppData/Local/Temp/aq-runs/candidate-codex-004/t01-bug-js-pagination__skills__r1/test/paginate.test.js:24:10) |       at Test.runInAsyncScope (node:async_hooks:214:14)","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_6299beac","block_sha256":"6299beac563e69ede707e0c27fbcc087e30f965d5dc809ef0d359a9401aab57c","normalized_sha256":"954cf42775263bde4b9f19a98a5d4885723ae1c256a7bd7b7b5961dce1123a60","raw_id":"44173d80","line_count":8,"token_estimate":39,"has_risk":true,"preview":"    code: 'ERR_ASSERTION', |     actual: [],","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_73c5a287","block_sha256":"73c5a287f6de6425a7c583d0e2336a6be6522d2cb7862b4fd0ae64c0a518b52d","normalized_sha256":"37efe76944b42b3b6e2dfb38dba6521c44f826b85afa431d30f948b842cf0a9e","raw_id":"44173d80","line_count":8,"token_estimate":55,"has_risk":false,"preview":"✖ search returns the final partial page of matching results (0.61ms) |   AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_768d8c88","block_sha256":"768d8c883af9c55b325a24485b6c159c66aa198f5cfd96436c9db218bfc5569d","normalized_sha256":"efa32ab06efcbb0626a47e51238dc20a449ce6caf5750641cd363ddd46897c6a","raw_id":"44173d80","line_count":8,"token_estimate":110,"has_risk":true,"preview":"  -   } |   - ]","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"block","block_id":"block_a5016e63","block_sha256":"a5016e63f03415aebc59ba37caa0023274e32b4380acf49182ba1d2e12daff30","normalized_sha256":"00206817d007eb2ff1894ba2d561206ee39d721a5fe3eac0190638562009c5fc","raw_id":"44173d80","line_count":8,"token_estimate":77,"has_risk":false,"preview":"      at Test.run (node:internal/test_runner/test:1163:12) |       at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {","created_at":"2026-10-18T07:31:23.564Z"}
++{"kind":"output","output_sha256":"a8c793e5ad440cdb36a6945040acbda8e297b25be61c12620b1237cea822405e","raw_id":"44173d80","command":"npm test","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073122337Z-44173d80.log","created_at":"2026-10-18T07:31:22.337Z"}
++{"kind":"block","block_id":"block_2c665742","block_sha256":"2c66574252da90c817c237bc35540a5805a094717ae6396174a4736278d3d7cc","normalized_sha256":"e859b3b055e6151e5fc61888878082d2ab78652ceeaa00e8975968b1cd1378c6","raw_id":"bbcca682","line_count":8,"token_estimate":67,"has_risk":false,"preview":" | > catalog-search@0.4.0 test","created_at":"2026-10-18T07:31:35.763Z"}
++{"kind":"block","block_id":"block_c3a580cf","block_sha256":"c3a580cff66de4dd85fc720f4abfe6b95ef635ee0db3119b223a86b663647044","normalized_sha256":"f6c0efaaf8aa9082279241aa9402b5b4309772456041fb5d9b7f6166a4b10b2d","raw_id":"bbcca682","line_count":8,"token_estimate":50,"has_risk":false,"preview":"✔ empty lists and pages past the end return no items (0.2772ms) | ✔ search returns the final partial page of matching results (0.3632ms)","created_at":"2026-10-18T07:31:35.763Z"}
++{"kind":"output","output_sha256":"e8c4a948d01fc0bc6c78d291bd7b825512e7e8a5c445d72577920cad79a72ed8","raw_id":"bbcca682","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073132092Z-bbcca682.log","created_at":"2026-10-18T07:31:32.092Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index 9a58c1f..430107e 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:30:44.566Z",
++  "generated_at": "2026-10-18T07:31:08.550Z",
+   "root": "t01-bug-js-pagination__skills__r1",
+-  "total_files": 57,
++  "total_files": 75,
+   "stats": {
+-    "scanned_files": 57,
++    "scanned_files": 75,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2525,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4687,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 6ad839d..8604a66 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t01-bug-js-pagination__skills__r1
+-Files indexed: 57
++Files indexed: 75
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2525 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4687 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..41c9389 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,2 @@
++{"type":"command_run","raw_id":"44173d80","command":"npm test","exit_code":1,"raw_tokens_estimated":850,"compressed_tokens_estimated":372,"estimated_raw_tokens":850,"estimated_reduced_payload_tokens":372,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":405,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":478,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:31:23.805Z"}
++{"type":"command_run","raw_id":"bbcca682","command":"npm test","exit_code":0,"raw_tokens_estimated":126,"compressed_tokens_estimated":66,"estimated_raw_tokens":126,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":60,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:31:36.179Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..080f85f 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,2 @@
++{"raw_id":"44173d80","path":".soturail\\raw\\2026-10-18\\20261018T073122337Z-44173d80.log","command":"npm test","exit_code":1,"created_at":"2026-10-18T07:31:22.337Z","compressor":"test-reducer","raw_tokens_estimated":850,"compressed_tokens_estimated":372,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"8ea2434f3d9a686f6d4e979022ad69381c0f2c772157ead5aeabcda55c7929df","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:31:22.337Z"}
++{"raw_id":"bbcca682","path":".soturail\\raw\\2026-10-18\\20261018T073132092Z-bbcca682.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:31:32.092Z","compressor":"test-reducer","raw_tokens_estimated":126,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"2a66494ac1148995e8d637eb4f54da47042e8659836aeff062d8fa66339dd561","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:31:32.092Z"}
+diff --git a/src/paginate.js b/src/paginate.js
+index 05b5769..0df2342 100644
+--- a/src/paginate.js
++++ b/src/paginate.js
+@@ -1,5 +1,5 @@
+ export function totalPages(totalItems, pageSize) {
+-  return Math.floor(totalItems / pageSize);
++  return Math.ceil(totalItems / pageSize);
+ }
+ 
+ export function paginate(items, page, pageSize) {
+diff --git a/test/paginate.test.js b/test/paginate.test.js
+index 97c2891..391173c 100644
+--- a/test/paginate.test.js
++++ b/test/paginate.test.js
+@@ -1,6 +1,7 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import { paginate } from "../src/paginate.js";
++import { search } from "../src/search.js";
+ 
+ test("first page of an evenly divisible list", () => {
+   const result = paginate([1, 2, 3, 4], 1, 2);
+@@ -11,3 +12,30 @@ test("first page of an evenly divisible list", () => {
+ test("rejects a non-positive page size", () => {
+   assert.throws(() => paginate([1], 1, 0), RangeError);
+ });
++
++test("includes the final partial page", () => {
++  const result = paginate([1, 2, 3, 4, 5], 3, 2);
++  assert.deepEqual(result.items, [5]);
++  assert.equal(result.totalPages, 3);
++});
++
++test("includes a first page smaller than the page size", () => {
++  const result = paginate([1], 1, 20);
++  assert.deepEqual(result.items, [1]);
++  assert.equal(result.totalPages, 1);
++});
++
++test("empty lists and pages past the end return no items", () => {
++  assert.equal(paginate([], 1, 2).totalPages, 0);
++  assert.deepEqual(paginate([], 1, 2).items, []);
++  assert.deepEqual(paginate([1, 2, 3], 3, 2).items, []);
++});
++
++test("search returns the final partial page of matching results", () => {
++  const catalog = ["Match one", "Other", "Match two", "Match three"]
++    .map((name) => ({ name }));
++  const result = search(catalog, "match", { page: 2, pageSize: 2 });
++  assert.deepEqual(result.items, [{ name: "Match three" }]);
++  assert.equal(result.totalItems, 3);
++  assert.equal(result.totalPages, 2);
++});

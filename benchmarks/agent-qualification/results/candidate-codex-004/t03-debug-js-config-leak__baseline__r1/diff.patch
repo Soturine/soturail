@@ -1,0 +1,29 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..f9ee838 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -2,13 +2,21 @@ function isPlainObject(value) {
+   return value !== null && typeof value === "object" && !Array.isArray(value);
+ }
+ 
++function cloneConfigValue(value) {
++  if (Array.isArray(value)) return value.map(cloneConfigValue);
++  if (isPlainObject(value)) return mergeConfig(value);
++  return value;
++}
++
+ export function mergeConfig(base, override = {}) {
+-  const result = { ...base };
++  const result = Object.fromEntries(
++    Object.entries(base).map(([key, value]) => [key, cloneConfigValue(value)])
++  );
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+-      result[key] = value;
++      result[key] = cloneConfigValue(value);
+     }
+   }
+   return result;

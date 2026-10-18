@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "arm": "skills",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "promptSha256": "a2bfddd9a401fc5e37ae095ab92b1f4d33ee528532cffba37003e58a007454b0",
+  "fixtureHead": "a4fb221e76f1a05f35f937fd3ead6d352a5c4fcc",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:39:43.117Z",
+  "wallMs": 61955,
+  "timedOut": false,
+  "exitCode": 1,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t09-security-py-sql-injection__skills__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M directory/users.py",
+    " M tests/test_users.py"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 7 tests in 0.028s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": null,
+      "verified": null
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "oracleDigest": "2b899e3fde64d86363ff1d33df76f1909fd1f5ac2fae80254a031b0fc567154a",
+  "metrics": {
+    "model": null,
+    "toolCalls": 8,
+    "toolsByName": {
+      "shell": 6,
+      "apply_patch": 2
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 5,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list; soturail index; git status --short'",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'Get-Content .soturail/indexes/tree.txt; soturail contract create --help; soturail candidates record --help; soturail read --h",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail read directory/users.py --full; soturail read directory/db.py --full; soturail read tests/test_users.py --full; sotu",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create directory-security --title \"Secure directory SQL inputs\" --intent \"Prevent SQL injection and preserv",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail run -- python -m unittest discover -s tests -v'"
+    ],
+    "edits": 2,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": null,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": true,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "dab2fad6597195e91d52050b12de31cdea6e7ea041d43e58a61edc9b8eea78bc",
+  "invalid": "You’ve hit your usage limit"
+}

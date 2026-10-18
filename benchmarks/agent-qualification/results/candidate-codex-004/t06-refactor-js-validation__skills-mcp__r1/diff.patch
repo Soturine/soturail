@@ -1,0 +1,315 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..f0fc116 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,6 @@
++{"kind":"output","output_sha256":"8ece47e68f1108dfd6eb602bea268d59fcb5781ecfe1cda8c896f651c12fda38","raw_id":"c221bb1e","command":"git status --short","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073652173Z-c221bb1e.log","created_at":"2026-10-18T07:36:52.173Z"}
++{"kind":"output","output_sha256":"0a19343c97943699929f13a6f468ad99263783267b3a53188ff9631ba08c50fa","raw_id":"90640c6b","command":"rg --files -g !node_modules -g !package-lock.json -g \"! .soturail\"","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073657751Z-90640c6b.log","created_at":"2026-10-18T07:36:57.751Z"}
++{"kind":"block","block_id":"block_ef3c9d4e","block_sha256":"ef3c9d4efdc2db1a3ddbd72d3a6ee6fecc67c47196ccfff1c805edd29e1ce864","normalized_sha256":"76ceba9acefdc1e69d67b4bc7d931be7cf20c33d7fa7cc385e69e8a0f006adbe","raw_id":"21819964","line_count":8,"token_estimate":70,"has_risk":false,"preview":" | > users-service@3.2.0 test","created_at":"2026-10-18T07:37:37.488Z"}
++{"kind":"block","block_id":"block_0e5c3391","block_sha256":"0e5c3391514965655635e8633c9326013fbc5e2540b5f9ea541e3c299cdf5a57","normalized_sha256":"d78439c74d117057a95c5709cbcfb6b48d4d405bbf25c1750a666f1effccd469","raw_id":"21819964","line_count":8,"token_estimate":40,"has_risk":false,"preview":"✔ update preserves omitted fields and checks existence before validating (0.3181ms) | ℹ tests 5","created_at":"2026-10-18T07:37:37.488Z"}
++{"kind":"output","output_sha256":"79e0500c81b370730a061e4d3d3443c758e63a49d675801cff7f229fcc97f88a","raw_id":"21819964","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073736155Z-21819964.log","created_at":"2026-10-18T07:37:36.155Z"}
++{"kind":"output","output_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","raw_id":"507a6c5b","command":"git diff --check","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073739724Z-507a6c5b.log","created_at":"2026-10-18T07:37:39.724Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index 749ab48..598d045 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:36:39.486Z",
++  "generated_at": "2026-10-18T07:36:50.501Z",
+   "root": "t06-refactor-js-validation__skills-mcp__r1",
+-  "total_files": 57,
++  "total_files": 75,
+   "stats": {
+-    "scanned_files": 57,
++    "scanned_files": 75,
+     "ignored_files": 0,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2525,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4687,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": "AGENTS.md",
+       "size_bytes": 302,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index a54766e..a4e2dd1 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t06-refactor-js-validation__skills-mcp__r1
+-Files indexed: 57
++Files indexed: 75
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2525 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4687 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+ docs/agents.md (markdown, 510 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..8e530b8 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,4 @@
++{"type":"command_run","raw_id":"c221bb1e","command":"git status --short","exit_code":0,"raw_tokens_estimated":24,"compressed_tokens_estimated":76,"estimated_raw_tokens":24,"estimated_reduced_payload_tokens":76,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":111,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:36:52.496Z"}
++{"type":"command_run","raw_id":"90640c6b","command":"rg --files -g !node_modules -g !package-lock.json -g \"! .soturail\"","exit_code":1,"raw_tokens_estimated":27,"compressed_tokens_estimated":44,"estimated_raw_tokens":27,"estimated_reduced_payload_tokens":44,"estimated_soturail_metadata_tokens":48,"estimated_net_tokens_sent":92,"summary_overhead_tokens":48,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:36:58.022Z"}
++{"type":"command_run","raw_id":"21819964","command":"npm test","exit_code":0,"raw_tokens_estimated":115,"compressed_tokens_estimated":66,"estimated_raw_tokens":115,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":49,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:37:37.726Z"}
++{"type":"command_run","raw_id":"507a6c5b","command":"git diff --check","exit_code":0,"raw_tokens_estimated":0,"compressed_tokens_estimated":34,"estimated_raw_tokens":0,"estimated_reduced_payload_tokens":34,"estimated_soturail_metadata_tokens":35,"estimated_net_tokens_sent":69,"summary_overhead_tokens":35,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:37:40.114Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..6b3c8d2 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,4 @@
++{"raw_id":"c221bb1e","path":".soturail\\raw\\2026-10-18\\20261018T073652173Z-c221bb1e.log","command":"git status --short","exit_code":0,"created_at":"2026-10-18T07:36:52.173Z","compressor":"git-reducer","raw_tokens_estimated":24,"compressed_tokens_estimated":76,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"98f6f0940203dd8fa440f8557cf6cf831f95172ae35b8102525daf7aded667b8","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:36:52.173Z"}
++{"raw_id":"90640c6b","path":".soturail\\raw\\2026-10-18\\20261018T073657751Z-90640c6b.log","command":"rg --files -g !node_modules -g !package-lock.json -g \"! .soturail\"","exit_code":1,"created_at":"2026-10-18T07:36:57.751Z","compressor":"generic-stream","raw_tokens_estimated":27,"compressed_tokens_estimated":44,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"98f6f0940203dd8fa440f8557cf6cf831f95172ae35b8102525daf7aded667b8","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:36:57.751Z"}
++{"raw_id":"21819964","path":".soturail\\raw\\2026-10-18\\20261018T073736155Z-21819964.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:37:36.155Z","compressor":"test-reducer","raw_tokens_estimated":115,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"47905344e1986ea909da85a54cd35a221fc0f3fab226ebd281639989916378a2","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:37:36.155Z"}
++{"raw_id":"507a6c5b","path":".soturail\\raw\\2026-10-18\\20261018T073739724Z-507a6c5b.log","command":"git diff --check","exit_code":0,"created_at":"2026-10-18T07:37:39.724Z","compressor":"git-reducer","raw_tokens_estimated":0,"compressed_tokens_estimated":34,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"47905344e1986ea909da85a54cd35a221fc0f3fab226ebd281639989916378a2","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:37:39.724Z"}
+diff --git a/src/handlers/create-user.js b/src/handlers/create-user.js
+index f7b2744..a731098 100644
+--- a/src/handlers/create-user.js
++++ b/src/handlers/create-user.js
+@@ -1,12 +1,10 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function createUser(store, input) {
+   const errors = [];
+-  const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
+-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
+-  const name = typeof input.name === "string" ? input.name.trim() : "";
+-  if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
+-  if (input.age !== undefined && (!Number.isInteger(input.age) || input.age < 13 || input.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
+-  }
++  const email = validateEmail(input, errors);
++  const name = validateName(input, errors);
++  validateAge(input, errors);
+   if (errors.length) return { status: 422, errors };
+   const user = store.insert({ email, name, ...(input.age !== undefined ? { age: input.age } : {}) });
+   return { status: 201, user };
+diff --git a/src/handlers/update-user.js b/src/handlers/update-user.js
+index b972dec..ef043af 100644
+--- a/src/handlers/update-user.js
++++ b/src/handlers/update-user.js
+@@ -1,21 +1,19 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function updateUser(store, id, patch) {
+   const current = store.get(id);
+   if (!current) return { status: 404, errors: ["user: not found"] };
+   const errors = [];
+   const next = { ...current };
+   if (patch.email !== undefined) {
+-    const email = typeof patch.email === "string" ? patch.email.trim().toLowerCase() : "";
+-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
++    const email = validateEmail(patch, errors);
+     next.email = email;
+   }
+   if (patch.name !== undefined) {
+-    const name = typeof patch.name === "string" ? patch.name.trim() : "";
+-    if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
++    const name = validateName(patch, errors);
+     next.name = name;
+   }
+-  if (patch.age !== undefined && (!Number.isInteger(patch.age) || patch.age < 13 || patch.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
+-  }
++  validateAge(patch, errors);
+   if (patch.age !== undefined) next.age = patch.age;
+   if (errors.length) return { status: 422, errors };
+   return { status: 200, user: store.replace(id, next) };
+diff --git a/test/handlers.test.js b/test/handlers.test.js
+index 0bea9d7..701deb3 100644
+--- a/test/handlers.test.js
++++ b/test/handlers.test.js
+@@ -16,3 +16,49 @@ test("update rejects invalid age", () => {
+   createUser(store, { email: "a@b.co", name: "Ana" });
+   assert.equal(updateUser(store, 1, { age: 7 }).status, 422);
+ });
++
++test("both handlers preserve validation errors and leave stored users unchanged", () => {
++  const errors = ["email: invalid", "name: must be 2-80 characters", "age: must be an integer between 13 and 130"];
++  const store = createStore();
++  const { user } = createUser(store, { email: "a@b.co", name: "Ana" });
++  const invalid = { email: null, name: " x ", age: 13.5 };
++  assert.deepEqual(createUser(store, invalid), { status: 422, errors });
++  assert.deepEqual(updateUser(store, user.id, invalid), { status: 422, errors });
++  assert.deepEqual(store.get(user.id), user);
++  assert.equal(store.get(2), undefined);
++});
++
++test("both handlers preserve field boundaries", () => {
++  for (const age of [undefined, null, "13", 12, 13, 130, 131, NaN]) {
++    for (const length of [1, 2, 80, 81]) {
++      const store = createStore();
++      createUser(store, { email: "a@b.co", name: "Ana" });
++      const input = { email: " A@B.CO ", name: "x".repeat(length), age };
++      const errors = [];
++      if (length < 2 || length > 80) errors.push("name: must be 2-80 characters");
++      if (age !== undefined && age !== 13 && age !== 130) errors.push("age: must be an integer between 13 and 130");
++      const created = createUser(store, input);
++      const updated = updateUser(store, 1, input);
++      if (errors.length) {
++        assert.deepEqual(created, { status: 422, errors });
++        assert.deepEqual(updated, { status: 422, errors });
++      } else {
++        assert.equal(created.status, 201);
++        assert.equal(updated.status, 200);
++        assert.deepEqual(created.user, { ...updated.user, id: created.user.id });
++        assert.equal(updated.user.email, "a@b.co");
++      }
++    }
++  }
++});
++
++test("update preserves omitted fields and checks existence before validating", () => {
++  const store = createStore();
++  const { user } = createUser(store, { email: "a@b.co", name: "Ana", age: 30 });
++  assert.deepEqual(updateUser(store, user.id, { email: undefined, name: undefined, age: undefined }), { status: 200, user });
++  assert.deepEqual(updateUser(store, user.id, { email: " B@C.CO ", name: " Bea " }), {
++    status: 200, user: { id: user.id, email: "b@c.co", name: "Bea", age: 30 }
++  });
++  assert.deepEqual(updateUser(store, 99, null), { status: 404, errors: ["user: not found"] });
++  assert.deepEqual(createUser(store, {}), { status: 422, errors: ["email: invalid", "name: must be 2-80 characters"] });
++});

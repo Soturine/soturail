@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "arm": "skills-mcp",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": "1.6.0+candidate-fad6d3ec99be",
+  "promptSha256": "a2bfddd9a401fc5e37ae095ab92b1f4d33ee528532cffba37003e58a007454b0",
+  "fixtureHead": "fa149afe2f2d6d4fe27ebd1dab06e7d3ff955414",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target codex --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:40:02.399Z",
+  "wallMs": 39818,
+  "timedOut": false,
+  "exitCode": 1,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t09-security-py-sql-injection__skills-mcp__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M directory/users.py"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 7 tests in 0.005s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": null,
+      "verified": null
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "skillRecall": 1,
+    "usedSoturail": true
+  },
+  "oracleDigest": "2b899e3fde64d86363ff1d33df76f1909fd1f5ac2fae80254a031b0fc567154a",
+  "metrics": {
+    "model": null,
+    "toolCalls": 16,
+    "toolsByName": {
+      "shell": 4,
+      "mcp__soturail__soturail.index": 1,
+      "mcp__soturail__soturail.read": 8,
+      "mcp__soturail__soturail.candidates.record": 2,
+      "apply_patch": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [
+      "soturail-core",
+      "soturail-change",
+      "soturail-security"
+    ],
+    "soturailCliCalls": 3,
+    "soturailMcpCalls": 11,
+    "soturailCommands": [
+      "mcp__soturail__soturail.index",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail capabilities list'",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create --help; soturail evidence collect --help; soturail run -- git status --short'",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "mcp__soturail__soturail.read",
+      "\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\" -Command 'soturail contract create user-directory-security --title \"Prevent SQL injection in user directory\" --intent \"Secure user look",
+      "mcp__soturail__soturail.candidates.record",
+      "mcp__soturail__soturail.candidates.record"
+    ],
+    "edits": 1,
+    "checksRun": 2,
+    "checkAfterLastEdit": false,
+    "turns": null,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": true,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "9fbb367a4522c2fcb72e2136f4d3bec43cb85f69dd9aeb6fa9be7a9fa2460e04",
+  "invalid": "You’ve hit your usage limit"
+}

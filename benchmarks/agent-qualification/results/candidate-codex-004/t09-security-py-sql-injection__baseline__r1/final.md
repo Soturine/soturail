@@ -1,0 +1,1 @@
+I’ll inspect the user directory module, fix any security issues I find, and run targeted checks on the changes.

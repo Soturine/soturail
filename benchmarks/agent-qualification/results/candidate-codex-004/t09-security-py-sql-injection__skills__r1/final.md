@@ -1,0 +1,1 @@
+Both lookup functions insert input directly into SQL, allowing crafted searches and emails to return unintended users. I’ll use bound parameters and make name searches treat `%` and `_` as literal characters, consistent with the documented “contains the fragment” behavior. The role update already uses bound parameters and an allowlist.

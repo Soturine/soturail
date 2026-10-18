@@ -12,7 +12,7 @@ import os from "node:os";
 import path from "node:path";
 import {
   ARMS, PROMPT_SUFFIX, SUITE_DIR, diffStat, ensureSoturail, evaluate, findHostBinary, hostVersion,
-  loadTasks, oracleDigest, prepareWorkspace, runClaude, runCodex, scoreRun, sha256, visibleTests
+  infraFailure, loadTasks, oracleDigest, prepareWorkspace, runClaude, runCodex, scoreRun, sha256, visibleTests
 } from "./lib.mjs";
 
 function parseArgs(argv) {
@@ -63,6 +63,7 @@ async function runOne(job, ctx) {
   };
   const agent = ctx.options.host === "codex" ? await runCodex(agentArgs) : await runClaude(agentArgs);
   const { metrics } = agent;
+  const invalid = infraFailure(agent);
   const visibleAfter = visibleTests(task, workDir);
   const changes = diffStat(workDir);
   const oracle = evaluate(task, workDir, metrics.finalMessage);
@@ -77,7 +78,7 @@ async function runOne(job, ctx) {
     startedAt, wallMs: agent.wallMs, timedOut: agent.timedOut, exitCode: agent.code, stderrTail: agent.stderr.slice(-800),
     visibleBefore: visibleBefore.pass, visibleAfter: visibleAfter.pass,
     changedFiles: changes.changedFiles,
-    oracle, score, oracleDigest: oracleDigest(task),
+    invalid, oracle, score, oracleDigest: oracleDigest(task),
     metrics: { ...metrics, finalMessage: undefined },
     transcriptSha256: sha256(agent.stdout)
   };
@@ -116,7 +117,7 @@ async function main() {
       try {
         const record = await runOne(job, ctx);
         const s = record.score;
-        process.stdout.write(`${s.success ? "PASS" : "FAIL"} ${record.task} ${record.arm} r${record.rep}  status=${s.claims.status ?? "-"} verified=${s.claims.verified ?? "-"} falseReady=${s.falseReady} cost=${record.metrics.costUsd?.toFixed?.(3) ?? "-"} wall=${Math.round(record.wallMs / 1000)}s tools=${record.metrics.toolCalls} soturail=${record.metrics.soturailCliCalls}+${record.metrics.soturailMcpCalls}mcp skills=[${s.skillsSelected.join(",")}]\n`);
+        process.stdout.write(`${record.invalid ? "INVALID" : s.success ? "PASS" : "FAIL"} ${record.task} ${record.arm} r${record.rep}  status=${s.claims.status ?? "-"} verified=${s.claims.verified ?? "-"} falseReady=${s.falseReady} cost=${record.metrics.costUsd?.toFixed?.(3) ?? "-"} wall=${Math.round(record.wallMs / 1000)}s tools=${record.metrics.toolCalls} soturail=${record.metrics.soturailCliCalls}+${record.metrics.soturailMcpCalls}mcp skills=[${s.skillsSelected.join(",")}]\n`);
       } catch (error) {
         process.stdout.write(`ERROR ${job.task.id} ${job.arm} r${job.rep}: ${error.stack ?? error}\n`);
       }

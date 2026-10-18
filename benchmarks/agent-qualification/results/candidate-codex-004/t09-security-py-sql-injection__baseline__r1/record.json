@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "candidate-codex-004",
+  "task": "t09-security-py-sql-injection",
+  "category": "security",
+  "stack": "python",
+  "locale": "en",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "codex",
+  "hostVersion": "codex-cli 0.162.0-alpha.17.2",
+  "model": null,
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "a2bfddd9a401fc5e37ae095ab92b1f4d33ee528532cffba37003e58a007454b0",
+  "fixtureHead": "ed7be779fc604139076e7fc9535af0ead3035b36",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T07:40:32.442Z",
+  "wallMs": 7470,
+  "timedOut": false,
+  "exitCode": 1,
+  "stderrTail": "WARNING: proceeding, even though we could not create PATH aliases: Refusing to create helper binaries under temporary dir \"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\\" (codex_home: AbsolutePathBuf(\"C:\\\\Users\\\\rafael\\\\AppData\\\\Local\\\\Temp\\\\aq-codex-home\\\\t09-security-py-sql-injection__baseline__r1-42980\"))\n",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [],
+  "oracle": {
+    "pass": false,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": false,
+        "detail": "Ran 7 tests in 0.007s | FAILED (failures=3, errors=1) | ERROR: test_apostrophes_work (test_hidden_users.HiddenUsersTest.test_apostrophes_work) | FAIL: test_email_injection (test_hidden_users.HiddenUsersTest.test_email_injection) | FAIL: test_search_injection_does_not_dump_table (test_hidden_users.HiddenUsersTest.test_search_injection_does_not_dump_table) | FAIL: test_search_union_injection (test_hidden_users.HiddenUsersTest.test_search_union_injection)"
+      }
+    ]
+  },
+  "score": {
+    "success": false,
+    "regression": false,
+    "claims": {
+      "status": null,
+      "verified": null
+    },
+    "statusCorrect": false,
+    "falseReady": false,
+    "falseNotReady": false,
+    "notReadyReason": null,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": false
+  },
+  "oracleDigest": "2b899e3fde64d86363ff1d33df76f1909fd1f5ac2fae80254a031b0fc567154a",
+  "metrics": {
+    "model": null,
+    "toolCalls": 1,
+    "toolsByName": {
+      "shell": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 1,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 0,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [],
+    "edits": 0,
+    "checksRun": 0,
+    "checkAfterLastEdit": false,
+    "turns": null,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "cacheRead": 0,
+      "cacheWrite": 0
+    },
+    "costUsd": null,
+    "apiMs": null,
+    "permissionDenials": 0,
+    "isError": true,
+    "availableSkills": [],
+    "mcpServers": []
+  },
+  "transcriptSha256": "423bae0f19a80c84932810999f54faa7e333271630a96d67af480b35310f042d",
+  "invalid": "You’ve hit your usage limit"
+}

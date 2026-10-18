@@ -1,0 +1,1 @@
+Both lookup functions insert input directly into SQL, allowing crafted input to change which users are returned. I’ll bind those inputs as parameters and make name searches treat `%` and `_` as literal characters, matching the documented “contains the fragment” behavior. The role update already uses parameters; I’ll add regression tests for it too.

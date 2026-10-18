@@ -242,8 +242,9 @@ export async function runClaude({ binary, dir, prompt, arm, model, effort, maxBu
 
 export async function runCodex({ binary, dir, prompt, arm, model, timeoutMs, transcriptFile, soturail, runDir }) {
   // Isolated CODEX_HOME: credentials only, no user memories, AGENTS.md, plugins or MCP servers.
-  // Outside the repository: Codex writes its own system skills into CODEX_HOME.
-  const home = path.join(os.tmpdir(), "aq-codex-home", `${path.basename(runDir)}-${process.pid}`);
+  // Outside the repository (Codex writes system skills into CODEX_HOME) and outside the OS temp
+  // dir, where Codex refuses to create its helper binaries and silently runs degraded.
+  const home = path.join(os.homedir(), ".aq-codex-home", `${path.basename(runDir)}-${process.pid}`);
   mkdirSync(home, { recursive: true });
   const userHome = process.env.CODEX_HOME ?? path.join(os.homedir(), ".codex");
   cpSync(path.join(userHome, "auth.json"), path.join(home, "auth.json"));
@@ -396,13 +397,26 @@ export function parseCodexTranscript(stdout) {
       metrics.tokens.cacheRead += event.usage.cached_input_tokens ?? 0;
       metrics.tokens.output += event.usage.output_tokens ?? 0;
     }
-    if (event.type === "turn.failed" || event.type === "error") metrics.isError = true;
+    if (event.type === "turn.failed" || event.type === "error") {
+      metrics.isError = true;
+      metrics.errorMessage = event.error?.message ?? event.message ?? metrics.errorMessage ?? null;
+    }
   }
   finalizeSequence(metrics, sequence);
   return metrics;
 }
 
 // ---------------------------------------------------------------------------- scoring
+
+/** Host-side failures (quota, auth, crash before any action) say nothing about the task or SotuRail. */
+export function infraFailure(agent) {
+  const m = agent.metrics;
+  const text = `${m.errorMessage ?? ""} ${agent.stderr ?? ""}`;
+  const hostError = text.match(/[^.\n]*(usage limit|rate limit|quota|insufficient credits|authentication|unauthori[sz]ed|not logged in)[^.\n]*/i);
+  if (hostError) return hostError[0].trim();
+  if (m.isError && m.toolCalls === 0 && !m.finalMessage) return "agent errored before taking any action";
+  return null;
+}
 
 export function scoreRun({ task, oracle, metrics, visibleBefore, visibleAfter }) {
   const claims = parseClaims(metrics.finalMessage);

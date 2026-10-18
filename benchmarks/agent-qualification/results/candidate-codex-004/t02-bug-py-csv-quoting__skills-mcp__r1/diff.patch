@@ -1,0 +1,253 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..82d9ba2 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,5 @@
++{"kind":"block","block_id":"block_55ec34b8","block_sha256":"55ec34b87cf861a4456891b2cc568a902b401cb00272f710b1737106293ee691","normalized_sha256":"fffc4c1566fe8dd3004c194f0860102e4420703e2e1a31df6199a5f2058e654d","raw_id":"339e9860","line_count":8,"token_estimate":132,"has_risk":true,"preview":"EE.. | ======================================================================","created_at":"2026-10-18T07:32:27.343Z"}
++{"kind":"block","block_id":"block_632d19c9","block_sha256":"632d19c9132965d6bf6be7d3fddaf769c282f54e94c51b06bf919900403c8eac","normalized_sha256":"91689b6f151b9e055b733784e978ad206563969eaa46255cde1e528c28b95cd9","raw_id":"339e9860","line_count":8,"token_estimate":153,"has_risk":true,"preview":"  File \"C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-runs\\candidate-codex-004\\t02-bug-py-csv-quoting__skills-mcp__r1\\csvtool\\parse.py\", line 23, in parse_customers |     raise ValueError(f\"linha {number}: esperado {len(header)} campos, encontrado ","created_at":"2026-10-18T07:32:27.343Z"}
++{"kind":"block","block_id":"block_6f717324","block_sha256":"6f7173245b4d2217bcdb2222a13145c0b246b43e9b33fe483688b3170c60eff1","normalized_sha256":"0f6e2705ced5ca6a29b131e74c10d8a1966c0c69f179da4711cbe8574fe3d3ab","raw_id":"339e9860","line_count":8,"token_estimate":180,"has_risk":false,"preview":"  File \"C:\\Users\\rafael\\AppData\\Local\\Temp\\aq-runs\\candidate-codex-004\\t02-bug-py-csv-quoting__skills-mcp__r1\\tests\\test_parse.py\", line 26, in test_quoted_header_empty_fields_and_blank_lines |     rows = parse_customers('\\n\"nome, completo\"","created_at":"2026-10-18T07:32:27.343Z"}
++{"kind":"output","output_sha256":"b108699959c9271789051e73be92527c93936d1ccfd4ca149c52f319f21779d5","raw_id":"339e9860","command":"python -m unittest discover -s tests","exit_code":1,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073226532Z-339e9860.log","created_at":"2026-10-18T07:32:26.532Z"}
++{"kind":"output","output_sha256":"1b6f69157102cc03f5264c937d138171570f1a3f06ab9ba2d8345507e1df7261","raw_id":"0beb3add","command":"python -m unittest discover -s tests","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T073235729Z-0beb3add.log","created_at":"2026-10-18T07:32:35.729Z"}
+diff --git a/.soturail/indexes/repo-map.json b/.soturail/indexes/repo-map.json
+index e98f539..65cf32d 100644
+--- a/.soturail/indexes/repo-map.json
++++ b/.soturail/indexes/repo-map.json
+@@ -1,14 +1,140 @@
+ {
+   "title": "Heuristic Repo Map",
+-  "generated_at": "2026-10-18T07:31:57.478Z",
++  "generated_at": "2026-10-18T07:32:09.542Z",
+   "root": "t02-bug-py-csv-quoting__skills-mcp__r1",
+-  "total_files": 58,
++  "total_files": 76,
+   "stats": {
+-    "scanned_files": 58,
+-    "ignored_files": 0,
++    "scanned_files": 76,
++    "ignored_files": 3,
+     "ignored_directories": 2
+   },
+   "files": [
++    {
++      "path": ".agents/skills/soturail-change/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-change/SKILL.md",
++      "size_bytes": 2525,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/.soturail-projection.json",
++      "size_bytes": 608,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/candidate-artifacts.md",
++      "size_bytes": 1874,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/references/trust-states.md",
++      "size_bytes": 1221,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-core/SKILL.md",
++      "size_bytes": 4687,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-debug/SKILL.md",
++      "size_bytes": 1876,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-knowledge/SKILL.md",
++      "size_bytes": 1718,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-release/SKILL.md",
++      "size_bytes": 1777,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-research/SKILL.md",
++      "size_bytes": 1859,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-review/SKILL.md",
++      "size_bytes": 1792,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/.soturail-projection.json",
++      "size_bytes": 321,
++      "language": "json",
++      "symbols": [],
++      "contracts": []
++    },
++    {
++      "path": ".agents/skills/soturail-security/SKILL.md",
++      "size_bytes": 1975,
++      "language": "markdown",
++      "symbols": [],
++      "contracts": []
++    },
+     {
+       "path": ".gitignore",
+       "size_bytes": 19,
+diff --git a/.soturail/indexes/tree.txt b/.soturail/indexes/tree.txt
+index 2527e56..43aefff 100644
+--- a/.soturail/indexes/tree.txt
++++ b/.soturail/indexes/tree.txt
+@@ -1,7 +1,25 @@
+ Heuristic Repo Map
+ Root: t02-bug-py-csv-quoting__skills-mcp__r1
+-Files indexed: 58
++Files indexed: 76
+ 
++.agents/skills/soturail-change/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-change/SKILL.md (markdown, 2525 bytes)
++.agents/skills/soturail-core/.soturail-projection.json (json, 608 bytes)
++.agents/skills/soturail-core/references/candidate-artifacts.md (markdown, 1874 bytes)
++.agents/skills/soturail-core/references/trust-states.md (markdown, 1221 bytes)
++.agents/skills/soturail-core/SKILL.md (markdown, 4687 bytes)
++.agents/skills/soturail-debug/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-debug/SKILL.md (markdown, 1876 bytes)
++.agents/skills/soturail-knowledge/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-knowledge/SKILL.md (markdown, 1718 bytes)
++.agents/skills/soturail-release/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-release/SKILL.md (markdown, 1777 bytes)
++.agents/skills/soturail-research/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-research/SKILL.md (markdown, 1859 bytes)
++.agents/skills/soturail-review/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-review/SKILL.md (markdown, 1792 bytes)
++.agents/skills/soturail-security/.soturail-projection.json (json, 321 bytes)
++.agents/skills/soturail-security/SKILL.md (markdown, 1975 bytes)
+ .gitignore (text, 19 bytes)
+ AGENTS.md (markdown, 302 bytes)
+ CLAUDE.md (markdown, 188 bytes)
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..1d7bc75 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1,4 @@
++{"type":"command_run","raw_id":"339e9860","command":"python -m unittest discover -s tests","exit_code":1,"raw_tokens_estimated":481,"compressed_tokens_estimated":363,"estimated_raw_tokens":481,"estimated_reduced_payload_tokens":363,"estimated_soturail_metadata_tokens":40,"estimated_net_tokens_sent":403,"summary_overhead_tokens":40,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":118,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:32:27.667Z"}
++{"type":"expand","raw_id":"339e9860","created_at":"2026-10-18T07:32:34.255Z"}
++{"type":"expand","raw_id":"339e9860","details":{"source":"mcp","disclosure":"redacted-only","redaction_count":0},"created_at":"2026-10-18T07:32:34.309Z"}
++{"type":"command_run","raw_id":"0beb3add","command":"python -m unittest discover -s tests","exit_code":0,"raw_tokens_estimated":27,"compressed_tokens_estimated":44,"estimated_raw_tokens":27,"estimated_reduced_payload_tokens":44,"estimated_soturail_metadata_tokens":40,"estimated_net_tokens_sent":84,"summary_overhead_tokens":40,"compression_effective":false,"small_output_warning":true,"details":{"terminal_reducer_estimated_tokens_saved":0,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:32:36.115Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..1535b39 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1,2 @@
++{"raw_id":"339e9860","path":".soturail\\raw\\2026-10-18\\20261018T073226532Z-339e9860.log","command":"python -m unittest discover -s tests","exit_code":1,"created_at":"2026-10-18T07:32:26.532Z","compressor":"test-reducer","raw_tokens_estimated":481,"compressed_tokens_estimated":363,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"6cb923263cbf9ac88b48e4f93525a7a34ec38649164e8d275e02c8cc201bca5b","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:32:26.532Z"}
++{"raw_id":"0beb3add","path":".soturail\\raw\\2026-10-18\\20261018T073235729Z-0beb3add.log","command":"python -m unittest discover -s tests","exit_code":0,"created_at":"2026-10-18T07:32:35.729Z","compressor":"generic-stream","raw_tokens_estimated":27,"compressed_tokens_estimated":44,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c0fee4369de9220b255c0261efaa41bb668f5e35b4b324ea75a2ee2e921149c1","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:32:35.729Z"}
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..4248c3b 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,14 +1,10 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
+ 
++import csv
++
+ 
+ def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
++    return [value.strip() for value in next(csv.reader([line], skipinitialspace=True))]
+ 
+ 
+ def parse_customers(text):
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..cf352f6 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -12,6 +12,20 @@ class ParseTest(unittest.TestCase):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")
+ 
++    def test_quoted_commas_and_escaped_quotes(self):
++        rows = parse_customers(
++            'nome,endereco,observacao\nAna,"Rua A, 10","Disse ""oi"", depois saiu"\n'
++        )
++        self.assertEqual(rows, [{
++            "nome": "Ana",
++            "endereco": "Rua A, 10",
++            "observacao": 'Disse "oi", depois saiu',
++        }])
++
++    def test_quoted_header_empty_fields_and_blank_lines(self):
++        rows = parse_customers('\n"nome, completo",cidade,nota\nAna,"",\n\n')
++        self.assertEqual(rows, [{"nome, completo": "Ana", "cidade": "", "nota": ""}])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

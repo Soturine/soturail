@@ -17,6 +17,10 @@ for (const runId of runIds) {
   }
 }
 
+// Invalid runs (host quota/auth/crash) are excluded from every metric and counted separately.
+const invalidRuns = records.filter((r) => r.invalid);
+records.splice(0, records.length, ...records.filter((r) => !r.invalid));
+
 const mean = (values) => (values.length ? values.reduce((a, b) => a + b, 0) / values.length : null);
 const rate = (items, pick) => (items.length ? items.filter(pick).length / items.length : null);
 const pct = (value) => (value === null ? "–" : `${Math.round(value * 100)}%`);
@@ -122,7 +126,7 @@ const metricRows = [
 const lines = [
   `# Agent qualification report — ${runIds.join(" + ")}`,
   "",
-  `Hosts/models: ${hosts.join(", ")}. Records: ${records.length}. Generated ${summary.generatedAt}.`,
+  `Hosts/models: ${hosts.join(", ")}. Valid records: ${records.length}; excluded as invalid (host failure): ${invalidRuns.length}${invalidRuns.length ? ` (${[...new Set(invalidRuns.map((r) => r.invalid))].join("; ")})` : ""}. Generated ${summary.generatedAt}.`,
   "",
   "Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.",
   "",
