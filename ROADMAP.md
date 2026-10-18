@@ -29,6 +29,14 @@ Therefore:
 
 v1.7 scope is decided by evidence, not by architecture. First measure the same agents with and without SotuRail on oracle-scored tasks, dogfood the published package on external projects, and fix what is reproduced. `StructuralProvider` work starts only if that evidence names a concrete capability it would improve. Plan, metrics, budget and promotion criteria: [v1.7 Real-Agent Qualification Baseline](docs/audits/v1.7.0-real-agent-qualification-baseline.md). Findings: [v1.7 Real-Agent Qualification Results](docs/audits/v1.7.0-real-agent-qualification-results.md) — no correctness gain on small tasks, a readiness defect in 1.6.0 that hurt agents (fixed on `main`), and a cost of 2.2–3× tokens for agents that use SotuRail.
 
+## Historical roadmap reconciliation
+
+The older v0.x and v1.0-era roadmaps are retained as historical planning records. They are **not** a list of current implementation guarantees or automatic backlog commitments. The [Historical Roadmap Reconciliation (2026-10-18)](docs/audits/historical-roadmap-reconciliation-2026-10-18.md) cross-references 42 capability themes to existing CLI/core code, known limitations, changed architecture and explicit deferrals.
+
+Key outcomes: Spec/Diagram functionality is partial relative to the original v1.2 plan; the Design Rail and the v1.3 Knowledge Graph command family were not delivered; Agent Evolution remains proposed. The v1.6.1 release is complete, but downstream SBOM semantics, npm-native provenance, agent-efficiency qualification and generated-benchmark retention remain follow-up work. No historical label alone justifies another Rail.
+
+This reconciliation does not alter release/tag history or change the v1.7 StructuralProvider benchmark gate.
+
 ## Milestone A — Integrity / Foundation (v1.5 baseline, migration follow-up)
 
 Delivered baseline: WorkspaceGuard, Artifact Envelope/Registry/Store, workspace fingerprints, atomic storage, JSONL tail recovery, MCP hardening, raw lifecycle, evidence freshness, knowledge cleanup, and Run Manifest.

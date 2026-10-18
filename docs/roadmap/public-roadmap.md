@@ -18,6 +18,10 @@ Implemented:
 - typed bounded MCP surface;
 - CI/security/release provenance, SBOM and canonical release artifacts.
 
+## Historical roadmap coverage
+
+The original plans included Design Rail, full Knowledge Graph, richer Diagram/Spec operations and an Agent Evolution experiment loop. They have **not** all shipped. See the [evidence-backed 42-theme reconciliation](../audits/historical-roadmap-reconciliation-2026-10-18.md) for delivered, partial, reformulated and deferred outcomes. The published corrective baseline is [v1.6.1](../releases/RELEASE_NOTES_v1.6.1.md).
+
 ## Near term
 
 Priority work:

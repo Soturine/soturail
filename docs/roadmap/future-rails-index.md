@@ -4,6 +4,8 @@ This document is the quick index for implemented rails and planned SotuRail rail
 
 It does not replace `ROADMAP.md`. It exists so planned features are not scattered only across long roadmap sections.
 
+> **Historical planning index, not a feature guarantee.** Older version targets, suggested commands and Rails below are preserved as intent/history. Before treating one as shipped or prioritizing it, consult the [42-theme historical roadmap reconciliation](../audits/historical-roadmap-reconciliation-2026-10-18.md) and the [operational tracker](verified-control-plane-implementation-tracker.md). The released corrective baseline is v1.6.1; a documented command shape does not prove implementation.
+
 ## Core Direction
 
 ```txt

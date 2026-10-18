@@ -56,6 +56,7 @@ SotuRail v1.6 documentation is organized by task and architecture. Start with th
 
 - [All Roadmap Docs](roadmap/)
 - [Roadmap Index](roadmap/future-rails-index.md)
+- [Historical Roadmap Reconciliation (2026-10-18)](audits/historical-roadmap-reconciliation-2026-10-18.md)
 - [v1.6 Agent-Native Semantic Control Plane Master Prompt](roadmap/v1.6.0-agent-native-semantic-control-plane-master-prompt.md)
 - [2026 External Research Master Index](ecosystem/2026-external-research-master-index.md)
 - [Ecosystem Influences](ecosystem/ecosystem-influences.md)

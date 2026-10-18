@@ -61,6 +61,27 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | OUT-001 | Outcome Ledger | 1.7+ | [>] | pending | pending | roadmap | Append-only accepted/rejected outcome tracking with provenance. |
 | RUN-002 | RuntimeProvider / Conductor | Later | [>] | pending | pending | roadmap | Optional approval-gated coordination; never required for the agent-native Skill surface. |
 
+## Historical roadmap coverage and release follow-up
+
+[Historical Roadmap Reconciliation (2026-10-18)](../audits/historical-roadmap-reconciliation-2026-10-18.md) inventories 42 historical capability themes from v0.x, v1.0 and addendums. It is a discovery crosswalk; the operational status of v1.5+ control-plane work remains in the matrix above.
+
+| ID | Subject | Status | Acceptance / next gate |
+|---|---|:---:|---|
+| HIST-001 | Historical roadmap crosswalk and scope | [x] | Historical plans classified without treating proposed commands as implemented |
+| HIST-002 | Spec workflow expansion | [~] | `spec new|validate|task` exists; decide whether old spec check/plan adds value over Change Contracts |
+| HIST-003 | Design Rail / token lint + host export | [>] | Real repo use case, bounded design contract, tests/benchmark before implementation |
+| HIST-004 | Diagram render/diff/sync/from-repo | [>] | Prioritize only if external consumers need these beyond current diagram validation |
+| HIST-005 | Knowledge/Code Graph command surface | [>] | Gated behind structural benchmark and evidence-backed edge semantics |
+| HIST-006 | Agent-governed trace/ledger/improve loop | [>] | Explicit human approval, comparative oracle, immutable evidence and rollback |
+| HIST-007 | Complete data-dependency re-attestation | [~] | Extend existing freshness primitives; do not duplicate trust gates |
+| HIST-008 | Release SBOM/install semantics | [ ] | Compare build-time and consumer-resolved dependency graphs and document supported claims |
+| HIST-009 | Native npm provenance / `gitHead` strategy | [>] | Separate owner decision about manual vs OIDC publish; GitHub byte attestations remain verified |
+| HIST-010 | Benchmark output retention | [ ] | Redacted/checksummed archival policy plus a gate preventing new raw-results Git bloat |
+| HIST-011 | Agent efficiency/relevance | [~] | Real-agent tests completed as pilot; no promoted small-task correctness benefit |
+| HIST-012 | v1.6.1 publication/registry smoke | [x] | [Release notes](../releases/RELEASE_NOTES_v1.6.1.md): canonical npm bytes, 7-project smoke, GitHub provenance and tag identity |
+
+Statuses use this tracker's legend; no item is promoted to `[x]` on doc intent alone.
+
 ## Checkpoint log (v1.6)
 
 | Checkpoint | Commit | CI | Last-known-green |
