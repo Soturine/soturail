@@ -1,0 +1,70 @@
+diff --git a/README.md b/README.md
+index c49eb46..410f5a0 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,58 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+-import { retry } from "./src/retry.js";
++import { retry } from "patient-retry";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), { retries: 5, baseDelayMs: 100 });
+ ```
+ 
+-Options:
++`retry(fn, options)` calls `fn` until it resolves, and resolves with its value.
++
++`fn` receives the zero-based attempt number as its only argument:
++
++```js
++const value = await retry((attempt) => fetchThing({ attempt }));
++```
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base wait in milliseconds before the first retry |
++| `factor` | `2` | multiplier applied to the wait after each retry |
++| `shouldRetry` | `() => true` | `(error) => boolean`; return `false` to stop retrying that error |
++
++## Delay between attempts
++
++Before retry `n` (starting at `n = 0`), the function waits `baseDelayMs * factor ** n` milliseconds. With the defaults, the waits are 200 ms, 400 ms, and 800 ms, for up to 4 calls in total.
++
++The delay is exponential, not fixed. Set `factor: 1` for a fixed delay.
++
++## Errors
++
++- If `shouldRetry(error)` returns `false` before the last attempt, that error is rethrown as-is.
++- If every attempt fails, `retry` throws an `AggregateError`. Its `errors` array holds every failure in order, and its message is `retry: N attempt(s) failed`.
++- If the last attempt fails and `shouldRetry` returns `false` for it, you still get an `AggregateError`, not the raw error.
++
++```js
++try {
++  await retry(() => fetchThing(), { retries: 2 });
++} catch (error) {
++  if (error instanceof AggregateError) {
++    console.log(error.errors); // every failure, in order
++  }
++}
++```
++
++`shouldRetry` may be called more than once for the same error, so keep it free of side effects.
++
++## Development
++
++```sh
++npm test
++```
+ 
+-Errors: after the last attempt the last error is rethrown.
++The test suite uses the Node.js built-in test runner. The code relies on `AggregateError` and `Array.prototype.at`, so it needs a runtime that provides both. The suite was run on Node.js 24.11.1.

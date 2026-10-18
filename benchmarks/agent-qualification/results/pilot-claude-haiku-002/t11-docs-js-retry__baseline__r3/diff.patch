@@ -1,0 +1,54 @@
+diff --git a/README.md b/README.md
+index c49eb46..96f1b30 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,43 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), { retries: 4, baseDelayMs: 100 });
+ ```
+ 
+-Options:
++`retry(fn, options)` calls `fn` and resolves with its result on the first success. `fn` is called with the zero-based attempt number, so `fn(0)` is the first call:
++
++```js
++await retry((attempt) => fetchThing({ attempt }));
++```
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | wait before the first retry, in milliseconds |
++| `factor` | `2` | multiplier applied to the wait after each retry |
++| `shouldRetry` | `() => true` | called with the error after a failed call; return `false` to stop immediately |
++
++The wait before retry `n` (starting from `0`) is `baseDelayMs * factor ** n`. With the defaults that is 200 ms, 400 ms, then 800 ms, for at most 4 calls in total.
++
++```js
++await retry(() => fetchThing(), {
++  retries: 2,
++  shouldRetry: (error) => error.status >= 500,
++});
++```
++
++## Errors
++
++- If `fn` succeeds on any attempt, `retry` resolves with its value.
++- If `shouldRetry(error)` returns `false` partway through, `retry` rethrows that original error as-is.
++- Otherwise, when every attempt fails, `retry` throws an `AggregateError` with the message `retry: N attempt(s) failed`. Its `errors` array holds every failure, in order.
++
++The original error is rethrown unwrapped only when `shouldRetry` stops the retries before the final attempt. A non-retryable error on the final attempt, or any failure when `retries` is `0`, is wrapped in an `AggregateError` like any other exhausted run. Check `error.errors` in that case.
+ 
+-Errors: after the last attempt the last error is rethrown.
++`shouldRetry` may be called twice for the same error when it stops retries early. Keep it free of side effects.

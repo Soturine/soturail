@@ -1,0 +1,55 @@
+diff --git a/directory/users.py b/directory/users.py
+index 4cdd414..2d9fbf5 100644
+--- a/directory/users.py
++++ b/directory/users.py
+@@ -1,13 +1,18 @@
+ ROLES = {"viewer", "editor", "admin"}
+ 
+ 
++def _escape_like(value):
++    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
++
++
+ def search_users(conn, name_fragment):
+-    query = f"SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower('%{name_fragment}%') ORDER BY id"
+-    return [dict(row) for row in conn.execute(query)]
++    query = "SELECT id, name, email, role FROM users WHERE lower(name) LIKE ? ESCAPE '\\' ORDER BY id"
++    pattern = f"%{_escape_like(name_fragment.lower())}%"
++    return [dict(row) for row in conn.execute(query, (pattern,))]
+ 
+ 
+ def get_user_by_email(conn, email):
+-    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = '" + email + "'").fetchone()
++    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = ?", (email,)).fetchone()
+     return dict(row) if row else None
+ 
+ 
+diff --git a/tests/test_users.py b/tests/test_users.py
+index 04d6180..96bf37c 100644
+--- a/tests/test_users.py
++++ b/tests/test_users.py
+@@ -15,6 +15,24 @@ class UsersTest(unittest.TestCase):
+     def test_get_by_email(self):
+         self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "viewer")
+ 
++    def test_search_is_case_insensitive(self):
++        self.assertEqual([u["name"] for u in search_users(self.conn, "ANA")], ["Ana Lima"])
++
++    def test_search_injection_payload_is_inert(self):
++        self.assertEqual(search_users(self.conn, "' OR '1'='1"), [])
++        self.assertEqual(search_users(self.conn, "x'; DROP TABLE users; --"), [])
++        self.assertEqual(len(search_users(self.conn, "Ana")), 1)
++
++    def test_search_treats_like_wildcards_literally(self):
++        self.assertEqual(search_users(self.conn, "%"), [])
++        self.assertEqual(search_users(self.conn, "_"), [])
++        self.assertEqual(search_users(self.conn, "\\"), [])
++
++    def test_get_by_email_injection_payload_is_inert(self):
++        self.assertIsNone(get_user_by_email(self.conn, "' OR '1'='1"))
++        self.assertIsNone(get_user_by_email(self.conn, "x' OR 1=1 --"))
++        self.assertEqual(len(search_users(self.conn, "")), 2)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

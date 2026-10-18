@@ -1,0 +1,94 @@
+diff --git a/.soturail/dedupe/index.jsonl b/.soturail/dedupe/index.jsonl
+index e69de29..4e3520e 100644
+--- a/.soturail/dedupe/index.jsonl
++++ b/.soturail/dedupe/index.jsonl
+@@ -0,0 +1,3 @@
++{"kind":"block","block_id":"block_1acfb2bd","block_sha256":"1acfb2bde8a3d1fd35ce011fe12965e68983ca5bb31ea1fc2c5ba457b56bdd78","normalized_sha256":"81017de2e7c685dfd0e129f3d2a5ea1a700a05f5d2f9b2473b6678d2b9e126ec","raw_id":"92828fef","line_count":8,"token_estimate":67,"has_risk":false,"preview":" | > checkout@0.3.0 test","created_at":"2026-10-18T07:45:40.530Z"}
++{"kind":"block","block_id":"block_b3c6fa27","block_sha256":"b3c6fa27df0bfaf32bf4a6e5df7216bfc10731e0e0e819b267551bb90a6654e7","normalized_sha256":"76555af2c056861664a291e7fd645f17c56dc3f28ed80e9d5931ed404cb49b5c","raw_id":"92828fef","line_count":8,"token_estimate":61,"has_risk":false,"preview":"✔ R3: international orders are not free at subtotal >= 50 (0.2635ms) | ✔ R4: express adds 6.00 to non-free orders (0.2325ms)","created_at":"2026-10-18T07:45:40.530Z"}
++{"kind":"output","output_sha256":"b416d86457668e77ef7a6988149b635f8d0fba4a64183eabd0d7be481ed20cee","raw_id":"92828fef","command":"npm test","exit_code":0,"raw_path":".soturail\\raw\\2026-10-18\\20261018T074539554Z-92828fef.log","created_at":"2026-10-18T07:45:39.554Z"}
+diff --git a/.soturail/metrics/events.jsonl b/.soturail/metrics/events.jsonl
+index e69de29..42038c2 100644
+--- a/.soturail/metrics/events.jsonl
++++ b/.soturail/metrics/events.jsonl
+@@ -0,0 +1 @@
++{"type":"command_run","raw_id":"92828fef","command":"npm test","exit_code":0,"raw_tokens_estimated":139,"compressed_tokens_estimated":66,"estimated_raw_tokens":139,"estimated_reduced_payload_tokens":66,"estimated_soturail_metadata_tokens":33,"estimated_net_tokens_sent":99,"summary_overhead_tokens":33,"compression_effective":true,"small_output_warning":false,"details":{"terminal_reducer_estimated_tokens_saved":73,"dedupe_estimated_tokens_saved":0,"dedupe_blocks_reused":0,"dedupe_recent_window":10,"similar_dedupe":"off"},"created_at":"2026-10-18T07:45:40.666Z"}
+diff --git a/.soturail/raw/index.jsonl b/.soturail/raw/index.jsonl
+index e69de29..d29962e 100644
+--- a/.soturail/raw/index.jsonl
++++ b/.soturail/raw/index.jsonl
+@@ -0,0 +1 @@
++{"raw_id":"92828fef","path":".soturail\\raw\\2026-10-18\\20261018T074539554Z-92828fef.log","command":"npm test","exit_code":0,"created_at":"2026-10-18T07:45:39.554Z","compressor":"test-reducer","raw_tokens_estimated":139,"compressed_tokens_estimated":66,"sensitivity":"normal","redaction_version":"soturail-redaction.v1","contains_probable_secrets":false,"workspace_fingerprint":"c67ad73b142f4b4629c970117f6b1d585a4d7c1586d4b1509b53cd1f103b7316","retention_policy":"local-30d-review-before-purge","expires_at":"2026-11-17T07:45:39.554Z"}
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..f9bb1ba 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,29 @@
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  // R5: peso negativo o no numérico. Se rechaza también NaN e Infinity (ver OPEN_QUESTIONS.md).
++  if (typeof weightKg !== "number" || !Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg debe ser un número finito mayor o igual que 0");
++  }
++
++  let fee;
++
++  if (country === "ES") {
++    // R2 contradice R4 en el caso exprés nacional con subtotal >= 50 (ver OPEN_QUESTIONS.md).
++    // No se resuelve aquí: se lanza un error explícito en lugar de elegir una interpretación.
++    if (express && subtotal >= 50) {
++      throw new Error("Caso sin resolver: envío exprés nacional con subtotal >= 50 (ver OPEN_QUESTIONS.md)");
++    }
++    // R1 y R2
++    fee = subtotal >= 50 ? 0 : 4.9;
++  } else {
++    // R3: 12,00 € más 1,50 € por cada kg completo por encima de 2 kg
++    const extraKg = Math.max(0, Math.floor(weightKg - 2));
++    fee = 12 + extraKg * 1.5;
++  }
++
++  // R4: el exprés suma 6,00 € (el caso gratuito exprés queda sin resolver arriba)
++  if (express) {
++    fee += 6;
++  }
++
++  return Math.round(fee * 100) / 100;
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..765073c 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,34 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("R1: national base fee is 4.90", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R2: national orders with subtotal >= 50 are free", () => {
++  assert.equal(shippingFee({ subtotal: 50, country: "ES", weightKg: 1 }), 0);
++  assert.equal(shippingFee({ subtotal: 49.99, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R3: international fee with 1.50 per full kg above 2 kg", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 1 }), 12);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 2 }), 12);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 4.7 }), 15);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 3.99 }), 13.5);
++});
++
++test("R3: international orders are not free at subtotal >= 50", () => {
++  assert.equal(shippingFee({ subtotal: 80, country: "FR", weightKg: 1 }), 12);
++});
++
++test("R4: express adds 6.00 to non-free orders", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1, express: true }), 10.9);
++  assert.equal(shippingFee({ subtotal: 20, country: "FR", weightKg: 4.7, express: true }), 21);
++});
++
++test("R5: negative or non-numeric weight throws RangeError", () => {
++  assert.throws(() => shippingFee({ subtotal: 20, country: "ES", weightKg: -1 }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 20, country: "ES", weightKg: "2" }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 20, country: "ES", weightKg: NaN }), RangeError);
++});

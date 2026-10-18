@@ -54,7 +54,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | SEM-002 | Candidate/verified boundary | 1.6.0 | [x] | `SelfPromotionError`; evidence-backed readiness snapshot; candidates excluded from evidence | adversarial/self-award fixtures | contracts/evidence | Model/provider output cannot self-promote to verified/current/approved/ready. |
 | I18N-001 | Language-neutral machine semantics | 1.6.0 | [x] | locale-independent IDs/enums; Unicode slugs, tokens and identifiers; no keyword tables | pt-BR/en/es/ja + mixed fixtures | agent-native architecture | IDs/enums/schemas are locale-independent; no English keyword authority. |
 | I18N-002 | Preserve-source locale metadata | 1.6.0 | [x] | exact `*Original` text, derived translations, locale metadata, per-source digests | Unicode/source-preservation fixtures | artifact/context docs | Original source remains evidence; translations are derived views; Unicode paths supported. |
-| STR-001 | StructuralProvider NativeLite | 1.7+ | [>] | heuristic index exists | provider tests pending | roadmap | Objective symbol/freshness/impact facts; do not evolve into a stack/language-specific semantic-rule engine. |
+| STR-001 | StructuralProvider NativeLite | 1.7+ | [>] | heuristic index exists | gating benchmark pending (qualification found no structural need on small repos) | [qualification results](../audits/v1.7.0-real-agent-qualification-results.md) §6 | Objective symbol/freshness/impact facts; do not evolve into a stack/language-specific semantic-rule engine. |
 | INT-005 | Local SQLite/FTS index | 1.7+ | [>] | JSON index remains canonical | provider/index tests | roadmap | Rebuildable cache only; deletion never destroys truth. |
 | KNW-001 | Knowledge drift / re-attestation | 1.6.x | [~] | fingerprint/hash freshness and cleanup shipped | one-byte/rename/delete pass | artifact/context docs | Full dependency propagation and explicit re-attestation remain. |
 | VER-001 | Evidence Receipts | 1.6.x | [>] | evidence foundation in 1.5.0 | pending | roadmap | Receipt links contract, envelope, verdict, checks and outcome. |
@@ -92,6 +92,9 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | 2 — dogfood of published 1.6.0 (5 projects) | `a843573` | green | `a843573` |
 | 3 — fingerprint runtime-state fix | `e5f1c15` | Windows/Node 22 timeout flake (3 heavy tests at 60/120 s budget; next push green) | `a843573` |
 | 3 — guard error, MCP host-native config | `3bb0499`, `becfc0a` | green (in `a843573`/`134657f`) | `a843573` |
+| 3 — proportional skills | `e3a99e7` | green (in `7306686`) | `7306686` |
+| host-failure classification, CODEX_HOME | `ac7a7a9` | see CI | `7306686` |
+| 4 — results and StructuralProvider gate | see git log | see CI | `7306686` |
 | pilots + false-not-ready metric + rescore | `134657f` | red: docs:check scanned recorded agent output; fixed in `ea38a86` | `a843573` |
 
 Known CI risk: on `windows-latest` + Node 22 the brain-eval and npm-pack integration tests use 31–92 s of their 60/120 s budgets on a normal runner; a slow runner times all three out together (`e5f1c15`). Not caused by product changes; tracked rather than masked by larger timeouts.

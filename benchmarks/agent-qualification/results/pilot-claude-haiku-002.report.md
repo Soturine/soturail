@@ -1,6 +1,6 @@
 # Agent qualification report — pilot-claude-haiku-002
 
-Hosts/models: claude/claude-haiku-5-5. Records: 36. Generated 2026-10-18T07:30:30.129Z.
+Hosts/models: claude/claude-haiku-5-5. Valid records: 108; excluded as invalid (host failure): 0. Generated 2026-10-18T07:47:14.823Z.
 
 Scores come only from hidden oracles copied in after the agent exits; the agent never grades itself.
 
@@ -8,26 +8,26 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 
 | metric | baseline | skills | skills-mcp |
 |---|---:|---:|---:|
-| runs | 12 | 12 | 12 |
-| task success (oracle) | 83% | 100% | 83% |
+| runs | 36 | 36 | 36 |
+| task success (oracle) | 89% | 89% | 81% |
 | regressions (visible suite broke) | 0% | 0% | 0% |
-| final STATUS correct | 83% | 100% | 92% |
-| false-ready | 17% | 0% | 8% |
-| false-verified | 25% | 17% | 25% |
-| false-not-ready (correct work reported not ready) | 0% | 0% | 0% |
-|   reasons | – | – | – |
-| ran a check after last edit | 92% | 83% | 83% |
-| used SotuRail (skill/CLI/MCP) | – | 8% | 0% |
-| expected-skill recall | – | 4% | 0% |
-| tool calls (mean) | 8.5 | 8.6 | 8.1 |
+| final STATUS correct | 86% | 89% | 86% |
+| false-ready | 11% | 8% | 11% |
+| false-verified | 22% | 17% | 25% |
+| false-not-ready (correct work reported not ready) | 3% | 3% | 3% |
+|   reasons | other: 1 | other: 1 | other: 1 |
+| ran a check after last edit | 89% | 89% | 86% |
+| used SotuRail (skill/CLI/MCP) | – | 8% | 6% |
+| expected-skill recall | – | 3% | 1% |
+| tool calls (mean) | 8.8 | 7.9 | 8.2 |
 | duplicate tool calls (mean) | 0.00 | 0.00 | 0.00 |
-| tool errors / recovered (mean) | 0.17 / 0.08 | 0.17 / 0.17 | 0.08 / 0.08 |
-| turns (mean) | 9.5 | 9.6 | 9.1 |
-| total tokens incl. cache (mean) | 164604 | 186569 | 175897 |
-| output tokens (mean) | 4659 | 5083 | 4728 |
-| cache-write tokens (mean) | 13189 | 16375 | 15977 |
-| cost USD, list price (mean) | 0.007 | 0.008 | 0.007 |
-| wall seconds (mean) | 37.2 | 40.1 | 38.0 |
+| tool errors / recovered (mean) | 0.22 / 0.11 | 0.14 / 0.11 | 0.11 / 0.08 |
+| turns (mean) | 9.8 | 9.0 | 9.3 |
+| total tokens incl. cache (mean) | 164480 | 183176 | 172565 |
+| output tokens (mean) | 4516 | 4804 | 4496 |
+| cache-write tokens (mean) | 13037 | 16228 | 15681 |
+| cost USD, list price (mean) | 0.006 | 0.007 | 0.007 |
+| wall seconds (mean) | 34.4 | 36.3 | 35.7 |
 | timeouts | 0 | 0 | 0 |
 | permission denials | 0 | 0 | 0 |
 
@@ -35,22 +35,26 @@ Scores come only from hidden oracles copied in after the agent exits; the agent 
 
 | task | category | baseline pass | skills pass | skills-mcp pass | baseline cost | skills cost | skills-mcp cost | SotuRail use |
 |---|---|---:|---:|---:|---:|---:|---:|---|
-| t01-bug-js-pagination | bug | 1/1 | 1/1 | 1/1 | 0.004 | 0.005 | 0.005 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t02-bug-py-csv-quoting | bug | 1/1 | 1/1 | 1/1 | 0.005 | 0.007 | 0.009 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t03-debug-js-config-leak | bug | 1/1 | 1/1 | 1/1 | 0.007 | 0.008 | 0.006 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t04-feature-js-rate-limit | feature | 0/1 (FR 1) | 1/1 | 1/1 | 0.006 | 0.005 | 0.007 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t05-feature-py-cli-json | feature | 1/1 | 1/1 | 1/1 | 0.005 | 0.006 | 0.006 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t06-refactor-js-validation | refactor | 1/1 | 1/1 | 1/1 | 0.009 | 0.009 | 0.009 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t07-review-js-discount | review | 1/1 | 1/1 | 0/1 | 0.008 | 0.006 | 0.005 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t08-security-js-path-traversal | security | 1/1 | 1/1 | 1/1 | 0.006 | 0.007 | 0.007 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t09-security-py-sql-injection | security | 1/1 | 1/1 | 1/1 | 0.007 | 0.011 | 0.008 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t10-requirements-js-shipping | requirements | 1/1 | 1/1 | 1/1 | 0.009 | 0.008 | 0.009 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t11-docs-js-retry | documentation | 0/1 (FR 1) | 1/1 | 0/1 (FR 1) | 0.008 | 0.009 | 0.007 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
-| t12-release-js-prepare | release | 1/1 | 1/1 | 1/1 | 0.005 | 0.008 | 0.008 | skills: soturail-release; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t01-bug-js-pagination | bug | 3/3 | 3/3 | 3/3 | 0.004 | 0.005 | 0.005 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t02-bug-py-csv-quoting | bug | 3/3 | 3/3 | 3/3 | 0.006 | 0.007 | 0.008 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t03-debug-js-config-leak | bug | 3/3 | 3/3 | 3/3 | 0.007 | 0.009 | 0.007 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t04-feature-js-rate-limit | feature | 1/3 (FR 2) | 2/3 (FR 1) | 2/3 (FR 1) | 0.005 | 0.006 | 0.006 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t05-feature-py-cli-json | feature | 3/3 | 3/3 | 3/3 | 0.006 | 0.006 | 0.006 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t06-refactor-js-validation | refactor | 3/3 | 3/3 | 3/3 | 0.010 | 0.009 | 0.009 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t07-review-js-discount | review | 3/3 | 2/3 | 0/3 | 0.006 | 0.006 | 0.005 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t08-security-js-path-traversal | security | 3/3 | 3/3 | 3/3 | 0.006 | 0.008 | 0.007 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t09-security-py-sql-injection | security | 3/3 | 3/3 | 3/3 | 0.007 | 0.009 | 0.008 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t10-requirements-js-shipping | requirements | 3/3 | 3/3 | 3/3 | 0.008 | 0.008 | 0.009 | skills: no skill; 1 call(s)<br>skills-mcp: no skill; 1 call(s) |
+| t11-docs-js-retry | documentation | 1/3 (FR 2) | 1/3 (FR 2) | 0/3 (FR 3) | 0.008 | 0.008 | 0.008 | skills: no skill; 0 call(s)<br>skills-mcp: no skill; 0 call(s) |
+| t12-release-js-prepare | release | 3/3 | 3/3 | 3/3 | 0.006 | 0.008 | 0.007 | skills: soturail-release; 0 call(s)<br>skills-mcp: soturail-release; 0 call(s) |
 
 ## Failed oracle checks
 
 - t04-feature-js-rate-limit / baseline: hidden node tests
+- t04-feature-js-rate-limit / skills: hidden node tests
+- t04-feature-js-rate-limit / skills-mcp: hidden node tests
+- t07-review-js-discount / skills: finds bulk-threshold-off-by-one
 - t07-review-js-discount / skills-mcp: finds bulk-threshold-off-by-one
 - t11-docs-js-retry / baseline: README js examples execute
+- t11-docs-js-retry / skills: README js examples execute
 - t11-docs-js-retry / skills-mcp: README js examples execute

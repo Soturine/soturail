@@ -1,0 +1,42 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..358f575 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,14 +1,11 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
+ 
++import csv
++
+ 
+ def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
++    row = next(csv.reader([line], skipinitialspace=True))
++    return [value.strip() for value in row]
+ 
+ 
+ def parse_customers(text):
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..a65557d 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -8,6 +8,14 @@ class ParseTest(unittest.TestCase):
+         rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
+         self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
+ 
++    def test_quoted_field_with_comma(self):
++        rows = parse_customers('nome,endereco\nAna,"Rua A, 10"\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10"}])
++
++    def test_quoted_field_with_escaped_quote(self):
++        rows = parse_customers('nome,apelido\nAna,"A ""Aninha"""\n')
++        self.assertEqual(rows, [{"nome": "Ana", "apelido": 'A "Aninha"'}])
++
+     def test_wrong_field_count(self):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")

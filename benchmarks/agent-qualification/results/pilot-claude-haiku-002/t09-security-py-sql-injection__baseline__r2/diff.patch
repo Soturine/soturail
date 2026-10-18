@@ -1,0 +1,49 @@
+diff --git a/directory/users.py b/directory/users.py
+index 4cdd414..86505e8 100644
+--- a/directory/users.py
++++ b/directory/users.py
+@@ -1,13 +1,18 @@
+ ROLES = {"viewer", "editor", "admin"}
+ 
+ 
++def _escape_like(text):
++    return text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
++
++
+ def search_users(conn, name_fragment):
+-    query = f"SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower('%{name_fragment}%') ORDER BY id"
+-    return [dict(row) for row in conn.execute(query)]
++    pattern = f"%{_escape_like(name_fragment)}%"
++    query = "SELECT id, name, email, role FROM users WHERE lower(name) LIKE lower(?) ESCAPE '\\' ORDER BY id"
++    return [dict(row) for row in conn.execute(query, (pattern,))]
+ 
+ 
+ def get_user_by_email(conn, email):
+-    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = '" + email + "'").fetchone()
++    row = conn.execute("SELECT id, name, email, role FROM users WHERE email = ?", (email,)).fetchone()
+     return dict(row) if row else None
+ 
+ 
+diff --git a/tests/test_users.py b/tests/test_users.py
+index 04d6180..28bcbca 100644
+--- a/tests/test_users.py
++++ b/tests/test_users.py
+@@ -15,6 +15,18 @@ class UsersTest(unittest.TestCase):
+     def test_get_by_email(self):
+         self.assertEqual(get_user_by_email(self.conn, "bruno@x.io")["role"], "viewer")
+ 
++    def test_search_treats_input_as_literal(self):
++        self.assertEqual(search_users(self.conn, "' OR '1'='1"), [])
++        self.assertEqual(search_users(self.conn, "%"), [])
++        self.assertEqual(search_users(self.conn, "_"), [])
++
++    def test_get_by_email_treats_input_as_literal(self):
++        self.assertIsNone(get_user_by_email(self.conn, "x' OR '1'='1"))
++        self.assertIsNone(get_user_by_email(self.conn, "bruno@x.io' --"))
++
++    def test_search_returns_all_rows_for_empty_fragment(self):
++        self.assertEqual(len(search_users(self.conn, "")), 2)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

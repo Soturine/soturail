@@ -1,0 +1,55 @@
+diff --git a/inventory/__main__.py b/inventory/__main__.py
+index 3a654e7..b8c7a20 100644
+--- a/inventory/__main__.py
++++ b/inventory/__main__.py
+@@ -1,7 +1,7 @@
+ import argparse
+ import sys
+ 
+-from .report import load, render_text
++from .report import load, render_json, render_text
+ 
+ 
+ def main(argv=None):
+@@ -10,9 +10,13 @@ def main(argv=None):
+     report = sub.add_parser("report")
+     report.add_argument("path")
+     report.add_argument("--threshold", type=int, default=5)
++    report.add_argument("--format", choices=["text", "json"], default="text")
+     args = parser.parse_args(argv)
+     items = load(args.path)
+-    print(render_text(items, args.threshold))
++    if args.format == "json":
++        print(render_json(items, args.threshold))
++    else:
++        print(render_text(items, args.threshold))
+     return 0
+ 
+ 
+diff --git a/inventory/report.py b/inventory/report.py
+index 6215cbc..d84acf1 100644
+--- a/inventory/report.py
++++ b/inventory/report.py
+@@ -1,4 +1,5 @@
+ import csv
++import json
+ 
+ 
+ def load(path):
+@@ -17,3 +18,16 @@ def render_text(items, threshold):
+             line += " LOW"
+         lines.append(line)
+     return "\n".join(lines)
++
++
++def render_json(items, threshold):
++    records = [
++        {
++            "sku": item["sku"],
++            "name": item["name"],
++            "quantity": item["quantity"],
++            "low_stock": item["quantity"] < threshold,
++        }
++        for item in sorted(items, key=lambda entry: entry["sku"])
++    ]
++    return json.dumps(records, ensure_ascii=False, indent=2)

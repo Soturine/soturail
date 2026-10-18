@@ -1,0 +1,68 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..9346aa7 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -6,7 +6,7 @@ export function mergeConfig(base, override = {}) {
+   const result = { ...base };
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+       result[key] = value;
+     }
+diff --git a/src/tenants.js b/src/tenants.js
+index e9d6337..56663c2 100644
+--- a/src/tenants.js
++++ b/src/tenants.js
+@@ -8,5 +8,5 @@ const TENANT_OVERRIDES = {
+ };
+ 
+ export function configFor(tenant) {
+-  return mergeConfig(DEFAULTS, TENANT_OVERRIDES[tenant] ?? {});
++  return structuredClone(mergeConfig(DEFAULTS, TENANT_OVERRIDES[tenant] ?? {}));
+ }
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..f92945e 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -1,6 +1,8 @@
+ import test from "node:test";
+ import assert from "node:assert/strict";
+ import { mergeConfig } from "../src/merge.js";
++import { configFor } from "../src/tenants.js";
++import { DEFAULTS } from "../src/defaults.js";
+ 
+ test("override wins for scalars", () => {
+   assert.equal(mergeConfig({ a: 1 }, { a: 2 }).a, 2);
+@@ -10,3 +12,30 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("merge does not mutate the base or override", () => {
++  const base = { http: { timeoutMs: 1, retry: { attempts: 2 } } };
++  const override = { http: { retry: { attempts: 5 } } };
++  mergeConfig(base, override);
++  assert.deepEqual(base, { http: { timeoutMs: 1, retry: { attempts: 2 } } });
++  assert.deepEqual(override, { http: { retry: { attempts: 5 } } });
++});
++
++test("tenant overrides do not leak into later tenant configs", () => {
++  const defaultsBefore = structuredClone(DEFAULTS);
++  const acme = configFor("acme");
++  assert.equal(acme.http.timeoutMs, 30000);
++  assert.equal(acme.http.retry.attempts, 5);
++  const globex = configFor("globex");
++  assert.equal(globex.http.timeoutMs, 5000);
++  assert.equal(globex.http.retry.attempts, 2);
++  assert.deepEqual(DEFAULTS, defaultsBefore);
++});
++
++test("mutating a returned tenant config does not change defaults", () => {
++  const config = configFor("globex");
++  config.headers["x-extra"] = "1";
++  config.allowedRegions.push("apac");
++  assert.equal(DEFAULTS.headers["x-extra"], undefined);
++  assert.deepEqual(DEFAULTS.allowedRegions, ["eu", "us"]);
++});

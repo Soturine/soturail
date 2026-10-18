@@ -1,0 +1,62 @@
+diff --git a/README.md b/README.md
+index c49eb46..7961673 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,51 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), {
++  retries: 3,
++  baseDelayMs: 200,
++  factor: 2,
++  shouldRetry: (error) => error.code !== "ENOENT",
++});
+ ```
+ 
+-Options:
++## Signature
++
++```js
++retry(fn, options?) => Promise<value>
++```
++
++- `fn(attempt)` is called with the zero-based attempt index (`0` for the first call, `1` for the first retry, and so on). It may be async or sync; a synchronous throw is handled like a rejection.
++- The promise resolves with the value from the first call of `fn` that does not throw or reject.
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base delay in milliseconds before the first retry |
++| `factor` | `2` | multiplier applied to the delay on each retry |
++| `shouldRetry` | `() => true` | `shouldRetry(error)` decides whether a failure is retried; return `false` to stop immediately |
++
++## Delay schedule
++
++Before retry `n` (counting from `0`), the function waits `baseDelayMs * factor ** n` milliseconds. With the defaults that is 200 ms, 400 ms, then 800 ms, for at most 1400 ms of waiting. Setting `factor: 1` gives a fixed delay between calls.
+ 
+-Errors: after the last attempt the last error is rethrown.
++There is no jitter and no maximum delay. No wait happens after the final failure.
++
++## Errors
++
++- **Non-retryable error:** if `shouldRetry(error)` returns `false` before attempts run out, the original error is rethrown as-is.
++- **Retries exhausted:** if every attempt fails, or the last attempt fails, an `AggregateError` is thrown. Its message is `retry: <n> attempt(s) failed`, and its `errors` array holds every failure in call order.
++
++`shouldRetry` can be called again for the final error after the loop has stopped early, so keep it free of side effects.
++
++## Development
++
++```sh
++npm test
++```

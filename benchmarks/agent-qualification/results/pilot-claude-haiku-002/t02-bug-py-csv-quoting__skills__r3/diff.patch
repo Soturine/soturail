@@ -1,0 +1,60 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..33ed9da 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,24 +1,18 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
+ 
+-
+-def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
++import csv
++import io
+ 
+ 
+ def parse_customers(text):
+-    lines = [line for line in text.splitlines() if line.strip()]
+-    if not lines:
++    # csv respeita campos entre aspas (vírgulas e "" dentro deles); skipinitialspace ignora espaços após o separador
++    rows = csv.reader(io.StringIO(text), skipinitialspace=True)
++    rows = [[value.strip() for value in row] for row in rows if any(value.strip() for value in row)]
++    if not rows:
+         return []
+-    header = split_line(lines[0])
++    header = rows[0]
+     customers = []
+-    for number, line in enumerate(lines[1:], start=2):
+-        values = split_line(line)
++    for number, values in enumerate(rows[1:], start=2):
+         if len(values) != len(header):
+             raise ValueError(f"linha {number}: esperado {len(header)} campos, encontrado {len(values)}")
+         customers.append(dict(zip(header, values)))
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..2e89b67 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -12,6 +12,18 @@ class ParseTest(unittest.TestCase):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")
+ 
++    def test_quoted_field_with_comma(self):
++        rows = parse_customers('nome,endereco,cidade\nAna,"Rua A, 10",Recife\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10", "cidade": "Recife"}])
++
++    def test_quoted_field_with_escaped_quote(self):
++        rows = parse_customers('nome,apelido\nAna,"A ""Aninha"""\n')
++        self.assertEqual(rows, [{"nome": "Ana", "apelido": 'A "Aninha"'}])
++
++    def test_blank_lines_ignored(self):
++        rows = parse_customers("nome,cidade\n\nAna,Recife\n\n")
++        self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}])
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

@@ -1,0 +1,77 @@
+diff --git a/src/static.js b/src/static.js
+index f2f38b9..b1a7c94 100644
+--- a/src/static.js
++++ b/src/static.js
+@@ -4,13 +4,33 @@ import path from "node:path";
+ const TYPES = { ".html": "text/html", ".css": "text/css", ".txt": "text/plain" };
+ 
+ // Resolves a request path such as "/css/site.css" against the public root.
++// Anything that would resolve outside publicRoot is answered with 404.
+ export async function serveStatic(publicRoot, requestPath) {
+-  const decoded = decodeURIComponent(requestPath.split("?")[0]);
+-  const target = path.join(publicRoot, decoded);
++  const target = resolveInside(publicRoot, requestPath);
++  if (target === null) return notFound();
+   try {
+     const body = await fs.readFile(target);
+     return { status: 200, type: TYPES[path.extname(target)] ?? "application/octet-stream", body };
+   } catch {
+-    return { status: 404, type: "text/plain", body: Buffer.from("not found") };
++    return notFound();
+   }
+ }
++
++function resolveInside(publicRoot, requestPath) {
++  let decoded;
++  try {
++    decoded = decodeURIComponent(requestPath.split("?")[0]);
++  } catch {
++    return null;
++  }
++  const root = path.resolve(publicRoot);
++  // Strip leading slashes so the request path is always relative to root.
++  const target = path.resolve(root, decoded.replace(/^[/\\]+/, ""));
++  const rel = path.relative(root, target);
++  if (path.isAbsolute(rel) || rel.split(path.sep)[0] === "..") return null;
++  return target;
++}
++
++function notFound() {
++  return { status: 404, type: "text/plain", body: Buffer.from("not found") };
++}
+diff --git a/test/static.test.js b/test/static.test.js
+index b9d6e6e..3f5618b 100644
+--- a/test/static.test.js
++++ b/test/static.test.js
+@@ -14,3 +14,31 @@ test("serves a nested file", async () => {
+ test("missing file is 404", async () => {
+   assert.equal((await serveStatic(root, "/nope.txt")).status, 404);
+ });
++
++test("file names containing dots are served", async () => {
++  const res = await serveStatic(root, "/notes..v2.txt");
++  assert.equal(res.status, 200);
++  assert.equal(res.type, "text/plain");
++});
++
++test("paths escaping the public root are 404", async () => {
++  const attacks = [
++    "/../secret.env",
++    "/%2e%2e/secret.env",
++    "/%2e%2e%2fsecret.env",
++    "/css/../../secret.env",
++    "//../secret.env",
++    "/..%5csecret.env",
++    "/%2e%2e%5c%2e%2e%5csecret.env",
++    "/C:/secret.env",
++  ];
++  for (const attack of attacks) {
++    const res = await serveStatic(root, attack);
++    assert.equal(res.status, 404, attack);
++  }
++});
++
++test("malformed percent-encoding is 404 instead of throwing", async () => {
++  const res = await serveStatic(root, "/%E0%A4%A");
++  assert.equal(res.status, 404);
++});

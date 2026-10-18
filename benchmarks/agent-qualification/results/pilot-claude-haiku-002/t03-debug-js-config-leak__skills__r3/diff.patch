@@ -1,0 +1,48 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..9346aa7 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -6,7 +6,7 @@ export function mergeConfig(base, override = {}) {
+   const result = { ...base };
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+       result[key] = value;
+     }
+diff --git a/src/tenants.js b/src/tenants.js
+index e9d6337..58555bb 100644
+--- a/src/tenants.js
++++ b/src/tenants.js
+@@ -8,5 +8,6 @@ const TENANT_OVERRIDES = {
+ };
+ 
+ export function configFor(tenant) {
+-  return mergeConfig(DEFAULTS, TENANT_OVERRIDES[tenant] ?? {});
++  // Clone the defaults so each tenant gets its own nested objects, not shared references.
++  return mergeConfig(structuredClone(DEFAULTS), TENANT_OVERRIDES[tenant] ?? {});
+ }
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..dcb0491 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,18 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("merge does not mutate the base's nested objects", () => {
++  const base = { http: { timeoutMs: 1, retry: { attempts: 2 } } };
++  mergeConfig(base, { http: { timeoutMs: 9, retry: { attempts: 5 } } });
++  assert.deepEqual(base, { http: { timeoutMs: 1, retry: { attempts: 2 } } });
++});
++
++test("tenant configs do not leak into defaults or other tenants", async () => {
++  const { configFor } = await import("../src/tenants.js");
++  const { DEFAULTS } = await import("../src/defaults.js");
++  configFor("acme");
++  assert.deepEqual(DEFAULTS.http, { timeoutMs: 5000, retry: { attempts: 2, backoffMs: 100 } });
++  assert.deepEqual(configFor("initech").http, { timeoutMs: 5000, retry: { attempts: 2, backoffMs: 100 } });
++  assert.equal(configFor("acme").http.timeoutMs, 30000);
++});

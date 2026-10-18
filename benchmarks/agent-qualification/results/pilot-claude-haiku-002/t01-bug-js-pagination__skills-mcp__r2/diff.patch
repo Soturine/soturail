@@ -1,0 +1,28 @@
+diff --git a/src/paginate.js b/src/paginate.js
+index 05b5769..0df2342 100644
+--- a/src/paginate.js
++++ b/src/paginate.js
+@@ -1,5 +1,5 @@
+ export function totalPages(totalItems, pageSize) {
+-  return Math.floor(totalItems / pageSize);
++  return Math.ceil(totalItems / pageSize);
+ }
+ 
+ export function paginate(items, page, pageSize) {
+diff --git a/test/paginate.test.js b/test/paginate.test.js
+index 97c2891..a5d5b95 100644
+--- a/test/paginate.test.js
++++ b/test/paginate.test.js
+@@ -8,6 +8,12 @@ test("first page of an evenly divisible list", () => {
+   assert.equal(result.totalPages, 2);
+ });
+ 
++test("last page of a list that is not evenly divisible", () => {
++  const result = paginate([1, 2, 3, 4, 5], 3, 2);
++  assert.deepEqual(result.items, [5]);
++  assert.equal(result.totalPages, 3);
++});
++
+ test("rejects a non-positive page size", () => {
+   assert.throws(() => paginate([1], 1, 0), RangeError);
+ });

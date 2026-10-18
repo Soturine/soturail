@@ -27,7 +27,7 @@ Therefore:
 
 ## Next step — Real-Agent Qualification (before v1.7 scope)
 
-v1.7 scope is decided by evidence, not by architecture. First measure the same agents with and without SotuRail on oracle-scored tasks, dogfood the published package on external projects, and fix what is reproduced. `StructuralProvider` work starts only if that evidence names a concrete capability it would improve. Plan, metrics, budget and promotion criteria: [v1.7 Real-Agent Qualification Baseline](docs/audits/v1.7.0-real-agent-qualification-baseline.md).
+v1.7 scope is decided by evidence, not by architecture. First measure the same agents with and without SotuRail on oracle-scored tasks, dogfood the published package on external projects, and fix what is reproduced. `StructuralProvider` work starts only if that evidence names a concrete capability it would improve. Plan, metrics, budget and promotion criteria: [v1.7 Real-Agent Qualification Baseline](docs/audits/v1.7.0-real-agent-qualification-baseline.md). Findings: [v1.7 Real-Agent Qualification Results](docs/audits/v1.7.0-real-agent-qualification-results.md) — no correctness gain on small tasks, a readiness defect in 1.6.0 that hurt agents (fixed on `main`), and a cost of 2.2–3× tokens for agents that use SotuRail.
 
 ## Milestone A — Integrity / Foundation (v1.5 baseline, migration follow-up)
 
@@ -111,6 +111,8 @@ Next:
 Context selection must remain budgeted and explainable. Agent reasoning may select candidates, but provenance/freshness remain explicit.
 
 ## Milestone G — Structural Intelligence (v1.7+)
+
+Gated by evidence: the [v1.7 qualification results](docs/audits/v1.7.0-real-agent-qualification-results.md) found no task failure caused by missing structural facts on small repositories. Build the structural gating benchmark (50+ file fixture, dependents the prompt does not name) first; implement the smallest deterministic provider only if it reduces missed dependents or regressions on ≥ 2 of 3 repetitions.
 
 Define `StructuralProvider`, symbol identity, structural freshness, impact analysis, doctor and hybrid retrieval. Preserve a small offline fallback before optional codebase-memory or code-review-graph adapters.
 

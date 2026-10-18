@@ -65,6 +65,7 @@ SotuRail v1.6 documentation is organized by task and architecture. Start with th
 - [v1.5 Preimplementation Audit](audits/v1.5.0-preimplementation-audit.md)
 - [v1.6 Semantic Migration Baseline](audits/v1.6.0-semantic-migration-baseline.md)
 - [v1.7 Real-Agent Qualification Baseline](audits/v1.7.0-real-agent-qualification-baseline.md)
+- [v1.7 Real-Agent Qualification Results](audits/v1.7.0-real-agent-qualification-results.md)
 - [v1.6 Refactor Map / Simplification](audits/v1.6.0-refactor-map.md)
 - [v1.6 Legacy Removal Report](audits/v1.6.0-legacy-removal-report.md)
 

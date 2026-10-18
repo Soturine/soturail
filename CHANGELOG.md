@@ -6,6 +6,20 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- Workspace fingerprints no longer include SotuRail's own runtime state under `.soturail/`. In projects that do not gitignore `.soturail/` (the `soturail init` default), every recorded run used to invalidate its own evidence, so change contracts could never become ready.
+- Missing paths are reported as `Path not found: <path>` instead of Node's raw `ENOENT … realpath` message; the `ENOENT` code is kept.
+- `mcp config` now includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config.
+
+### Changed
+
+- The core and change Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work, `project.read` is for untrusted paths, possible secrets and large files, and only durable findings are recorded as candidates.
+
+### Added
+
+- Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, and a deterministic dogfood of the published package.
+
 ## [1.6.0] - 2026-10-04
 
 Agent-Native Semantic Control Plane. See `docs/releases/RELEASE_NOTES_v1.6.0.md` and `docs/getting-started/migration-v1.6.md`.

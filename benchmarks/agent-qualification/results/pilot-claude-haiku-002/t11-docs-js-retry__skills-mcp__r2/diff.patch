@@ -1,0 +1,56 @@
+diff --git a/README.md b/README.md
+index c49eb46..8b17b86 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,45 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry(() => fetchThing(), { retries: 5, baseDelayMs: 100 });
+ ```
+ 
+-Options:
++`retry(fn, options)` calls `fn` until it resolves. It returns the first resolved value.
++
++`fn` is called with the zero-based attempt number, so it can vary its behavior per try:
++
++```js
++const value = await retry(async (attempt) => fetchThing({ timeout: 1000 * (attempt + 1) }));
++```
++
++## Options
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call, so at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | delay in milliseconds before the first retry |
++| `factor` | `2` | multiplier applied to the delay after each failed call |
++| `shouldRetry` | `() => true` | called with each error; return `false` to stop retrying |
++
++The wait before retry *n* (counting from 0) is `baseDelayMs * factor ** n`. With the defaults, the waits are 200, 400, and 800 ms, for at most 4 calls.
++
++## Errors
+ 
+-Errors: after the last attempt the last error is rethrown.
++- If `shouldRetry(error)` returns `false` before the last allowed call, the error is rethrown as-is, without further calls.
++- If every allowed call fails, or the last failure is one `shouldRetry` declines to retry on the final call, `retry` throws an `AggregateError`. Its `errors` array holds every failure, in order, and its message is `retry: N attempt(s) failed`.
++
++`shouldRetry` may be called more than once for the same error (it is called again when deciding whether to rethrow), so keep it free of side effects.
++
++## Requirements
++
++Uses `AggregateError` and `Array.prototype.at`, so it needs Node.js 16.6 or later (or an equivalent runtime).
++
++## Tests
++
++```sh
++npm test
++```

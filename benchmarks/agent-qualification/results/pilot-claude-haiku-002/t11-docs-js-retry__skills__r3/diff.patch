@@ -1,0 +1,79 @@
+diff --git a/README.md b/README.md
+index c49eb46..432d9f6 100644
+--- a/README.md
++++ b/README.md
+@@ -1,18 +1,68 @@
+ # patient-retry
+ 
+-Retry an async function.
++Retry an async function with exponential backoff.
+ 
+ ```js
+ import { retry } from "./src/retry.js";
+ 
+-const value = await retry(() => fetchThing(), { attempts: 5, delay: 100 });
++const value = await retry((attempt) => fetchThing(), { retries: 5, baseDelayMs: 100 });
+ ```
+ 
+-Options:
++When installed as the `patient-retry` package, import from the package name instead:
++
++```js
++import { retry } from "patient-retry";
++```
++
++## `retry(fn, options?)`
++
++`fn` is called with the zero-based attempt index (`0` for the first call, `1` for the first retry, and so on). It may be any function that returns a value or a promise. The promise resolves with the value from the first call of `fn` that does not throw.
++
++Options (all optional):
+ 
+ | option | default | meaning |
+ |---|---|---|
+-| `attempts` | `5` | total number of calls |
+-| `delay` | `100` | fixed milliseconds between calls |
++| `retries` | `3` | number of retries after the first call; at most `retries + 1` calls in total |
++| `baseDelayMs` | `200` | base delay in milliseconds before the first retry |
++| `factor` | `2` | multiplier applied to the delay after each failed attempt |
++| `shouldRetry` | `() => true` | called with each thrown error; return `false` to stop retrying |
++
++### Delay schedule
++
++Before retry `n` (counting from `0`), the function waits `baseDelayMs * factor ** n` milliseconds. With the defaults, the waits are 200 ms, 400 ms and 800 ms, for at most four calls in total. Time spent inside `fn` is not included in the delays.
++
++### Errors
++
++- **Retries exhausted:** if every allowed call fails, `retry` rejects with an `AggregateError`. Its `errors` array holds the thrown values for every call, in order, and its message is `retry: <n> attempt(s) failed`.
++- **Non-retryable error:** if `shouldRetry(error)` returns `false` for a call that is not the last allowed call, `retry` rejects immediately with that original error. No `AggregateError` is created, and earlier errors are not reported.
++- **Non-retryable error on the last call:** if `shouldRetry` returns `false` for the final allowed call, `retry` still rejects with an `AggregateError` containing every error, not the original error. Check `error.errors` in this case.
++
++`shouldRetry` may be called more than once for the same error. Keep it free of side effects.
++
++## Examples
+ 
+-Errors: after the last attempt the last error is rethrown.
++Retry only on errors you know are transient:
++
++```js
++const value = await retry(() => fetchThing(), {
++  retries: 4,
++  baseDelayMs: 50,
++  shouldRetry: (error) => error.code === "ECONNRESET",
++});
++```
++
++Use `attempt` to vary the request:
++
++```js
++await retry((attempt) => fetchThing({ timeoutMs: 1000 * (attempt + 1) }));
++```
++
++## Requirements
++
++The code uses `AggregateError` and `Array.prototype.at`, so it needs Node.js 16.6 or later. It is tested on Node.js 24.
++
++## Tests
++
++```sh
++npm test
++```
