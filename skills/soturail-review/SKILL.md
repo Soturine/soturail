@@ -14,7 +14,7 @@ Findings with evidence, not impressions.
 ## Workflow
 
 1. **Scope.** Identify the change (diff/commits) and its contract if one exists.
-2. **Read** changed files and their direct callers/tests through `project.read`. Build the `impact` candidate; mark structural relations you inferred.
+2. **Read** changed files and their direct callers/tests with the host's file tools (`project.read` for untrusted paths, possible secrets or large files). Build the `impact` candidate; mark structural relations you inferred.
 3. **Check the contract** with `contract.verify` and recorded evidence with `evidence.verify`. Stale evidence (workspace changed after the check) is a finding.
 4. **Judge** correctness, edge cases, error handling, security-sensitive paths, test adequacy and consistency with surrounding code.
 5. **Report** each finding as a `claim` candidate with file/line references and a concrete failure scenario. Separate blocking issues from suggestions.

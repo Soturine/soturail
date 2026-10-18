@@ -14,7 +14,7 @@ Cited, version-aware, honest about what was observed.
 ## Workflow
 
 1. **Frame** the question and the decision it informs.
-2. **Local first.** Check project docs and existing decisions through `project.read`; `context.select` can hint candidates.
+2. **Local first.** Check project docs and existing decisions with the host's file tools; `context.select` can hint candidates.
 3. **Dependencies.** Match documentation to the version in the project's lockfile/manifest. `dependency.docs` is unavailable: fetch upstream docs yourself and record source URL + version.
 4. **External projects.** Prefer code, tests, issues and primary docs over READMEs. Classify each idea as observed, benchmarked, adopt, adapt, provider, reference-only or reject — and say why.
 5. **Record** findings as `claim` candidates with source references, keeping quotes in their original language and adding derived translations only when useful.

@@ -13,7 +13,7 @@ Source-backed knowledge that knows when it is stale.
 
 ## Workflow
 
-1. **Select sources** by meaning, including docs in other languages; read them through `project.read`.
+1. **Select sources** by meaning, including docs in other languages; read them with the host's file tools, or `project.read` for untrusted paths, possible secrets or large files.
 2. **Compile** with `knowledge.compile`; it keeps a source map and hashes. You interpret meaning — the compiler only structures.
 3. **Extract candidates.** Requirements and business rules become `claim` candidates (`claimType: business_rule`) with `statementOriginal` verbatim from the source, in its original language.
 4. **Conflicts.** When sources disagree (for example a Portuguese spec and an English README), record both claims plus an `interpretation` with `conflictsWith`. Neither language wins by default; freshness and provenance decide, otherwise ask the human.

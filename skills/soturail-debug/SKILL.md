@@ -15,7 +15,7 @@ Reproduce, isolate, fix, re-run the same check.
 
 1. **Reproduce** with `command.run` (`soturail run -- <command>`). The exit code is the authoritative signal; output wording varies by tool and locale.
 2. **Inspect** the recorded output with `raw.inspect.redacted` instead of pasting full logs. Prefer structured reports (JUnit, JSON reporters, compiler diagnostics) when the project can emit them.
-3. **Isolate.** Form hypotheses from the evidence, read only the implicated files, and record the most likely cause as a `claim` candidate citing the log and source lines.
+3. **Isolate.** Form hypotheses from the evidence, read only the implicated files, and state the most likely cause citing the log and source lines; record it as a `claim` candidate when it must outlive this session (handoff, review, recurring failure).
 4. **Fix** the cause, not the symptom. If the fix changes behavior beyond the failure, switch to soturail-change discipline.
 5. **Confirm** by re-running the identical command and `evidence.collect`. A different command is not confirmation.
 
