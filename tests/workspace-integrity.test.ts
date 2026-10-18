@@ -131,6 +131,34 @@ describe("artifact identity", () => {
     expect(second.dirtyDigest).not.toBe(first.dirtyDigest);
     expect(second.fingerprint).not.toBe(first.fingerprint);
   });
+
+  it("ignores SotuRail runtime state when .soturail/ is not gitignored", async () => {
+    // `soturail init` does not gitignore .soturail/; every run writes raw logs and evidence
+    // there. If those entries reach the digest, evidence goes stale the moment it is recorded.
+    const root = await temporaryProject();
+    await initializeGit(root);
+    const before = await createWorkspaceFingerprint(root);
+    for (const file of ["raw/abc.log", "evidence/run-1/evidence.json", "metrics/events.jsonl", "contracts/c.json", "candidates/x.json"]) {
+      await fs.mkdir(path.dirname(path.join(root, ".soturail", file)), { recursive: true });
+      await fs.writeFile(path.join(root, ".soturail", file), "runtime", "utf8");
+    }
+    const after = await createWorkspaceFingerprint(root);
+    expect(after.fingerprint).toBe(before.fingerprint);
+    expect(after.dirty).toBe(false);
+
+    await fs.writeFile(path.join(root, "inside.txt"), "changed", "utf8");
+    expect((await createWorkspaceFingerprint(root)).fingerprint).not.toBe(before.fingerprint);
+  });
+
+  it("still binds the SotuRail configuration file", async () => {
+    const root = await temporaryProject();
+    await initializeGit(root);
+    await fs.mkdir(path.join(root, ".soturail", "config"), { recursive: true });
+    await fs.writeFile(path.join(root, ".soturail", "config", "config.json"), "{\"a\":1}", "utf8");
+    const first = await createWorkspaceFingerprint(root);
+    await fs.writeFile(path.join(root, ".soturail", "config", "config.json"), "{\"a\":2}", "utf8");
+    expect((await createWorkspaceFingerprint(root)).fingerprint).not.toBe(first.fingerprint);
+  });
 });
 
 async function temporaryProject(): Promise<string> {

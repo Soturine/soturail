@@ -84,6 +84,16 @@ describe("contract baseline vs verification freshness", () => {
     expect(snapshot.satisfiedBy.criteria).toEqual({ "ttl is 15": "recorded-evidence" });
   });
 
+  it("1b. ready without .soturail/ in .gitignore (fresh `soturail init` project)", async () => {
+    const root = await committedProject({ ignoreRuntimeState: false });
+    const contract = await saveContract(root);
+    await implement(root);
+    await run(root);
+    const snapshot = await buildReadinessSnapshot(contract, root);
+    expect(snapshot.checkEvidence[0]?.state).toBe("current-pass");
+    expect(evaluateReadiness(contract, snapshot).verdict).toBe("ready");
+  });
+
   it("2. evidence recorded at A does not count after the workspace moves to B", async () => {
     const root = await committedProject();
     const contract = await saveContract(root);

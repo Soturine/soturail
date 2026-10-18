@@ -33,7 +33,7 @@ export async function createWorkspaceFingerprint(root = process.cwd()): Promise<
     git(root, ["rev-parse", "--show-toplevel"], resolvedRoot),
     git(root, ["branch", "--show-current"], "DETACHED"),
     git(root, ["rev-parse", "HEAD"], "UNAVAILABLE"),
-    git(root, ["status", "--porcelain=v1", "-z", "--untracked-files=all"], "")
+    git(root, ["status", "--porcelain=v1", "-z", "--untracked-files=all"], "").then(withoutRuntimeState)
   ]);
   const relevantFiles = ["package.json", "package-lock.json", "native/soturail-native/Cargo.toml", ".soturail/config/config.json"];
   const relevantFilesDigest = await digestFiles(resolvedRoot, relevantFiles);
@@ -96,6 +96,16 @@ async function git(root: string, args: string[], fallback: string): Promise<stri
 
 function sanitizeRepositoryIdentity(value: string): string {
   return value.replace(/:\/\/[^/@\s]+@/g, "://[REDACTED]@").replace(/^git@([^:]+):/, "ssh://$1/");
+}
+
+/**
+ * Drops SotuRail's own runtime state (raw logs, evidence, metrics, contracts) from the
+ * porcelain status. `soturail init` does not gitignore `.soturail/`, so otherwise every
+ * recorded run would change the fingerprint it was just bound to. `.soturail/config/config.json`
+ * stays bound through `configurationDigest`.
+ */
+function withoutRuntimeState(status: string): string {
+  return status.split("\0").filter((entry) => entry && !/^\.soturail(?:[\\/]|$)/i.test(entry.slice(3))).map((entry) => `${entry}\0`).join("");
 }
 
 function ignored(relative: string): boolean {
