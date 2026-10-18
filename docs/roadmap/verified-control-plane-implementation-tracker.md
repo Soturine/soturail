@@ -45,7 +45,7 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 | HST-001 | Host adapter registry | 1.6.0 | [x] | `host-adapters.ts`; 121 → 7 literal host branches | golden export fixtures | host compatibility | Per-host facts live in one registry; unknown hosts resolve to generic fallback with explicit limitations. |
 | LEG-001 | Legacy removal / migration | 1.6.0 | [x] | approved-memory migration, alias/dead code removal, deprecations with v2.0 targets | legacy cleanup suite | legacy removal report | Remove obsolete implementation, migrate persisted state, deprecate public contracts with a removal target. |
 | EVL-001 | Agent-skill eval fixtures | 1.6.0 | [~] | selection fixtures + satisfiability tests; agent-run scoring pending | trigger/non-trigger/composition/multilingual | Skill Rail | Deterministic assertions on selection, capability binding, evidence discipline and context bytes; model judges separate. |
-| QUA-001 | Real-agent qualification harness | 1.7.0 | [~] | baseline audit; harness pending | oracle negative/positive controls | [v1.7 qualification baseline](../audits/v1.7.0-real-agent-qualification-baseline.md) | Same agent with/without SotuRail on 12 oracle-scored tasks; promotion criteria gate v1.7 scope. Closes the agent-run half of EVL-001. |
+| QUA-001 | Real-agent qualification harness | 1.7.0 | [~] | `benchmarks/agent-qualification/` (12 tasks, 3 arms, Claude Code + Codex, dogfood, rescore) | oracle negative/positive/mutant controls in CI | [v1.7 qualification baseline](../audits/v1.7.0-real-agent-qualification-baseline.md) | Same agent with/without SotuRail on 12 oracle-scored tasks; promotion criteria gate v1.7 scope. Closes the agent-run half of EVL-001. |
 | SKL-001 | Portable SotuRail Core Skill | 1.6.0 | [x] | `skill-model.ts`, `skills/soturail-core/`, portable export | trigger/non-trigger + progressive disclosure | Skill Rail; agent-native architecture | Small `SKILL.md` teaches discover -> select -> act -> verify. |
 | SKL-002 | Task Skill set | 1.6.0 | [x] | `skills/soturail-{change,debug,review,security,research,knowledge,release}` | change/debug/review/security/research/knowledge/release fixtures | Skill Rail | Start with a small measured catalog; avoid always-loaded skill bloat. |
 | SKL-003 | Host Skill adapters + generic fallback | 1.6.0 | [x] | `skills export --layout portable --install`, projection markers | verified host layout/export fixtures | host compatibility; Skill Rail | Canonical skill projects to verified host-native layouts; unsupported hosts use generic portable fallback. |
@@ -87,7 +87,15 @@ The v1.6 starting state, heuristic/parser classification and checkpoint plan are
 
 | Checkpoint | Commit | CI | Last-known-green |
 |---|---|---|---|
-| 0 — baseline and inventory | see git log | pending | `7704906` |
+| 0 — baseline and inventory | `66175d3` | green | `66175d3` |
+| 1 — comparison harness + oracle controls | `7f1cda6` | green | `7f1cda6` |
+| 2 — dogfood of published 1.6.0 (5 projects) | `a843573` | green | `a843573` |
+| 3 — fingerprint runtime-state fix | `e5f1c15` | Windows/Node 22 timeout flake (3 heavy tests at 60/120 s budget; next push green) | `a843573` |
+| 3 — guard error, MCP host-native config | `3bb0499`, `becfc0a` | green (in `a843573`/`134657f`) | `a843573` |
+| pilots + false-not-ready metric + rescore | `134657f` | red: docs:check scanned recorded agent output; fixed in `ea38a86` | `a843573` |
+
+Known CI risk: on `windows-latest` + Node 22 the brain-eval and npm-pack integration tests use 31–92 s of their 60/120 s budgets on a normal runner; a slow runner times all three out together (`e5f1c15`). Not caused by product changes; tracked rather than masked by larger timeouts.
+
 
 ## Foundation
 
