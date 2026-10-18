@@ -6,19 +6,26 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [1.6.1] - UNRELEASED
+
+Corrective release. Every fix below was found by dogfooding the published 1.6.0 on external projects and by real-agent qualification; see `docs/releases/RELEASE_NOTES_v1.6.1.md`.
+
 ### Fixed
 
-- Workspace fingerprints no longer include SotuRail's own runtime state under `.soturail/`. In projects that do not gitignore `.soturail/` (the `soturail init` default), every recorded run used to invalidate its own evidence, so change contracts could never become ready.
+- Change contracts can become ready in projects that do not gitignore `.soturail/` (the `soturail init` default). The workspace fingerprint included SotuRail's own raw logs, evidence and metrics, so every recorded run invalidated the evidence it had just written.
+- Workspace fingerprints detect edits in projects without a Git work tree by hashing workspace content. Previously every edit was invisible and earlier evidence stayed current (false green). Workspaces too large to scan fail closed.
+- `.soturail/.gitignore` is written (only if missing) so raw logs, file snapshots, evidence and caches stay out of Git; `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` stay versionable. The project's own `.gitignore` is not modified, and files already tracked stay tracked.
 - Missing paths are reported as `Path not found: <path>` instead of Node's raw `ENOENT … realpath` message; the `ENOENT` code is kept.
-- `mcp config` now includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config.
+- `mcp config` includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config; the server version no longer depends on whichever `soturail` is first on `PATH`.
 
 ### Changed
 
-- The core and change Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work, `project.read` is for untrusted paths, possible secrets and large files, and only durable findings are recorded as candidates.
+- The bundled Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work; ordinary files are read with the host's tools and `project.read` is kept for untrusted paths, possible secrets and large files; only findings that must outlive the session are recorded as candidates. Security keeps `project.read`.
 
-### Added
+### Upgrade notes
 
-- Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, and a deterministic dogfood of the published package.
+- Evidence recorded by 1.6.0 in a project that did not gitignore `.soturail/`, or in a project without Git, may now read as stale once. Re-run the checks.
+- If `.soturail/` contents were already committed, the new `.soturail/.gitignore` does not untrack them; use `git rm -r --cached .soturail/raw` (and other runtime directories) if needed.
 
 ## [1.6.0] - 2026-10-04
 

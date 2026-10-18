@@ -1,6 +1,6 @@
 {
   "name": "soturail",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Local-first agent-native engineering control plane for AI-assisted software development: portable Skills, self-describing capabilities, verified context, evidence, change contracts, provenance and readiness.",
   "type": "module",
   "bin": {

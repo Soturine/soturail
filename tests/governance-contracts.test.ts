@@ -109,16 +109,16 @@ describe("control-plane documentation drift", () => {
       fs.readFile(path.join(root, "docs", "architecture", "architecture.md"), "utf8"),
       fs.readFile(path.join(root, "docs", "rails", "hosts", "mcp.md"), "utf8"),
       fs.readFile(path.join(root, "docs", "security", "security-model.md"), "utf8"),
-      fs.readFile(path.join(root, "docs", "releases", "RELEASE_NOTES_v1.6.0.md"), "utf8")
+      fs.readFile(path.join(root, "docs", "releases", "RELEASE_NOTES_v1.6.1.md"), "utf8")
     ]);
     const packageJson = JSON.parse(packageText) as { version: string; engines: { node: string } };
-    expect(packageJson).toMatchObject({ version: "1.6.0", engines: { node: ">=22" } });
+    expect(packageJson).toMatchObject({ version: "1.6.1", engines: { node: ">=22" } });
     expect(readme).toContain("agent-native engineering control plane");
     expect(readme).toContain("AI understands.");
     expect(architecture).toContain("SotuRail v1.6");
     expect(mcp).toContain("2026-07-28");
     expect(`${mcp}\n${security}`).not.toMatch(/allow_raw=true/);
-    expect(release).toContain("SotuRail v1.6.0");
+    expect(release).toContain("SotuRail v1.6.1");
   });
 });
 
