@@ -1,0 +1,56 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..69e343b 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,22 @@
++const round2 = (n) => Math.round(n * 100) / 100;
++
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  // R5
++  if (typeof weightKg !== "number" || !Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg must be a non-negative number");
++  }
++
++  // R4 is contradictory (see OPEN_QUESTIONS.md, Q1): deliberately unresolved.
++  if (express) {
++    throw new Error("express shipping rules are unresolved: see OPEN_QUESTIONS.md Q1");
++  }
++
++  if (country === "ES") {
++    // R1, R2
++    return subtotal >= 50 ? 0 : 4.9;
++  }
++
++  // R3
++  const extraKg = Math.max(0, Math.floor(weightKg - 2));
++  return round2(12 + 1.5 * extraKg);
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..7373d19 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,23 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("R1/R2 national", () => {
++  assert.equal(shippingFee({ subtotal: 49.99, country: "ES", weightKg: 1 }), 4.9);
++  assert.equal(shippingFee({ subtotal: 50, country: "ES", weightKg: 1 }), 0);
++});
++
++test("R3 international", () => {
++  assert.equal(shippingFee({ subtotal: 100, country: "FR", weightKg: 2 }), 12);
++  assert.equal(shippingFee({ subtotal: 100, country: "FR", weightKg: 4.7 }), 15);
++});
++
++test("R5 invalid weight", () => {
++  assert.throws(() => shippingFee({ subtotal: 10, country: "ES", weightKg: -1 }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 10, country: "ES", weightKg: "2" }), RangeError);
++  assert.throws(() => shippingFee({ subtotal: 10, country: "ES", weightKg: NaN }), RangeError);
++});
++
++test("R4 express is unresolved (OPEN_QUESTIONS Q1)", () => {
++  assert.throws(() => shippingFee({ subtotal: 60, country: "ES", weightKg: 1, express: true }));
++});

@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-001",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "baseline",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": null,
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "fdfff76af1a5d35ccf7f43c5a4b94da24371bdef",
+  "onboarding": null,
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:41:52.598Z",
+  "wallMs": 22135,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py",
+    "?? csvtool/__pycache__/__init__.cpython-312.pyc",
+    "?? csvtool/__pycache__/parse.cpython-312.pyc",
+    "?? tests/__pycache__/test_parse.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.011s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 6,
+    "toolsByName": {
+      "Grep": 1,
+      "Read": 2,
+      "Bash": 2,
+      "Edit": 1
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 2,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "cd C:/Users/rafael/AppData/Local/Temp/soturail-qual/pilot-claude-001/t02-bug-py-csv-quoting__baseline__r1 && python - <<'EOF'\np='csvtool/parse.py'\ns=open(p,encoding='utf-8').read()\na=s.index('def spli",
+      "cd C:/Users/rafael/AppData/Local/Temp/soturail-qual/pilot-claude-001/t02-bug-py-csv-quoting__baseline__r1 && python -m unittest discover -s tests 2>&1 | tail -3"
+    ],
+    "edits": 1,
+    "checksRun": 2,
+    "checkAfterLastEdit": true,
+    "turns": 7,
+    "tokens": {
+      "input": 1341,
+      "output": 2551,
+      "cacheRead": 98835,
+      "cacheWrite": 8920
+    },
+    "costUsd": 0.06591609999999999,
+    "apiMs": 19065,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "2c66eb76c62af9d01368163a0bc15b7cb315d6a54e110d2ca6d0827e3ebab000"
+}

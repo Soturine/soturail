@@ -1,0 +1,71 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..a8a609a 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,25 +1,26 @@
+-"""Leitura de CSV de clientes exportado pelo ERP."""
+-
+-
+-def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
+-
+-
+-def parse_customers(text):
+-    lines = [line for line in text.splitlines() if line.strip()]
+-    if not lines:
+-        return []
+-    header = split_line(lines[0])
+-    customers = []
+-    for number, line in enumerate(lines[1:], start=2):
+-        values = split_line(line)
+-        if len(values) != len(header):
+-            raise ValueError(f"linha {number}: esperado {len(header)} campos, encontrado {len(values)}")
+-        customers.append(dict(zip(header, values)))
+-    return customers
++"""Leitura de CSV de clientes exportado pelo ERP."""
++
++import csv
++import io
++
++
++def split_line(line):
++    rows = list(csv.reader([line], skipinitialspace=True))
++    return rows[0] if rows else []
++
++
++def parse_customers(text):
++    reader = csv.reader(io.StringIO(text, newline=""), skipinitialspace=True)
++    header = None
++    customers = []
++    for values in reader:
++        if not any(v.strip() for v in values):
++            continue
++        number = reader.line_num
++        if header is None:
++            header = values
++            continue
++        if len(values) != len(header):
++            raise ValueError(f"linha {number}: esperado {len(header)} campos, encontrado {len(values)}")
++        customers.append(dict(zip(header, values)))
++    return customers
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..c912651 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -8,6 +8,10 @@ class ParseTest(unittest.TestCase):
+         rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
+         self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
+ 
++    def test_quoted_comma(self):
++        rows = parse_customers('nome,endereco\nAna,"Rua A, 10"\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10"}])
++
+     def test_wrong_field_count(self):
+         with self.assertRaises(ValueError):
+             parse_customers("a,b\n1,2,3\n")

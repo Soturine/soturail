@@ -1,0 +1,51 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..b76df6a 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -2,13 +2,22 @@ function isPlainObject(value) {
+   return value !== null && typeof value === "object" && !Array.isArray(value);
+ }
+ 
++function clone(value) {
++  if (Array.isArray(value)) return value.map(clone);
++  if (isPlainObject(value)) {
++    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, clone(v)]));
++  }
++  return value;
++}
++
++// Returns a new object that shares no nested references with base or override.
+ export function mergeConfig(base, override = {}) {
+-  const result = { ...base };
++  const result = clone(base);
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+-      result[key] = value;
++      result[key] = clone(value);
+     }
+   }
+   return result;
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..6a70fe5 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -6,6 +6,16 @@ test("override wins for scalars", () => {
+   assert.equal(mergeConfig({ a: 1 }, { a: 2 }).a, 2);
+ });
+ 
++test("merging does not mutate or alias the base", async () => {
++  const { configFor } = await import("../src/tenants.js");
++  const { DEFAULTS } = await import("../src/defaults.js");
++  const snapshot = structuredClone(DEFAULTS);
++  configFor("acme").allowedRegions.push("xx");
++  assert.deepEqual(DEFAULTS, snapshot);
++  assert.equal(configFor("initech").http.timeoutMs, 5000);
++  assert.equal(configFor("initech").http.retry.attempts, 2);
++});
++
+ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });

@@ -1,0 +1,81 @@
+diff --git a/csvtool/parse.py b/csvtool/parse.py
+index b0b7cb5..236268a 100644
+--- a/csvtool/parse.py
++++ b/csvtool/parse.py
+@@ -1,24 +1,21 @@
+ """Leitura de CSV de clientes exportado pelo ERP."""
++import csv
++import io
+ 
+ 
+ def split_line(line):
+-    fields = []
+-    for raw in line.split(","):
+-        value = raw.strip()
+-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+-            value = value[1:-1].replace('""', '"')
+-        fields.append(value)
+-    return fields
++    rows = list(csv.reader([line], skipinitialspace=True))
++    return rows[0] if rows else []
+ 
+ 
+ def parse_customers(text):
+-    lines = [line for line in text.splitlines() if line.strip()]
+-    if not lines:
++    reader = csv.reader(io.StringIO(text, newline=""), skipinitialspace=True)
++    rows = [(reader.line_num, row) for row in reader if any(f.strip() for f in row)]
++    if not rows:
+         return []
+-    header = split_line(lines[0])
++    header = rows[0][1]
+     customers = []
+-    for number, line in enumerate(lines[1:], start=2):
+-        values = split_line(line)
++    for number, values in rows[1:]:
+         if len(values) != len(header):
+             raise ValueError(f"linha {number}: esperado {len(header)} campos, encontrado {len(values)}")
+         customers.append(dict(zip(header, values)))
+diff --git a/tests/test_parse.py b/tests/test_parse.py
+index 15011e8..23c1a94 100644
+--- a/tests/test_parse.py
++++ b/tests/test_parse.py
+@@ -1,17 +1,21 @@
+-import unittest
+-
+-from csvtool.parse import parse_customers
+-
+-
+-class ParseTest(unittest.TestCase):
+-    def test_simple_rows(self):
+-        rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
+-        self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
+-
+-    def test_wrong_field_count(self):
+-        with self.assertRaises(ValueError):
+-            parse_customers("a,b\n1,2,3\n")
+-
+-
+-if __name__ == "__main__":
+-    unittest.main()
++import unittest
++
++from csvtool.parse import parse_customers
++
++
++class ParseTest(unittest.TestCase):
++    def test_simple_rows(self):
++        rows = parse_customers("nome,cidade\nAna,Recife\nBruno,Natal\n")
++        self.assertEqual(rows, [{"nome": "Ana", "cidade": "Recife"}, {"nome": "Bruno", "cidade": "Natal"}])
++
++    def test_wrong_field_count(self):
++        with self.assertRaises(ValueError):
++            parse_customers("a,b\n1,2,3\n")
++
++    def test_quoted_comma(self):
++        rows = parse_customers('nome,endereco\nAna,"Rua A, 10"\nBia,"Disse ""oi"", ok"\n')
++        self.assertEqual(rows, [{"nome": "Ana", "endereco": "Rua A, 10"}, {"nome": "Bia", "endereco": 'Disse "oi", ok'}])
++
++
++if __name__ == "__main__":
++    unittest.main()

@@ -4,7 +4,8 @@
 //   node harness/run.mjs --host claude --tasks all --arms baseline,skills --reps 1 \
 //     --model sonnet --max-budget 3 --timeout-min 20 --parallel 2 --run-id pilot-001
 //
-// Each run happens in a fresh temp workspace outside this repository. Records land in
+// Each run happens in a fresh temp workspace outside this repository, under a neutral
+// path: the product name must not leak into the baseline's context through the cwd. Records land in
 // results/<run-id>/<task>__<arm>__r<rep>/ (record.json, final.md, diff.patch, transcript.jsonl).
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import os from "node:os";
@@ -95,7 +96,7 @@ async function main() {
   const ctx = {
     options, soturail, binary, hostVersion: hostVersion(binary),
     resultsDir: path.join(SUITE_DIR, "results", options.runId),
-    workRoot: path.join(os.tmpdir(), "soturail-qual", options.runId)
+    workRoot: path.join(os.tmpdir(), "aq-runs", options.runId)
   };
   mkdirSync(ctx.resultsDir, { recursive: true });
   writeFileSync(path.join(ctx.resultsDir, "run.json"), `${JSON.stringify({ ...options, hostVersion: ctx.hostVersion, soturailVersion: soturail?.version ?? null, node: process.version, platform: `${process.platform}-${process.arch}`, startedAt: new Date().toISOString(), tasks: tasks.map((task) => task.id) }, null, 2)}\n`);

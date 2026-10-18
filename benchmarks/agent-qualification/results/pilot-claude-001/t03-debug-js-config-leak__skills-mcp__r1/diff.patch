@@ -1,0 +1,42 @@
+diff --git a/src/merge.js b/src/merge.js
+index 1b07886..238dead 100644
+--- a/src/merge.js
++++ b/src/merge.js
+@@ -6,10 +6,16 @@ export function mergeConfig(base, override = {}) {
+   const result = { ...base };
+   for (const [key, value] of Object.entries(override)) {
+     if (isPlainObject(value) && isPlainObject(result[key])) {
+-      result[key] = Object.assign(result[key], mergeConfig(result[key], value));
++      result[key] = mergeConfig(result[key], value);
+     } else {
+-      result[key] = value;
++      result[key] = clone(value);
+     }
+   }
+   return result;
+ }
++
++function clone(value) {
++  if (Array.isArray(value)) return value.map(clone);
++  if (isPlainObject(value)) return mergeConfig({}, value);
++  return value;
++}
+diff --git a/test/merge.test.js b/test/merge.test.js
+index db17da7..a460681 100644
+--- a/test/merge.test.js
++++ b/test/merge.test.js
+@@ -10,3 +10,14 @@ test("nested values are merged", () => {
+   const merged = mergeConfig({ http: { timeoutMs: 1, keep: true } }, { http: { timeoutMs: 2 } });
+   assert.deepEqual(merged, { http: { timeoutMs: 2, keep: true } });
+ });
++
++test("configFor does not leak overrides into defaults or other tenants", async () => {
++  const { configFor } = await import("../src/tenants.js");
++  const { DEFAULTS } = await import("../src/defaults.js");
++  configFor("acme");
++  assert.equal(DEFAULTS.http.timeoutMs, 5000);
++  assert.equal(DEFAULTS.http.retry.attempts, 2);
++  assert.equal(configFor("initech").http.timeoutMs, 5000);
++  assert.equal(configFor("globex").http.retry.attempts, 2);
++  assert.equal(configFor("globex").http.retry.backoffMs, 100);
++});

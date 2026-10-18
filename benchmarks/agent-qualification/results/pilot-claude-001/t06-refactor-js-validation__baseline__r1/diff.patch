@@ -1,0 +1,71 @@
+diff --git a/src/handlers/create-user.js b/src/handlers/create-user.js
+index f7b2744..03d24dc 100644
+--- a/src/handlers/create-user.js
++++ b/src/handlers/create-user.js
+@@ -1,13 +1,20 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function createUser(store, input) {
+   const errors = [];
+-  const email = typeof input.email === "string" ? input.email.trim().toLowerCase() : "";
+-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
+-  const name = typeof input.name === "string" ? input.name.trim() : "";
+-  if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
+-  if (input.age !== undefined && (!Number.isInteger(input.age) || input.age < 13 || input.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
++  const email = validateEmail(input.email);
++  if (email.error) errors.push(email.error);
++  const name = validateName(input.name);
++  if (name.error) errors.push(name.error);
++  if (input.age !== undefined) {
++    const age = validateAge(input.age);
++    if (age.error) errors.push(age.error);
+   }
+   if (errors.length) return { status: 422, errors };
+-  const user = store.insert({ email, name, ...(input.age !== undefined ? { age: input.age } : {}) });
++  const user = store.insert({
++    email: email.value,
++    name: name.value,
++    ...(input.age !== undefined ? { age: input.age } : {}),
++  });
+   return { status: 201, user };
+ }
+diff --git a/src/handlers/update-user.js b/src/handlers/update-user.js
+index b972dec..6a689ac 100644
+--- a/src/handlers/update-user.js
++++ b/src/handlers/update-user.js
+@@ -1,22 +1,25 @@
++import { validateEmail, validateName, validateAge } from "../validation.js";
++
+ export function updateUser(store, id, patch) {
+   const current = store.get(id);
+   if (!current) return { status: 404, errors: ["user: not found"] };
+   const errors = [];
+   const next = { ...current };
+   if (patch.email !== undefined) {
+-    const email = typeof patch.email === "string" ? patch.email.trim().toLowerCase() : "";
+-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.push("email: invalid");
+-    next.email = email;
++    const email = validateEmail(patch.email);
++    if (email.error) errors.push(email.error);
++    next.email = email.value;
+   }
+   if (patch.name !== undefined) {
+-    const name = typeof patch.name === "string" ? patch.name.trim() : "";
+-    if (name.length < 2 || name.length > 80) errors.push("name: must be 2-80 characters");
+-    next.name = name;
++    const name = validateName(patch.name);
++    if (name.error) errors.push(name.error);
++    next.name = name.value;
+   }
+-  if (patch.age !== undefined && (!Number.isInteger(patch.age) || patch.age < 13 || patch.age > 130)) {
+-    errors.push("age: must be an integer between 13 and 130");
++  if (patch.age !== undefined) {
++    const age = validateAge(patch.age);
++    if (age.error) errors.push(age.error);
++    next.age = age.value;
+   }
+-  if (patch.age !== undefined) next.age = patch.age;
+   if (errors.length) return { status: 422, errors };
+   return { status: 200, user: store.replace(id, next) };
+ }

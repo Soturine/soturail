@@ -1,0 +1,76 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..f5a7a9e 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,33 @@
++const DOMESTIC_BASE = 4.9;
++const FREE_SHIPPING_THRESHOLD = 50;
++const INTL_BASE = 12;
++const INTL_PER_EXTRA_KG = 1.5;
++const INTL_INCLUDED_KG = 2;
++const EXPRESS_SURCHARGE = 6;
++
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  if (typeof weightKg !== "number" || !Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError(`Invalid weightKg: ${weightKg}`);
++  }
++
++  let fee;
++  if (country === "ES") {
++    if (subtotal >= FREE_SHIPPING_THRESHOLD) {
++      if (express) {
++        // Unresolved: R2/R4 conflict, see OPEN_QUESTIONS.md (Q1).
++        throw new Error(
++          "Unresolved requirement: express shipping for domestic orders with subtotal >= 50 (see OPEN_QUESTIONS.md Q1)"
++        );
++      }
++      fee = 0;
++    } else {
++      fee = DOMESTIC_BASE;
++    }
++  } else {
++    const extraKg = Math.max(0, Math.floor(weightKg - INTL_INCLUDED_KG));
++    fee = INTL_BASE + INTL_PER_EXTRA_KG * extraKg;
++  }
++
++  if (express) fee += EXPRESS_SURCHARGE;
++  return Math.round(fee * 100) / 100;
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..4e4062c 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,32 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("R1 domestic base fee", () => {
++  assert.equal(shippingFee({ subtotal: 49.99, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R2 domestic free shipping from 50", () => {
++  assert.equal(shippingFee({ subtotal: 50, country: "ES", weightKg: 1 }), 0);
++});
++
++test("R3 international", () => {
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 2 }), 12);
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 1 }), 12);
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 4.7 }), 15);
++});
++
++test("R4 express surcharge", () => {
++  assert.equal(shippingFee({ subtotal: 10, country: "ES", weightKg: 1, express: true }), 10.9);
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 4.7, express: true }), 21);
++});
++
++test("R2/R4 conflict stays unresolved", () => {
++  assert.throws(() => shippingFee({ subtotal: 60, country: "ES", weightKg: 1, express: true }), /Unresolved/);
++});
++
++test("R5 invalid weight", () => {
++  for (const weightKg of [-1, NaN, "2", undefined, null]) {
++    assert.throws(() => shippingFee({ subtotal: 10, country: "ES", weightKg }), RangeError);
++  }
++});

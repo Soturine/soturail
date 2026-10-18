@@ -1,0 +1,64 @@
+diff --git a/src/shipping.js b/src/shipping.js
+index 29c8394..0e977e0 100644
+--- a/src/shipping.js
++++ b/src/shipping.js
+@@ -1,3 +1,22 @@
+ export function shippingFee({ subtotal, country, weightKg, express = false }) {
+-  throw new Error("not implemented");
++  if (typeof weightKg !== "number" || !Number.isFinite(weightKg) || weightKg < 0) {
++    throw new RangeError("weightKg must be a non-negative number");
++  }
++
++  const domestic = country === "ES";
++  let fee;
++
++  if (domestic) {
++    if (express && subtotal >= 50) {
++      // Unresolved: R2/R4 and the R4 example contradict each other. See OPEN_QUESTIONS.md (Q1).
++      throw new Error("Unresolved requirement: express domestic order with subtotal >= 50 (see OPEN_QUESTIONS.md Q1)");
++    }
++    fee = subtotal >= 50 ? 0 : 4.9;
++  } else {
++    fee = 12 + 1.5 * Math.max(0, Math.floor(weightKg - 2));
++  }
++
++  if (express) fee += 6;
++
++  return Math.round(fee * 100) / 100;
+ }
+diff --git a/test/shipping.test.js b/test/shipping.test.js
+index 1dca596..688adb9 100644
+--- a/test/shipping.test.js
++++ b/test/shipping.test.js
+@@ -5,3 +5,31 @@ import { shippingFee } from "../src/shipping.js";
+ test("module exports shippingFee", () => {
+   assert.equal(typeof shippingFee, "function");
+ });
++
++test("R1 domestic base fee", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1 }), 4.9);
++});
++
++test("R2 domestic free over 50", () => {
++  assert.equal(shippingFee({ subtotal: 50, country: "ES", weightKg: 1 }), 0);
++});
++
++test("R3 international", () => {
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 2 }), 12);
++  assert.equal(shippingFee({ subtotal: 10, country: "FR", weightKg: 4.7 }), 15);
++});
++
++test("R4 express adds 6 (unambiguous cases)", () => {
++  assert.equal(shippingFee({ subtotal: 20, country: "ES", weightKg: 1, express: true }), 10.9);
++  assert.equal(shippingFee({ subtotal: 90, country: "FR", weightKg: 2, express: true }), 18);
++});
++
++test("R4 express domestic >= 50 is unresolved", () => {
++  assert.throws(() => shippingFee({ subtotal: 60, country: "ES", weightKg: 1, express: true }));
++});
++
++test("R5 invalid weight", () => {
++  for (const weightKg of [-1, "2", NaN, undefined]) {
++    assert.throws(() => shippingFee({ subtotal: 10, country: "ES", weightKg }), RangeError);
++  }
++});

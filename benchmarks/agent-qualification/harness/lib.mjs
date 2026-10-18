@@ -49,19 +49,26 @@ const git = (cwd, ...args) => run("git", args, { cwd });
 
 // ---------------------------------------------------------------------------- tools
 
-/** Installs the published package once into the suite cache and returns its CLI entry. */
-export function ensureSoturail(version) {
-  const prefix = path.join(CACHE_DIR, `soturail-${version}`);
+/**
+ * Installs SotuRail once into the suite cache and returns its CLI entry.
+ * `spec` is a published version ("1.6.0") or a local `npm pack` tarball (a candidate build),
+ * cached by content digest so a rebuilt tarball never reuses a stale install.
+ */
+export function ensureSoturail(spec) {
+  const tarball = spec.endsWith(".tgz") ? path.resolve(spec) : null;
+  const key = tarball ? `candidate-${sha256(readFileSync(tarball)).slice(0, 12)}` : spec;
+  const prefix = path.join(CACHE_DIR, `soturail-${key}`);
   const cli = path.join(prefix, "node_modules", "soturail", "dist", "cli.js");
   if (!existsSync(cli)) {
     mkdirSync(prefix, { recursive: true });
     writeFileSync(path.join(prefix, "package.json"), "{\"private\":true}\n");
-    const install = spawnSync(`npm install soturail@${version} --no-audit --no-fund --ignore-scripts`, { cwd: prefix, shell: true, encoding: "utf8" });
-    if (install.status !== 0) throw new Error(`npm install soturail@${version} failed: ${install.stderr}`);
+    const target = tarball ? `"${tarball}"` : `soturail@${spec}`;
+    const install = spawnSync(`npm install ${target} --no-audit --no-fund --ignore-scripts`, { cwd: prefix, shell: true, encoding: "utf8" });
+    if (install.status !== 0) throw new Error(`npm install ${target} failed: ${install.stderr}`);
   }
   const pkg = JSON.parse(readFileSync(path.join(prefix, "node_modules", "soturail", "package.json"), "utf8"));
   const shimDir = path.join(prefix, "node_modules", ".bin");
-  return { version: pkg.version, cli, shimDir, prefix };
+  return { version: tarball ? `${pkg.version}+${key}` : pkg.version, cli, shimDir, prefix };
 }
 
 /** PATH without any directory that provides a `soturail` executable (e.g. a stale global install). */
@@ -258,6 +265,8 @@ export async function runCodex({ binary, dir, prompt, arm, model, timeoutMs, tra
 
 // ---------------------------------------------------------------------------- transcript metrics
 
+// A `soturail` invocation, not a path segment such as ".../soturail-1.6.0/...".
+const SOTURAIL_COMMAND = /(^|[\s;&|(`"'])soturail(\.cmd)?(?=\s|$|["'`])/;
 const CHECK_COMMAND = /(node\s+--test|npm\s+(run\s+)?test|python3?\s+-m\s+(unittest|pytest)|pytest|vitest|soturail\s+run)/i;
 const EDIT_TOOLS = new Set(["Edit", "Write", "MultiEdit", "NotebookEdit"]);
 
@@ -315,7 +324,7 @@ export function parseClaudeTranscript(stdout) {
         if (block.name === "Skill") metrics.skillsLoaded.push(String(block.input?.skill ?? block.input?.name ?? block.input?.command ?? "?"));
         const filePath = String(block.input?.file_path ?? "");
         if (block.name === "Read" && /skills[\\/][^\\/]+[\\/]SKILL\.md$/i.test(filePath)) metrics.skillFilesRead.push(filePath.split(/[\\/]/).at(-2));
-        if (block.name === "Bash" && /\bsoturail\b/.test(command)) { metrics.soturailCliCalls += 1; metrics.soturailCommands.push(command.slice(0, 200)); }
+        if (block.name === "Bash" && SOTURAIL_COMMAND.test(command)) { metrics.soturailCliCalls += 1; metrics.soturailCommands.push(command.slice(0, 200)); }
         if (block.name.startsWith("mcp__soturail")) { metrics.soturailMcpCalls += 1; metrics.soturailCommands.push(block.name); }
       }
     }
@@ -363,7 +372,7 @@ export function parseCodexTranscript(stdout) {
         metrics.toolsByName.shell = (metrics.toolsByName.shell ?? 0) + 1;
         if (call.check) metrics.checksRun += 1;
         if (item.exit_code !== 0) metrics.toolErrors += 1;
-        if (/\bsoturail\b/.test(command)) { metrics.soturailCliCalls += 1; metrics.soturailCommands.push(command.slice(0, 200)); }
+        if (SOTURAIL_COMMAND.test(command)) { metrics.soturailCliCalls += 1; metrics.soturailCommands.push(command.slice(0, 200)); }
         for (const skill of command.matchAll(/skills[\\/]([^\\/\s"',]+)[\\/]SKILL\.md/gi)) metrics.skillFilesRead.push(skill[1]);
       } else if (item.type === "file_change") {
         sequence.push({ name: "apply_patch", input: item.changes ?? null, edit: true, check: false, ok: item.status !== "failed" });

@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "soturail.qualification.run.v1",
+  "runId": "pilot-claude-001",
+  "task": "t02-bug-py-csv-quoting",
+  "category": "bug",
+  "stack": "python",
+  "locale": "pt-BR",
+  "arm": "skills",
+  "rep": 1,
+  "host": "claude",
+  "hostVersion": "2.1.301 (Claude Code)",
+  "model": "claude-sonnet-5-5",
+  "effort": null,
+  "soturailVersion": "1.6.0",
+  "promptSha256": "b7886ec4cd95bfe6fbd6d00b32b4e7946dca3dfca065a9ef56f6cecd56a6359a",
+  "fixtureHead": "cc74dd70707a1d3fc28c0e21fc87dab80b561142",
+  "onboarding": [
+    {
+      "command": "soturail init",
+      "code": 0
+    },
+    {
+      "command": "soturail index",
+      "code": 0
+    },
+    {
+      "command": "soturail skills export --target claude --layout portable --install",
+      "code": 0
+    }
+  ],
+  "limits": {
+    "maxBudgetUsd": 3,
+    "timeoutMin": 20
+  },
+  "startedAt": "2026-10-18T06:41:47.627Z",
+  "wallMs": 29384,
+  "timedOut": false,
+  "exitCode": 0,
+  "stderrTail": "",
+  "visibleBefore": true,
+  "visibleAfter": true,
+  "changedFiles": [
+    " M csvtool/parse.py",
+    " M tests/test_parse.py",
+    "?? csvtool/__pycache__/__init__.cpython-312.pyc",
+    "?? csvtool/__pycache__/parse.cpython-312.pyc",
+    "?? tests/__pycache__/test_parse.cpython-312.pyc"
+  ],
+  "oracle": {
+    "pass": true,
+    "checks": [
+      {
+        "kind": "functional",
+        "name": "hidden python tests",
+        "pass": true,
+        "detail": "Ran 6 tests in 0.011s | OK"
+      }
+    ]
+  },
+  "score": {
+    "success": true,
+    "regression": false,
+    "claims": {
+      "status": "READY",
+      "verified": true
+    },
+    "statusCorrect": true,
+    "falseReady": false,
+    "falseVerified": false,
+    "skillsSelected": [],
+    "skillRecall": 0,
+    "usedSoturail": true
+  },
+  "metrics": {
+    "model": "claude-sonnet-5-5",
+    "toolCalls": 7,
+    "toolsByName": {
+      "Glob": 1,
+      "Read": 3,
+      "Bash": 3
+    },
+    "duplicateCalls": 0,
+    "toolErrors": 0,
+    "recoveredErrors": 0,
+    "skillsLoaded": [],
+    "skillFilesRead": [],
+    "soturailCliCalls": 3,
+    "soturailMcpCalls": 0,
+    "soturailCommands": [
+      "cd \"C:/Users/rafael/AppData/Local/Temp/soturail-qual/pilot-claude-001/t02-bug-py-csv-quoting__skills__r1\" && cat > csvtool/parse.py <<'EOF'\n\"\"\"Leitura de CSV de clientes exportado pelo ERP.\"\"\"\nimport ",
+      "cd \"C:/Users/rafael/AppData/Local/Temp/soturail-qual/pilot-claude-001/t02-bug-py-csv-quoting__skills__r1\" && python -m unittest tests.test_parse -v 2>&1 | tail -8",
+      "cd \"C:/Users/rafael/AppData/Local/Temp/soturail-qual/pilot-claude-001/t02-bug-py-csv-quoting__skills__r1\" && git checkout tests/test_parse.py && cat > /tmp/fix.py <<'EOF'\np='tests/test_parse.py'\ns=ope"
+    ],
+    "edits": 0,
+    "checksRun": 3,
+    "checkAfterLastEdit": true,
+    "turns": 8,
+    "tokens": {
+      "input": 1343,
+      "output": 2329,
+      "cacheRead": 128393,
+      "cacheWrite": 10880
+    },
+    "costUsd": 0.07957840000000001,
+    "apiMs": 20382,
+    "permissionDenials": 0,
+    "isError": false,
+    "availableSkills": [
+      "soturail-change",
+      "soturail-core",
+      "soturail-debug",
+      "soturail-knowledge",
+      "soturail-release",
+      "soturail-research",
+      "soturail-review",
+      "soturail-security",
+      "design",
+      "design-sync",
+      "dataviz",
+      "update-config",
+      "verify",
+      "debug",
+      "code-review",
+      "simplify",
+      "batch",
+      "fewer-permission-prompts",
+      "doctor",
+      "loop",
+      "schedule",
+      "claude-api",
+      "run",
+      "run-skill-generator",
+      "plugin-authoring"
+    ],
+    "mcpServers": []
+  },
+  "transcriptSha256": "5f3b5bca125cea1c8919ceb0ed5480e0ced0a504163653a54751f2bb47488e52"
+}
