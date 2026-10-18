@@ -211,3 +211,32 @@ async function initializeGit(root: string): Promise<void> {
   await exec("git", ["add", "inside.txt"], { cwd: root, windowsHide: true });
   await exec("git", ["commit", "-qm", "fixture"], { cwd: root, windowsHide: true });
 }
+
+describe("workspace git hygiene", () => {
+  async function ignoredPaths(root: string, candidates: string[]): Promise<string[]> {
+    const { execFile } = await import("node:child_process");
+    const { promisify } = await import("node:util");
+    const result = await promisify(execFile)("git", ["check-ignore", "--no-index", ...candidates], { cwd: root, windowsHide: true }).catch((error: { stdout?: string }) => ({ stdout: error.stdout ?? "" }));
+    return result.stdout.split(/\r?\n/).filter(Boolean);
+  }
+
+  it("keeps runtime state local and leaves versionable configuration visible to git", async () => {
+    const { ensureWorkspace } = await import("../src/core/config.js");
+    const root = await temporaryProject();
+    await initializeGit(root);
+    await ensureWorkspace(root);
+    const local = [".soturail/raw/2026/x.log", ".soturail/evidence/e1/evidence.json", ".soturail/fs/snapshots/s.json", ".soturail/metrics/events.jsonl", ".soturail/candidates/c.json", ".soturail/config/other.json", ".soturail/some-future-dir/x.json"];
+    const versioned = [".soturail/.gitignore", ".soturail/config/config.json", ".soturail/contracts/c1.json", ".soturail/rules/r.md", ".soturail/skills/s/SKILL.md", ".soturail/specs/spec.md"];
+    expect((await ignoredPaths(root, local)).sort()).toEqual([...local].sort());
+    expect(await ignoredPaths(root, versioned)).toEqual([]);
+  });
+
+  it("never overwrites a user-authored .soturail/.gitignore", async () => {
+    const { ensureWorkspace } = await import("../src/core/config.js");
+    const root = await temporaryProject();
+    await fs.mkdir(path.join(root, ".soturail"), { recursive: true });
+    await fs.writeFile(path.join(root, ".soturail", ".gitignore"), "custom\n", "utf8");
+    await ensureWorkspace(root);
+    expect(await fs.readFile(path.join(root, ".soturail", ".gitignore"), "utf8")).toBe("custom\n");
+  });
+});

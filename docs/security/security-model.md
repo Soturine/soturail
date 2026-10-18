@@ -27,6 +27,8 @@ soturail raw purge --ttl 30d --dry-run
 
 Raw records include sensitivity, fingerprint, and retention metadata. Never commit `.soturail/raw/`.
 
+SotuRail writes `.soturail/.gitignore` (only if missing, never over a user edit) with deny-by-default rules: raw logs, file snapshots, evidence, caches, indexes, metrics, candidates and any future directory stay local; only `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` are versionable. The project's own `.gitignore` is not modified. Files already tracked by Git stay tracked; remove them with `git rm --cached` if they were committed before.
+
 ## MCP, hooks, and skills
 
 The MCP server uses typed schemas, exposes a small capability-registry-mapped surface, and does not expose arbitrary shell execution. Modern protocol support coexists with explicitly tested legacy negotiation. Hooks, skills, and host exports are local artifacts for review; SotuRail does not auto-trust or auto-execute third-party instructions.
