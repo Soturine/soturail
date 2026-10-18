@@ -27,6 +27,14 @@ describe("WorkspaceGuard", () => {
     await expect(guard.resolveProjectPath("inside.txt")).resolves.toBe(await fs.realpath(path.join(root, "inside.txt")));
   });
 
+  it("reports a missing path plainly and keeps the ENOENT code", async () => {
+    const guard = new WorkspaceGuard(await temporaryProject());
+    const error = await guard.resolveProjectPath("does/not/exist.txt").catch((caught: NodeJS.ErrnoException) => caught);
+    expect(error.message).toMatch(/^Path not found: .*exist\.txt$/);
+    expect(error.message).not.toMatch(/realpath/);
+    expect(error.code).toBe("ENOENT");
+  });
+
   it("accepts a canonical target under a symlinked project-root alias", async () => {
     const root = await temporaryProject();
     const aliasParent = await fs.mkdtemp(path.join(os.tmpdir(), "soturail-root-alias-"));

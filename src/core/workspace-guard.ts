@@ -139,7 +139,12 @@ async function canonicalizeTarget(target: string, mustExist: boolean): Promise<s
   try {
     return path.normalize(await fs.realpath(target));
   } catch (error) {
-    if (mustExist || (error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+    const code = (error as NodeJS.ErrnoException).code;
+    if (mustExist && code === "ENOENT") {
+      // Keep the errno code for callers; replace Node's "ENOENT: ... realpath '<path>'" wording.
+      throw Object.assign(new Error(`Path not found: ${target}`), { code });
+    }
+    if (mustExist || code !== "ENOENT") throw error;
   }
 
   const missing: string[] = [];
