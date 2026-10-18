@@ -4,11 +4,11 @@ This folder is the repository source of truth for SotuRail release notes. GitHub
 
 Current release:
 
-- [v1.6.0](RELEASE_NOTES_v1.6.0.md) — [v1.6.1](RELEASE_NOTES_v1.6.1.md) is prepared, not yet published
+- [v1.6.1](RELEASE_NOTES_v1.6.1.md) — corrective release (see its errata)
 
 ## Index
 
-- [v1.6.1](RELEASE_NOTES_v1.6.1.md) (prepared)
+- [v1.6.1](RELEASE_NOTES_v1.6.1.md)
 - [v1.6.0](RELEASE_NOTES_v1.6.0.md)
 - [v1.5.0](RELEASE_NOTES_v1.5.0.md)
 - [v1.4.0](RELEASE_NOTES_v1.4.0.md)

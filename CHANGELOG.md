@@ -17,7 +17,9 @@ Planned for the next minor release.
 - `soturail run --summary-only`: agent mode that does not mirror output live and prints the reduced summary or, when that is not smaller, the redacted output once, plus a one-line `raw_id` trailer. The default tee mode printed the full output and a summary on top, so `soturail run` always cost an agent more tokens than running the command directly. The core and debug Skills now use it.
 - Real-agent qualification suite (`benchmarks/agent-qualification/`, repository tool, not shipped): 12 oracle-scored tasks, baseline / Skills / Skills+MCP arms on Claude Code and Codex, oracle controls in CI, readiness classified from SotuRail verdict codes, and a deterministic dogfood of the published package.
 
-## [1.6.1] - UNRELEASED
+## [1.6.1] - 2026-10-18
+
+**Errata (tag `v1.6.1`, commit `242999a`).** The CHANGELOG and release notes inside the published package and at the tag were written before publication: the CHANGELOG heading reads `[1.6.1] - UNRELEASED` and the release notes say "Status: prepared, not published". v1.6.1 was published to npm on 2026-10-18. The tag is not moved or rewritten; only these two texts are affected, not code or behavior. The corrected texts live on `main`.
 
 Corrective release. Every fix below was found by dogfooding the published 1.6.0 on external projects and by real-agent qualification; see `docs/releases/RELEASE_NOTES_v1.6.1.md`.
 
