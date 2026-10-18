@@ -48,6 +48,8 @@ async function listMarkdown(dir) {
   for (const entry of await fs.readdir(dir, { withFileTypes: true })) {
     if ([".git", ".soturail", "node_modules", "dist"].includes(entry.name)) continue;
     const absolute = path.join(dir, entry.name);
+    // Agent outputs and fixture repositories are recorded data, not documentation.
+    if (/benchmarks[\\/]agent-qualification[\\/](results|tasks)$/.test(absolute)) continue;
     if (entry.isDirectory()) result.push(...await listMarkdown(absolute));
     else if (entry.isFile() && entry.name.endsWith(".md")) result.push(absolute);
   }
