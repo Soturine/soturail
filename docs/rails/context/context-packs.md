@@ -56,7 +56,7 @@ Dynamic data never appears before stable blocks.
 
 Review a generated pack before pasting it into an agent. Dynamic footer data can include recent command status, raw IDs or branch details.
 
-`soturail init` scaffolds context-pack examples under `examples/context-packs/`, and v0.4 agent examples can be paired with `soturail context pack --target all` for a clean first setup.
+`soturail init --with-docs` scaffolds context-pack examples under `examples/context-packs/`, and v0.4 agent examples can be paired with `soturail context pack --target all` for a clean first setup.
 
 ## Query-Aware Context Selection
 

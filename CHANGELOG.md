@@ -8,12 +8,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Fixed
 
+- Workspace fingerprints detect edits in projects without a Git work tree by hashing workspace content (previously every edit was invisible and old evidence stayed current), and fail closed when the workspace is too large to scan.
+- `.soturail/.gitignore` is written (only if missing) so raw logs, file snapshots, evidence and caches stay out of Git; `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` stay versionable. The project's own `.gitignore` is not modified.
 - Workspace fingerprints no longer include SotuRail's own runtime state under `.soturail/`. In projects that do not gitignore `.soturail/` (the `soturail init` default), every recorded run used to invalidate its own evidence, so change contracts could never become ready.
 - Missing paths are reported as `Path not found: <path>` instead of Node's raw `ENOENT … realpath` message; the `ENOENT` code is kept.
 - `mcp config` now includes a host-native `mcpServers` entry pinned to the release (`npx -y soturail@<version>`), usable directly as a Claude Code or Cursor MCP config.
 
 ### Changed
 
+- **`soturail init` is minimal by default** (next minor release, not 1.6.1): it creates only `.soturail/` and never writes outside it. The previous starter set (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `docs/`, `examples/`) is opt-in with `soturail init --with-docs`, still without overwriting existing files.
 - The core and change Skills scale ceremony to the task: contracts, impact candidates and evidence verification are for material work, `project.read` is for untrusted paths, possible secrets and large files, and only durable findings are recorded as candidates.
 
 ### Added

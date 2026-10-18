@@ -92,6 +92,8 @@ Runtime state is kept locally under:
 .soturail/
 ```
 
+`soturail init` creates only `.soturail/`, with its own `.gitignore` that keeps raw logs, snapshots, evidence and caches out of Git while leaving `config/config.json`, `contracts/`, `rules/`, `skills/` and `specs/` versionable. It never touches files outside `.soturail/` and never overwrites anything. Add `--with-docs` for the previous starter set (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `docs/` and `examples/`).
+
 SotuRail does not require a hosted workspace, account or mandatory cloud service for its normal local workflow.
 
 ### 2. Install the portable Skills for your agent

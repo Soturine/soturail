@@ -27,7 +27,7 @@ import { exportHook, hooksDoctor, installHooks, promptOnly } from "../src/comman
 import { runIndex } from "../src/commands/index.js";
 import { ingestCommand } from "../src/commands/ingest.js";
 import { approveMemory, listMemory, proposeMemory, rejectMemory } from "../src/commands/memory.js";
-import { runInit } from "../src/commands/init.js";
+import { formatInitReport, runInit } from "../src/commands/init.js";
 import { formatProgressiveRead } from "../src/commands/read.js";
 import { executeRunCommand } from "../src/commands/run.js";
 import { checkRules, listRules } from "../src/commands/rules.js";
@@ -95,15 +95,26 @@ describe("soturail init", () => {
     expect(await fs.readFile(path.join(root, ".soturail", "raw", "index.jsonl"), "utf8")).toBe("");
 
     await writeFile(path.join(root, "AGENTS.md"), "custom agent instructions\n");
-    const second = await runInit(root);
+    const second = await runInit(root, { withDocs: true });
 
     expect(await fs.readFile(path.join(root, "AGENTS.md"), "utf8")).toBe("custom agent instructions\n");
     expect(second.skipped).toContain("AGENTS.md");
   });
 
-  it("scaffolds v0.4 docs and examples in a clean workspace", async () => {
+  it("creates nothing outside .soturail/ by default", async () => {
     const root = await tempRoot();
+    const before = new Set(await fs.readdir(root));
     const report = await runInit(root);
+    const added = (await fs.readdir(root)).filter((entry) => !before.has(entry));
+    expect(added).toEqual([".soturail"]);
+    expect(report.created.every((item) => item.startsWith(".soturail"))).toBe(true);
+    expect(report.created).toContain(path.normalize(".soturail/.gitignore"));
+    expect(formatInitReport(report)).toMatch(/--with-docs/);
+  });
+
+  it("scaffolds starter docs and examples with --with-docs", async () => {
+    const root = await tempRoot();
+    const report = await runInit(root, { withDocs: true });
     const expected = [
       path.join("docs", "agents.md"),
       path.join("docs", "mcp.md"),
@@ -144,7 +155,7 @@ describe("soturail init", () => {
 
   it("keeps generated docs free of stale fixed-version wording", async () => {
     const root = await tempRoot();
-    await runInit(root);
+    await runInit(root, { withDocs: true });
     const files = [
       path.join(root, "docs", "architecture.md"),
       path.join(root, "docs", "mvp.md"),
@@ -1128,7 +1139,7 @@ describe("clean-folder installed workflow", () => {
     await writeFile(path.join(root, "README.md"), "# Clean Folder\n\nQuick start\n");
     await writeFile(path.join(root, "src", "app.ts"), "export function hello() { return 'world'; }\n");
 
-    await runInit(root);
+    await runInit(root, { withDocs: true });
     const indexOutput = await runIndex(root);
     const pack = await buildContextPack("generic", root);
     const skill = await createSkill("demo-skill", root);

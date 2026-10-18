@@ -561,10 +561,23 @@ function documentationTemplates(root: string): Array<{ path: string; content: st
   ];
 }
 
-export interface InitReport extends EnsureResult {}
+export interface InitReport extends EnsureResult {
+  withDocs: boolean;
+}
 
-export async function runInit(root = process.cwd()): Promise<InitReport> {
-  const report = await ensureWorkspace(root);
+export interface InitOptions {
+  /** Also write the agent entry files, starter docs and examples (the pre-1.7 default). */
+  withDocs?: boolean;
+}
+
+/**
+ * Minimal and non-destructive by default: only the .soturail/ workspace (with its own
+ * .gitignore). Nothing in the project outside .soturail/ is created or touched unless
+ * --with-docs is passed, and existing files are never overwritten either way.
+ */
+export async function runInit(root = process.cwd(), options: InitOptions = {}): Promise<InitReport> {
+  const report: InitReport = { ...(await ensureWorkspace(root)), withDocs: options.withDocs === true };
+  if (!report.withDocs) return report;
   for (const template of documentationTemplates(root)) {
     await writeFileIfMissing(template.path, template.content, report, root);
   }
@@ -579,17 +592,25 @@ export function formatInitReport(report: InitReport): string {
     ...(report.created.length > 0 ? report.created.map((item) => `  + ${item}`) : ["  none"]),
     "",
     `Skipped existing paths (${report.skipped.length}):`,
-    ...(report.skipped.length > 0 ? report.skipped.map((item) => `  = ${item}`) : ["  none"])
+    ...(report.skipped.length > 0 ? report.skipped.map((item) => `  = ${item}`) : ["  none"]),
+    "",
+    "Next:",
+    "  soturail index",
+    "  soturail skills export --target <claude|codex|cursor|gemini|generic> --layout portable --install"
   ];
+  if (!report.withDocs) {
+    lines.push("", "Only .soturail/ was created. Starter docs, examples and AGENTS.md/CLAUDE.md/GEMINI.md are opt-in: soturail init --with-docs");
+  }
   return `${lines.join("\n")}\n`;
 }
 
 export function registerInitCommand(program: Command): void {
   program
     .command("init")
-    .description("Create a non-destructive .soturail workspace and starter docs.")
-    .action(async () => {
-      const report = await runInit();
+    .description("Create a minimal, non-destructive .soturail workspace.")
+    .option("--with-docs", "Also write AGENTS.md, CLAUDE.md, GEMINI.md, starter docs and examples (never overwrites)")
+    .action(async (options: { withDocs?: boolean }) => {
+      const report = await runInit(process.cwd(), { withDocs: options.withDocs === true });
       process.stdout.write(formatInitReport(report));
     });
 }
