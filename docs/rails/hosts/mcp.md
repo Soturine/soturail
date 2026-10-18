@@ -73,11 +73,13 @@ Security defaults:
 
 `soturail mcp config --agent claude|cursor|generic` writes a reviewed stdio snippet under `.soturail/exports/mcp/<agent>/mcp-config.json`.
 
-The snippet runs:
+Its `mcpServers` entry is the host-native form used by Claude Code (`.mcp.json` or `--mcp-config`) and Cursor (`.cursor/mcp.json`). It is pinned to the release that generated it, so the server version does not depend on whichever `soturail` is first on `PATH`:
 
-```bash
-soturail mcp serve --transport stdio
+```json
+{ "mcpServers": { "soturail": { "command": "npx", "args": ["-y", "soturail@<version>", "mcp", "serve", "--transport", "stdio"] } } }
 ```
+
+The remaining fields (`safety`, `resources`, `tools`) describe the exposed surface for review; hosts ignore them.
 
 It does not assume a global application config path. Review it before adding it to an agent host.
 

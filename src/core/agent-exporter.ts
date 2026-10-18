@@ -439,6 +439,11 @@ export async function buildAgentExportFiles(agent: AgentId, root = process.cwd()
 
 export function mcpConfig(agent: AgentId | "cursor" | "generic" = "generic"): Record<string, unknown> {
   return {
+    // Host-native entry (Claude Code `.mcp.json`, Cursor `.cursor/mcp.json`), pinned to this
+    // release so the server version never depends on whichever `soturail` is first on PATH.
+    mcpServers: {
+      soturail: { command: "npx", args: ["-y", `soturail@${SOTURAIL_VERSION}`, "mcp", "serve", "--transport", "stdio"] }
+    },
     name: "soturail",
     agent,
     transport: "stdio",

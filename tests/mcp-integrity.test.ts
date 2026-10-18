@@ -85,3 +85,16 @@ async function rawFixture(root: string, content: string): Promise<RawRunRecord> 
   await appendJsonl(paths.rawIndex, record);
   return record;
 }
+
+describe("MCP host configuration snippet", () => {
+  it("includes a host-native mcpServers entry pinned to this release", async () => {
+    const { mcpConfig } = await import("../src/core/agent-exporter.js");
+    const { SOTURAIL_VERSION } = await import("../src/core/version.js");
+    for (const agent of ["claude", "cursor", "generic"] as const) {
+      const config = mcpConfig(agent) as { mcpServers: Record<string, { command: string; args: string[] }>; safety: unknown };
+      expect(config.mcpServers.soturail.command).toBe("npx");
+      expect(config.mcpServers.soturail.args).toEqual(["-y", `soturail@${SOTURAIL_VERSION}`, "mcp", "serve", "--transport", "stdio"]);
+      expect(config.safety).toBeDefined();
+    }
+  });
+});
